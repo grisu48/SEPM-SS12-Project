@@ -7,7 +7,7 @@ public class HelloWorld {
 		System.out.println("GIT is fun. :-)");
 		System.out.println("Hello World!");
 		System.out.println("Na endlich, es funktioniert bei mir nun auch!!!!");
-		System.out.println("Und noch ein Test!");
+		System.out.println("Und noch ein letzter Test!");
 	}
 
 }
