@@ -6,6 +6,13 @@ public abstract class Code {
 	/** Code language */
 	public final String language;
 
+	/**
+	 * No external constructor calls are allowed. The code and the language must
+	 * be defined, otherwise an {@link IllegalArgumentException} is thrown
+	 * 
+	 * @param code
+	 * @param language
+	 */
 	Code(String code, String language) {
 		if (code.length() == 0) throw new IllegalArgumentException("Cannot create snippet with no code");
 		if (language.length() == 0) throw new IllegalArgumentException("No coding language defined");

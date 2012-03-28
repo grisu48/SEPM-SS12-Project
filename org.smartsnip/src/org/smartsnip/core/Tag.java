@@ -75,6 +75,13 @@ public class Tag {
 	}
 
 	/**
+	 * Check for unused tags and remove them
+	 */
+	synchronized void removeUnusedTags() {
+		// TODO: Write me
+	}
+
+	/**
 	 * Invokes the refreshing process for the database
 	 */
 	protected void addToDB(Tag tag) {

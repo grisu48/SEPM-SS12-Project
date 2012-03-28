@@ -12,7 +12,7 @@ public interface IAccessPolicy {
 	 * Indicating if the current session can register a new user
 	 * 
 	 * @param session
-	 *            To be checked
+	 *            that is checked
 	 * @return true if operation succeeds if denied false
 	 */
 	public boolean canRegister(Session session);
@@ -21,7 +21,7 @@ public interface IAccessPolicy {
 	 * Indicating if the current session can do a login process
 	 * 
 	 * @param session
-	 *            To be checked
+	 *            that is checked
 	 * @return true if operation succeeds if denied false
 	 */
 	public boolean canLogin(Session session);
@@ -30,7 +30,7 @@ public interface IAccessPolicy {
 	 * Indicating if the current session can do a search
 	 * 
 	 * @param session
-	 *            To be checked
+	 *            that is checked
 	 * @return true if operation succeeds if denied false
 	 */
 	public boolean canSearch(Session session);
@@ -39,7 +39,7 @@ public interface IAccessPolicy {
 	 * Indicating if the current session can do a register process
 	 * 
 	 * @param session
-	 *            To be checked
+	 *            that is checked
 	 * @param user
 	 *            Data of this user should be changed
 	 * @return true if operation succeeds if denied false
@@ -51,7 +51,7 @@ public interface IAccessPolicy {
 	 * category.
 	 * 
 	 * @param session
-	 *            To be checked
+	 *            that is checked
 	 * @param category
 	 *            Category where the snippet should be created
 	 * @return true if operation succeeds if denied false
@@ -62,7 +62,7 @@ public interface IAccessPolicy {
 	 * Indicating if the current session can do a register process
 	 * 
 	 * @param session
-	 *            To be checked
+	 *            that is checked
 	 * @param snippet
 	 *            Concrete snippet that should be deleted
 	 * @return true if operation succeeds if denied false
@@ -73,7 +73,7 @@ public interface IAccessPolicy {
 	 * Indicating if the current session can do a register process
 	 * 
 	 * @param session
-	 *            To be checked
+	 *            that is checked
 	 * @param snippet
 	 *            Concrete snippet, that should be edited
 	 * @return true if operation succeeds if denied false

@@ -1,9 +1,20 @@
 package org.smartsnip.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class Category {
+	/** Container for all categories. The key string is always in lowercase */
+	private static final HashMap<String, Category> allCategories = new HashMap<String, Category>();
+	/**
+	 * List of all categories, used as a cache for returning all categories in
+	 * getCategory. Do not directly access this attribute - it may be null. In
+	 * this case the method getCategory rebuilds the list.
+	 */
+	private static List<Category> categories = new ArrayList<Category>();
+
 	/** Name of the category */
 	private String name;
 	/** Description of the category */
@@ -35,6 +46,34 @@ public class Category {
 		this.description = description;
 		this.parent = parent;
 		this.subcategories = new ArrayList<Category>();
+	}
+
+	/**
+	 * Gets a category by his name. If the name is null or empty, null is
+	 * returned. If no category is found, null is returned
+	 * 
+	 * @param name
+	 *            of the category to be searched
+	 * @return the category with the given name if found, otherwise null
+	 */
+	static Category getCategory(String name) {
+		if (name == null || name.length() == 0) return null;
+		return allCategories.get(name.toLowerCase());
+	}
+
+	/**
+	 * @return a list with all categories
+	 */
+	static List<Category> getCategories() {
+		synchronized (categories) {
+			if (categories != null) return categories;
+
+			categories = new ArrayList<Category>(allCategories.size());
+			Iterator<Category> iterator = allCategories.values().iterator();
+			while (iterator.hasNext())
+				categories.add(iterator.next());
+			return categories;
+		}
 	}
 
 	/**

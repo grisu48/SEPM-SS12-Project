@@ -6,7 +6,7 @@ package org.smartsnip.security;
  */
 public interface IHash {
 	/**
-	 * Do the hash
+	 * Do the hash of the interface
 	 * 
 	 * @param input
 	 *            string to be hashed

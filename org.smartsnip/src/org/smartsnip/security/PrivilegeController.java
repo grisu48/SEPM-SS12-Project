@@ -54,7 +54,7 @@ public class PrivilegeController {
 	 *            for that the access policy should be generated
 	 * @return the generated access policy
 	 */
-	public static IAccessPolicy getAccessPolicty(Session session) {
+	public static IAccessPolicy getSessionAccessPolicy(Session session) {
 		// TODO Write me!
 		return null;
 	}

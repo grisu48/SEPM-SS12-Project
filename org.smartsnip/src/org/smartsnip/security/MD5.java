@@ -12,6 +12,10 @@ public class MD5 implements IHash {
 	static final MessageDigest messageDigest;
 	static final MD5 instance = new MD5();
 
+	/** No outer instances allowed */
+	private MD5() {
+	}
+
 	/** MessageDigest initialisation */
 	static {
 		MessageDigest digest = null;

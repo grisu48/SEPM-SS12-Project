@@ -71,11 +71,11 @@ public class Comment {
 	}
 
 	/**
-	 * Unvotes the vote of the given user. If the user has no vote given,
+	 * Removes the vote of the given user. If the user has no vote given,
 	 * nothing happens.
 	 * 
 	 * @param user
-	 *            that wants to unvote
+	 *            that wants to un-vote
 	 */
 	synchronized void unvote(User user) {
 		if (!votes.containsKey(user)) return;

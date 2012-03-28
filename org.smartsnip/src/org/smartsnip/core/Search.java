@@ -33,9 +33,18 @@ public class Search {
 	 * Applies all filter and resets filterResults
 	 */
 	synchronized void applyFilter() {
-		// TODO: Write me
-		filteredResults = totalResults;
+		filteredResults = new ArrayList<Snippet>();
+		boolean checkCategories = categories.size() > 0;
+		boolean checkTags = tags.size() > 0;
+		for (Snippet snippet : totalResults) {
+			boolean addToList = true;
 
+			if (checkCategories) addToList = categories.contains(snippet.getCategory());
+			if (addToList && checkTags) {
+				// TODO: Check tags efficiently!
+			}
+			if (addToList) filteredResults.add(snippet);
+		}
 	}
 
 	/**

@@ -125,5 +125,11 @@ public class Session {
 		if (isLoggedIn()) throw new IllegalAccessException("The session is already logged in");
 
 		if (!policy.canLogin(this)) throw new IllegalAccessException("Access denied");
+		if (User.auth(username, password)) throw new IllegalAccessException("Access denied");
+
+		User user = User.getUser(username);
+		if (user == null) throw new IllegalAccessException("Access denied");
+
+		this.user = user;
 	}
 }

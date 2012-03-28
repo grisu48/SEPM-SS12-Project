@@ -80,8 +80,8 @@ public class Snippet {
 	 * @return the next available hash code
 	 */
 	private synchronized static int getNextHashCode() {
-		while (exists(++hashCounter))
-			;
+		while (exists(hashCounter))
+			hashCounter++;
 		return hashCounter;
 	}
 
