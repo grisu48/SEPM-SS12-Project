@@ -13,6 +13,7 @@ public class Tag {
 	/** Container for all tags. The key is the tags name in lowercase. Allways! */
 	private static final HashMap<String, Tag> allTags = new HashMap<String, Tag>();
 
+	/** Name of the tag */
 	public final String name;
 
 	private Tag(String name) {

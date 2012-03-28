@@ -5,4 +5,7 @@ public class Notification {
 	private String message;
 	private boolean read;
 	private String time;
+
+	Notification() {
+	}
 }

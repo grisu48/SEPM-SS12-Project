@@ -3,6 +3,10 @@ package org.smartsnip.security;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Implements the MD5 hash algorithm
+ * 
+ */
 public class MD5 implements IHash {
 
 	static final MessageDigest messageDigest;

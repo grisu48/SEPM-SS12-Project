@@ -24,7 +24,7 @@ public class Comment {
 	/**
 	 * Creates a new comment. If one of the arguments if null a new
 	 * {@link NullPointerException} will be thrown, and if the message is empty
-	 * a new {@link IllegalArgumentException} will be thrown
+	 * a new {@link IllegalArgumentException} is thrown
 	 * 
 	 * @param owner
 	 *            of the comment

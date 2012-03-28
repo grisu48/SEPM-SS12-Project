@@ -124,5 +124,6 @@ public class Session {
 			throw new IllegalAccessException("Login credentials missing");
 		if (isLoggedIn()) throw new IllegalAccessException("The session is already logged in");
 
+		if (!policy.canLogin(this)) throw new IllegalAccessException("Access denied");
 	}
 }

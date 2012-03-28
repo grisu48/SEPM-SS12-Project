@@ -9,7 +9,7 @@ import org.smartsnip.core.*;
 public interface IAccessPolicy {
 
 	/**
-	 * Indicating if the current session can do a register process
+	 * Indicating if the current session can register a new user
 	 * 
 	 * @param session
 	 *            To be checked

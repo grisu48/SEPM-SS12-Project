@@ -32,7 +32,7 @@ public abstract class Code {
 	}
 
 	/**
-	 * @return the formatted and highlighted code in HTML
+	 * @return the formatted and highlighted code in HTML format
 	 */
 	public abstract String getFormattedHTML();
 

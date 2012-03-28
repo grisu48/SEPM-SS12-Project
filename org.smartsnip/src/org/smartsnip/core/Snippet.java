@@ -89,7 +89,7 @@ public class Snippet {
 	 * Checks if the given hash code exists
 	 * 
 	 * @param hash
-	 *            to be checks
+	 *            hash code to be checks
 	 * @return true if already registered hash, otherwise false
 	 */
 	synchronized static boolean exists(int hash) {

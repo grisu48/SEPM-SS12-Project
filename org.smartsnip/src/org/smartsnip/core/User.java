@@ -26,7 +26,7 @@ public class User {
 	/** This hash algorithm is used for password hashing */
 	private final static IHash hashAlgorithm = MD5.getInstance();
 
-	/** Final identifier of the username */
+	/** Final identifier of the user. The username is lowercased and unique */
 	public final String username;
 
 	/** Encrypted password of the user */

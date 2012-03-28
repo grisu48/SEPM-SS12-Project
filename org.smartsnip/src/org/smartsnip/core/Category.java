@@ -45,7 +45,7 @@ public class Category {
 	}
 
 	/**
-	 * Sets the name of the category. If null or empty, nothing happends
+	 * Sets the name of this category. If null or empty, nothing happends
 	 * 
 	 * @param name
 	 *            the name to set

@@ -2,6 +2,10 @@ package org.smartsnip.security;
 
 import org.smartsnip.core.*;
 
+/**
+ * Core factory for all IAccessPolicy objects
+ * 
+ */
 public class PrivilegeController {
 
 	/** Default hard coded internal guest access policy */

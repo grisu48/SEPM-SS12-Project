@@ -1,7 +1,7 @@
 package org.smartsnip.security;
 
 /**
- * Simply interface for a hashing algorithm.
+ * Simply interface for an arbitrary hashing algorithm.
  * 
  */
 public interface IHash {

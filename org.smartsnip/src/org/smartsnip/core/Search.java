@@ -14,7 +14,7 @@ public class Search {
 	private List<Snippet> totalResults;
 
 	/** Filtered results */
-	private List<Snippet> filterResults;
+	private List<Snippet> filteredResults;
 
 	Search(String searchString) {
 		if (searchString == null) throw new NullPointerException();
@@ -26,7 +26,7 @@ public class Search {
 	 */
 	public synchronized List<Snippet> getResults() {
 		applyFilter();
-		return filterResults;
+		return filteredResults;
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class Search {
 	 */
 	synchronized void applyFilter() {
 		// TODO: Write me
-		filterResults = totalResults;
+		filteredResults = totalResults;
 
 	}
 
