@@ -12,10 +12,10 @@ body {
 }
 
 
-
-
 h1 {
 }
+
+
 
 
 
@@ -40,7 +40,19 @@ margin-right:auto;
 background-color:white;
 }
 
+#title {
+	float:left;
+	width:90%;
+	
+}
+
+#login {
+	float:right;
+	width:10%;	
+}
+
 #search {
+clear:both;
 background-color:red;
 }
 

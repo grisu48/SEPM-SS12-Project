@@ -1,13 +1,8 @@
 package org.smartsnip.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.*;
 
 public class GUI implements EntryPoint {
 
@@ -15,13 +10,16 @@ public class GUI implements EntryPoint {
 	//Label label = new Label("Hello GWT !!!");
 	//Button button = new Button("Say something");
 	
+	//Create loginPanel
+	HorizontalPanel loginPanel = new HorizontalPanel();
+	Label user = new Label("guest");
 	//Create searchPanel
 	HorizontalPanel searchPanel = new HorizontalPanel();
-	TextBox searchSnippet = new TextBox();
+	SuggestBox searchSnippet = new SuggestBox();
 	ListBox searchLanguage = new ListBox();
 	Button searchButton = new Button("Search");
 	//Create leftSide
-	TabPanel leftPanel = new TabPanel();
+	TabLayoutPanel leftPanel = new TabLayoutPanel(3, Unit.EM);
 	VerticalPanel contentPanel0 = new VerticalPanel();
 	VerticalPanel contentPanel1 = new VerticalPanel();
 	VerticalPanel contentPanel2 = new VerticalPanel();
@@ -43,6 +41,9 @@ public class GUI implements EntryPoint {
 		//hier werden die widgets in einander gebaut
 		//z.b.  addPanel.add(addStockButton);
 		
+
+		//Fill loginPanel
+		loginPanel.add(user);
 		//Fill searchPanel
 		searchPanel.add(searchSnippet);
 		searchPanel.add(searchLanguage);
@@ -65,9 +66,11 @@ public class GUI implements EntryPoint {
 		//RootPanel.get().add(button);
 		
 		//Fix Panels to Divs
+		RootPanel.get("login").add(loginPanel);
 		RootPanel.get("search").add(searchPanel);
 		RootPanel.get("left").add(leftPanel);
 		RootPanel.get("right").add(rightPanel);
+		
 		
 		//hier wird der cursor gesetzt
 		//newSymbolTextBox.setFocus(true);
