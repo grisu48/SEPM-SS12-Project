@@ -1,0 +1,2 @@
+serviceClass: org.smartsnip.client.GreetingService
+path: C3FFC1F5C26FA3701AADD917FB4F5927.gwt.rpc
