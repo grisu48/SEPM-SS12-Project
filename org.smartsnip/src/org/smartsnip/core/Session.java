@@ -5,6 +5,9 @@ import org.smartsnip.security.PrivilegeController;
 
 import java.util.HashMap;
 
+/**
+  * TODO: Write the documentation
+  */
 public class Session {
 	/** Session storage, each session is identified with the cookie string */
 	private static HashMap<String, Session> storedSessions = new HashMap<String, Session>();
