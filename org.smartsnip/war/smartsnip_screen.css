@@ -23,14 +23,17 @@ h1 {
 
 
 header {
-background-color:blue;
+height:150px;
+background-image:url(images/bg_banner.png);
+background-repeat:x-repeat;
 }
 
 
 footer {
 clear:both;
-background-color:green;
+background-color:blue;
 height:200px;
+
 }
   
 
@@ -40,20 +43,31 @@ margin-right:auto;
 background-color:white;
 }
 
+#code {
+height:150px;
+background-image:url(images/code_banner.png);
+background-repeat:no-repeat;
+}
+
 #title {
-	float:left;
-	width:90%;
+	position:absolute;
+	left:10%;
+	top:0px;
+	width:200px;
+	padding:25px;
+	margin:0px;
+	background-color:#4a3320; 
+	color:white;
 	
 }
 
 #login {
-	float:right;
-	width:10%;	
+float:right;
 }
 
 #search {
 clear:both;
-background-color:red;
+background-color:#e6e6e6;
 }
 
 #data {
