@@ -239,4 +239,11 @@ public class User {
 	protected void refreshDB() {
 
 	}
+
+	/**
+	 * @return a list of the snippets created by the user
+	 */
+	List<Snippet> getMySnippets() {
+		return new ArrayList<Snippet>();
+	}
 }

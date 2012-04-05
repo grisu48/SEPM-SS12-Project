@@ -41,6 +41,11 @@ public class PrivilegeController {
 		public boolean canCreateSnippet(Session session, Category category) {
 			return false;
 		}
+
+		@Override
+		public boolean canTagSnippet(Session session, Snippet snippet) {
+			return true;
+		}
 	};
 
 	/**

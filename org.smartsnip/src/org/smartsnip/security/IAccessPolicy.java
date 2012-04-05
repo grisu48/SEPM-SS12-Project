@@ -79,4 +79,15 @@ public interface IAccessPolicy {
 	 * @return true if operation succeeds if denied false
 	 */
 	public boolean canEditSnippet(Session session, Snippet snippet);
+
+	/**
+	 * Indicating if the given session can tag the given snippet
+	 * 
+	 * @param session
+	 *            to be checked
+	 * @param snippet
+	 *            to be tagged
+	 * @return true if operation succeeds if denied false
+	 */
+	public boolean canTagSnippet(Session session, Snippet snippet);
 }
