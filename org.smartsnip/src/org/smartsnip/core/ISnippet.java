@@ -24,7 +24,7 @@ public interface ISnippet {
 	public String getDesc();
 
 	/**
-	 * @return the codeing language of the snippet
+	 * @return the coding language of the snippet
 	 */
 	public String getLanguage();
 

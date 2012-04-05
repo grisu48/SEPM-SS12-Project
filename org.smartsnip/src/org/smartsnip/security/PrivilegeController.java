@@ -56,6 +56,9 @@ public class PrivilegeController {
 	 * @return the generated access policy
 	 */
 	public static IAccessPolicy getAccessPolicty(Session session) {
+		if (session == null) return guestAccessPolicy;
+		if (!session.isLoggedIn()) return guestAccessPolicy;
+		
 		// TODO Write me!
 		return null;
 	}

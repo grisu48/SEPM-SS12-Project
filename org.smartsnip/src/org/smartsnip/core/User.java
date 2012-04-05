@@ -244,6 +244,15 @@ public class User {
 	 * @return a list of the snippets created by the user
 	 */
 	List<Snippet> getMySnippets() {
+		// TODO: Implement me
 		return new ArrayList<Snippet>();
+	}
+	
+	/**
+	 * @return a list of the hash codes of the snippets, created by the user
+	 */
+	List<Integer> getMySnippetsHash() {
+		// TODO: Implement me
+		return new ArrayList<Integer>();
 	}
 }

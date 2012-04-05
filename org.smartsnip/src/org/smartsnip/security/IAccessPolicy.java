@@ -84,7 +84,7 @@ public interface IAccessPolicy {
 	 * Indicating if the given session can tag the given snippet
 	 * 
 	 * @param session
-	 *            to be checked
+	 *            to be checked. Concrete, the user of the session will be checked
 	 * @param snippet
 	 *            to be tagged
 	 * @return true if operation succeeds if denied false

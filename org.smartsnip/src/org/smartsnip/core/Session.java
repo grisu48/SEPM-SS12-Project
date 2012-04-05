@@ -315,7 +315,9 @@ public class Session {
 					if (!policy.canTagSnippet(Session.this, owner)) throw new IllegalAccessException();
 
 					// Security check passed. Add tag
-					// TODO: Add tag
+					// TODO: Get TAG entity
+					Tag tagEntity = null;
+					// TODO: Implement me ....
 				}
 
 				@Override
