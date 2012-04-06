@@ -61,7 +61,7 @@ public class TestSession {
 		final int threadcount = 10;
 
 		/*
-		 * NOTE: This test case has currently serveral problems with the
+		 * XXX: This test case has currently serveral problems with the
 		 * IllegalStateException that normally should NOT be thrown!!!
 		 * 
 		 * I have to work on this
