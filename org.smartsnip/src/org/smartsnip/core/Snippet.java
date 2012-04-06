@@ -49,13 +49,13 @@ public class Snippet {
 	 * field is empty, a {@link IllegalArgumentException} will be thrown
 	 * 
 	 * @param owner
-	 *            of the snippet
+	 *            the owner of the snippet
 	 * @param name
-	 *            of the snippet
+	 *            snippet's name
 	 * @param description
-	 *            of the snippet
+	 *            a short description
 	 * @param code
-	 *            of the snippet
+	 *            the code of the snippet
 	 * @param hash
 	 *            hash code of the snippet
 	 * @throws IllegalArgumentException

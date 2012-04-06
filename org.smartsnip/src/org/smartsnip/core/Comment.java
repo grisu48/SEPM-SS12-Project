@@ -7,7 +7,7 @@ public class Comment {
 	public final User owner;
 	/** The snippet where the comment belongs is fixed */
 	public final Snippet snippet;
-	/** Comment message */
+	/** Comment message. */
 	private String message = "";
 
 	/** Positive votes are stored as chocolates */

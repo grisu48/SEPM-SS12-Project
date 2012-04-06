@@ -234,13 +234,6 @@ public class User {
 	}
 
 	/**
-	 * Invokes the refreshing process for the database
-	 */
-	protected void refreshDB() {
-
-	}
-
-	/**
 	 * @return a list of the snippets created by the user
 	 */
 	List<Snippet> getMySnippets() {
@@ -254,5 +247,12 @@ public class User {
 	List<Integer> getMySnippetsHash() {
 		// TODO: Implement me
 		return new ArrayList<Integer>();
+	}
+
+	/**
+	 * Invokes the refreshing process for the database
+	 */
+	protected void refreshDB() {
+
 	}
 }

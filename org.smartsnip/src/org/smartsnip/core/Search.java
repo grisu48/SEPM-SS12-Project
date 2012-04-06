@@ -18,7 +18,7 @@ public class Search {
 
 	/**
 	 * Filtered results. If null, they need to be re-filtered. This occurs if a
-	 * new filter criterium has been applied
+	 * filter criterium changes
 	 */
 	private List<Snippet> filterResults;
 

@@ -22,11 +22,12 @@ public interface IUser {
 	public void logout() throws IllegalAccessException;
 
 	/**
-	 *  
+	 * 
 	 * @return a list containing all snippets of the user
 	 * @throws IllegalAccessException
 	 *             Thrown if the call cannot be executed by this session
-	 * @obsolete A list with all interfaces is a waste of system resources!
+	 * @obsolete A list with all interfaces is a waste of system resources.
+	 *           Check this!
 	 */
 	public List<ISnippet> getSnippets() throws IllegalAccessException;
 }

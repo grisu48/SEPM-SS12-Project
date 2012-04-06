@@ -24,7 +24,10 @@ public class Session {
 	private User user = null;
 
 	/**
-	 * General access policy that applies to this session
+	 * General access policy that applies to this session.
+	 * 
+	 * The policy is refreshed by the method refreshPolicy and should never be
+	 * touched outside this method for writing.
 	 */
 	private IAccessPolicy policy = PrivilegeController.getGuestAccessPolicty();
 

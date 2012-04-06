@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * A tag for the snippets. This method also serves as containment for all tags
- * in the system, the corresponing methods to access them and as TagFactory.
+ * in the system, the corresponding methods to access them and as TagFactory.
  * 
  */
 public class Tag {

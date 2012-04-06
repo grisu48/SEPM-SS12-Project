@@ -28,16 +28,18 @@ public interface IComment {
 
 	/**
 	 * Removes teh current rate given to this comment
+	 * 
 	 * @throws IllegalAccessException
 	 *             Thrown if the call cannot be executed by this session
 	 */
 	public void removeRating() throws IllegalAccessException;
-	
+
 	/**
 	 * 
 	 * @return the owner of the comment
 	 * @throws IllegalAccessException
-	 *             Thrown if the call cannot be executed by this session
+	 *             Thrown for security reasons if the call cannot be executed by
+	 *             this session
 	 */
 	public IUser getOwner() throws IllegalAccessException;
 }
