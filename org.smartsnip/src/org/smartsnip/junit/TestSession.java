@@ -21,6 +21,8 @@ public class TestSession {
 
 	@Before
 	public void setUp() throws Exception {
+		testSession = null;
+		// TODO Disable persistence layer for all testing methods!!
 	}
 
 	@After
