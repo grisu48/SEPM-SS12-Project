@@ -214,7 +214,7 @@ public class User {
 	 *            to be user
 	 * @param password
 	 *            for that user
-	 * @return true if the login is successfull, otherwise false (without reason
+	 * @return true if the login is successful, otherwise false (without reason
 	 *         message)
 	 */
 	static boolean auth(String username, String password) {
@@ -247,7 +247,7 @@ public class User {
 		// TODO: Implement me
 		return new ArrayList<Snippet>();
 	}
-	
+
 	/**
 	 * @return a list of the hash codes of the snippets, created by the user
 	 */

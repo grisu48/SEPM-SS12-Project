@@ -228,6 +228,39 @@ public class Snippet {
 	}
 
 	/**
+	 * Adds a tag to the snippet. If the given tag is null, nothing will be
+	 * done. If the snippet has already been tagged with the tag, nothing is
+	 * done.
+	 * 
+	 * @param tag
+	 *            to be added to the snippet
+	 */
+	void addTag(Tag tag) {
+		if (tag == null) return;
+		synchronized (tags) {
+			if (tags.contains(tag)) return;
+			tags.add(tag);
+		}
+		refreshDB();
+	}
+
+	/**
+	 * Removes a tag from the snippet. If the given tag is null, nothing will be
+	 * done. If the snippet has not been tagged with the tag, nothing is done.
+	 * 
+	 * @param tag
+	 *            to be removed from the snippet
+	 */
+	void removeTag(Tag tag) {
+		if (tag == null) return;
+		synchronized (tags) {
+			if (!tags.contains(tag)) return;
+			tags.remove(tag);
+		}
+		refreshDB();
+	}
+
+	/**
 	 * @return the comments of the snippet
 	 */
 	List<Comment> getComments() {
@@ -247,24 +280,35 @@ public class Snippet {
 	}
 
 	/**
-	 * Adds a comment to the snippet.
+	 * Adds a comment to the snippet. If the comment is null, nothing will be
+	 * done. If comment has already been added, nothing is done
 	 * 
 	 * @param comment
 	 *            to be added
 	 */
 	void addComment(Comment comment) {
-		comments.add(comment);
+		if (comment == null) return;
+		synchronized (comments) {
+			if (comments.contains(comment)) return;
+			comments.add(comment);
+		}
 		refreshDB();
 	}
 
 	/**
-	 * Removes a comment from the snippet
+	 * Removes a comment from the snippet. If the comment is null, the nothing
+	 * is done. If the given comment is not in the comments list of the snippet
+	 * also the method returns without effect.
 	 * 
 	 * @param comment
 	 *            to be removed
 	 */
 	void removeComment(Comment comment) {
-		if (comments.contains(comment)) comments.remove(comment);
+		if (comment == null) return;
+		synchronized (comments) {
+			if (!comments.contains(comment)) return;
+			comments.remove(comment);
+		}
 		refreshDB();
 	}
 
@@ -273,5 +317,25 @@ public class Snippet {
 	 */
 	protected void refreshDB() {
 
+	}
+
+	/**
+	 * Checks if the snippet has a given tag
+	 * 
+	 * @param tag
+	 *            to be checked
+	 * @return true if the snippet has been tagged with the given tag, otherwise
+	 *         false
+	 */
+	boolean hasTag(Tag tag) {
+		if (tag == null) return false;
+		return tags.contains(tag);
+	}
+
+	/**
+	 * @return the owner of the session
+	 */
+	public User getOwner() {
+		return owner;
 	}
 }

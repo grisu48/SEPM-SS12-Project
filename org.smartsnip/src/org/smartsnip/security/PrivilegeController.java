@@ -44,7 +44,63 @@ public class PrivilegeController {
 
 		@Override
 		public boolean canTagSnippet(Session session, Snippet snippet) {
-			return true;
+			return false;
+		}
+
+		@Override
+		public boolean canRateSnippet(Session session, Snippet snippet) {
+			return false;
+		}
+	};
+
+	/** Hard coded user access policy */
+	private final static IAccessPolicy userAccessPolicy = new IAccessPolicy() {
+
+		@Override
+		public boolean canTagSnippet(Session session, Snippet snippet) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canSearch(Session session) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canRegister(Session session) {
+			return !session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canRateSnippet(Session session, Snippet snippet) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canLogin(Session session) {
+			return !session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canEditUserData(Session session, User user) {
+			return session.getUser() == user;
+		}
+
+		@Override
+		public boolean canEditSnippet(Session session, Snippet snippet) {
+			if (!session.isLoggedIn()) return false;
+			return (snippet.getOwner() == session.getUser());
+		}
+
+		@Override
+		public boolean canDeleteSnippet(Session session, Snippet snippet) {
+			if (!session.isLoggedIn()) return false;
+			return (snippet.getOwner() == session.getUser());
+		}
+
+		@Override
+		public boolean canCreateSnippet(Session session, Category category) {
+			return session.isLoggedIn();
 		}
 	};
 
@@ -58,9 +114,8 @@ public class PrivilegeController {
 	public static IAccessPolicy getAccessPolicty(Session session) {
 		if (session == null) return guestAccessPolicy;
 		if (!session.isLoggedIn()) return guestAccessPolicy;
-		
-		// TODO Write me!
-		return null;
+
+		return userAccessPolicy;
 	}
 
 	/**

@@ -84,10 +84,23 @@ public interface IAccessPolicy {
 	 * Indicating if the given session can tag the given snippet
 	 * 
 	 * @param session
-	 *            to be checked. Concrete, the user of the session will be checked
+	 *            to be checked. Concrete, the user of the session will be
+	 *            checked
 	 * @param snippet
 	 *            to be tagged
 	 * @return true if operation succeeds if denied false
 	 */
 	public boolean canTagSnippet(Session session, Snippet snippet);
+
+	/**
+	 * Indicating if the given session is able to rate a snippet
+	 * 
+	 * @param session
+	 *            to be checked. Concrete, the user of the session will be
+	 *            checked
+	 * @param snippet
+	 *            to be tagged
+	 * @return true if operation succeeds if denied false
+	 */
+	public boolean canRateSnippet(Session session, Snippet snippet);
 }
