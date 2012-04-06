@@ -60,6 +60,13 @@ public class TestSession {
 	public void testGetState() {
 		final int threadcount = 10;
 
+		/*
+		 * NOTE: This test case has currently serveral problems with the
+		 * IllegalStateException that normally should NOT be thrown!!!
+		 * 
+		 * I have to work on this
+		 */
+
 		System.out.print("Testing session state with " + threadcount + " threads ... ");
 		Thread[] threads = new Thread[threadcount];
 		final AtomicBoolean success = new AtomicBoolean(true);
