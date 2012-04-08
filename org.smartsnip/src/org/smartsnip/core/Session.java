@@ -32,6 +32,46 @@ public class Session {
 	private IAccessPolicy policy = PrivilegeController.getGuestAccessPolicty();
 
 	/**
+	 * The session implements an observable pattern for the GUI.
+	 * 
+	 * In this list all given observers are stored.
+	 */
+	private List<ISessionObserver> observers = new ArrayList<ISessionObserver>();
+
+	/**
+	 * Implementation of the observer to serve the observers with the given
+	 * methods.
+	 * 
+	 * Each method of the interface is implemented to redirect the call to the
+	 * observers.
+	 * */
+	private ISessionObserver observable = new ISessionObserver() {
+
+		@Override
+		public void notification(Notification notification) {
+			if (notification == null) return;
+
+			for (ISessionObserver observer : observers) {
+				observer.notification(notification);
+			}
+		}
+
+		@Override
+		public void logout() {
+			for (ISessionObserver observer : observers) {
+				observer.logout();
+			}
+		}
+
+		@Override
+		public void login(String username) {
+			for (ISessionObserver observer : observers) {
+				observer.login(username);
+			}
+		}
+	};
+
+	/**
 	 * The state in witch the current session is. An active session becomes
 	 * inactive after a given time period, and after becoming inactive it will
 	 * be deleted after another defined time period
@@ -194,6 +234,8 @@ public class Session {
 	 *             Thrown as security exception when the login process fails.
 	 */
 	public synchronized void login(String username, String password) throws IllegalAccessException {
+		doActivity();
+
 		if (username.length() == 0 || password.length() == 0)
 			throw new IllegalAccessException("Login credentials missing");
 		if (isLoggedIn()) throw new IllegalAccessException("The session is already logged in");
@@ -204,6 +246,7 @@ public class Session {
 
 		this.user = user;
 		refreshPolicy();
+		observable.login(user.getUsername());
 	}
 
 	/**
@@ -235,6 +278,37 @@ public class Session {
 	public synchronized void logout() {
 		user = null;
 		refreshPolicy();
+	}
+
+	/**
+	 * Adds an observer to the session. The given observer must not be null or
+	 * already added, otherwise the method returns without any effect.
+	 * 
+	 * @param observer
+	 *            to be added
+	 */
+	public void addObserver(ISessionObserver observer) {
+		synchronized (observers) {
+			if (observer == null) return;
+			if (observers.contains(observer)) return;
+			observers.add(observer);
+		}
+	}
+
+	/**
+	 * Removes a given observer from the session. The given observer must not be
+	 * null and must be an observer, otherwise the method returns without any
+	 * effect.
+	 * 
+	 * @param observer
+	 *            to be removed
+	 */
+	public void removeObserver(ISessionObserver observer) {
+		synchronized (observers) {
+			if (observer == null) return;
+			if (!observers.contains(observer)) return;
+			observers.remove(observer);
+		}
 	}
 
 	/**
@@ -446,6 +520,15 @@ public class Session {
 				return createIUser(comment.owner);
 			}
 		};
+	}
+
+	/**
+	 * Calculates the time the current session was idle in milliseconds.
+	 * 
+	 * @return the time the session was idle in milliseconds
+	 */
+	public long getIdleTime() {
+		return System.currentTimeMillis() - lastActivityTime;
 	}
 
 	/**
