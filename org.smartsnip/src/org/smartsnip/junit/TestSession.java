@@ -30,23 +30,37 @@ public class TestSession {
 	}
 
 	/**
-	 * This test performs action on the cookie handler of the session.
+	 * This test performs actions on the cookie management system.
 	 * 
-	 * It creates a new test session, and tries to match the given cookie with
-	 * the session. At the end the session is deleted.
+	 * It creates 1000 different cookies and checks
 	 */
 	@Test
-	public void testGetCookie() {
-		System.out.print("Testing session cookie management ... ");
-		testSession = Session.getSession(testCookie);
-		if (testSession == null) fail("Test session creation failure");
-		if (!Session.existsCookie(testCookie)) fail("Test session exists check failed");
-		if (Session.getSession(testCookie) != testSession) fail("Cookie match of test session failed");
-		Session.deleteSession(testCookie);
-		if (Session.getSession(testCookie) == testSession) fail("Session delete failed");
-		System.out.println("done");
+	public void testCookieManagnement() {
+		final int cookieCount = 1000;
+		System.out.println("Creating " + cookieCount + " sessions ... ");
+		String sids[] = new String[cookieCount];
+		for (int i = 0; i < cookieCount; i++) {
+			sids[i] = testSession.getNewSessionCookie();
+		}
+		for (int i = 0; i < cookieCount; i++) {
+			Session sessionObject = Session.getSession(sids[i]);
+			if (sessionObject == null)
+				fail("Getting of session " + i + " failed. Cookie not found in session management");
+			sessionObject.deleteSession();
+			if (Session.existsCookie(sids[i]))
+				fail("Delete session " + i + " failed. Session exists after deleteing it!");
+		}
 	}
 
+	@Test
+	public void testUserManagement() {
+		// TODO
+	}
+
+	/*
+	 * NOTE: This test takes LOTS of time. Always perfom this test at the end of
+	 * other tests!
+	 */
 	/**
 	 * This test performs actions on the session lifecycle.
 	 * 
@@ -131,11 +145,6 @@ public class TestSession {
 		}
 		if (!success.get()) fail("testGetState() failure flag set");
 
-	}
-
-	@Test
-	public void testUserManagement() {
-		fail("Not yet implemented"); // TODO
 	}
 
 }
