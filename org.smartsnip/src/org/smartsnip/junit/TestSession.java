@@ -40,7 +40,7 @@ public class TestSession {
 		System.out.println("Creating " + cookieCount + " sessions ... ");
 		String sids[] = new String[cookieCount];
 		for (int i = 0; i < cookieCount; i++) {
-			sids[i] = testSession.getNewSessionCookie();
+			sids[i] = Session.createNewSession().getCookie();
 		}
 		for (int i = 0; i < cookieCount; i++) {
 			Session sessionObject = Session.getSession(sids[i]);
