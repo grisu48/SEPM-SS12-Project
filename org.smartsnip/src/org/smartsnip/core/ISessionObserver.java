@@ -15,12 +15,12 @@ public interface ISessionObserver {
 	 * @param username
 	 *            of the user that has been logged on
 	 */
-	public void login(String username);
+	public void login(Session source, String username);
 
 	/**
 	 * If the session has been logged out
 	 */
-	public void logout();
+	public void logout(Session source);
 
 	/**
 	 * The current session received a new notifications. Mostly used for user
@@ -29,5 +29,5 @@ public interface ISessionObserver {
 	 * @param notification
 	 *            that has been received
 	 */
-	public void notification(Notification notification);
+	public void notification(Session source, Notification notification);
 }
