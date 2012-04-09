@@ -2,6 +2,7 @@ package org.smartsnip.client;
 
 import java.util.Date;
 
+import org.smartsnip.client.MessageBox.OptionPaneResult;
 import org.smartsnip.core.Session;
 
 import com.gargoylesoftware.htmlunit.util.Cookie;
@@ -43,7 +44,7 @@ public class GUI implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		boolean guest = true; // UGLY
+		boolean guest = true; // UGLY, remove this
 
 		// hier kann eine initialisierung vorgenommen werden
 		// z.b. stocksFlexTable.setText(0, 1, "Price");
@@ -62,14 +63,24 @@ public class GUI implements EntryPoint {
 
 			@Override
 			public void onClick(ClickEvent event) {
+				if (Controller.isLoggedIn()) {
+					if (MessageBox.showOptionPane("You are already logged in as " + Controller.getUsername()
+							+ "\nYou want to log out and re-login?", "Question", txtLoginUsername.getAbsoluteLeft(),
+							txtLoginUsername.getAbsoluteTop() + 20) != OptionPaneResult.yes) return;
+
+					// Log out
+					Controller.logout();
+				}
+
 				String username = txtLoginUsername.getText();
 				String password = txtLoginUsername.getText();
 				if (username.length() == 0 || password.length() == 0) {
-					showMessageBox("Login credentials missing", "Login failure", txtLoginUsername.getAbsoluteLeft(),
-							txtLoginUsername.getAbsoluteTop() + 20);
+					MessageBox.showMessageBox("Login credentials missing", "Login failure",
+							txtLoginUsername.getAbsoluteLeft(), txtLoginUsername.getAbsoluteTop() + 20);
 				} else {
-					showMessageBox("Loggin in ... ", "DEBUG message", txtLoginUsername.getAbsoluteLeft(),
+					MessageBox.showMessageBox("Loggin in ... ", "DEBUG message", txtLoginUsername.getAbsoluteLeft(),
 							txtLoginUsername.getAbsoluteTop() + 40);
+
 				}
 			}
 		});
@@ -106,127 +117,4 @@ public class GUI implements EntryPoint {
 
 	}
 
-	/**
-	 * Creates a new message box with a given message at the given position
-	 * 
-	 * If the given message is null or empty, nothing happens
-	 * 
-	 * @param message
-	 *            to be displayed
-	 * @param title
-	 *            Title of the message to be displayed
-	 * @param left
-	 *            Position from the left (x coordiante)
-	 * @param top
-	 *            Position from the top (y coordiante)
-	 */
-	static void showMessageBox(final String message, final String title, int left, int top) {
-		if (message == null || message.length() == 0) return;
-
-		DialogBox box = new DialogBox() {
-			Label lblMessage = new Label();
-
-			/** Constructor for the anonymous inner class */
-			{
-				// Set the dialog box's caption.
-				lblMessage.setText(message);
-				if (title != null && title.length() > 0) {
-					setText(title);
-				} else {
-					setText("Message");
-				}
-
-				// DialogBox is a SimplePanel, so you have to set its widget
-				// property to
-				// whatever you want its contents to be.
-				Button ok = new Button("Ok");
-				ok.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						hide();
-					}
-				});
-
-				add(lblMessage);
-				setWidget(ok);
-			}
-		};
-		box.setPopupPosition(left, top);
-		box.show();
-	}
-
-	/**
-	 * Creates a new message box with a given message at the given position
-	 * 
-	 * If the given message is null or empty, nothing happens
-	 * 
-	 * @param message
-	 *            to be displayed
-	 * @param left
-	 *            Position from the left (x coordiante)
-	 * @param top
-	 *            Position from the top (y coordiante)
-	 */
-	static void showMessageBox(final String message, int left, int top) {
-		showMessageBox(message, "Message", left, top);
-	}
-
-	/**
-	 * Creates a new message box with a given message and a default title
-	 * 
-	 * If the given message is null or empty, nothing happens
-	 * 
-	 * @param message
-	 *            to be displayed
-	 */
-	static void showMessageBox(final String message) {
-		showMessageBox(message, "Message");
-	}
-
-	/**
-	 * Creates a new message box with a given message
-	 * 
-	 * If the given message is null or empty, nothing happens
-	 * 
-	 * @param message
-	 *            to be displayed
-	 * @param title
-	 *            Title of the message to be displayed
-	 */
-	static void showMessageBox(final String message, final String title) {
-		if (message == null || message.length() == 0) return;
-
-		DialogBox box = new DialogBox() {
-			Label lblMessage = new Label();
-
-			/** Constructor for the anonymous inner class */
-			{
-				// Set the dialog box's caption.
-				lblMessage.setText(message);
-				if (title != null && title.length() > 0) {
-					setText(title);
-				} else {
-					setText("Message");
-				}
-
-				// DialogBox is a SimplePanel, so you have to set its widget
-				// property to
-				// whatever you want its contents to be.
-				Button ok = new Button("Ok");
-				ok.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						hide();
-					}
-				});
-
-				add(lblMessage);
-				setWidget(ok);
-			}
-		};
-		box.center();
-		box.show();
-	}
 }
