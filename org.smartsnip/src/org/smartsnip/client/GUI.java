@@ -63,6 +63,21 @@ public class GUI implements EntryPoint {
 
 			@Override
 			public void onClick(ClickEvent event) {
+
+				// XXX The access to the controller fails!
+				/*
+				 * [ERROR] [org_smartsnip] - Errors in
+				 * 'file:.../SEPM-SS12-Project/org.smartsnip/src/org/smartsnip/client/Controller.java'
+				 * [ERROR] [org_smartsnip] - Line 23: No source code is
+				 * available for type org.smartsnip.core.ISessionObserver; did
+				 * you forget to inherit a required module? [ERROR]
+				 * [org_smartsnip] - Line 26: No source code is available for
+				 * type org.smartsnip.core.Session; did you forget to inherit a
+				 * required module? [ERROR] [org_smartsnip] - Line 26: No source
+				 * code is available for type org.smartsnip.core.Notification;
+				 * did you forget to inherit a required module? [ERROR]
+				 * [org_smartsnip] - Uncaught exception escaped
+				 */
 				if (Controller.isLoggedIn()) {
 					if (MessageBox.showOptionPane("You are already logged in as " + Controller.getUsername()
 							+ "\nYou want to log out and re-login?", "Question", txtLoginUsername.getAbsoluteLeft(),
