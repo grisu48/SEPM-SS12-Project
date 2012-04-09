@@ -48,25 +48,25 @@ public class Session {
 	private ISessionObserver observable = new ISessionObserver() {
 
 		@Override
-		public void notification(Notification notification) {
+		public void notification(Session source, Notification notification) {
 			if (notification == null) return;
 
 			for (ISessionObserver observer : observers) {
-				observer.notification(notification);
+				observer.notification(Session.this, notification);
 			}
 		}
 
 		@Override
-		public void logout() {
+		public void logout(Session source) {
 			for (ISessionObserver observer : observers) {
-				observer.logout();
+				observer.logout(Session.this);
 			}
 		}
 
 		@Override
-		public void login(String username) {
+		public void login(Session source, String username) {
 			for (ISessionObserver observer : observers) {
-				observer.login(username);
+				observer.login(Session.this, username);
 			}
 		}
 	};
@@ -118,7 +118,6 @@ public class Session {
 	 * @return the state of the session
 	 */
 	public SessionState getState() {
-		refreshSessionState();
 		return state;
 	}
 
@@ -246,7 +245,7 @@ public class Session {
 
 		this.user = user;
 		refreshPolicy();
-		observable.login(user.getUsername());
+		observable.login(this, user.getUsername());
 	}
 
 	/**
@@ -276,8 +275,15 @@ public class Session {
 	 * Logs the session out
 	 */
 	public synchronized void logout() {
+		if (user == null) {
+			// Just a safety call
+			refreshPolicy();
+			return;
+		}
+
 		user = null;
 		refreshPolicy();
+		observable.logout(this);
 	}
 
 	/**
@@ -578,6 +584,8 @@ public class Session {
 	public void deleteSession() {
 		synchronized (state) {
 			this.state = SessionState.deleted;
+		}
+		synchronized (storedSessions) {
 			storedSessions.remove(this);
 		}
 	}
@@ -634,5 +642,43 @@ public class Session {
 
 			this.state = SessionState.active;
 		}
+	}
+
+	/**
+	 * Creates a new session with a new randomised session ID.
+	 * 
+	 * @return The new created session
+	 */
+	public static Session createNewSession() {
+		String sid;
+		Session session;
+
+		synchronized (storedSessions) {
+			int maxTries = storedSessions.size() * 1000;
+			while (storedSessions.containsKey((sid = getRandomizedSID())))
+				if (maxTries-- <= 0) throw new RuntimeException("Session creation failure");
+
+			session = createNewSession(sid);
+			// XXX: Maybe a new created session can have a reduced lifetime ...
+			storedSessions.put(sid, session);
+		}
+
+		return session;
+	}
+
+	/**
+	 * Creates a new randomised session ID value without checking, if already
+	 * existing
+	 * 
+	 * @return creates a randomised SID value
+	 */
+	private static String getRandomizedSID() {
+		StringBuffer result = new StringBuffer("SID.");
+		int rnd = (int) (Math.random() * Integer.MAX_VALUE);
+		result.append(rnd);
+		rnd = (int) (Math.random() * 26);
+		result.append((char) ('a' + rnd));
+
+		return result.toString();
 	}
 }
