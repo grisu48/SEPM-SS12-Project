@@ -681,4 +681,31 @@ public class Session {
 
 		return result.toString();
 	}
+
+	/**
+	 * Creates the IUser interface for the currently logged in user, or null, if
+	 * it is a guest session
+	 * 
+	 * @return the IUser interface for the session user
+	 */
+	public IUser getIUser() {
+		if (!isLoggedIn()) return null;
+		try {
+			return getIUser(user.getUsername());
+		} catch (IllegalAccessException e) {
+			// Access denied
+			return null;
+		}
+	}
+
+	/**
+	 * Gets the username of the currently logged in user, or "guest" if it is a
+	 * guest session
+	 * 
+	 * @return the username or "guest" if a guest session
+	 */
+	public String getUsername() {
+		if (!isLoggedIn()) return "guest";
+		return user.getUsername();
+	}
 }
