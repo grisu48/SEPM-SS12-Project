@@ -71,7 +71,9 @@ public class Controller {
 	 * @return the session id of the newly generated session
 	 */
 	private static String createNewSession() {
-		return Session.createNewSession().getCookie();
+		Session session = Session.createNewSession();
+		session.addObserver(sessionObserver);
+		return session.getCookie();
 	}
 
 	/**
