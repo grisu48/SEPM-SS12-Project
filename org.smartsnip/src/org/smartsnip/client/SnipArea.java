@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 
-public class Snip extends Composite {
+public class SnipArea extends Composite {
 
 	private VerticalPanel vertPanel;
 	private HorizontalPanel horPanel;
@@ -25,7 +25,7 @@ public class Snip extends Composite {
 	private Button rate;
 	
 	
-	Snip(ISnippet mySnip) {
+	SnipArea() {
 	
 		vertPanel = new VerticalPanel();
 		horPanel = new HorizontalPanel();
@@ -49,7 +49,7 @@ public class Snip extends Composite {
 		
 		initWidget(vertPanel);
 	    // Give the overall composite a style name.
-	    setStyleName("snip");
+	    setStyleName("snipArea");
 	}
 	
 }

@@ -7,14 +7,14 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ShortSnip extends Composite {
+public class ShortSnipField extends Composite {
 
 	private VerticalPanel vertPanel;
 	private FlexTable properties;
 	private HTMLPanel snipPreview;
 	
 
-	public ShortSnip(ISnippet mysnip) {
+	public ShortSnipField(ISnippet mysnip) {
 		vertPanel = new VerticalPanel();
 		properties = new FlexTable();
 		snipPreview = new HTMLPanel("Test");
@@ -23,7 +23,7 @@ public class ShortSnip extends Composite {
 		
 		initWidget(vertPanel);
 	    // Give the overall composite a style name.
-	    setStyleName("shortSnip");
+	    setStyleName("shortSnipField");
 		
 	}
 

@@ -11,10 +11,10 @@ public class CommentField extends Composite {
 	private HorizontalPanel horPanel;
 	private HTMLPanel commentText;
 	
-	public CommentField(IComment myComment) {
+	public CommentField(String comment) {
 		
 		horPanel = new HorizontalPanel();
-		commentText = new HTMLPanel("Testkommentar");
+		commentText = new HTMLPanel(comment);
 		horPanel.add(commentText);
 		
 		

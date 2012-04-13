@@ -14,7 +14,20 @@ public class TagArea extends Composite {
 	private VerticalPanel vertPanel;
 	private Label title;
 	
+	public TagArea() {
+		vertPanel = new VerticalPanel();
+		title = new Label("Tags");
+		vertPanel.add(title);
+		vertPanel.add(new Button("Test1"));
+		vertPanel.add(new Button("Test2"));
+		vertPanel.add(new Button("Test3"));
 	
+		initWidget(vertPanel);
+	    // Give the overall composite a style name.
+	    setStyleName("tagArea");
+	}
+	
+	/*
 	public TagArea(ISnippet mySnip) {
 		vertPanel = new VerticalPanel();
 		title = new Label("Tags");
@@ -25,7 +38,6 @@ public class TagArea extends Composite {
 		initWidget(vertPanel);
 	    // Give the overall composite a style name.
 	    setStyleName("tagArea");
-		
-	}
+	}*/
 
 }

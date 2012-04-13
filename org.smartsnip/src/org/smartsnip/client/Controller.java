@@ -1,8 +1,13 @@
 package org.smartsnip.client;
 
+import java.util.ArrayList;
+
 import org.smartsnip.core.ISessionObserver;
+import org.smartsnip.core.ISnippet;
 import org.smartsnip.core.Notification;
 import org.smartsnip.core.Session;
+import org.smartsnip.core.Snippet;
+import org.smartsnip.core.User;
 
 import com.google.gwt.user.client.Cookies;
 
@@ -41,7 +46,7 @@ public class Controller {
 		}
 	};
 
-	/** Static constructor initialises the singleton instance */
+	/** Static constructor initializes the singleton instance */
 	static {
 		// Currently empty
 	}
@@ -50,8 +55,18 @@ public class Controller {
 	private Controller() {
 	}
 
-	// zuständig für kommunikation mit dem server
-	// verwaltet die GUI
+	
+	/* Some necessary Methods, each first implemented to test the GUI
+	 * 
+	 */
+	static ArrayList<String> getSnippet() {
+		ArrayList<String> myList = new ArrayList<String>();
+		myList.add("Name");
+		myList.add("Das ist ein Snippet");
+		myList.add("Das ist eine Beschreibung");
+		return myList;
+	}
+	
 
 	/**
 	 * Gets the ID of the current session

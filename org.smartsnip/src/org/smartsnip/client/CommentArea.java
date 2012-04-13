@@ -18,6 +18,28 @@ public class CommentArea extends Composite {
 	private Button send;
 	
 	
+	public CommentArea() {
+		
+		vertPanel = new VerticalPanel();
+		horPanel = new HorizontalPanel();
+		vertPanel.add(new CommentField("Test1"));
+		vertPanel.add(new CommentField("Test2"));
+		myComment = new TextArea();
+		send = new Button("Send");
+		horPanel.add(myComment);
+		horPanel.add(send);
+		vertPanel.add(horPanel);
+		
+		
+		initWidget(vertPanel);
+	    // Give the overall composite a style name.
+	    setStyleName("commentArea");
+		
+	}
+	
+	
+	
+	/*
 	public CommentArea(ArrayList<IComment> comments) {
 		
 		vertPanel = new VerticalPanel();
@@ -36,7 +58,7 @@ public class CommentArea extends Composite {
 	    // Give the overall composite a style name.
 	    setStyleName("commentArea");
 		
-	}
+	}*/
 	
 	
 

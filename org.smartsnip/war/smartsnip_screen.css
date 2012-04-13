@@ -95,8 +95,14 @@ min-height:400px;
 }
 
 
-.tabPanel {
-	width: 500px;
+.tabArea {
+	width: 800px;
+	margin: 10px;
+	padding: 0px;
+}
+
+.snipArea {
+	width: 800px;
 	margin: 10px;
 	padding: 0px;
 }
