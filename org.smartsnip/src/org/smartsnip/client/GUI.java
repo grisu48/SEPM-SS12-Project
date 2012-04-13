@@ -1,16 +1,8 @@
 package org.smartsnip.client;
 
-import java.util.Date;
 
-import org.smartsnip.client.MessageBox.OptionPaneResult;
-import org.smartsnip.core.Session;
 
-import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.*;
 
 public class GUI implements EntryPoint {
@@ -50,6 +42,10 @@ public class GUI implements EntryPoint {
 	VerticalPanel mostPanel = new VerticalPanel();
 	VerticalPanel recePanel = new VerticalPanel();
 	VerticalPanel favPanel = new VerticalPanel();
+	
+	
+	
+	
 	
 
 
