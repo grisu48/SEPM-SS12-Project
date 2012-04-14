@@ -13,8 +13,7 @@ public class GUI implements EntryPoint {
 	HorizontalPanel userPanel = new HorizontalPanel();
 	Label user = new Label("guest");
 	
-	// Create loginPanel
-	PopupPanel loginPanel = new PopupPanel();
+	
 	
 	// Create searchPanel
 	HorizontalPanel searchPanel = new HorizontalPanel();
@@ -29,14 +28,18 @@ public class GUI implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 	
+		// For overwriting the basic css-style
+		Resources.INSTANCE.css().ensureInjected(); 
+		
 		// Make CSS-Classes
 		searchButton.addStyleName("searchButton");
 		searchSnippet.addStyleName("searchSnippet");
 		
 		createBasicPage();
-		//showSearchPage();
+		showSearchPage();
 		//showSnipPage();
-		showPersonalPage();
+		//showPersonalPage();
+		showLoginPopup();
 	}
 	
 	
@@ -92,6 +95,23 @@ public class GUI implements EntryPoint {
 		dataPanel.add(myPersonalArea);
 		dataPanel.add(vertPanel);
 		
+	}
+	
+	public void showLoginPopup() {
+		
+		// Create loginPanel
+		PopupPanel loginPanel = new PopupPanel(true);
+		loginPanel.setStyleName("Login");
+	    loginPanel.setTitle("PopUpPanel");
+	    HorizontalPanel horPanel = new HorizontalPanel();
+	    TextBox name = new TextBox();
+	    PasswordTextBox pw = new PasswordTextBox();
+	    Button login = new Button("Login");
+	    horPanel.add(name);
+	    horPanel.add(pw);
+	    horPanel.add(login);
+	    loginPanel.setWidget(horPanel);
+	    loginPanel.center();
 	}
 
 }
