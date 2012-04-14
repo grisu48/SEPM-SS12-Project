@@ -84,6 +84,10 @@ min-height:400px;
 	color:white;
 }
 
+.gwt-Label {
+	margin:2px 15px 2px 15px;
+}
+
 .gwt-SuggestBox {
 	padding:10px;
 	margin:10px;
@@ -129,6 +133,15 @@ min-height:400px;
 	border: 10px solid #e7e7e7;
 	padding: 30px;
 	background-color: #4a3320;
+}
+
+ .footerGrid {
+	padding: 10px;
+	margin: 20px;
+}
+
+.gwt-HTML {
+	margin:15px:
 }
 
 

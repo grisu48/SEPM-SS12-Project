@@ -7,59 +7,72 @@ import com.google.gwt.user.client.ui.*;
 
 public class GUI implements EntryPoint {
 
-	// Create the common used Panels
-
 	// Create userPanel
 	HorizontalPanel userPanel = new HorizontalPanel();
-	Label user = new Label("guest");
-	
-	
-	
 	// Create searchPanel
 	HorizontalPanel searchPanel = new HorizontalPanel();
-	SuggestBox searchSnippet = new SuggestBox();
-	Button searchButton = new Button("Search");
-	
 	// Create dataPanel
 	HorizontalPanel dataPanel = new HorizontalPanel();
-	
+	// Create footerPanel
+	SimplePanel footerPanel = new SimplePanel();
 	
 
 	@Override
 	public void onModuleLoad() {
 	
-		// For overwriting the basic css-style
+		// Adds a personalized CSS-File
 		Resources.INSTANCE.css().ensureInjected(); 
 		
-		// Make CSS-Classes
-		searchButton.addStyleName("searchButton");
-		searchSnippet.addStyleName("searchSnippet");
-		
+		//Create the Page
 		createBasicPage();
-		showSearchPage();
+		//showSearchPage();
+		showImpressum();
 		//showSnipPage();
 		//showPersonalPage();
-		showLoginPopup();
+		//showLoginPopup();
+		//showRegisterPopup();
 	}
 	
 	
 	
 	
+	
 	public void createBasicPage() {
+		
 		// Fill userPanel
-		userPanel.add(user);	
+		Label user = new Label("Guest");
+		Label login = new Label("Login");
+		Label register = new Label("Register");
+		userPanel.add(user);
+		userPanel.add(login);
+		userPanel.add(register);
 		
 		// Fill searchPanel
+		SuggestBox searchSnippet = new SuggestBox();
+		Button searchButton = new Button("Search");
 		searchPanel.add(searchSnippet);
 		searchPanel.add(searchButton);
+		
+		//Fill footerPanel
+		Footer footer = new Footer();
+		footerPanel.setWidth("100%");
+		footerPanel.add(footer);
+		//footerPanel.add(new Label("Test"));
+		
 		
 		// Fix Panels to divs
 		RootPanel.get("user").add(userPanel);
 		RootPanel.get("search").add(searchPanel);
 		RootPanel.get("data").add(dataPanel);
+		RootPanel.get("footer").add(footerPanel);
 		
-		// cursor?
+		// Sets Cursor
 		// z.B. ewSymbolTextBox.setFocus(true);
+		
+		// Make additional CSS-Classes
+		searchButton.addStyleName("searchButton");
+		searchSnippet.addStyleName("searchSnippet");
+		
 	}
 	
 	
@@ -67,17 +80,17 @@ public class GUI implements EntryPoint {
 		
 		TabArea myTabArea = new TabArea();
 		VerticalPanel rightPanel = new VerticalPanel();
-		FlowPanel catsPanel = new FlowPanel();
+		CatArea myCatArea = new CatArea();
 		TagArea myTagArea = new TagArea();
+	
 		Button test1 = new Button("test");
 		Button test2 = new Button("test");
 		
 		dataPanel.add(myTabArea);
 		dataPanel.add(rightPanel);
-		rightPanel.add(catsPanel);
+		rightPanel.add(myCatArea);
 		rightPanel.add(myTagArea);
-		catsPanel.add(test1);
-		catsPanel.add(test2);
+		
 		
 	}
 	
@@ -99,10 +112,10 @@ public class GUI implements EntryPoint {
 	
 	public void showLoginPopup() {
 		
-		// Create loginPanel
-		PopupPanel loginPanel = new PopupPanel(true);
+		
+		PopupPanel loginPanel = new PopupPanel(false);
 		loginPanel.setStyleName("Login");
-	    loginPanel.setTitle("PopUpPanel");
+	    loginPanel.setTitle("Login");
 	    HorizontalPanel horPanel = new HorizontalPanel();
 	    TextBox name = new TextBox();
 	    PasswordTextBox pw = new PasswordTextBox();
@@ -112,6 +125,30 @@ public class GUI implements EntryPoint {
 	    horPanel.add(login);
 	    loginPanel.setWidget(horPanel);
 	    loginPanel.center();
+	}
+	
+	public void showRegisterPopup() {
+		PopupPanel registerPanel = new PopupPanel(false);
+		registerPanel.setStyleName("Register");
+		registerPanel.setTitle("Register");
+	    HorizontalPanel horPanel = new HorizontalPanel();
+	    TextBox name = new TextBox();
+	    TextBox mail = new TextBox();
+	    PasswordTextBox pw = new PasswordTextBox();
+	    Button login = new Button("Register");
+	    horPanel.add(name);
+	    horPanel.add(mail);
+	    horPanel.add(pw);
+	    horPanel.add(login);
+	    registerPanel.setWidget(horPanel);
+	    registerPanel.center();
+	}
+	
+	public void showImpressum() {
+		HTML impressum = new HTML("<p><br /><strong>Verantwortlich für die Inhalte<br /></strong>Paul Opitz <br />"+
+	"Roveretoplatz 2 <br />6330 Kufstein <br />Österreich</p><p><br /><strong>Haftung für die Inhalte</strong><br />"+
+	"Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann ich jedoch keine Gewähr übernehmen.</p><p><br /><strong>Haftung für Links</strong><br />Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Deshalb kann ich für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Links umgehend entfernen.</p><br /><strong>Rechte</strong><br />Die Inhalte stehen unter einer <a href='http://creativecommons.org/licenses/by-nc-sa/3.0/at/' rel='license'>Creative Commons Namensnennung-Nicht-kommerziell-Weitergabe unter gleichen Bedingungen 3.0 Österreich Lizenz</a>.<p><br /><strong>Datenschutz</strong><br />Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf meinen Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder E-Mail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.Ich weise darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Der Betreiber der Seiten behaltet sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.</p>");
+		dataPanel.add(impressum);
 	}
 
 }
