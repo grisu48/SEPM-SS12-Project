@@ -3,6 +3,8 @@ package org.smartsnip.client;
 
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 
 public class GUI implements EntryPoint {
@@ -29,7 +31,7 @@ public class GUI implements EntryPoint {
 		showImpressum();
 		//showSnipPage();
 		//showPersonalPage();
-		//showLoginPopup();
+		showLoginPopup();
 		//showRegisterPopup();
 	}
 	
@@ -50,6 +52,7 @@ public class GUI implements EntryPoint {
 		// Fill searchPanel
 		SuggestBox searchSnippet = new SuggestBox();
 		Button searchButton = new Button("Search");
+		searchButton.addStyleName("searchButton");
 		searchPanel.add(searchSnippet);
 		searchPanel.add(searchButton);
 		
@@ -57,7 +60,7 @@ public class GUI implements EntryPoint {
 		Footer footer = new Footer();
 		footerPanel.setWidth("100%");
 		footerPanel.add(footer);
-		//footerPanel.add(new Label("Test"));
+
 		
 		
 		// Fix Panels to divs
@@ -69,9 +72,7 @@ public class GUI implements EntryPoint {
 		// Sets Cursor
 		// z.B. ewSymbolTextBox.setFocus(true);
 		
-		// Make additional CSS-Classes
-		searchButton.addStyleName("searchButton");
-		searchSnippet.addStyleName("searchSnippet");
+		
 		
 	}
 	
@@ -116,32 +117,57 @@ public class GUI implements EntryPoint {
 		PopupPanel loginPanel = new PopupPanel(false);
 		loginPanel.setStyleName("Login");
 	    loginPanel.setTitle("Login");
-	    HorizontalPanel horPanel = new HorizontalPanel();
+	    VerticalPanel vertPanel = new VerticalPanel();
+	    Label lname = new Label("Username");
 	    TextBox name = new TextBox();
+	    Label lpw= new Label("Password");
 	    PasswordTextBox pw = new PasswordTextBox();
 	    Button login = new Button("Login");
-	    horPanel.add(name);
-	    horPanel.add(pw);
-	    horPanel.add(login);
-	    loginPanel.setWidget(horPanel);
-	    loginPanel.center();
+	    vertPanel.add(lname);
+	    vertPanel.add(name);
+	    vertPanel.add(lpw);
+	    vertPanel.add(pw);
+	    vertPanel.add(login);
+	    loginPanel.setWidget(vertPanel);
+	    loginPanel.setGlassEnabled(true);
+	    loginPanel.setPopupPosition(110,100);
+	    loginPanel.setWidth("340px");
+	    loginPanel.show();
 	}
 	
 	public void showRegisterPopup() {
 		PopupPanel registerPanel = new PopupPanel(false);
 		registerPanel.setStyleName("Register");
 		registerPanel.setTitle("Register");
-	    HorizontalPanel horPanel = new HorizontalPanel();
+	    VerticalPanel vertPanel = new VerticalPanel();
+	    Label lname = new Label("Username");
 	    TextBox name = new TextBox();
+	    name.setText("myusername");
 	    TextBox mail = new TextBox();
-	    PasswordTextBox pw = new PasswordTextBox();
+	    Label lmail= new Label("E-Mail");
+	    mail.setText("user@provider.com");
+	    Label lpw1= new Label("Create Password");
+	    PasswordTextBox pw1 = new PasswordTextBox();
+	    Label lpw2= new Label("Confirm Password");
+	    PasswordTextBox pw2 = new PasswordTextBox();
 	    Button login = new Button("Register");
-	    horPanel.add(name);
-	    horPanel.add(mail);
-	    horPanel.add(pw);
-	    horPanel.add(login);
-	    registerPanel.setWidget(horPanel);
-	    registerPanel.center();
+	    vertPanel.add(lname);
+	    vertPanel.add(name);
+	    vertPanel.add(lmail);
+	    vertPanel.add(mail);
+	    vertPanel.add(lpw1);
+	    vertPanel.add(pw1);
+	    vertPanel.add(lpw2);
+	    vertPanel.add(pw2);
+	    vertPanel.add(login);
+	    registerPanel.setWidget(vertPanel);
+	    registerPanel.setGlassEnabled(true);
+	    registerPanel.setPopupPosition(110,100);
+	    registerPanel.setWidth("340px");
+	    registerPanel.show();
+	    
+	    
+	    
 	}
 	
 	public void showImpressum() {

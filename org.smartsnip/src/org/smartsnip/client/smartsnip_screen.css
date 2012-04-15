@@ -49,11 +49,10 @@ background-repeat:no-repeat;
 
 #title {
 	position:absolute;
-	left:10%;
 	top:0px;
-	width:200px;
+	width:350px;
 	padding:25px;
-	margin:0px;
+	margin-left:100px;
 	background-color:#4a3320; 
 	color:white;
 	
@@ -65,7 +64,9 @@ float:right;
 
 #search {
 clear:both;
-background-color:#e6e6e6;
+margin-top:-50px;
+margin-left:100px;
+width:400px;
 }
 
 #data {
@@ -89,8 +90,14 @@ min-height:400px;
 }
 
 .gwt-SuggestBox {
+	width:300px;
 	padding:10px;
-	margin:10px;
+	margin: 0px 0px 10px px;
+}
+
+.searchButton {
+	padding:10px;
+	margin: 0px 0px 10px 15px;
 }
 
 .gwt-TextBox {
@@ -130,10 +137,29 @@ min-height:400px;
 }
 
  .popupContent {
-	border: 10px solid #e7e7e7;
+	border: 1px solid #4a3320;
 	padding: 30px;
-	background-color: #4a3320;
+	background-color: #e6e6e6;
+	box-shadow:4px 4px 25px #666
 }
+
+.popupContent .gwt-Label {
+	margin: 15px 0px 3px 0px;
+}
+
+.popupContent .gwt-TextBox {
+	margin: 0px 0px 0px 0px;
+}
+.popupContent .gwt-PasswordTextBox {
+	margin: 0px 0px 0px 0px;
+}
+
+
+.gwt-PopupPanelGlass {
+	background-color: #000;
+	opacity: 0.8;
+}
+
 
  .footerGrid {
 	padding: 10px;
@@ -145,21 +171,7 @@ min-height:400px;
 }
 
 
-/*
-.searchButton {
-	width: 100px;
-	height: 50px;
-	margin: 10px;
-	padding: 0px;
-}
 
-
-.searchSnippet {
-	width: 300px;
-	height: 50px;
-	margin: 10px;
-	padding: 0px;
-}
 
 
 .tabArea {
