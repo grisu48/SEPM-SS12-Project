@@ -1,17 +1,25 @@
 package org.smartsnip.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Category {
+	/** List of all root categories */
+	private static List<Category> rootCategories = new ArrayList<Category>();
+	/** All categories */
+	private static HashMap<String, Category> allCategories = new HashMap<String, Category>();
+	/** Snippets */
+	private final List<Snippet> snippets = new ArrayList<Snippet>();
+
 	/** Name of the category */
 	private String name;
 	/** Description of the category */
 	private String description;
 	/** Parent category, if present, or null if a root category */
 	private Category parent;
-	/** Subcategories */
-	private List<Category> subcategories;
+	/** Sub-categories */
+	private final List<Category> subcategories;
 
 	/**
 	 * Constructor for a new category. If one of the fields (except parent) if
@@ -27,14 +35,85 @@ public class Category {
 	 */
 	private Category(String name, String description, Category parent) {
 		super();
-		if (name == null || description == null) throw new NullPointerException();
-		if (name.length() == 0) throw new IllegalArgumentException("Empty category name not allowed");
-		if (description.length() == 0) throw new IllegalArgumentException("Empty category description not allowed");
+		if (name == null || description == null)
+			throw new NullPointerException();
+		if (name.length() == 0)
+			throw new IllegalArgumentException("Empty category name not allowed");
+		if (description.length() == 0)
+			throw new IllegalArgumentException("Empty category description not allowed");
 
 		this.name = name;
 		this.description = description;
 		this.parent = parent;
 		this.subcategories = new ArrayList<Category>();
+	}
+
+	/**
+	 * Creates a new category in the system. The name and description must not
+	 * be null or empty.
+	 * 
+	 * If the parent category is null, it is added as a new root category
+	 * 
+	 * @param name
+	 *            Of the category
+	 * @param description
+	 *            Of the category
+	 * @param parent
+	 *            Parent category. If null, the new category is added as root
+	 *            category
+	 * @return the newly created category
+	 */
+	synchronized static Category createCategory(String name, String description, Category parent) {
+		Category category = new Category(name, description, parent);
+		addToDB(category);
+		return category;
+	}
+
+	/**
+	 * Gets a category by it's name.
+	 * 
+	 * @param name
+	 *            to be searched for
+	 * @return the corresponding category or null, if not found
+	 */
+	synchronized static Category getCategory(String name) {
+		if (name == null || name.isEmpty())
+			return null;
+		return allCategories.get(name.trim().toLowerCase());
+	}
+
+	/**
+	 * @return a String list containing all root categories
+	 */
+	synchronized static List<String> getCategories() {
+		List<String> result = new ArrayList<String>();
+
+		for (Category item : rootCategories) {
+			result.add(item.name);
+		}
+		return result;
+	}
+
+	/**
+	 * Creates a new list containing all sub-categories of a given category. If
+	 * the given parent is null or empty the root categories will be returned.
+	 * 
+	 * @return a String list containing all sub-categories of a category. Empty
+	 *         if the parent could not be found.
+	 */
+	synchronized static List<String> getCategories(String parent) {
+		if (parent == null || parent.isEmpty())
+			return getCategories();
+		Category prnt = getCategory(parent);
+		if (prnt == null)
+			return new ArrayList<String>();
+
+		List<String> result = new ArrayList<String>(prnt.subcategories.size());
+		for (Category item : prnt.subcategories) {
+			result.add(item.name);
+		}
+
+		return result;
 	}
 
 	/**
@@ -51,8 +130,10 @@ public class Category {
 	 *            the name to set
 	 */
 	void setName(String name) {
-		if (name == null || name.length() == 0) return;
-		if (this.name.equals(name)) return;
+		if (name == null || name.length() == 0)
+			return;
+		if (this.name.equals(name))
+			return;
 		this.name = name;
 		refreshDB();
 	}
@@ -71,8 +152,10 @@ public class Category {
 	 *            the description to set
 	 */
 	void setDescription(String description) {
-		if (description == null || description.length() == 0) return;
-		if (this.description.equals(description)) return;
+		if (description == null || description.length() == 0)
+			return;
+		if (this.description.equals(description))
+			return;
 		this.description = description;
 		refreshDB();
 	}
@@ -91,7 +174,8 @@ public class Category {
 	 *            the parent to set
 	 */
 	void setParent(Category parent) {
-		if (this.parent == parent) return;
+		if (this.parent == parent)
+			return;
 		this.parent = parent;
 		refreshDB();
 	}
@@ -104,8 +188,10 @@ public class Category {
 	 *            to be added
 	 */
 	void addSubCategory(Category category) {
-		if (category == null) return;
-		if (subcategories.contains(category)) return;
+		if (category == null)
+			return;
+		if (subcategories.contains(category))
+			return;
 		subcategories.add(category);
 		refreshDB();
 	}
@@ -118,8 +204,10 @@ public class Category {
 	 *            to be removed
 	 */
 	void removeSubCategory(Category category) {
-		if (category == null) return;
-		if (!subcategories.contains(category)) return;
+		if (category == null)
+			return;
+		if (!subcategories.contains(category))
+			return;
 		subcategories.remove(category);
 		refreshDB();
 	}
@@ -139,5 +227,35 @@ public class Category {
 	 */
 	protected void refreshDB() {
 
+	}
+
+	/**
+	 * Adds a category object to the database. If null, nothing happens
+	 * 
+	 * @param category
+	 *            to be added.
+	 */
+	protected static void addToDB(Category category) {
+		if (category == null)
+			return;
+
+		if (category.parent == null) {
+			// Root category
+			if (!rootCategories.contains(category)) {
+				rootCategories.add(category);
+			}
+		} else {
+			// Subcategory
+			if (!category.parent.subcategories.contains(category)) {
+				category.parent.subcategories.add(category);
+			}
+		}
+
+		String name = category.name.trim().toLowerCase();
+		if (!allCategories.containsKey(name)) {
+			allCategories.put(name, category);
+		}
+
+		// TODO Implement me!
 	}
 }
