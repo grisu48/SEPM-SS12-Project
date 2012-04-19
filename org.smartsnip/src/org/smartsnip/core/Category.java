@@ -225,7 +225,7 @@ public class Category {
 	/**
 	 * Invokes the refreshing process for the database
 	 */
-	protected void refreshDB() {
+	synchronized protected void refreshDB() {
 
 	}
 
@@ -235,9 +235,10 @@ public class Category {
 	 * @param category
 	 *            to be added.
 	 */
-	protected static void addToDB(Category category) {
+	synchronized protected static void addToDB(Category category) {
 		if (category == null)
 			return;
+		String name = category.name.trim().toLowerCase();
 
 		if (category.parent == null) {
 			// Root category
@@ -251,10 +252,7 @@ public class Category {
 			}
 		}
 
-		String name = category.name.trim().toLowerCase();
-		if (!allCategories.containsKey(name)) {
-			allCategories.put(name, category);
-		}
+		allCategories.put(name, category);
 
 		// TODO Implement me!
 	}
@@ -291,5 +289,49 @@ public class Category {
 		if (snippets.contains(snippet))
 			return;
 		snippets.add(snippet);
+	}
+
+	/**
+	 * @return the total number of categories
+	 */
+	synchronized static int totalCount() {
+		return allCategories.size();
+	}
+
+	/**
+	 * Deletes a category out of the system. If the category cannot be found,
+	 * nothing is done.
+	 * 
+	 * @param name
+	 *            the name of the category to be deleted
+	 */
+	synchronized static void deleteCategory(String name) {
+		if (!exists(name))
+			return;
+
+		name = name.trim().toLowerCase();
+		Category category = allCategories.get(name);
+		if (category == null)
+			return;
+		if (category.parent != null) {
+			category.parent.subcategories.remove(category);
+		}
+		allCategories.remove(name);
+	}
+
+	/**
+	 * Checks if a category given by it's name exists. If hte argument is null
+	 * or empty false is returned.
+	 * 
+	 * @param name
+	 *            of the category to be checked
+	 * @return true if existing, otherwise false
+	 */
+	synchronized static boolean exists(String name) {
+		if (name == null || name.isEmpty())
+			return false;
+
+		name = name.trim().toLowerCase();
+		return allCategories.containsKey(name);
 	}
 }
