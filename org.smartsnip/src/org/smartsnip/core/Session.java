@@ -933,4 +933,27 @@ public class Session {
 		};
 
 	}
+
+	/**
+	 * @return the total number of registered users
+	 */
+	public static int getUserCount() {
+		return User.totalCount();
+	}
+
+	/**
+	 * @return the number of currently active sessions
+	 */
+	public static int activeCount() {
+		// TODO Implement me
+		return 0;
+	}
+
+	/**
+	 * @return the number of currently active guest sessions
+	 */
+	public static int guestSessions() {
+		// TODO Implement me
+		return 0;
+	}
 }
