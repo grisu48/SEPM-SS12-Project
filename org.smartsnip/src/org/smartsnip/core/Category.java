@@ -258,4 +258,38 @@ public class Category {
 
 		// TODO Implement me!
 	}
+
+	/**
+	 * Removes a snippet from this category. If the snippet is null or not
+	 * listed in this category, nothing happens
+	 * 
+	 * This call does not affect the snippet's internal category.
+	 * 
+	 * @param snippet
+	 *            to be removed
+	 */
+	void removeSnippet(Snippet snippet) {
+		if (snippet == null)
+			return;
+
+		if (!snippets.contains(snippet))
+			return;
+		snippets.remove(snippet);
+	}
+
+	/**
+	 * Adds a snippet to this category. If the snippet is null, nothing happens.
+	 * 
+	 * This call does not affect the snippet's internal category.
+	 * 
+	 * @param snippet
+	 */
+	void addSnippet(Snippet snippet) {
+		if (snippet == null)
+			return;
+
+		if (snippets.contains(snippet))
+			return;
+		snippets.add(snippet);
+	}
 }
