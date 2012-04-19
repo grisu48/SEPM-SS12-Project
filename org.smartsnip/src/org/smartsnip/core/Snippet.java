@@ -275,7 +275,10 @@ public class Snippet {
 	}
 
 	/**
-	 * Set the snippet category. If null nothing happens
+	 * Set the snippet category. If null nothing happens.
+	 * 
+	 * This call removes the snippet from the old category and adds the snippet
+	 * to the new category.
 	 * 
 	 * @param category
 	 *            the category to set
@@ -286,7 +289,11 @@ public class Snippet {
 		if (this.category == category)
 			return;
 
+		if (this.category != null) {
+			this.category.removeSnippet(this);
+		}
 		this.category = category;
+		category.addSnippet(this);
 		refreshDB();
 	}
 
