@@ -137,6 +137,31 @@ public class User {
 	}
 
 	/**
+	 * Removes a user from the system. If the given user cannot be found,
+	 * nothing is done
+	 * 
+	 * @param username
+	 *            name of the user to be deleted
+	 */
+	synchronized static void deleteUser(String username) {
+		deleteUser(getUser(username));
+	}
+
+	/**
+	 * Removes a user from the system. If the given user is null, nothing
+	 * happens
+	 * 
+	 * @param user
+	 *            that should be deleted.
+	 */
+	synchronized static void deleteUser(User user) {
+		if (user == null)
+			return;
+
+		removeFromDB(user);
+	}
+
+	/**
 	 * Internal call to check if the email address is valid
 	 * 
 	 * @param email
@@ -271,9 +296,24 @@ public class User {
 	}
 
 	/**
+	 * Deletes this user from the database
+	 */
+	synchronized void delete() {
+		deleteUser(this);
+	}
+
+	/**
 	 * Invokes the refreshing process for the database
 	 */
 	protected void refreshDB() {
 
+	}
+
+	protected static void removeFromDB(User user) {
+		if (user == null)
+			return;
+
+		String name = user.getUsername().toLowerCase();
+		allUsers.remove(name);
 	}
 }
