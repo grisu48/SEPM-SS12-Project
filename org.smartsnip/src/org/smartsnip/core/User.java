@@ -1,9 +1,8 @@
 package org.smartsnip.core;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import java.util.HashMap;
+import java.util.List;
 
 import org.smartsnip.security.IHash;
 import org.smartsnip.security.MD5;
@@ -36,12 +35,12 @@ public class User {
 	private String email = "";
 
 	/** State of the user */
-	private UserState state = UserState.unvalidated;
+	private final UserState state = UserState.unvalidated;
 
 	/**
 	 * List of favourite snippets of the user
 	 */
-	private List<Snippet> favorites = new ArrayList<Snippet>();
+	private final List<Snippet> favorites = new ArrayList<Snippet>();
 
 	/**
 	 * Determines the status of the user, currently if the user has been
@@ -80,7 +79,8 @@ public class User {
 	 * @return found user with the given username or null if not found
 	 */
 	synchronized static User getUser(String username) {
-		if (username.length() == 0) return null;
+		if (username.length() == 0)
+			return null;
 		username = username.toLowerCase();
 
 		return allUsers.get(username);
@@ -95,7 +95,8 @@ public class User {
 	 * @return true if existing otherwise false
 	 */
 	synchronized static boolean exists(String username) {
-		if (username.length() == 0) return false;
+		if (username.length() == 0)
+			return false;
 		username = username.toLowerCase();
 		return allUsers.containsKey(username);
 	}
@@ -118,12 +119,16 @@ public class User {
 	 */
 	synchronized static User createNewUser(String username, String password, String email)
 			throws IllegalArgumentException {
-		if (username.length() == 0) throw new IllegalArgumentException("Username cannot be empty");
-		if (email.length() == 0) throw new IllegalArgumentException("e-mail address cannot be empty");
-		if (!isValidEmailAddress(email)) throw new IllegalArgumentException("Illegal email address");
+		if (username.length() == 0)
+			throw new IllegalArgumentException("Username cannot be empty");
+		if (email.length() == 0)
+			throw new IllegalArgumentException("e-mail address cannot be empty");
+		if (!isValidEmailAddress(email))
+			throw new IllegalArgumentException("Illegal email address");
 		// Check for duplicated user entries
 		username = username.toLowerCase();
-		if (exists(username)) throw new IllegalArgumentException("Username already taken");
+		if (exists(username))
+			throw new IllegalArgumentException("Username already taken");
 
 		// All test passed. Create new user
 		User newUser = new User(username, email, password);
@@ -139,10 +144,13 @@ public class User {
 	 * @return true if valid otherwise false
 	 */
 	private static boolean isValidEmailAddress(String email) {
-		if (email.length() == 0) return false;
+		if (email.length() == 0)
+			return false;
 		int atSign = email.indexOf('@');
-		if (atSign < 1) return false;
-		if (atSign >= email.length()) return false;
+		if (atSign < 1)
+			return false;
+		if (atSign >= email.length())
+			return false;
 		return true;
 	}
 
@@ -175,10 +183,13 @@ public class User {
 	 *            the email to set
 	 */
 	void setEmail(String email) throws IllegalArgumentException {
-		if (email.length() == 0) throw new IllegalArgumentException("Empty email address not allowed");
-		if (!isValidEmailAddress(email)) throw new IllegalArgumentException("Illegal email-address");
+		if (email.length() == 0)
+			throw new IllegalArgumentException("Empty email address not allowed");
+		if (!isValidEmailAddress(email))
+			throw new IllegalArgumentException("Illegal email-address");
 
-		if (this.email.equals(email)) return;
+		if (this.email.equals(email))
+			return;
 		this.email = email;
 		refreshDB();
 	}
@@ -191,6 +202,13 @@ public class User {
 	}
 
 	/**
+	 * @return the total count of registered users in the system
+	 */
+	static int totalCount() {
+		return allUsers.size();
+	}
+
+	/**
 	 * Sets the user password. Password must not be empty, or a new
 	 * {@link IllegalArgumentException} will be thrown
 	 * 
@@ -198,9 +216,11 @@ public class User {
 	 *            the password to set
 	 */
 	void setPassword(String password) throws IllegalArgumentException {
-		if (password.length() == 0) throw new IllegalArgumentException("Empty password not allowed");
+		if (password.length() == 0)
+			throw new IllegalArgumentException("Empty password not allowed");
 		password = hashAlgorithm.hash(password);
-		if (this.password.equals(password)) return;
+		if (this.password.equals(password))
+			return;
 
 		this.password = password;
 	}
@@ -219,7 +239,8 @@ public class User {
 	 */
 	static boolean auth(String username, String password) {
 		User user = getUser(username);
-		if (user == null) return false;
+		if (user == null)
+			return false;
 		return user.checkPassword(password);
 	}
 
