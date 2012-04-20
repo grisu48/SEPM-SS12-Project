@@ -33,7 +33,7 @@ public class PersistenceTest {
 				String name = "user" + i;
 				User user = User.createNewUser(name, "password", "email@mail.com");
 				if (User.getUser(name) != user) {
-					fail("Userget: " + name);
+					fail("Getting User: " + name);
 				}
 				addedUsers.add(name);
 			}
@@ -94,6 +94,34 @@ public class PersistenceTest {
 			if (Category.totalCount() != 0) {
 				fail("Category cleanup failed. Delta = " + Category.totalCount());
 			}
+		}
+	}
+
+	/**
+	 * This test is designed for the Persistence class, that currently produces
+	 * some test objects for the system. When the persistence layer becomes
+	 * active, this test becomes obsolete.
+	 * 
+	 * After this test the persistence layer contains some test objects,
+	 * therefore it MUST BE EXECUTED AFTER ALL OTHER TESTS!
+	 */
+	@Test
+	public void testPersistenceTest() {
+		// DO NOT EDIT THIS SETTINGS! They are hard-coded in the class
+		// Persistence
+		final int userCount = 3;
+		final int categoryCount = 3;
+		final int testSnippets = 11;
+
+		Persistence.initialize();
+		if (Session.getUserCount() != userCount) {
+			fail("Usercount not as expected. Delta = " + (userCount - Session.getUserCount()));
+		}
+		if (Session.getCategoryCount() != categoryCount) {
+			fail("Usercount not as expected. Delta = " + (categoryCount - Session.getCategoryCount()));
+		}
+		if (Session.getSnippetCount() != testSnippets) {
+			fail("Usercount not as expected. Delta = " + (testSnippets - Session.getSnippetCount()));
 		}
 	}
 }
