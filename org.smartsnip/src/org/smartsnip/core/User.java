@@ -299,8 +299,11 @@ public class User {
 	 * @return a list of the users' favourite snippets
 	 */
 	List<Snippet> getFavoriteSnippets() {
-		// TODO: Implement me
-		return new ArrayList<Snippet>();
+		List<Snippet> result = new ArrayList<Snippet>(favorites.size());
+		for (Snippet snippet : favorites) {
+			result.add(snippet);
+		}
+		return result;
 
 	}
 
@@ -308,8 +311,11 @@ public class User {
 	 * @return a list of the hash codes of the users' favourite snippets
 	 */
 	List<Integer> getFavoriteSnippetsHash() {
-		// TODO: Implement me
-		return new ArrayList<Integer>();
+		List<Integer> result = new ArrayList<Integer>(favorites.size());
+		for (Snippet snippet : favorites) {
+			result.add(snippet.hash);
+		}
+		return result;
 
 	}
 
@@ -333,5 +339,37 @@ public class User {
 
 		String name = user.getUsername().toLowerCase();
 		allUsers.remove(name);
+	}
+
+	/**
+	 * Adds a snippet to the user's favourites. If the snippet is null, nothing
+	 * happens. If the snippet as already been added, nothing happens.
+	 * 
+	 * @param snippet
+	 *            to be added
+	 */
+	public void addFavorite(Snippet snippet) {
+		if (snippet == null)
+			return;
+
+		if (favorites.contains(snippet))
+			return;
+		favorites.add(snippet);
+	}
+
+	/**
+	 * Removes a snippet from the user's favourites. If the snippet is null,
+	 * nothing happens. If the snippet is not in the user's favorite list,
+	 * nothing happens
+	 * 
+	 * @param snippet
+	 */
+	public void removeFavorite(Snippet snippet) {
+		if (snippet == null)
+			return;
+
+		if (!favorites.contains(snippet))
+			return;
+		favorites.remove(snippet);
 	}
 }
