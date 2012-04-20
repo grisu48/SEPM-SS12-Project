@@ -30,4 +30,13 @@ public interface IUser {
 	 *           Check this!
 	 */
 	public List<ISnippet> getSnippets() throws IllegalAccessException;
+
+	/**
+	 * 
+	 * @return a list containing all favourite snippets of the user
+	 * @throws IllegalAccessException
+	 *             Thrown if the call cannot be executed by this session
+	 */
+	public List<ISnippet> getFavorites() throws IllegalAccessException;
+
 }
