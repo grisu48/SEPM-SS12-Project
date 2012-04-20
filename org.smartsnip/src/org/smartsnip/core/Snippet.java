@@ -442,6 +442,14 @@ public class Snippet {
 	}
 
 	/**
+	 * 
+	 * @return the total number of snippets in the system
+	 */
+	static int totalCount() {
+		return allSnippets.size();
+	}
+
+	/**
 	 * Invokes the refreshing process for the database
 	 */
 	protected void refreshDB() {
