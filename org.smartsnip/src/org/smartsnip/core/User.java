@@ -296,6 +296,24 @@ public class User {
 	}
 
 	/**
+	 * @return a list of the users' favourite snippets
+	 */
+	List<Snippet> getFavoriteSnippets() {
+		// TODO: Implement me
+		return new ArrayList<Snippet>();
+
+	}
+
+	/**
+	 * @return a list of the hash codes of the users' favourite snippets
+	 */
+	List<Integer> getFavoriteSnippetsHash() {
+		// TODO: Implement me
+		return new ArrayList<Integer>();
+
+	}
+
+	/**
 	 * Deletes this user from the database
 	 */
 	synchronized void delete() {
