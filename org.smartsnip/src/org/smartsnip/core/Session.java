@@ -560,12 +560,12 @@ public class Session {
 
 	/**
 	 * Creates a snippet interface for the GUI for this session. If the given
-	 * comment is null, null is also the result.
+	 * snippet is null, null is also the result.
 	 * 
 	 * @param snippet
 	 *            entity where the interface belongs to
 	 * @return interface providing access from the GUI or null if the given
-	 *         comment is null
+	 *         snippet is null
 	 */
 	private ISnippet createISnippet(final Snippet snippet) {
 		return new ISnippet() {
@@ -653,6 +653,71 @@ public class Session {
 
 				// TODO Auto-generated method stub
 				return null;
+			}
+		};
+	}
+
+	/**
+	 * Creates a notification interface for the GUI for this session. If the
+	 * given notification is null, null is also the result.
+	 * 
+	 * This FactoryMethod is a bit different from the others: The interface does
+	 * not include security check mechanisms. If the currenly logged in user is
+	 * not the same as the notification's owner, the result will be null.
+	 * 
+	 * @param notification
+	 *            entity where the interface belongs to
+	 * @return interface providing access from the GUI or null if the given
+	 *         notification is null
+	 */
+	private INotification createINotification(final Notification notification) {
+		if (notification == null)
+			return null;
+		if (!isLoggedIn())
+			return null;
+		if (user != notification.getOwner())
+			return null;
+
+		return new INotification() {
+
+			@Override
+			public void markUnread() {
+				notification.markUnread();
+			}
+
+			@Override
+			public void markRead() {
+				notification.markRead();
+			}
+
+			@Override
+			public boolean isRead() {
+				return notification.isRead();
+			}
+
+			@Override
+			public String getTime() {
+				return notification.getTime();
+			}
+
+			@Override
+			public String getSource() {
+				return notification.getSource();
+			}
+
+			@Override
+			public String getMessage() {
+				return notification.getMessage();
+			}
+
+			@Override
+			public void delete() {
+				// Here the check takes place, because this call is criitcal to
+				// user data
+				if (notification.getOwner() != user)
+					return;
+
+				// TODO Implement me
 			}
 		};
 	}
