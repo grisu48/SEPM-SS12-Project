@@ -353,108 +353,7 @@ public class Session {
 		List<ISnippet> result = new ArrayList<ISnippet>(snippets.size());
 
 		for (final Snippet snippet : snippets) {
-			result.add(new ISnippet() {
-
-				// Note:
-				// Snippet snippet is declared in the for loop!
-
-				Session session = Session.this;
-
-				@Override
-				public void removeTag(String tag) throws IllegalAccessException {
-					if (tag == null || tag.length() == 0)
-						return;
-					if (!policy.canTagSnippet(session, snippet))
-						throw new IllegalAccessException();
-
-					// Method removeTag can handle calls with argument == null
-					snippet.removeTag(Tag.getTag(tag));
-				}
-
-				@Override
-				public void increaseViewCounter() throws IllegalAccessException {
-					snippet.increaseViewCounter();
-				}
-
-				@Override
-				public int getViewCount() {
-					return snippet.getViewcount();
-				}
-
-				@Override
-				public List<String> getTags() {
-					// TODO: Ineffective call
-					List<Tag> tags = snippet.getTags();
-					List<String> result = new ArrayList<String>(tags.size());
-					for (Tag tag : tags) {
-						result.add(tag.name);
-					}
-					return result;
-				}
-
-				@Override
-				public IUser getOwner() {
-					return createIUser(snippet.owner);
-				}
-
-				@Override
-				public String getName() {
-					return snippet.getName();
-				}
-
-				@Override
-				public String getLanguage() {
-					return snippet.getCode().language;
-				}
-
-				@Override
-				public int getHash() {
-					return snippet.hash;
-				}
-
-				@Override
-				public String getDesc() {
-					return snippet.getDescription();
-				}
-
-				@Override
-				public List<IComment> getComments() throws IllegalAccessException {
-					// TODO: Ineffective call
-					List<Comment> comments = snippet.getComments();
-					List<IComment> result = new ArrayList<IComment>(comments.size());
-					for (Comment comment : comments) {
-						result.add(createIComment(comment));
-					}
-					return result;
-				}
-
-				@Override
-				public String getCodeHTML() {
-					return snippet.getCode().getFormattedHTML();
-				}
-
-				@Override
-				public String getCategory() {
-					return snippet.getCategory().getName();
-				}
-
-				@Override
-				public void addTag(String tag) throws IllegalAccessException {
-					if (!policy.canTagSnippet(session, snippet))
-						throw new IllegalAccessException();
-
-					// Security check passed. Add tag
-					// TODO: Get TAG entity
-					Tag tagEntity = null;
-					// TODO: Implement me ....
-				}
-
-				@Override
-				public IComment addComment(String comment) throws IllegalAccessException {
-					// TODO Auto-generated method stub
-					return null;
-				}
-			});
+			result.add(createISnippet(snippet));
 		}
 
 		return result;
@@ -672,6 +571,24 @@ public class Session {
 
 				// TODO Auto-generated method stub
 				return null;
+			}
+
+			@Override
+			public void addFavorite() {
+				if (Session.this.user == null)
+					// TODO Add support for guest user favorites
+					return;
+
+				Session.this.user.addFavorite(snippet);
+			}
+
+			@Override
+			public void removeFavorite() {
+				if (Session.this.user == null)
+					// TODO Add support for guest user favorites
+					return;
+
+				Session.this.user.removeFavorite(snippet);
 			}
 		};
 	}
