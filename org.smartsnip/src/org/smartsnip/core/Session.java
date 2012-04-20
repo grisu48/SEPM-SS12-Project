@@ -942,6 +942,20 @@ public class Session {
 	}
 
 	/**
+	 * @return the total number of snippets in the system
+	 */
+	public static int getSnippetCount() {
+		return Snippet.totalCount();
+	}
+
+	/**
+	 * @return the total number of categories in the system
+	 */
+	public static int getCategoryCount() {
+		return Category.totalCount();
+	}
+
+	/**
 	 * @return the number of currently active sessions
 	 */
 	public static int activeCount() {
