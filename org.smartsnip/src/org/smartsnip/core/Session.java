@@ -471,42 +471,61 @@ public class Session {
 		if (user == null)
 			return null;
 
-		if (user == this.user)
-			return new IUser() {
+		return new IUser() {
 
-				@Override
-				public void logout() throws IllegalAccessException {
-					logout();
+			/** Cached list of favourite snippets */
+			List<ISnippet> favourites = null;
+
+			@Override
+			public void logout() throws IllegalAccessException {
+				if (user != Session.this.user)
+					throw new IllegalAccessException();
+				logout();
+			}
+
+			@Override
+			public List<ISnippet> getSnippets() throws IllegalAccessException {
+				if (user != Session.this.user)
+					throw new IllegalAccessException();
+				return getUserSnippets(user);
+			}
+
+			@Override
+			public String getName() {
+				return user.username;
+			}
+
+			@Override
+			public List<ISnippet> getFavorites() throws IllegalAccessException {
+				if (!isLoggedIn())
+					// TODO Implement guest user session favorites
+					return new ArrayList<ISnippet>();
+				else {
+					synchronized (favourites) {
+						if (favourites == null) {
+							createFavourites();
+						}
+
+						return favourites;
+					}
+				}
+			}
+
+			/**
+			 * Creates the favourite list of snippets
+			 */
+			private void createFavourites() {
+				synchronized (favourites) {
+					List<Snippet> snippets = user.getFavoriteSnippets();
+					favourites = new ArrayList<ISnippet>();
+
+					for (Snippet snippet : snippets) {
+						favourites.add(createISnippet(snippet));
+					}
 				}
 
-				@Override
-				public List<ISnippet> getSnippets() throws IllegalAccessException {
-					return getUserSnippets(user);
-				}
-
-				@Override
-				public String getName() {
-					return user.username;
-				}
-			};
-		else
-			return new IUser() {
-
-				@Override
-				public void logout() throws IllegalAccessException {
-					throw new IllegalAccessException("Cannot logout foreign user account");
-				}
-
-				@Override
-				public List<ISnippet> getSnippets() throws IllegalAccessException {
-					return getUserSnippets(user);
-				}
-
-				@Override
-				public String getName() {
-					return user.username;
-				}
-			};
+			}
+		};
 	}
 
 	/**
