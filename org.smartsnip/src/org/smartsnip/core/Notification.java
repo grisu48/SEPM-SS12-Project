@@ -1,10 +1,27 @@
 package org.smartsnip.core;
 
 public class Notification {
+	/**
+	 * This user is the owner of the notificaiton. The owner is always the
+	 * receiver of the notification
+	 */
 	private User owner;
+	/**
+	 * Message text
+	 */
 	private String message;
+	/**
+	 * True if the notification is read, otherwise false
+	 */
 	private boolean read;
+	/**
+	 * Time the notification was created
+	 */
 	private String time;
+	/**
+	 * Source of the notification
+	 */
+	private String source;
 
 	/**
 	 * @return the owner of the notification
@@ -33,6 +50,13 @@ public class Notification {
 	 */
 	String getTime() {
 		return time;
+	}
+
+	/**
+	 * @return the source of the notification
+	 */
+	String getSource() {
+		return source;
 	}
 
 	/**
