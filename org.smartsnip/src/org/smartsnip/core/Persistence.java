@@ -9,17 +9,50 @@ package org.smartsnip.core;
  */
 public class Persistence {
 
+	public final static String testuser1 = "javajoe";
+	public final static String testuser2 = "rubyrupert";
+	public final static String testuser3 = "misterX";
+
+	public final static String password1 = "test";
+	public final static String password2 = "Test";
+	public final static String password3 = "TEST";
+
+	public final static String testCategory1 = "Main";
+	public final static String testCategory2 = "Network";
+	public final static String testCategory3 = "P2P";
+
+	public static Snippet testSnippet = null;
+	public static Comment testComment = null;
+
+	private static boolean testEnvironment = false;
+
 	/**
 	 * Static constructor used to create some hard-coded test objects
 	 */
 	static {
-		User user1 = User.createNewUser("javajoe", "test", "joe@java.com");
-		User user2 = User.createNewUser("rubyrupert", "test", "rupert@spam.com");
-		User user3 = User.createNewUser("misterX", "test", "misterX@hidemyass.com");
+		createTestEnvironment();
+	}
 
-		Category mainCategory = Category.createCategory("Main", "Main category", null);
-		Category networkCategory = Category.createCategory("Network", "Networking snippets", null);
-		Category p2pCategory = Category.createCategory("P2P", "Networking snippets", networkCategory);
+	/**
+	 * Initialises the persistence layer
+	 */
+	public static void initialize() {
+		// Empty. All initialisation process is done in the static constructor
+	}
+
+	/**
+	 * This method creates the test environment
+	 */
+	public synchronized static void createTestEnvironment() {
+		if (testEnvironment) return;
+
+		User user1 = User.createNewUser(testuser1, password1, "joe@java.com");
+		User user2 = User.createNewUser(testuser2, password2, "rupert@spam.com");
+		User user3 = User.createNewUser(testuser3, password3, "misterX@hidemyass.com");
+
+		Category mainCategory = Category.createCategory(testCategory1, "Main category", null);
+		Category networkCategory = Category.createCategory(testCategory2, "Networking snippets", null);
+		Category p2pCategory = Category.createCategory(testCategory3, "Networking snippets", networkCategory);
 
 		final String testCode = "// Not even hello world is found here :-/";
 		for (int i = 0; i < 10; i++) {
@@ -29,16 +62,11 @@ public class Persistence {
 			snippet.setCategory(mainCategory);
 		}
 
-		Snippet snippet = Snippet.createSnippet(user3, "P2P", "P2P Example", new CodeJava(testCode));
+		Snippet snippet = Snippet.createSnippet(user1, "P2P", "P2P Example", new CodeJava(testCode));
+		testSnippet = snippet;
 		snippet.setCategory(p2pCategory);
 
-		Comment.createComment(user2, snippet, "I like your snippet!");
-	}
-
-	/**
-	 * Initialises the persistence layer
-	 */
-	public static void initialize() {
-		// Empty. All initialisation process is done in the static constructor
+		testComment = Comment.createComment(user2, snippet, "I like your snippet!");
+		testEnvironment = true;
 	}
 }
