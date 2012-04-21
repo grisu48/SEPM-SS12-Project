@@ -21,6 +21,33 @@ public interface IUser {
 	public String getEmail() throws IllegalAccessException;
 
 	/**
+	 * Sets the email-address of the user. If the address is null or empty,
+	 * nothing is done. If the address does not match the format of an
+	 * email-address, a new {@link IllegalArgumentException} is thrown.
+	 * 
+	 * @param newAddress
+	 *            new email-address of the user
+	 * @throws IllegalAccessException
+	 *             Thrown if the session cannot change the email-address of the
+	 *             user
+	 * @throws link
+	 *             IllegalArgumentException Thrown if the given email-address is
+	 *             invalid
+	 */
+	public void setEmail(String newAddress) throws IllegalAccessException, IllegalArgumentException;
+
+	/**
+	 * Sets the real name of the user. If the name is null or empty, nothing is
+	 * done.
+	 * 
+	 * @param newName
+	 *            New name of the user
+	 * @throws IllegalAccessException
+	 *             Thrown if the current session cannot access this property
+	 */
+	public void setRealName(String newName) throws IllegalAccessException;
+
+	/**
 	 * @return the real name of the user
 	 * @throws IllegalAccessException
 	 *             Thrown if the call is not permitted
@@ -52,5 +79,13 @@ public interface IUser {
 	 *             Thrown if the call cannot be executed by this session
 	 */
 	public List<ISnippet> getFavorites() throws IllegalAccessException;
+
+	/**
+	 * Reports an abusive user.
+	 * 
+	 * @param reason
+	 *            Reason why the user is behaving abusive
+	 */
+	public void report(String reason);
 
 }
