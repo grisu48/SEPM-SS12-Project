@@ -441,6 +441,20 @@ public class Session {
 				}
 
 			}
+
+			@Override
+			public String getEmail() throws IllegalAccessException {
+				if (!isLoggedIn()) throw new IllegalAccessException();
+
+				return user.getEmail();
+			}
+
+			@Override
+			public String getRealName() throws IllegalAccessException {
+				if (!isLoggedIn()) throw new IllegalAccessException();
+
+				return user.getRealName();
+			}
 		};
 	}
 
