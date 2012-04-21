@@ -1,5 +1,9 @@
 package org.smartsnip.core;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Comment {
@@ -9,6 +13,9 @@ public class Comment {
 	public final Snippet snippet;
 	/** Comment message. */
 	private String message = "";
+
+	/** Last change time */
+	private Date time = null;
 
 	/** Positive votes are stored as chocolates */
 	private int chocolates = 0;
@@ -40,6 +47,7 @@ public class Comment {
 		this.owner = owner;
 		this.snippet = snippet;
 		this.message = message;
+		setCurrentSystemTime();
 	}
 
 	/**
@@ -60,6 +68,7 @@ public class Comment {
 	static Comment createComment(User owner, Snippet snippet, String message) {
 		Comment comment = new Comment(owner, snippet, message);
 		snippet.addComment(comment);
+		comment.setCurrentSystemTime();
 		return comment;
 	}
 
@@ -139,21 +148,46 @@ public class Comment {
 	}
 
 	/**
-	 * Sets the message of the comment. If the message is null or emtpy, nothing
-	 * is done.
-	 * 
-	 * @param message
-	 *            the message to set
+	 * @return the last time the comment was edited
 	 */
-	void setMessage(String message) {
-		if (message == null || message.length() == 0) return;
-		this.message = message;
-		refreshDB();
+	public Date getTime() {
+		return time;
+	}
+
+	/**
+	 * Sets the time to the current system time
+	 */
+	private void setCurrentSystemTime() {
+		Calendar cal = Calendar.getInstance();
+		this.time = cal.getTime();
 	}
 
 	@Override
 	public String toString() {
 		return message;
+	}
+
+	/**
+	 * Deletes this comment out of the database
+	 */
+	public void delete() {
+		snippet.removeComment(this);
+		removeFromDB();
+	}
+
+	/**
+	 * Edits the current message to a new message. If the given message is null
+	 * or empty, the method returns without effect.
+	 * 
+	 * @param newMessage
+	 */
+	void edit(String newMessage) {
+		if (newMessage == null || newMessage.isEmpty()) return;
+
+		// TODO: Message change history
+
+		this.message = newMessage;
+		setCurrentSystemTime();
 	}
 
 	/**
@@ -164,11 +198,9 @@ public class Comment {
 	}
 
 	/**
-	 * Deletes this comment out of the database
+	 * Removes this object from the database
 	 */
-	public void delete() {
-		// TODO Auto-generated method stub
+	protected void removeFromDB() {
 
 	}
-
 }
