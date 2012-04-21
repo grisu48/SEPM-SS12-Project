@@ -1,9 +1,11 @@
 package org.smartsnip.core;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.smartsnip.core.Code.UnsupportedLanguageException;
 import org.smartsnip.security.IAccessPolicy;
 import org.smartsnip.security.PrivilegeController;
 
@@ -484,6 +486,37 @@ public class Session {
 			public IUser getOwner() throws IllegalAccessException {
 				return createIUser(comment.owner);
 			}
+
+			@Override
+			public void delete() throws IllegalAccessException {
+				if (!policy.canEditComment(session, comment)) throw new IllegalAccessException();
+
+				comment.delete();
+			}
+
+			@Override
+			public void edit(String newComment) throws IllegalAccessException {
+				if (newComment == null || newComment.isEmpty()) return;
+				if (!policy.canEditComment(session, comment)) throw new IllegalAccessException();
+
+				comment.edit(newComment);
+			}
+
+			@Override
+			public void report() throws IllegalAccessException {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public String getMessage() {
+				return comment.getMessage();
+			}
+
+			@Override
+			public Date getLastModificationTime() {
+				return comment.getTime();
+			}
 		};
 	}
 
@@ -889,22 +922,32 @@ public class Session {
 
 			@Override
 			public void setName(String name) throws IllegalAccessException {
-				if (!isLoggedIn()) throw new IllegalAccessException();
+				if (name == null || name.isEmpty()) return;
+				if (!policy.canEditCategory(Session.this, category)) throw new IllegalAccessException();
 
-				// TODO Auto-generated method stub
-
+				category.setName(name);
 			}
 
 			@Override
 			public void setDescription(String desc) throws IllegalAccessException {
-				if (!isLoggedIn()) throw new IllegalAccessException();
+				if (desc == null || desc.isEmpty()) return;
+				if (!policy.canEditCategory(Session.this, category)) throw new IllegalAccessException();
 
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public List<ISnippet> getSnippets() {
+			public List<Pair<Integer, String>> getSnippets() {
+				List<Pair<Integer, String>> result = new ArrayList<Pair<Integer, String>>();
+				for (Snippet snippet : category.getSnippets()) {
+					result.add(new Pair<Integer, String>(snippet.hash, snippet.getName()));
+				}
+				return result;
+			}
+
+			@Override
+			public List<ISnippet> getISnippets() {
 				if (snippets == null) {
 					for (Snippet snippet : category.getSnippets()) {
 						snippets.add(createISnippet(snippet));
@@ -927,9 +970,16 @@ public class Session {
 			public void addSnippet(String name, String description, String code, String language)
 					throws IllegalArgumentException, IllegalAccessException {
 				if (policy.canCreateSnippet(Session.this, category)) throw new IllegalAccessException();
+				/* This security call is hard-coded and remains as-it-is! */
+				if (user == null) throw new IllegalAccessException();
 
-				// TODO Auto-generated method stub
-
+				try {
+					// IllegalArgumentExceptions are created in this call
+					Snippet snippet = Snippet.createSnippet(user, name, description, Code.createCode(code, language));
+					category.addSnippet(snippet);
+				} catch (UnsupportedLanguageException e) {
+					throw new IllegalArgumentException("Language not supported: " + language, e);
+				}
 			}
 		};
 
