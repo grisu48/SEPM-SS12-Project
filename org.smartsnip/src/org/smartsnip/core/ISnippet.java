@@ -129,4 +129,13 @@ public interface ISnippet {
 	 * Removes the snippet from the users' favorites
 	 */
 	public void removeFavorite();
+
+	/**
+	 * Delete snippet.
+	 * 
+	 * @throws IllegalAccessException
+	 *             Thrown as security exception if the current session is not
+	 *             allowed to do that
+	 */
+	public void delete() throws IllegalAccessException;
 }
