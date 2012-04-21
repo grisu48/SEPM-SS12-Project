@@ -56,6 +56,16 @@ public class PrivilegeController {
 		public boolean canComment(Session session) {
 			return false;
 		}
+
+		@Override
+		public boolean canEditComment(Session session, Comment comment) {
+			return false;
+		}
+
+		@Override
+		public boolean canEditCategory(Session session, Category category) {
+			return false;
+		}
 	};
 
 	/** Hard coded user access policy */
@@ -111,6 +121,18 @@ public class PrivilegeController {
 		@Override
 		public boolean canComment(Session session) {
 			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canEditComment(Session session, Comment comment) {
+			if (!session.isLoggedIn()) return false;
+			return session.isLoggedInUser(comment.owner);
+		}
+
+		@Override
+		public boolean canEditCategory(Session session, Category category) {
+			// TODO Currently not available!
+			return false;
 		}
 	};
 
