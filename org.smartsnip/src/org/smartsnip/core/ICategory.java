@@ -68,7 +68,17 @@ public interface ICategory {
 			throws IllegalArgumentException, IllegalAccessException;
 
 	/**
-	 * @return A list with all snippets
+	 * @return A list containing pairs with all snippets. The integer value is
+	 *         the hash code of the snippets, the string is the name of the
+	 *         snippets
 	 */
-	public List<ISnippet> getSnippets();
+	public List<Pair<Integer, String>> getSnippets();
+
+	/**
+	 * This call creates interfaces for all snippets of the category. Be
+	 * careful, this method may be a performance brake!
+	 * 
+	 * @return a list containing interfaces to all snippets of the category.
+	 */
+	public List<ISnippet> getISnippets();
 }
