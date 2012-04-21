@@ -56,6 +56,17 @@ public interface IAccessPolicy {
 	public boolean canComment(Session session);
 
 	/**
+	 * Indicating if the given session can edit a given comment.
+	 * 
+	 * @param session
+	 *            the call belongs to
+	 * @param comment
+	 *            to be checked
+	 * @return true if operation succeeds if denied false
+	 */
+	public boolean canEditComment(Session session, Comment comment);
+
+	/**
 	 * Indicating if the current session can create a snippet in the given
 	 * category.
 	 * 
