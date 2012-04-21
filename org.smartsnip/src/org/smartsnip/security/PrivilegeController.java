@@ -51,6 +51,11 @@ public class PrivilegeController {
 		public boolean canRateSnippet(Session session, Snippet snippet) {
 			return false;
 		}
+
+		@Override
+		public boolean canComment(Session session) {
+			return false;
+		}
 	};
 
 	/** Hard coded user access policy */
@@ -100,6 +105,11 @@ public class PrivilegeController {
 
 		@Override
 		public boolean canCreateSnippet(Session session, Category category) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canComment(Session session) {
 			return session.isLoggedIn();
 		}
 	};
