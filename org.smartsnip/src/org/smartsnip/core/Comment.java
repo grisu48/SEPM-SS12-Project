@@ -170,7 +170,7 @@ public class Comment {
 	/**
 	 * Deletes this comment out of the database
 	 */
-	public void delete() {
+	void delete() {
 		snippet.removeComment(this);
 		removeFromDB();
 	}
@@ -201,6 +201,6 @@ public class Comment {
 	 * Removes this object from the database
 	 */
 	protected void removeFromDB() {
-
+		// Nothing to do yet
 	}
 }
