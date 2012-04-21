@@ -42,4 +42,34 @@ public interface IComment {
 	 *             this session
 	 */
 	public IUser getOwner() throws IllegalAccessException;
+
+	/**
+	 * Deletes a comment from the system
+	 * 
+	 * @throws IllegalAccessException
+	 *             Thrown if the access policy denies the process
+	 */
+	public void delete() throws IllegalAccessException;
+
+	/**
+	 * Sets a new comment text. See the security restrictions to find out, who
+	 * can do this.
+	 * 
+	 * If the given new comment is null or empty, nothing is done.
+	 * 
+	 * @param newComment
+	 *            New comment that should be changed to.
+	 * @throws IllegalAccessException
+	 *             Thrown if the access policy denies the process
+	 */
+	public void edit(String newComment) throws IllegalAccessException;
+
+	/**
+	 * Reports the comment as abusive.
+	 * 
+	 * @throws IllegalAccessException
+	 *             Thrown if the access policy denies the process
+	 */
+	public void report() throws IllegalAccessException;
+
 }
