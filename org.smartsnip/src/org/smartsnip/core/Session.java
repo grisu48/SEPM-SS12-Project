@@ -455,6 +455,26 @@ public class Session {
 
 				return user.getRealName();
 			}
+
+			@Override
+			public void setEmail(String newAddress) throws IllegalAccessException, IllegalArgumentException {
+				if (!policy.canEditUserData(Session.this, user)) throw new IllegalAccessException();
+
+				user.setEmail(newAddress);
+			}
+
+			@Override
+			public void setRealName(String newName) throws IllegalAccessException {
+				if (!policy.canEditUserData(Session.this, user)) throw new IllegalAccessException();
+
+				user.setRealName(newName);
+			}
+
+			@Override
+			public void report(String reason) {
+				// TODO Auto-generated method stub
+
+			}
 		};
 	}
 
