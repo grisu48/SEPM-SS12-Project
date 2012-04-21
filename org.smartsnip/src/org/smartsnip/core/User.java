@@ -28,6 +28,9 @@ public class User {
 	/** Final identifier of the username */
 	public final String username;
 
+	/** Real name of the user */
+	public String realName = "";
+
 	/** Encrypted password of the user */
 	private String password = "";
 
@@ -79,8 +82,7 @@ public class User {
 	 * @return found user with the given username or null if not found
 	 */
 	synchronized static User getUser(String username) {
-		if (username.length() == 0)
-			return null;
+		if (username.length() == 0) return null;
 		username = username.toLowerCase();
 
 		return allUsers.get(username);
@@ -95,8 +97,7 @@ public class User {
 	 * @return true if existing otherwise false
 	 */
 	synchronized static boolean exists(String username) {
-		if (username.length() == 0)
-			return false;
+		if (username.length() == 0) return false;
 		username = username.toLowerCase();
 		return allUsers.containsKey(username);
 	}
@@ -119,16 +120,12 @@ public class User {
 	 */
 	synchronized static User createNewUser(String username, String password, String email)
 			throws IllegalArgumentException {
-		if (username.length() == 0)
-			throw new IllegalArgumentException("Username cannot be empty");
-		if (email.length() == 0)
-			throw new IllegalArgumentException("e-mail address cannot be empty");
-		if (!isValidEmailAddress(email))
-			throw new IllegalArgumentException("Illegal email address");
+		if (username.length() == 0) throw new IllegalArgumentException("Username cannot be empty");
+		if (email.length() == 0) throw new IllegalArgumentException("e-mail address cannot be empty");
+		if (!isValidEmailAddress(email)) throw new IllegalArgumentException("Illegal email address");
 		// Check for duplicated user entries
 		username = username.toLowerCase();
-		if (exists(username))
-			throw new IllegalArgumentException("Username already taken");
+		if (exists(username)) throw new IllegalArgumentException("Username already taken");
 
 		// All test passed. Create new user
 		User newUser = new User(username, email, password);
@@ -155,8 +152,7 @@ public class User {
 	 *            that should be deleted.
 	 */
 	synchronized static void deleteUser(User user) {
-		if (user == null)
-			return;
+		if (user == null) return;
 
 		removeFromDB(user);
 	}
@@ -169,13 +165,10 @@ public class User {
 	 * @return true if valid otherwise false
 	 */
 	private static boolean isValidEmailAddress(String email) {
-		if (email.length() == 0)
-			return false;
+		if (email.length() == 0) return false;
 		int atSign = email.indexOf('@');
-		if (atSign < 1)
-			return false;
-		if (atSign >= email.length())
-			return false;
+		if (atSign < 1) return false;
+		if (atSign >= email.length()) return false;
 		return true;
 	}
 
@@ -194,6 +187,13 @@ public class User {
 	}
 
 	/**
+	 * @return the real name of the user
+	 */
+	String getRealName() {
+		return realName;
+	}
+
+	/**
 	 * @return the email address of the user
 	 */
 	String getEmail() {
@@ -208,14 +208,26 @@ public class User {
 	 *            the email to set
 	 */
 	void setEmail(String email) throws IllegalArgumentException {
-		if (email.length() == 0)
-			throw new IllegalArgumentException("Empty email address not allowed");
-		if (!isValidEmailAddress(email))
-			throw new IllegalArgumentException("Illegal email-address");
+		if (email.length() == 0) throw new IllegalArgumentException("Empty email address not allowed");
+		if (!isValidEmailAddress(email)) throw new IllegalArgumentException("Illegal email-address");
 
-		if (this.email.equals(email))
-			return;
+		if (this.email.equals(email)) return;
 		this.email = email;
+		refreshDB();
+	}
+
+	/**
+	 * 
+	 * Sets the real name of the user. If the new name is null or empty, or the
+	 * name does not changes, the method returns without any effect.
+	 * 
+	 * @param name
+	 *            new real name of the user
+	 */
+	void setRealName(String name) {
+		if (name == null || name.isEmpty()) return;
+		if (this.realName.equalsIgnoreCase(name)) return;
+		this.realName = name;
 		refreshDB();
 	}
 
@@ -241,11 +253,9 @@ public class User {
 	 *            the password to set
 	 */
 	void setPassword(String password) throws IllegalArgumentException {
-		if (password.length() == 0)
-			throw new IllegalArgumentException("Empty password not allowed");
+		if (password.length() == 0) throw new IllegalArgumentException("Empty password not allowed");
 		password = hashAlgorithm.hash(password);
-		if (this.password.equals(password))
-			return;
+		if (this.password.equals(password)) return;
 
 		this.password = password;
 	}
@@ -264,8 +274,7 @@ public class User {
 	 */
 	static boolean auth(String username, String password) {
 		User user = getUser(username);
-		if (user == null)
-			return false;
+		if (user == null) return false;
 		return user.checkPassword(password);
 	}
 
@@ -334,8 +343,7 @@ public class User {
 	}
 
 	protected static void removeFromDB(User user) {
-		if (user == null)
-			return;
+		if (user == null) return;
 
 		String name = user.getUsername().toLowerCase();
 		allUsers.remove(name);
@@ -349,11 +357,9 @@ public class User {
 	 *            to be added
 	 */
 	public void addFavorite(Snippet snippet) {
-		if (snippet == null)
-			return;
+		if (snippet == null) return;
 
-		if (favorites.contains(snippet))
-			return;
+		if (favorites.contains(snippet)) return;
 		favorites.add(snippet);
 	}
 
@@ -365,11 +371,9 @@ public class User {
 	 * @param snippet
 	 */
 	public void removeFavorite(Snippet snippet) {
-		if (snippet == null)
-			return;
+		if (snippet == null) return;
 
-		if (!favorites.contains(snippet))
-			return;
+		if (!favorites.contains(snippet)) return;
 		favorites.remove(snippet);
 	}
 }
