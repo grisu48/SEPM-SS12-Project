@@ -34,10 +34,8 @@ public class Comment {
 	 *            of the comment
 	 */
 	Comment(User owner, Snippet snippet, String message) {
-		if (owner == null || snippet == null || message == null)
-			throw new NullPointerException();
-		if (message.length() == 0)
-			throw new IllegalArgumentException("Cannot create empty comment box");
+		if (owner == null || snippet == null || message == null) throw new NullPointerException();
+		if (message.length() == 0) throw new IllegalArgumentException("Cannot create empty comment box");
 
 		this.owner = owner;
 		this.snippet = snippet;
@@ -73,9 +71,7 @@ public class Comment {
 	 *            that wants to vote
 	 */
 	synchronized void votePositive(User user) {
-		if (votes.containsKey(user))
-			if (Math.abs(votes.get(user)) == 1)
-				return;
+		if (votes.containsKey(user)) if (Math.abs(votes.get(user)) == 1) return;
 		chocolates++;
 		votes.put(user, 1);
 		refreshDB();
@@ -89,9 +85,7 @@ public class Comment {
 	 *            that wants to vote
 	 */
 	synchronized void voteNegative(User user) {
-		if (votes.containsKey(user))
-			if (Math.abs(votes.get(user)) == 1)
-				return;
+		if (votes.containsKey(user)) if (Math.abs(votes.get(user)) == 1) return;
 		chocolates++;
 		votes.put(user, -1);
 		refreshDB();
@@ -105,8 +99,7 @@ public class Comment {
 	 *            that wants to unvote
 	 */
 	synchronized void unvote(User user) {
-		if (!votes.containsKey(user))
-			return;
+		if (!votes.containsKey(user)) return;
 		int vote = votes.get(user);
 		if (vote == 1) {
 			chocolates--;
@@ -153,8 +146,7 @@ public class Comment {
 	 *            the message to set
 	 */
 	void setMessage(String message) {
-		if (message == null || message.length() == 0)
-			return;
+		if (message == null || message.length() == 0) return;
 		this.message = message;
 		refreshDB();
 	}
@@ -168,6 +160,14 @@ public class Comment {
 	 * Invokes the refreshing process for the database
 	 */
 	protected void refreshDB() {
+
+	}
+
+	/**
+	 * Deletes this comment out of the database
+	 */
+	public void delete() {
+		// TODO Auto-generated method stub
 
 	}
 
