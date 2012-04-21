@@ -14,6 +14,20 @@ public interface IUser {
 	public String getName();
 
 	/**
+	 * @return the email address
+	 * @throws IllegalAccessException
+	 *             Thrown if the call is not permitted
+	 */
+	public String getEmail() throws IllegalAccessException;
+
+	/**
+	 * @return the real name of the user
+	 * @throws IllegalAccessException
+	 *             Thrown if the call is not permitted
+	 */
+	public String getRealName() throws IllegalAccessException;
+
+	/**
 	 * Closes the current session of the user
 	 * 
 	 * @throws IllegalAccessException
