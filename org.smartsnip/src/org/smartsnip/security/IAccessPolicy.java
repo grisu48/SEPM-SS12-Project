@@ -123,4 +123,15 @@ public interface IAccessPolicy {
 	 * @return true if operation succeeds if denied false
 	 */
 	public boolean canRateSnippet(Session session, Snippet snippet);
+
+	/**
+	 * Indicating if the given session can edit a given category.
+	 * 
+	 * @param session
+	 *            the call belongs to
+	 * @param category
+	 *            to be checked
+	 * @return true if operation succeeds if denied false
+	 */
+	public boolean canEditCategory(Session session, Category category);
 }
