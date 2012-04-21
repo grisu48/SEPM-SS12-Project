@@ -67,8 +67,8 @@ public class Snippet {
 	 */
 	private Snippet(User owner, String name, String description, Code code, int hash) {
 		if (owner == null || name == null || description == null || code == null) throw new NullPointerException();
-		if (name.length() == 0) throw new IllegalArgumentException("Snippet name cannot be empty");
-		if (description.length() == 0) throw new IllegalArgumentException("Snippet description cannot be empty");
+		if (name.isEmpty()) throw new IllegalArgumentException("Snippet name cannot be empty");
+		if (description.isEmpty()) throw new IllegalArgumentException("Snippet description cannot be empty");
 		if (exists(hash)) throw new IllegalStateException("Given hash code already exists");
 
 		this.owner = owner;
