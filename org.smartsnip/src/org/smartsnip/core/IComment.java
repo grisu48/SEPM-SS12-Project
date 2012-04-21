@@ -1,11 +1,23 @@
 package org.smartsnip.core;
 
+import java.util.Date;
+
 /**
  * This interface handles the interactions of the GUI on a concrete comment. It
  * is given by the session to the GUI
  * 
  */
 public interface IComment {
+	/**
+	 * @return the comment's message text
+	 */
+	public String getMessage();
+
+	/**
+	 * @return the last modification date and time of the comment
+	 */
+	public Date getLastModificationTime();
+
 	/**
 	 * Rates the comment positive. If already rated positive nothing happesn. If
 	 * rated negative, the negative rate will be deleted, and instant a positive
