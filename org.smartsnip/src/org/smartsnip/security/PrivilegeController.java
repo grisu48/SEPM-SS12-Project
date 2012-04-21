@@ -83,19 +83,19 @@ public class PrivilegeController {
 
 		@Override
 		public boolean canEditUserData(Session session, User user) {
-			return session.getUser() == user;
+			return session.isLoggedInUser(user);
 		}
 
 		@Override
 		public boolean canEditSnippet(Session session, Snippet snippet) {
 			if (!session.isLoggedIn()) return false;
-			return (snippet.getOwner() == session.getUser());
+			return session.isLoggedInUser(snippet.getOwner());
 		}
 
 		@Override
 		public boolean canDeleteSnippet(Session session, Snippet snippet) {
 			if (!session.isLoggedIn()) return false;
-			return (snippet.getOwner() == session.getUser());
+			return session.isLoggedInUser(snippet.getOwner());
 		}
 
 		@Override
