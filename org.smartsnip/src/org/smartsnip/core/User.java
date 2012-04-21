@@ -258,6 +258,7 @@ public class User {
 		if (this.password.equals(password)) return;
 
 		this.password = password;
+		refreshDB();
 	}
 
 	/**
