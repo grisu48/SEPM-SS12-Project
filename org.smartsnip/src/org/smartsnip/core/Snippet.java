@@ -66,14 +66,10 @@ public class Snippet {
 	 *             Thrown if the hash code is already in the system
 	 */
 	private Snippet(User owner, String name, String description, Code code, int hash) {
-		if (owner == null || name == null || description == null || code == null)
-			throw new NullPointerException();
-		if (name.length() == 0)
-			throw new IllegalArgumentException("Snippet name cannot be empty");
-		if (description.length() == 0)
-			throw new IllegalArgumentException("Snippet description cannot be empty");
-		if (exists(hash))
-			throw new IllegalStateException("Given hash code already exists");
+		if (owner == null || name == null || description == null || code == null) throw new NullPointerException();
+		if (name.length() == 0) throw new IllegalArgumentException("Snippet name cannot be empty");
+		if (description.length() == 0) throw new IllegalArgumentException("Snippet description cannot be empty");
+		if (exists(hash)) throw new IllegalStateException("Given hash code already exists");
 
 		this.owner = owner;
 		this.name = name;
@@ -113,8 +109,7 @@ public class Snippet {
 	 *             {@link UnsupportedLanguageException}.
 	 */
 	synchronized static Snippet createSnippet(User owner, String name, String description, String code, String language) {
-		if (code == null || language == null)
-			throw new NullPointerException();
+		if (code == null || language == null) throw new NullPointerException();
 
 		// Create code object
 		Code codeObj = null;
@@ -187,7 +182,7 @@ public class Snippet {
 	 *            hash code of the snippet
 	 * @return the found snippet or null if not existsing
 	 */
-	public synchronized Snippet getSnippet(int hash) {
+	synchronized static Snippet getSnippet(int hash) {
 		return allSnippets.get(hash);
 	}
 
@@ -206,10 +201,8 @@ public class Snippet {
 	 *            the name to set
 	 */
 	void setName(String name) {
-		if (name == null || name.length() == 0)
-			return;
-		if (this.name.equals(name))
-			return;
+		if (name == null || name.length() == 0) return;
+		if (this.name.equals(name)) return;
 
 		this.name = name;
 		refreshDB();
@@ -230,10 +223,8 @@ public class Snippet {
 	 *            the description to set
 	 */
 	void setDescription(String description) {
-		if (description == null || description.length() == 0)
-			return;
-		if (this.description.equals(description))
-			return;
+		if (description == null || description.length() == 0) return;
+		if (this.description.equals(description)) return;
 
 		this.description = description;
 		refreshDB();
@@ -253,10 +244,8 @@ public class Snippet {
 	 *            the code to set
 	 */
 	void setCode(Code code) {
-		if (code == null)
-			return;
-		if (this.code.equals(code))
-			return;
+		if (code == null) return;
+		if (this.code.equals(code)) return;
 
 		this.code = code;
 		refreshDB();
@@ -284,10 +273,8 @@ public class Snippet {
 	 *            the category to set
 	 */
 	void setCategory(Category category) {
-		if (category == null)
-			return;
-		if (this.category == category)
-			return;
+		if (category == null) return;
+		if (this.category == category) return;
 
 		if (this.category != null) {
 			this.category.removeSnippet(this);
@@ -312,10 +299,8 @@ public class Snippet {
 	 *            the license to set
 	 */
 	void setLicense(String license) {
-		if (license == null || license.length() == 0)
-			return;
-		if (this.license.equals(license))
-			return;
+		if (license == null || license.length() == 0) return;
+		if (this.license.equals(license)) return;
 		this.license = license;
 		refreshDB();
 	}
@@ -336,11 +321,9 @@ public class Snippet {
 	 *            to be added to the snippet
 	 */
 	void addTag(Tag tag) {
-		if (tag == null)
-			return;
+		if (tag == null) return;
 		synchronized (tags) {
-			if (tags.contains(tag))
-				return;
+			if (tags.contains(tag)) return;
 			tags.add(tag);
 		}
 		refreshDB();
@@ -354,11 +337,9 @@ public class Snippet {
 	 *            to be removed from the snippet
 	 */
 	void removeTag(Tag tag) {
-		if (tag == null)
-			return;
+		if (tag == null) return;
 		synchronized (tags) {
-			if (!tags.contains(tag))
-				return;
+			if (!tags.contains(tag)) return;
 			tags.remove(tag);
 		}
 		refreshDB();
@@ -391,11 +372,9 @@ public class Snippet {
 	 *            to be added
 	 */
 	void addComment(Comment comment) {
-		if (comment == null)
-			return;
+		if (comment == null) return;
 		synchronized (comments) {
-			if (comments.contains(comment))
-				return;
+			if (comments.contains(comment)) return;
 			comments.add(comment);
 		}
 		refreshDB();
@@ -410,11 +389,9 @@ public class Snippet {
 	 *            to be removed
 	 */
 	void removeComment(Comment comment) {
-		if (comment == null)
-			return;
+		if (comment == null) return;
 		synchronized (comments) {
-			if (!comments.contains(comment))
-				return;
+			if (!comments.contains(comment)) return;
 			comments.remove(comment);
 		}
 		refreshDB();
@@ -429,8 +406,7 @@ public class Snippet {
 	 *         false
 	 */
 	boolean hasTag(Tag tag) {
-		if (tag == null)
-			return false;
+		if (tag == null) return false;
 		return tags.contains(tag);
 	}
 
@@ -463,10 +439,17 @@ public class Snippet {
 	 *            to be added.
 	 */
 	static protected void addToDB(Snippet snippet) {
-		if (snippet == null)
-			return;
+		if (snippet == null) return;
 
 		allSnippets.put(snippet.hash, snippet);
 		// TODO: Implement me!
+	}
+
+	/**
+	 * Deletes the snippet
+	 */
+	void delete() {
+		// TODO Auto-generated method stub
+
 	}
 }
