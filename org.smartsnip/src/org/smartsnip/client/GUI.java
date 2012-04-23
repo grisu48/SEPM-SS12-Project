@@ -27,8 +27,8 @@ public class GUI implements EntryPoint {
 		
 		//Create the Page
 		createBasicPage();
-		showSearchPage();
-		//showImpressum();
+		//showSearchPage();
+		showImpressum();
 		//showSnipPage();
 		//showPersonalPage();
 		//showLoginPopup();
@@ -51,7 +51,7 @@ public class GUI implements EntryPoint {
 		
 		// Fill searchPanel
 		SuggestBox searchSnippet = new SuggestBox();
-		Image searchButton = new Image("images/logo_small.png");
+		Button searchButton = new Button("Search Snippet");
 		searchButton.addStyleName("searchButton");
 		searchPanel.add(searchSnippet);
 		searchPanel.add(searchButton);

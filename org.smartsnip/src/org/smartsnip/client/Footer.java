@@ -33,12 +33,15 @@ public class Footer extends Composite {
 		vertPanel2 = new VerticalPanel();
 		vertPanel3 = new VerticalPanel();
 		copyright = new Label("Copyright");
+		copyright.addStyleName("h3");
 		name1 = new Label("Gerhard Aigner");
 		name2 = new Label("Felix Niederwanger");
 		name3 = new Label("Paul Opitz");
 		links = new Label("Links");
+		links.addStyleName("h3");
 		link1 = new Label("Example link");
 		about = new Label("About this Website");
+		about.addStyleName("h3");
 		impressum = new Label("Impressum");
 		vertPanel1.add(copyright);
 		vertPanel1.add(name1);
