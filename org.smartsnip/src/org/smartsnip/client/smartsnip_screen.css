@@ -7,11 +7,17 @@
 }
 
 html {
+	margin:0px;
+	padding:0px;
 }
 
 
 body {
- 	background-color:#bbb;
+ 	background-color:red;
+ 	margin:0px;
+	padding:0px;
+
+
 }
 
 
@@ -22,23 +28,43 @@ h1 {
 
 
 header {
-height:150px;
-background-image:url(images/bg_banner.png);
-background-repeat:x-repeat;
+	height:110px;
 }
 
 
 footer {
-background-color:blue;
-height:200px;
-
+	height:200px;
+	background-image:url(images/bg_banner.png);
+	background-repeat:x-repeat;
 }
   
 
 #wrapper {
-margin-left:auto;
-margin-right:auto;
-background-color:white;
+	margin-left:auto;
+	margin-right:auto;
+	background-color:#e6e6e6;
+	background-image:url(images/bg_banner.png);
+	background-repeat:repeat-x;
+}
+
+#banner {
+	position:absolute;
+	top:-20px;
+	margin-left:80px;
+	width:300px;
+	padding:25px;
+	background-color:#fffeeb;
+	border-radius:20px 20px 20px 20px;
+	transform:rotate(-7deg);
+	-moz-transform:rotate(-7deg); /* Firefox 3.6 Firefox 4 */
+	-webkit-transform:rotate(-7deg); /* Safari */
+	-o-transform:rotate(-7deg); /* Opera */
+	-ms-transform:rotate(-7deg); /* IE9 */
+	border-color:#4a3320;
+	border-width:1px;
+	border-style:dashed;
+
+	
 }
 
 #code {
@@ -48,31 +74,35 @@ background-repeat:no-repeat;
 }
 
 #title {
-	position:absolute;
-	top:0px;
-	width:350px;
-	padding:25px;
-	margin-left:100px;
-	background-color:#4a3320; 
-	color:white;
-	
+	font-family:"Ruluko";
+	font-size:50px;
+	margin-top:20px;
+	color:#4a3320;
 }
 
+#subtitle {
+	color:#4a3320;
+}
+
+
 #user {
+margin:10px;
 float:right;
 }
 
 #search {
-clear:both;
-margin-top:-50px;
-margin-left:100px;
-width:400px;
+	clear:both;
+	margin-top:30px;
+	margin-left:100px;
+	width:450px;
 }
 
 #data {
 background-color:white;
 min-width:700px;
 min-height:400px;
+
+
 }
 
 /* Style used for GWT-Widgets*/
@@ -89,15 +119,21 @@ min-height:400px;
 	margin:2px 15px 2px 15px;
 }
 
+.gwt-Image {
+	padding:0px;
+	margin:0px;
+}
+
 .gwt-SuggestBox {
-	width:300px;
+	width:350px;
+	height:40px;
 	padding:10px;
-	margin: 0px 0px 10px px;
+	margin: 0px 0px 0px 0px;
 }
 
 .searchButton {
-	padding:10px;
-	margin: 0px 0px 10px 15px;
+	padding:0px;
+	margin: -35px 0px 0px -35px;
 }
 
 .gwt-TextBox {
