@@ -1,5 +1,9 @@
 package org.smartsnip.core;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Comment {
@@ -10,6 +14,9 @@ public class Comment {
 	/** Comment message. */
 	private String message = "";
 
+	/** Last change time */
+	private Date time = null;
+
 	/** Positive votes are stored as chocolates */
 	private int chocolates = 0;
 	/** Negative votes are stored as lemons */
@@ -19,7 +26,7 @@ public class Comment {
 	 * Votes that are given for this comment. A 1 as key indicates a chocolate,
 	 * a -1 a lemon. All other entries are ignored
 	 */
-	private HashMap<User, Integer> votes = new HashMap<User, Integer>();
+	private final HashMap<User, Integer> votes = new HashMap<User, Integer>();
 
 	/**
 	 * Creates a new comment. If one of the arguments if null a new
@@ -40,6 +47,29 @@ public class Comment {
 		this.owner = owner;
 		this.snippet = snippet;
 		this.message = message;
+		setCurrentSystemTime();
+	}
+
+	/**
+	 * Creates a comment and adds this comment to the snippet
+	 * 
+	 * If one of the arguments if null a new {@link NullPointerException} will
+	 * be thrown, and if the message is empty a new
+	 * {@link IllegalArgumentException} will be thrown
+	 * 
+	 * @param owner
+	 *            of the comment
+	 * @param snippet
+	 *            of the comment
+	 * @param message
+	 *            of the comment
+	 * @return the newly created comment if success
+	 */
+	static Comment createComment(User owner, Snippet snippet, String message) {
+		Comment comment = new Comment(owner, snippet, message);
+		snippet.addComment(comment);
+		comment.setCurrentSystemTime();
+		return comment;
 	}
 
 	/**
@@ -118,21 +148,46 @@ public class Comment {
 	}
 
 	/**
-	 * Sets the message of the comment. If the message is null or emtpy, nothing
-	 * is done.
-	 * 
-	 * @param message
-	 *            the message to set
+	 * @return the last time the comment was edited
 	 */
-	void setMessage(String message) {
-		if (message == null || message.length() == 0) return;
-		this.message = message;
-		refreshDB();
+	public Date getTime() {
+		return time;
+	}
+
+	/**
+	 * Sets the time to the current system time
+	 */
+	private void setCurrentSystemTime() {
+		Calendar cal = Calendar.getInstance();
+		this.time = cal.getTime();
 	}
 
 	@Override
 	public String toString() {
 		return message;
+	}
+
+	/**
+	 * Deletes this comment out of the database
+	 */
+	void delete() {
+		snippet.removeComment(this);
+		removeFromDB();
+	}
+
+	/**
+	 * Edits the current message to a new message. If the given message is null
+	 * or empty, the method returns without effect.
+	 * 
+	 * @param newMessage
+	 */
+	void edit(String newMessage) {
+		if (newMessage == null || newMessage.isEmpty()) return;
+
+		// TODO: Message change history
+
+		this.message = newMessage;
+		setCurrentSystemTime();
 	}
 
 	/**
@@ -142,4 +197,10 @@ public class Comment {
 
 	}
 
+	/**
+	 * Removes this object from the database
+	 */
+	protected void removeFromDB() {
+		// Nothing to do yet
+	}
 }

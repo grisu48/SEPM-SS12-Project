@@ -1,9 +1,8 @@
 package org.smartsnip.core;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import java.util.HashMap;
+import java.util.List;
 
 import org.smartsnip.security.IHash;
 import org.smartsnip.security.MD5;
@@ -29,6 +28,9 @@ public class User {
 	/** Final identifier of the username */
 	public final String username;
 
+	/** Real name of the user */
+	public String realName = "";
+
 	/** Encrypted password of the user */
 	private String password = "";
 
@@ -36,12 +38,12 @@ public class User {
 	private String email = "";
 
 	/** State of the user */
-	private UserState state = UserState.unvalidated;
+	private final UserState state = UserState.unvalidated;
 
 	/**
 	 * List of favourite snippets of the user
 	 */
-	private List<Snippet> favorites = new ArrayList<Snippet>();
+	private final List<Snippet> favorites = new ArrayList<Snippet>();
 
 	/**
 	 * Determines the status of the user, currently if the user has been
@@ -132,6 +134,30 @@ public class User {
 	}
 
 	/**
+	 * Removes a user from the system. If the given user cannot be found,
+	 * nothing is done
+	 * 
+	 * @param username
+	 *            name of the user to be deleted
+	 */
+	synchronized static void deleteUser(String username) {
+		deleteUser(getUser(username));
+	}
+
+	/**
+	 * Removes a user from the system. If the given user is null, nothing
+	 * happens
+	 * 
+	 * @param user
+	 *            that should be deleted.
+	 */
+	synchronized static void deleteUser(User user) {
+		if (user == null) return;
+
+		removeFromDB(user);
+	}
+
+	/**
 	 * Internal call to check if the email address is valid
 	 * 
 	 * @param email
@@ -161,6 +187,13 @@ public class User {
 	}
 
 	/**
+	 * @return the real name of the user
+	 */
+	String getRealName() {
+		return realName;
+	}
+
+	/**
 	 * @return the email address of the user
 	 */
 	String getEmail() {
@@ -184,10 +217,32 @@ public class User {
 	}
 
 	/**
+	 * 
+	 * Sets the real name of the user. If the new name is null or empty, or the
+	 * name does not changes, the method returns without any effect.
+	 * 
+	 * @param name
+	 *            new real name of the user
+	 */
+	void setRealName(String name) {
+		if (name == null || name.isEmpty()) return;
+		if (this.realName.equalsIgnoreCase(name)) return;
+		this.realName = name;
+		refreshDB();
+	}
+
+	/**
 	 * @return the username
 	 */
 	String getUsername() {
 		return username;
+	}
+
+	/**
+	 * @return the total count of registered users in the system
+	 */
+	static int totalCount() {
+		return allUsers.size();
 	}
 
 	/**
@@ -203,6 +258,7 @@ public class User {
 		if (this.password.equals(password)) return;
 
 		this.password = password;
+		refreshDB();
 	}
 
 	/**
@@ -250,9 +306,75 @@ public class User {
 	}
 
 	/**
+	 * @return a list of the users' favourite snippets
+	 */
+	List<Snippet> getFavoriteSnippets() {
+		List<Snippet> result = new ArrayList<Snippet>(favorites.size());
+		for (Snippet snippet : favorites) {
+			result.add(snippet);
+		}
+		return result;
+
+	}
+
+	/**
+	 * @return a list of the hash codes of the users' favourite snippets
+	 */
+	List<Integer> getFavoriteSnippetsHash() {
+		List<Integer> result = new ArrayList<Integer>(favorites.size());
+		for (Snippet snippet : favorites) {
+			result.add(snippet.hash);
+		}
+		return result;
+
+	}
+
+	/**
+	 * Deletes this user from the database
+	 */
+	synchronized void delete() {
+		deleteUser(this);
+	}
+
+	/**
 	 * Invokes the refreshing process for the database
 	 */
 	protected void refreshDB() {
 
+	}
+
+	protected static void removeFromDB(User user) {
+		if (user == null) return;
+
+		String name = user.getUsername().toLowerCase();
+		allUsers.remove(name);
+	}
+
+	/**
+	 * Adds a snippet to the user's favourites. If the snippet is null, nothing
+	 * happens. If the snippet as already been added, nothing happens.
+	 * 
+	 * @param snippet
+	 *            to be added
+	 */
+	public void addFavorite(Snippet snippet) {
+		if (snippet == null) return;
+
+		if (favorites.contains(snippet)) return;
+		favorites.add(snippet);
+	}
+
+	/**
+	 * Removes a snippet from the user's favourites. If the snippet is null,
+	 * nothing happens. If the snippet is not in the user's favorite list,
+	 * nothing happens
+	 * 
+	 * @param snippet
+	 */
+	public void removeFavorite(Snippet snippet) {
+		if (snippet == null) return;
+
+		if (!favorites.contains(snippet)) return;
+		favorites.remove(snippet);
 	}
 }

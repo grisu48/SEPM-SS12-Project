@@ -119,4 +119,23 @@ public interface ISnippet {
 	 *             allowed to do that
 	 */
 	public IComment addComment(String comment) throws IllegalAccessException;
+
+	/**
+	 * Adds the snippet to the users' favorites
+	 */
+	public void addFavorite();
+
+	/**
+	 * Removes the snippet from the users' favorites
+	 */
+	public void removeFavorite();
+
+	/**
+	 * Delete snippet.
+	 * 
+	 * @throws IllegalAccessException
+	 *             Thrown as security exception if the current session is not
+	 *             allowed to do that
+	 */
+	public void delete() throws IllegalAccessException;
 }

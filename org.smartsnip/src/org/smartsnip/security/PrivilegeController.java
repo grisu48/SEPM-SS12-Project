@@ -51,6 +51,21 @@ public class PrivilegeController {
 		public boolean canRateSnippet(Session session, Snippet snippet) {
 			return false;
 		}
+
+		@Override
+		public boolean canComment(Session session) {
+			return false;
+		}
+
+		@Override
+		public boolean canEditComment(Session session, Comment comment) {
+			return false;
+		}
+
+		@Override
+		public boolean canEditCategory(Session session, Category category) {
+			return false;
+		}
 	};
 
 	/** Hard coded user access policy */
@@ -83,24 +98,41 @@ public class PrivilegeController {
 
 		@Override
 		public boolean canEditUserData(Session session, User user) {
-			return session.getUser() == user;
+			return session.isLoggedInUser(user);
 		}
 
 		@Override
 		public boolean canEditSnippet(Session session, Snippet snippet) {
 			if (!session.isLoggedIn()) return false;
-			return (snippet.getOwner() == session.getUser());
+			return session.isLoggedInUser(snippet.getOwner());
 		}
 
 		@Override
 		public boolean canDeleteSnippet(Session session, Snippet snippet) {
 			if (!session.isLoggedIn()) return false;
-			return (snippet.getOwner() == session.getUser());
+			return session.isLoggedInUser(snippet.getOwner());
 		}
 
 		@Override
 		public boolean canCreateSnippet(Session session, Category category) {
 			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canComment(Session session) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canEditComment(Session session, Comment comment) {
+			if (!session.isLoggedIn()) return false;
+			return session.isLoggedInUser(comment.owner);
+		}
+
+		@Override
+		public boolean canEditCategory(Session session, Category category) {
+			// TODO Currently not available!
+			return false;
 		}
 	};
 

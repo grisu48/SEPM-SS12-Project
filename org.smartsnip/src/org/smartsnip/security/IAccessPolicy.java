@@ -47,6 +47,26 @@ public interface IAccessPolicy {
 	public boolean canEditUserData(Session session, User user);
 
 	/**
+	 * Inidicating if the given session can comment
+	 * 
+	 * @param session
+	 *            to be investigated
+	 * @return true if operation succeeds if denied false
+	 */
+	public boolean canComment(Session session);
+
+	/**
+	 * Indicating if the given session can edit a given comment.
+	 * 
+	 * @param session
+	 *            the call belongs to
+	 * @param comment
+	 *            to be checked
+	 * @return true if operation succeeds if denied false
+	 */
+	public boolean canEditComment(Session session, Comment comment);
+
+	/**
 	 * Indicating if the current session can create a snippet in the given
 	 * category.
 	 * 
@@ -103,4 +123,15 @@ public interface IAccessPolicy {
 	 * @return true if operation succeeds if denied false
 	 */
 	public boolean canRateSnippet(Session session, Snippet snippet);
+
+	/**
+	 * Indicating if the given session can edit a given category.
+	 * 
+	 * @param session
+	 *            the call belongs to
+	 * @param category
+	 *            to be checked
+	 * @return true if operation succeeds if denied false
+	 */
+	public boolean canEditCategory(Session session, Category category);
 }

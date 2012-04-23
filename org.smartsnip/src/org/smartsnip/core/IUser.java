@@ -14,6 +14,47 @@ public interface IUser {
 	public String getName();
 
 	/**
+	 * @return the email address
+	 * @throws IllegalAccessException
+	 *             Thrown if the call is not permitted
+	 */
+	public String getEmail() throws IllegalAccessException;
+
+	/**
+	 * Sets the email-address of the user. If the address is null or empty,
+	 * nothing is done. If the address does not match the format of an
+	 * email-address, a new {@link IllegalArgumentException} is thrown.
+	 * 
+	 * @param newAddress
+	 *            new email-address of the user
+	 * @throws IllegalAccessException
+	 *             Thrown if the session cannot change the email-address of the
+	 *             user
+	 * @throws link
+	 *             IllegalArgumentException Thrown if the given email-address is
+	 *             invalid
+	 */
+	public void setEmail(String newAddress) throws IllegalAccessException, IllegalArgumentException;
+
+	/**
+	 * Sets the real name of the user. If the name is null or empty, nothing is
+	 * done.
+	 * 
+	 * @param newName
+	 *            New name of the user
+	 * @throws IllegalAccessException
+	 *             Thrown if the current session cannot access this property
+	 */
+	public void setRealName(String newName) throws IllegalAccessException;
+
+	/**
+	 * @return the real name of the user
+	 * @throws IllegalAccessException
+	 *             Thrown if the call is not permitted
+	 */
+	public String getRealName() throws IllegalAccessException;
+
+	/**
 	 * Closes the current session of the user
 	 * 
 	 * @throws IllegalAccessException
@@ -30,4 +71,21 @@ public interface IUser {
 	 *           Check this!
 	 */
 	public List<ISnippet> getSnippets() throws IllegalAccessException;
+
+	/**
+	 * 
+	 * @return a list containing all favourite snippets of the user
+	 * @throws IllegalAccessException
+	 *             Thrown if the call cannot be executed by this session
+	 */
+	public List<ISnippet> getFavorites() throws IllegalAccessException;
+
+	/**
+	 * Reports an abusive user.
+	 * 
+	 * @param reason
+	 *            Reason why the user is behaving abusive
+	 */
+	public void report(String reason);
+
 }
