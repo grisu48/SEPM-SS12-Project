@@ -4,8 +4,17 @@
  */
 package org.smartsnip.persistence;
 
+import java.io.IOException;
 import java.util.List;
-import org.smartsnip.core.*;
+
+import org.smartsnip.core.Category;
+import org.smartsnip.core.Code;
+import org.smartsnip.core.Comment;
+import org.smartsnip.core.Notification;
+import org.smartsnip.core.Pair;
+import org.smartsnip.core.Snippet;
+import org.smartsnip.core.Tag;
+import org.smartsnip.core.User;
 
 /**
  * Wrapper interface which contains all methods to persist or load data from the
@@ -74,7 +83,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeUser(User user, int mode) throws Exception;
+	public void writeUser(User user, int mode) throws IOException;
 
 	/**
 	 * Persist multiple User-datasets.
@@ -86,7 +95,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeUser(List<User> users, int mode) throws Exception;
+	public void writeUser(List<User> users, int mode) throws IOException;
 
 	/**
 	 * Persist a single Snippet-dataset.
@@ -98,7 +107,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeSnippet(Snippet snippet, int mode) throws Exception;
+	public void writeSnippet(Snippet snippet, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Snippet-datasets.
@@ -110,7 +119,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeSnippet(List<Snippet> snippets, int mode) throws Exception;
+	public void writeSnippet(List<Snippet> snippets, int mode) throws IOException;
 
 	/**
 	 * Persist a single Comment-dataset.
@@ -122,7 +131,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeComment(Comment comment, int mode) throws Exception;
+	public void writeComment(Comment comment, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Comment-datasets.
@@ -134,7 +143,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeComment(List<Comment> comments, int mode) throws Exception;
+	public void writeComment(List<Comment> comments, int mode) throws IOException;
 
 	/**
 	 * Persist a single Tag-dataset.
@@ -146,7 +155,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeTag(Tag tag, int mode) throws Exception;
+	public void writeTag(Tag tag, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Tag-datasets.
@@ -158,7 +167,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeTag(List<Tag> tags, int mode) throws Exception;
+	public void writeTag(List<Tag> tags, int mode) throws IOException;
 
 	/**
 	 * Persist a single Notification-dataset.
@@ -170,8 +179,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeNotification(Notification notification, int mode)
-			throws Exception;
+	public void writeNotification(Notification notification, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Notification-datasets.
@@ -183,8 +191,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeNotification(List<Notification> notifications, int mode)
-			throws Exception;
+	public void writeNotification(List<Notification> notifications, int mode) throws IOException;
 
 	/**
 	 * Persist a single Code-dataset.
@@ -196,7 +203,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeCode(Code code, int mode) throws Exception;
+	public void writeCode(Code code, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Code-datasets.
@@ -208,7 +215,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeCode(List<Code> codes, int mode) throws Exception;
+	public void writeCode(List<Code> codes, int mode) throws IOException;
 
 	/**
 	 * Persist a single Category-dataset.
@@ -220,7 +227,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeCategory(Category category, int mode) throws Exception;
+	public void writeCategory(Category category, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Category-datasets.
@@ -232,8 +239,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeCategory(List<Category> categories, int mode)
-			throws Exception;
+	public void writeCategory(List<Category> categories, int mode) throws IOException;
 
 	// XXX Language not implemented yet.
 	/**
@@ -246,7 +252,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeLanguage(String language, int mode) throws Exception;
+	public void writeLanguage(String language, int mode) throws IOException;
 
 	// XXX Rating not implemented yet.
 	/**
@@ -267,8 +273,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
-			throws Exception;
+	public void writeRating(Integer rating, Snippet snippet, User user, int mode) throws IOException;
 
 	// XXX Vote not implemented yet.
 	/**
@@ -289,8 +294,7 @@ public interface IPersistence {
 	 * @return the actual value of Comment.vote_sum
 	 * @throws Exception
 	 */
-	public int writeVote(Integer vote, Comment comment, User user, int mode)
-			throws Exception;
+	public int writeVote(Integer vote, Comment comment, User user, int mode) throws IOException;
 
 	/**
 	 * Persist a positive vote. This operation updates an existing vote if the
@@ -308,8 +312,7 @@ public interface IPersistence {
 	 * @return the actual value of Comment.vote_sum
 	 * @throws Exception
 	 */
-	public int votePositive(User user, Comment comment, int mode)
-			throws Exception;
+	public int votePositive(User user, Comment comment, int mode) throws IOException;
 
 	/**
 	 * Persist a negative vote. This operation updates an existing vote if the
@@ -327,8 +330,7 @@ public interface IPersistence {
 	 * @return the actual value of Comment.vote_sum
 	 * @throws Exception
 	 */
-	public int voteNegative(User user, Comment comment, int mode)
-			throws Exception;
+	public int voteNegative(User user, Comment comment, int mode) throws IOException;
 
 	/**
 	 * Remove a vote. This operation updates an existing vote to 'none' in
@@ -345,71 +347,72 @@ public interface IPersistence {
 	 * @return the actual value of Comment.vote_sum
 	 * @throws Exception
 	 */
-	public int unVote(User user, Comment comment, int mode) throws Exception;
+	public int unVote(User user, Comment comment, int mode) throws IOException;
 
 	/**
 	 * Sets the favourite-state of the snippet.
 	 * 
 	 * @param snippet
 	 *            the snippet to change state
-	 * @param user the owner of the favorite list
+	 * @param user
+	 *            the owner of the favorite list
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return true if the state has changed
 	 * @throws Exception
 	 */
-	public boolean addFavourite(Snippet snippet, User user, int mode) throws Exception;
+	public boolean addFavourite(Snippet snippet, User user, int mode) throws IOException;
 
 	/**
 	 * Clears the favourite-state of the snippet.
 	 * 
 	 * @param snippet
 	 *            the snippet to change state
-	 * @param user the owner of the favorite list
+	 * @param user
+	 *            the owner of the favorite list
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return true if the state has changed
 	 * @throws Exception
 	 */
-	public boolean removeFavourite(Snippet snippet, User user, int mode) throws Exception;
+	public boolean removeFavourite(Snippet snippet, User user, int mode) throws IOException;
 
 	/**
 	 * get a user by his nickname
+	 * 
 	 * @param nick
 	 * @return
 	 * @throws Exception
 	 */
-	public User getUser(String nick) throws Exception;
-	
-	public User getUserByEmail(String email) throws Exception;
+	public User getUser(String nick) throws IOException;
 
-	public List<User> findUser(String realName) throws Exception;
+	public User getUserByEmail(String email) throws IOException;
 
-	public List<Snippet> getUserSnippets(User owner) throws Exception;
+	public List<User> findUser(String realName) throws IOException;
 
-	public List<Snippet> getFavorited(User owner)
-			throws Exception;
+	public List<Snippet> getUserSnippets(User owner) throws IOException;
 
-	public List<Snippet> getSnippets(List<Tag> matchingTags) throws Exception;
+	public List<Snippet> getFavorited(User owner) throws IOException;
 
-	public List<Snippet> getSnippets(Category category) throws Exception;
+	public List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException;
 
-	public List<Comment> getComments(Snippet snippet) throws Exception;
+	public List<Snippet> getSnippets(Category category) throws IOException;
 
-	public List<Tag> getTags(Snippet snippet) throws Exception;
+	public List<Comment> getComments(Snippet snippet) throws IOException;
 
-	public List<Tag> getAllTags() throws Exception;
+	public List<Tag> getTags(Snippet snippet) throws IOException;
 
-	public List<Notification> getNotifications(User user, boolean unreadOnly)
-			throws Exception;
+	public List<Tag> getAllTags() throws IOException;
 
-	public List<Code> getCodes(Snippet snippet) throws Exception;
+	public List<Notification> getNotifications(User user, boolean unreadOnly) throws IOException;
 
-	public Category getCategory(Snippet snippet) throws Exception;
+	public List<Code> getCodes(Snippet snippet) throws IOException;
 
-	public Category getParentCategory(Category category) throws Exception;
+	public Category getCategory(Snippet snippet) throws IOException;
+
+	public Category getParentCategory(Category category) throws IOException;
 
 	/**
 	 * 
@@ -417,15 +420,14 @@ public interface IPersistence {
 	 * @return the child categories in first order
 	 * @throws Exception
 	 */
-	public List<Category> getSubcategories(Category category)
-			throws Exception;
+	public List<Category> getSubcategories(Category category) throws IOException;
 
-	public List<String> getAllLanguages() throws Exception;
+	public List<String> getAllLanguages() throws IOException;
 
-	public List<Pair<User, Integer>> getRatings(Snippet snippet) throws Exception;
+	public List<Pair<User, Integer>> getRatings(Snippet snippet) throws IOException;
 
-	public List<Pair<User, Integer>> getVotes(Comment comment) throws Exception;
-	
-	public List<Snippet> search (String searchString) throws Exception;
-	
+	public List<Pair<User, Integer>> getVotes(Comment comment) throws IOException;
+
+	public List<Snippet> search(String searchString) throws IOException;
+
 }
