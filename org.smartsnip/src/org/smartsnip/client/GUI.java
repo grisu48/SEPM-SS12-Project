@@ -7,7 +7,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 
-public class GUI implements EntryPoint {
+public class GUI {
 
 	// Create userPanel
 	HorizontalPanel userPanel = new HorizontalPanel();
@@ -18,10 +18,8 @@ public class GUI implements EntryPoint {
 	// Create footerPanel
 	SimplePanel footerPanel = new SimplePanel();
 	
-
-	@Override
-	public void onModuleLoad() {
 	
+	public void getReady() {
 		// Adds a personalized CSS-File
 		Resources.INSTANCE.css().ensureInjected(); 
 		
@@ -33,7 +31,10 @@ public class GUI implements EntryPoint {
 		//showPersonalPage();
 		//showLoginPopup();
 		//showRegisterPopup();
+		//showTestPopup();
 	}
+
+	
 	
 	
 	
@@ -138,6 +139,21 @@ public class GUI implements EntryPoint {
 	    loginPanel.show();
 	}
 	
+public void showTestPopup(String test) {
+		
+		PopupPanel loginPanel = new PopupPanel(true);
+	    loginPanel.setTitle(test);
+	    VerticalPanel vertPanel = new VerticalPanel();
+	    Label lname = new Label(test);
+	    vertPanel.add(lname);
+	    loginPanel.setWidget(vertPanel);
+	    loginPanel.setGlassEnabled(true);
+	    loginPanel.setPopupPosition(110,100);
+	    loginPanel.setWidth("340px");
+	    loginPanel.show();
+	}
+	
+	
 	public void showRegisterPopup() {
 		PopupPanel registerPanel = new PopupPanel(false);
 		registerPanel.setStyleName("Register");
@@ -168,9 +184,6 @@ public class GUI implements EntryPoint {
 	    registerPanel.setPopupPosition(110,100);
 	    registerPanel.setWidth("340px");
 	    registerPanel.show();
-	    
-	    
-	    
 	}
 	
 	public void showImpressum() {

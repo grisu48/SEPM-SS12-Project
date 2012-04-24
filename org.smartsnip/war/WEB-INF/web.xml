@@ -6,14 +6,15 @@
          xmlns="http://java.sun.com/xml/ns/javaee">
 
   <!-- Servlets -->
+  
   <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>org.smartsnip.server.GreetingServiceImpl</servlet-class>
+    <servlet-name>communicationImpl</servlet-name>
+    <servlet-class>org.smartsnip.server.CommunicationImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/org_smartsnip/greet</url-pattern>
+    <servlet-name>communicationImpl</servlet-name>
+    <url-pattern>/org_smartsnip/comm</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->

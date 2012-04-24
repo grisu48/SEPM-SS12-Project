@@ -56,6 +56,34 @@ public class Controller {
 	}
 
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/* Some necessary Methods, each first implemented to test the GUI
 	 * 
 	 */
@@ -132,7 +160,7 @@ public class Controller {
 	 * @return the username of the currently logged in user
 	 */
 	public static String getUsername() {
-		if (!isLoggedIn()) return "guest";
+		if (!isLoggedIn()) return "anonym";
 		return getSession().getUsername();
 	}
 
