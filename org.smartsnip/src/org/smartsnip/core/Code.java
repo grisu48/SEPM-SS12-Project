@@ -5,15 +5,17 @@ public abstract class Code {
 	public final String code;
 	/** Code language */
 	public final String language;
+	/** Owner snippet of the code object */
+	public final Snippet snippet;
 	/** Version of this code object, auto incrementing */
 	private int version;
-	
+
 	/**
 	 * Exception that is used to express, that a given coding language is not
 	 * supported by the system.
 	 * 
 	 */
-	static class UnsupportedLanguageException extends RuntimeException {
+	static class UnsupportedLanguageException extends IllegalArgumentException {
 
 		/**
 		 * Generated serialisation ID
@@ -37,13 +39,16 @@ public abstract class Code {
 		}
 	}
 
-	Code(String code, String language) {
+	Code(String code, String language, Snippet snippet) {
 		if (code.length() == 0)
 			throw new IllegalArgumentException("Cannot create snippet with no code");
 		if (language.length() == 0)
 			throw new IllegalArgumentException("No coding language defined");
+		if (snippet == null)
+			throw new NullPointerException("Cannot create code segment to no snippet");
 		this.code = formatCode(code);
 		this.language = language;
+		this.snippet = snippet;
 	}
 
 	public boolean equals(Code code) {
@@ -105,7 +110,7 @@ public abstract class Code {
 	public int getVersion() {
 		return version;
 	}
-	
+
 	/**
 	 * Creates a new code object with the given code and the language.
 	 * 
@@ -119,28 +124,32 @@ public abstract class Code {
 	 * @param language
 	 *            Coding language. It must be supported by the system, otherwise
 	 *            a new {@link UnsupportedLanguageException} is thrown.
+	 * @param owner
+	 *            The owner snippet of the code
 	 * @return The newly generated code object
 	 * @throws UnsupportedLanguageException
 	 *             Thrown if the given language is not supported
 	 * @throws NullPointerException
-	 *             Thrown if the code or the language is null
+	 *             Thrown if the code or the language or the snippet is null
 	 * @throws IllegalArgumentException
 	 *             Thrown if the code or if the language is empty
 	 */
-	static Code createCode(String code, String language) throws UnsupportedLanguageException {
+	static Code createCode(String code, String language, Snippet owner) throws UnsupportedLanguageException {
 		if (code == null || language == null)
 			throw new NullPointerException();
 		if (code.isEmpty())
 			throw new IllegalArgumentException("Cannot create code object with no code");
 		if (language.isEmpty())
 			throw new IllegalArgumentException("Cannot create code object with no language");
+		if (owner == null)
+			throw new NullPointerException("Cannot create code segment without a snippet");
 
 		language = language.trim().toLowerCase();
 
 		/* Here the language inspection takes place */
 		Code result = null;
 		if (language.equals("java")) { // Java object
-			result = new CodeJava(code);
+			result = new CodeJava(code, owner);
 		}
 
 		if (result == null)

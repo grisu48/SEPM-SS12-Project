@@ -51,7 +51,8 @@ public class Session {
 
 		@Override
 		public void notification(Session source, Notification notification) {
-			if (notification == null) return;
+			if (notification == null)
+				return;
 
 			for (ISessionObserver observer : observers) {
 				observer.notification(Session.this, notification);
@@ -171,7 +172,8 @@ public class Session {
 	 * @return Session identified by the cookie
 	 */
 	public synchronized static Session getSession(String cookie) {
-		if (cookie == null || cookie.length() == 0) return null;
+		if (cookie == null || cookie.length() == 0)
+			return null;
 
 		Session result = storedSessions.get(cookie);
 		if (result == null) {
@@ -197,9 +199,11 @@ public class Session {
 	 *         given cookie is null or empty
 	 */
 	public synchronized static boolean existsCookie(String cookie) {
-		if (cookie == null || cookie.length() == 0) return false;
+		if (cookie == null || cookie.length() == 0)
+			return false;
 		Session result = storedSessions.get(cookie);
-		if (result == null) return false;
+		if (result == null)
+			return false;
 		if (result.isDead()) {
 			storedSessions.remove(cookie);
 			return false;
@@ -246,7 +250,8 @@ public class Session {
 	 * @return true if the user matches the session user
 	 */
 	public synchronized boolean isLoggedInUser(User user) {
-		if (user == null) return this.user == null;
+		if (user == null)
+			return this.user == null;
 		return user == this.user;
 	}
 
@@ -272,11 +277,14 @@ public class Session {
 
 		if (username.length() == 0 || password.length() == 0)
 			throw new IllegalAccessException("Login credentials missing");
-		if (isLoggedIn()) throw new IllegalAccessException("The session is already logged in");
+		if (isLoggedIn())
+			throw new IllegalAccessException("The session is already logged in");
 
-		if (!User.auth(username, password)) throw new IllegalAccessException("Invalid username or password");
+		if (!User.auth(username, password))
+			throw new IllegalAccessException("Invalid username or password");
 		User user = User.getUser(username);
-		if (user == null) throw new IllegalAccessException("Invalid username or password");
+		if (user == null)
+			throw new IllegalAccessException("Invalid username or password");
 
 		this.user = user;
 		refreshPolicy();
@@ -301,7 +309,8 @@ public class Session {
 	 *             to do that
 	 */
 	public IUser getIUser(String username) throws IllegalAccessException {
-		if (username == null || username.length() == 0) return null;
+		if (username == null || username.length() == 0)
+			return null;
 
 		return createIUser(User.getUser(username));
 	}
@@ -330,8 +339,10 @@ public class Session {
 	 */
 	public void addObserver(ISessionObserver observer) {
 		synchronized (observers) {
-			if (observer == null) return;
-			if (observers.contains(observer)) return;
+			if (observer == null)
+				return;
+			if (observers.contains(observer))
+				return;
 			observers.add(observer);
 		}
 	}
@@ -346,8 +357,10 @@ public class Session {
 	 */
 	public void removeObserver(ISessionObserver observer) {
 		synchronized (observers) {
-			if (observer == null) return;
-			if (!observers.contains(observer)) return;
+			if (observer == null)
+				return;
+			if (!observers.contains(observer))
+				return;
 			observers.remove(observer);
 		}
 	}
@@ -362,7 +375,8 @@ public class Session {
 	 * @obsolete
 	 */
 	private List<ISnippet> getUserSnippets(User user) {
-		if (user == null) return new ArrayList<ISnippet>();
+		if (user == null)
+			return new ArrayList<ISnippet>();
 		List<Snippet> snippets = user.getMySnippets();
 		List<ISnippet> result = new ArrayList<ISnippet>(snippets.size());
 
@@ -381,7 +395,8 @@ public class Session {
 	 *         logged in user.
 	 */
 	private IUser createIUser(final User user) {
-		if (user == null) return null;
+		if (user == null)
+			return null;
 
 		return new IUser() {
 
@@ -391,13 +406,15 @@ public class Session {
 
 			@Override
 			public void logout() throws IllegalAccessException {
-				if (user != Session.this.user) throw new IllegalAccessException();
+				if (user != Session.this.user)
+					throw new IllegalAccessException();
 				logout();
 			}
 
 			@Override
 			public List<ISnippet> getSnippets() throws IllegalAccessException {
-				if (user != Session.this.user) throw new IllegalAccessException();
+				if (user != Session.this.user)
+					throw new IllegalAccessException();
 				return getUserSnippets(user);
 			}
 
@@ -409,7 +426,8 @@ public class Session {
 			@Override
 			public List<ISnippet> getFavorites() throws IllegalAccessException {
 				if (!isLoggedIn()) {
-					if (user != null) throw new IllegalAccessException("Cannot get favorites from foreign user");
+					if (user != null)
+						throw new IllegalAccessException("Cannot get favorites from foreign user");
 
 					// TODO Implement guest user session favorites
 					return new ArrayList<ISnippet>();
@@ -444,28 +462,32 @@ public class Session {
 
 			@Override
 			public String getEmail() throws IllegalAccessException {
-				if (!isLoggedIn()) throw new IllegalAccessException();
+				if (!isLoggedIn())
+					throw new IllegalAccessException();
 
 				return user.getEmail();
 			}
 
 			@Override
 			public String getRealName() throws IllegalAccessException {
-				if (!isLoggedIn()) throw new IllegalAccessException();
+				if (!isLoggedIn())
+					throw new IllegalAccessException();
 
 				return user.getRealName();
 			}
 
 			@Override
 			public void setEmail(String newAddress) throws IllegalAccessException, IllegalArgumentException {
-				if (!policy.canEditUserData(Session.this, user)) throw new IllegalAccessException();
+				if (!policy.canEditUserData(Session.this, user))
+					throw new IllegalAccessException();
 
 				user.setEmail(newAddress);
 			}
 
 			@Override
 			public void setRealName(String newName) throws IllegalAccessException {
-				if (!policy.canEditUserData(Session.this, user)) throw new IllegalAccessException();
+				if (!policy.canEditUserData(Session.this, user))
+					throw new IllegalAccessException();
 
 				user.setRealName(newName);
 			}
@@ -488,7 +510,8 @@ public class Session {
 	 *         comment is null
 	 */
 	private IComment createIComment(final Comment comment) {
-		if (comment == null) return null;
+		if (comment == null)
+			return null;
 
 		return new IComment() {
 
@@ -497,21 +520,24 @@ public class Session {
 
 			@Override
 			public void removeRating() throws IllegalAccessException {
-				if (!policy.canRateSnippet(session, comment.snippet)) throw new IllegalAccessException();
+				if (!policy.canRateSnippet(session, comment.snippet))
+					throw new IllegalAccessException();
 
 				comment.unvote(getUser());
 			}
 
 			@Override
 			public void ratePositive() throws IllegalAccessException {
-				if (!policy.canRateSnippet(session, comment.snippet)) throw new IllegalAccessException();
+				if (!policy.canRateSnippet(session, comment.snippet))
+					throw new IllegalAccessException();
 
 				comment.votePositive(getUser());
 			}
 
 			@Override
 			public void rateNegative() throws IllegalAccessException {
-				if (!policy.canRateSnippet(session, comment.snippet)) throw new IllegalAccessException();
+				if (!policy.canRateSnippet(session, comment.snippet))
+					throw new IllegalAccessException();
 
 				comment.voteNegative(getUser());
 			}
@@ -523,15 +549,18 @@ public class Session {
 
 			@Override
 			public void delete() throws IllegalAccessException {
-				if (!policy.canEditComment(session, comment)) throw new IllegalAccessException();
+				if (!policy.canEditComment(session, comment))
+					throw new IllegalAccessException();
 
 				comment.delete();
 			}
 
 			@Override
 			public void edit(String newComment) throws IllegalAccessException {
-				if (newComment == null || newComment.isEmpty()) return;
-				if (!policy.canEditComment(session, comment)) throw new IllegalAccessException();
+				if (newComment == null || newComment.isEmpty())
+					return;
+				if (!policy.canEditComment(session, comment))
+					throw new IllegalAccessException();
 
 				comment.edit(newComment);
 			}
@@ -568,10 +597,12 @@ public class Session {
 
 			@Override
 			public void removeTag(String tag) throws IllegalAccessException {
-				if (!policy.canTagSnippet(Session.this, snippet)) throw new IllegalAccessException();
+				if (!policy.canTagSnippet(Session.this, snippet))
+					throw new IllegalAccessException();
 
 				Tag objTag = Tag.getTag(tag);
-				if (objTag == null) return;
+				if (objTag == null)
+					return;
 				snippet.removeTag(objTag);
 			}
 
@@ -630,7 +661,8 @@ public class Session {
 			@Override
 			public String getCategory() {
 				Category category = snippet.getCategory();
-				if (category == null) return "";
+				if (category == null)
+					return "";
 				return snippet.getCategory().getName();
 			}
 
@@ -641,8 +673,10 @@ public class Session {
 
 			@Override
 			public IComment addComment(String comment) throws IllegalAccessException {
-				if (comment == null || comment.isEmpty()) return null;
-				if (!policy.canComment(Session.this)) throw new IllegalAccessException();
+				if (comment == null || comment.isEmpty())
+					return null;
+				if (!policy.canComment(Session.this))
+					throw new IllegalAccessException();
 
 				Comment objComment = Comment.createComment(user, snippet, comment);
 				snippet.addComment(objComment);
@@ -654,7 +688,7 @@ public class Session {
 			@Override
 			public void addFavorite() {
 				if (Session.this.user == null)
-				// TODO Add support for guest user favorites
+					// TODO Add support for guest user favorites
 					return;
 
 				Session.this.user.addFavorite(snippet);
@@ -663,7 +697,7 @@ public class Session {
 			@Override
 			public void removeFavorite() {
 				if (Session.this.user == null)
-				// TODO Add support for guest user favorites
+					// TODO Add support for guest user favorites
 					return;
 
 				Session.this.user.removeFavorite(snippet);
@@ -671,7 +705,8 @@ public class Session {
 
 			@Override
 			public void delete() throws IllegalAccessException {
-				if (!policy.canDeleteSnippet(Session.this, snippet)) throw new IllegalAccessException();
+				if (!policy.canDeleteSnippet(Session.this, snippet))
+					throw new IllegalAccessException();
 
 				snippet.delete();
 			}
@@ -692,9 +727,12 @@ public class Session {
 	 *         notification is null
 	 */
 	private INotification createINotification(final Notification notification) {
-		if (notification == null) return null;
-		if (!isLoggedIn()) return null;
-		if (user != notification.getOwner()) return null;
+		if (notification == null)
+			return null;
+		if (!isLoggedIn())
+			return null;
+		if (user != notification.getOwner())
+			return null;
 
 		return new INotification() {
 
@@ -732,7 +770,8 @@ public class Session {
 			public void delete() {
 				// Here the check takes place, because this call is criitcal to
 				// user data
-				if (notification.getOwner() != user) return;
+				if (notification.getOwner() != user)
+					return;
 
 				// TODO Implement me
 			}
@@ -763,7 +802,8 @@ public class Session {
 	 */
 	public void doActivity() {
 		synchronized (state) {
-			if (getState() == SessionState.deleted) throw new IllegalStateException();
+			if (getState() == SessionState.deleted)
+				throw new IllegalStateException();
 			this.lastActivityTime = System.currentTimeMillis();
 			if (this.state != SessionState.active) {
 				refreshSessionState();
@@ -779,7 +819,8 @@ public class Session {
 	 */
 	private void refreshSessionState() {
 		synchronized (state) {
-			if (getState() == SessionState.deleted) throw new IllegalStateException();
+			if (getState() == SessionState.deleted)
+				throw new IllegalStateException();
 			long delay = System.currentTimeMillis() - this.lastActivityTime;
 			if (delay > this.deleteDelay) {
 				deleteSession();
@@ -816,10 +857,12 @@ public class Session {
 	 *            of the session to be deleted.
 	 */
 	public static void deleteSession(String cookie) {
-		if (cookie == null || cookie.length() == 0) return;
+		if (cookie == null || cookie.length() == 0)
+			return;
 
 		Session session = getSession(cookie);
-		if (session == null) return;
+		if (session == null)
+			return;
 		session.deleteSession();
 	}
 
@@ -831,7 +874,8 @@ public class Session {
 	 */
 	private void inactivateSession() {
 		synchronized (state) {
-			if (getState() == SessionState.deleted) throw new IllegalStateException();
+			if (getState() == SessionState.deleted)
+				throw new IllegalStateException();
 			this.state = SessionState.inactive;
 		}
 	}
@@ -869,7 +913,8 @@ public class Session {
 		synchronized (storedSessions) {
 			int maxTries = storedSessions.size() * 1000;
 			while (storedSessions.containsKey((sid = getRandomizedSID())))
-				if (maxTries-- <= 0) throw new RuntimeException("Session creation failure");
+				if (maxTries-- <= 0)
+					throw new RuntimeException("Session creation failure");
 
 			session = createNewSession(sid);
 			// XXX: Maybe a new created session can have a reduced lifetime ...
@@ -902,7 +947,8 @@ public class Session {
 	 * @return the IUser interface for the session user
 	 */
 	public IUser getIUser() {
-		if (!isLoggedIn()) return null;
+		if (!isLoggedIn())
+			return null;
 		try {
 			return getIUser(user.getUsername());
 		} catch (IllegalAccessException e) {
@@ -918,7 +964,8 @@ public class Session {
 	 * @return the username or "guest" if a guest session
 	 */
 	public String getUsername() {
-		if (!isLoggedIn()) return "guest";
+		if (!isLoggedIn())
+			return "guest";
 		return user.getUsername();
 	}
 
@@ -932,10 +979,12 @@ public class Session {
 	 *         been found
 	 */
 	public ICategory getCategory(String name) {
-		if (name == null || name.isEmpty()) return null;
+		if (name == null || name.isEmpty())
+			return null;
 
 		Category category = Category.getCategory(name);
-		if (category == null) return null;
+		if (category == null)
+			return null;
 
 		return createICategory(category);
 	}
@@ -948,7 +997,8 @@ public class Session {
 	 * @return the created interface
 	 */
 	private ICategory createICategory(final Category category) {
-		if (category == null) return null;
+		if (category == null)
+			return null;
 
 		return new ICategory() {
 
@@ -956,16 +1006,20 @@ public class Session {
 
 			@Override
 			public void setName(String name) throws IllegalAccessException {
-				if (name == null || name.isEmpty()) return;
-				if (!policy.canEditCategory(Session.this, category)) throw new IllegalAccessException();
+				if (name == null || name.isEmpty())
+					return;
+				if (!policy.canEditCategory(Session.this, category))
+					throw new IllegalAccessException();
 
 				category.setName(name);
 			}
 
 			@Override
 			public void setDescription(String desc) throws IllegalAccessException {
-				if (desc == null || desc.isEmpty()) return;
-				if (!policy.canEditCategory(Session.this, category)) throw new IllegalAccessException();
+				if (desc == null || desc.isEmpty())
+					return;
+				if (!policy.canEditCategory(Session.this, category))
+					throw new IllegalAccessException();
 
 				// TODO Auto-generated method stub
 
@@ -1003,13 +1057,15 @@ public class Session {
 			@Override
 			public void addSnippet(String name, String description, String code, String language)
 					throws IllegalArgumentException, IllegalAccessException {
-				if (policy.canCreateSnippet(Session.this, category)) throw new IllegalAccessException();
+				if (policy.canCreateSnippet(Session.this, category))
+					throw new IllegalAccessException();
 				/* This security call is hard-coded and remains as-it-is! */
-				if (user == null) throw new IllegalAccessException();
+				if (user == null)
+					throw new IllegalAccessException();
 
 				try {
 					// IllegalArgumentExceptions are created in this call
-					Snippet snippet = Snippet.createSnippet(user, name, description, Code.createCode(code, language));
+					Snippet snippet = Snippet.createSnippet(user, name, description, code, language);
 					category.addSnippet(snippet);
 				} catch (UnsupportedLanguageException e) {
 					throw new IllegalArgumentException("Language not supported: " + language, e);
@@ -1067,7 +1123,8 @@ public class Session {
 	 */
 	public synchronized ISnippet getISnippet(int hash) {
 		Snippet snippet = Snippet.getSnippet(hash);
-		if (snippet == null) return null;
+		if (snippet == null)
+			return null;
 
 		return createISnippet(snippet);
 	}
