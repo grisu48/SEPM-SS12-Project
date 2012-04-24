@@ -71,8 +71,6 @@ public interface IPersistence {
 	 */
 	public static int DB_FORCE_DELETE = 8;
 
-	// TODO: specialize Exception
-
 	/**
 	 * Persist a single User-dataset.
 	 * 
@@ -81,7 +79,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeUser(User user, int mode) throws IOException;
 
@@ -93,7 +91,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeUser(List<User> users, int mode) throws IOException;
 
@@ -105,7 +103,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeSnippet(Snippet snippet, int mode) throws IOException;
 
@@ -117,7 +115,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeSnippet(List<Snippet> snippets, int mode) throws IOException;
 
@@ -129,7 +127,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeComment(Comment comment, int mode) throws IOException;
 
@@ -141,7 +139,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeComment(List<Comment> comments, int mode) throws IOException;
 
@@ -153,7 +151,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeTag(Tag tag, int mode) throws IOException;
 
@@ -165,7 +163,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeTag(List<Tag> tags, int mode) throws IOException;
 
@@ -177,7 +175,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeNotification(Notification notification, int mode) throws IOException;
 
@@ -189,7 +187,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeNotification(List<Notification> notifications, int mode) throws IOException;
 
@@ -201,7 +199,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeCode(Code code, int mode) throws IOException;
 
@@ -213,7 +211,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeCode(List<Code> codes, int mode) throws IOException;
 
@@ -225,7 +223,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeCategory(Category category, int mode) throws IOException;
 
@@ -237,11 +235,10 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeCategory(List<Category> categories, int mode) throws IOException;
 
-	// XXX Language not implemented yet.
 	/**
 	 * Persist a language.
 	 * 
@@ -250,11 +247,10 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeLanguage(String language, int mode) throws IOException;
 
-	// XXX Rating not implemented yet.
 	/**
 	 * Persist a rating. This operation updates an existing rating if the user
 	 * has rated already for the given snippet. This operation will be rejected
@@ -271,11 +267,10 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public void writeRating(Integer rating, Snippet snippet, User user, int mode) throws IOException;
 
-	// XXX Vote not implemented yet.
 	/**
 	 * Persist a vote. This operation updates an existing vote if the user has
 	 * voted already for the given comment. This operation will be rejected in
@@ -292,9 +287,9 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the actual value of Comment.vote_sum
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public int writeVote(Integer vote, Comment comment, User user, int mode) throws IOException;
+	public void writeVote(Integer vote, Comment comment, User user, int mode) throws IOException;
 
 	/**
 	 * Persist a positive vote. This operation updates an existing vote if the
@@ -310,9 +305,9 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the actual value of Comment.vote_sum
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public int votePositive(User user, Comment comment, int mode) throws IOException;
+	public void votePositive(User user, Comment comment, int mode) throws IOException;
 
 	/**
 	 * Persist a negative vote. This operation updates an existing vote if the
@@ -328,9 +323,9 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the actual value of Comment.vote_sum
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public int voteNegative(User user, Comment comment, int mode) throws IOException;
+	public void voteNegative(User user, Comment comment, int mode) throws IOException;
 
 	/**
 	 * Remove a vote. This operation updates an existing vote to 'none' in
@@ -345,9 +340,9 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the actual value of Comment.vote_sum
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public int unVote(User user, Comment comment, int mode) throws IOException;
+	public void unVote(User user, Comment comment, int mode) throws IOException;
 
 	/**
 	 * Sets the favourite-state of the snippet.
@@ -360,9 +355,9 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return true if the state has changed
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public boolean addFavourite(Snippet snippet, User user, int mode) throws IOException;
+	public void addFavourite(Snippet snippet, User user, int mode) throws IOException;
 
 	/**
 	 * Clears the favourite-state of the snippet.
@@ -375,19 +370,25 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return true if the state has changed
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public boolean removeFavourite(Snippet snippet, User user, int mode) throws IOException;
+	public void removeFavourite(Snippet snippet, User user, int mode) throws IOException;
 
 	/**
 	 * get a user by his nickname
 	 * 
 	 * @param nick
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public User getUser(String nick) throws IOException;
 
+	/**
+	 * get a user by his email address
+	 * @param email
+	 * @return
+	 * @throws IOException
+	 */
 	public User getUserByEmail(String email) throws IOException;
 
 	public List<User> findUser(String realName) throws IOException;
@@ -418,7 +419,7 @@ public interface IPersistence {
 	 * 
 	 * @param category
 	 * @return the direct child categories in first order
-	 * @throws Exception
+	 * @throws IOException
 	 */
 	public List<Category> getSubcategories(Category category) throws IOException;
 
