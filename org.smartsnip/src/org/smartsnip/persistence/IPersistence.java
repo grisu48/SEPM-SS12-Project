@@ -246,7 +246,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeLanguage(Language language, int mode) throws Exception;
+	public void writeLanguage(String language, int mode) throws Exception;
 
 	// XXX Rating not implemented yet.
 	/**
@@ -267,7 +267,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeRating(Rating rating, Snippet snippet, User user, int mode)
+	public void writeRating( rating, Snippet snippet, User user, int mode)
 			throws Exception;
 
 	// XXX Vote not implemented yet.
@@ -376,7 +376,12 @@ public interface IPersistence {
 	 */
 	public boolean clearFavouriteState(Snippet snippet) throws Exception;
 
-	// TODO comments
+	/**
+	 * get a user by his nickname
+	 * @param nick
+	 * @return
+	 * @throws Exception
+	 */
 	public User getUser(String nick) throws Exception;
 
 	public List<User> getUser(String first, String last) throws Exception;
@@ -410,9 +415,9 @@ public interface IPersistence {
 	public List<Category> getAllSubcategories(Category category)
 			throws Exception;
 
-	public Language getLanguage(Snippet snippet) throws Exception;
+	public String getLanguage(Snippet snippet) throws Exception;
 
-	public List<Language> getAllLanguages() throws Exception;
+	public List<String> getAllLanguages() throws Exception;
 
 	public List<Rating> getRatings(Snippet snippet) throws Exception;
 
