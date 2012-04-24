@@ -1,5 +1,7 @@
 package org.smartsnip.core;
 
+import org.smartsnip.persistence.IPersistence;
+
 /**
  * This class is used to create some test objects in the application layer to
  * test the implementation of the GUI.
@@ -9,6 +11,8 @@ package org.smartsnip.core;
  */
 public class Persistence {
 
+	public static IPersistence persistence = null;
+	
 	public final static String testuser1 = "javajoe";
 	public final static String testuser2 = "rubyrupert";
 	public final static String testuser3 = "misterX";
