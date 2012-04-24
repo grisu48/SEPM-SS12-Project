@@ -305,7 +305,7 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Snippet> search(String searchString) throws IOException {
+	public List<Snippet> search(String searchString, int min, int max) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -332,6 +332,27 @@ public class MemPersistence implements IPersistence {
 	public int getTagsCount() throws IOException {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void writePassword(Pair<String, String> userPass, int mode)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getPassword(User user) throws IOException,
+			UnsupportedOperationException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean verifyPassword(User user, String password)
+			throws IOException, UnsupportedOperationException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
