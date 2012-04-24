@@ -32,7 +32,7 @@ public interface INotification {
 	public String getSource();
 
 	/**
-	 * @returnthe notification message text
+	 * @return the notification message text
 	 */
 	public String getMessage();
 
