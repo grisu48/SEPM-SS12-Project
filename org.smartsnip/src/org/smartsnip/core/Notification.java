@@ -26,7 +26,7 @@ public class Notification {
 	/**
 	 * @return the owner of the notification
 	 */
-	User getOwner() {
+	public User getOwner() {
 		return owner;
 	}
 
@@ -34,28 +34,28 @@ public class Notification {
 	 * 
 	 * @return the message of the notification
 	 */
-	String getMessage() {
+	public String getMessage() {
 		return message;
 	}
 
 	/**
 	 * @return true if read, false if unread
 	 */
-	boolean isRead() {
+	public boolean isRead() {
 		return read;
 	}
 
 	/**
 	 * @return the sending time of the notification
 	 */
-	String getTime() {
+	public String getTime() {
 		return time;
 	}
 
 	/**
 	 * @return the source of the notification
 	 */
-	String getSource() {
+	public String getSource() {
 		return source;
 	}
 
