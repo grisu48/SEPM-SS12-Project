@@ -5,7 +5,9 @@ public abstract class Code {
 	public final String code;
 	/** Code language */
 	public final String language;
-
+	/** Version of this code object, auto incrementing */
+	private int version;
+	
 	/**
 	 * Exception that is used to express, that a given coding language is not
 	 * supported by the system.
@@ -97,6 +99,13 @@ public abstract class Code {
 		return language;
 	}
 
+	/**
+	 * @return current version of this code object
+	 */
+	public int getVersion() {
+		return version;
+	}
+	
 	/**
 	 * Creates a new code object with the given code and the language.
 	 * 
