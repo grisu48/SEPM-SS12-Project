@@ -6,23 +6,25 @@ import org.smartsnip.core.ISnippet;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class TagArea extends Composite {
 	
-	private VerticalPanel vertPanel;
+	private FlowPanel myPanel;
 	private Label title;
 	
 	public TagArea() {
-		vertPanel = new VerticalPanel();
+		myPanel = new FlowPanel();
 		title = new Label("Tags");
-		vertPanel.add(title);
-		vertPanel.add(new Button("Test1"));
-		vertPanel.add(new Button("Test2"));
-		vertPanel.add(new Button("Test3"));
+		myPanel.add(title);
+		myPanel.add(new Button("So ein Tag"));
+		myPanel.add(new Button("so wun"));
+		myPanel.add(new Button("derschön"));
+		myPanel.add(new Button("wie heute"));
 	
-		initWidget(vertPanel);
+		initWidget(myPanel);
 	    // Give the overall composite a style name.
 	    setStyleName("tagArea");
 	}

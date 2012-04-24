@@ -6,23 +6,24 @@ import org.smartsnip.core.ISnippet;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class CatArea extends Composite {
 	
-	private VerticalPanel vertPanel;
+	private FlowPanel myPanel;
 	private Label title;
 	
 	public CatArea() {
-		vertPanel = new VerticalPanel();
+		myPanel = new FlowPanel();
 		title = new Label("Categories");
-		vertPanel.add(title);
-		vertPanel.add(new Button("Test1"));
-		vertPanel.add(new Button("Test2"));
-		vertPanel.add(new Button("Test3"));
+		myPanel.add(title);
+		myPanel.add(new Button("Test1"));
+		myPanel.add(new Button("Test2"));
+		myPanel.add(new Button("Test3"));
 	
-		initWidget(vertPanel);
+		initWidget(myPanel);
 	    // Give the overall composite a style name.
 	    setStyleName("catArea");
 	}
