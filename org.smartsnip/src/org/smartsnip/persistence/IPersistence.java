@@ -6,15 +6,7 @@ package org.smartsnip.persistence;
 
 import java.io.IOException;
 import java.util.List;
-
-import org.smartsnip.core.Category;
-import org.smartsnip.core.Code;
-import org.smartsnip.core.Comment;
-import org.smartsnip.core.Notification;
-import org.smartsnip.core.Pair;
-import org.smartsnip.core.Snippet;
-import org.smartsnip.core.Tag;
-import org.smartsnip.core.User;
+import org.smartsnip.core.*;
 
 /**
  * Wrapper interface which contains all methods to persist or load data from the
@@ -95,6 +87,16 @@ public interface IPersistence {
 	 */
 	public void writeUser(List<User> users, int mode) throws IOException;
 
+	/**
+	 * Persist a new password into the database
+	 * @param userPass the pair of nickname and password-string
+	 * @param mode
+	 *            the constraints for the write access. more than one constraint
+	 *            can be added by a logical or connection.
+	 * @throws IOException 
+	 */
+	public void writePassword(Pair<String, String> userPass, int mode) throws IOException;
+	
 	/**
 	 * Persist a single Snippet-dataset.
 	 * 
@@ -391,6 +393,31 @@ public interface IPersistence {
 	 */
 	public User getUserByEmail(String email) throws IOException;
 
+	/**
+	 * get the password string related to the user
+	 * @param user
+	 * @return the password string
+	 * @throws IOException
+	 * @throws UnsupportedOperationException 
+	 */
+	public String getPassword (User user) throws IOException, UnsupportedOperationException;
+	
+	/**
+	 * verifies the password of the given user
+	 * @param user
+	 * @param password
+	 * @return true if the password is correct
+	 * @throws IOException
+	 * @throws UnsupportedOperationException 
+	 */
+	public boolean verifyPassword (User user, String password) throws IOException, UnsupportedOperationException;
+	
+	/**
+	 * find all users 
+	 * @param realName
+	 * @return
+	 * @throws IOException
+	 */
 	public List<User> findUser(String realName) throws IOException;
 
 	public List<Snippet> getUserSnippets(User owner) throws IOException;
