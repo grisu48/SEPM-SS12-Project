@@ -426,7 +426,17 @@ public interface IPersistence {
 
 	public List<Pair<User, Integer>> getRatings(Snippet snippet) throws IOException;
 
-	public List<Pair<User, Integer>> getVotes(Comment comment) throws IOException;
+	/**
+	 * Creates a pair with the votes for a comment.
+	 * 
+	 * The first parameter gives the positive votes, the seconds parameter of
+	 * the pair gives the number of negative votes
+	 * 
+	 * @param comment
+	 * @return
+	 * @throws IOException
+	 */
+	public Pair<Integer, Integer> getVotes(Comment comment) throws IOException;
 
 	public List<Snippet> search(String searchString) throws IOException;
 
