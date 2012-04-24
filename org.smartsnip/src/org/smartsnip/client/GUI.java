@@ -27,8 +27,8 @@ public class GUI implements EntryPoint {
 		
 		//Create the Page
 		createBasicPage();
-		//showSearchPage();
-		showImpressum();
+		showSearchPage();
+		//showImpressum();
 		//showSnipPage();
 		//showPersonalPage();
 		//showLoginPopup();
@@ -81,6 +81,7 @@ public class GUI implements EntryPoint {
 		
 		TabArea myTabArea = new TabArea();
 		VerticalPanel rightPanel = new VerticalPanel();
+		rightPanel.setStyleName("rightPanel");
 		CatArea myCatArea = new CatArea();
 		TagArea myTagArea = new TagArea();
 	
@@ -91,9 +92,11 @@ public class GUI implements EntryPoint {
 		dataPanel.add(rightPanel);
 		rightPanel.add(myCatArea);
 		rightPanel.add(myTagArea);
-		
-		
+	
 	}
+	
+	
+	
 	
 	public void showSnipPage() {
 		SnipArea mySnipArea = new SnipArea();

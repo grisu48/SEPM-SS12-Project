@@ -243,8 +243,54 @@ header .gwt-Label {
 	margin: 10px;
 	padding: 0px;
 }
-*/
+
+.rightPanel {
+	padding: 20px;
+	margin: 20px;
+	width: 300px;
+	background-color:#e6e6e6;
+	border-style:solid;
+	border-color:#a9c34a;
+	border-width:1px;
+}
 
 
+
+.catArea {	
+}
+
+.catArea .gwt-Button {
+	padding:3px;
+	margin:3px;
+	background-color:#fffeeb;
+	color:#a9c34a;
+	
+}
+
+.catArea .gwt-Label {
+	margin-top:20px;
+	font-family:"Lato";
+	font-weight:700;
+}
+
+
+
+
+.tagArea {	
+}
+
+.tagArea .gwt-Button {
+	padding:3px;
+	margin:3px;
+	background-color:#fffeeb;
+	color:#a9c34a;
+	
+}
+
+.tagArea .gwt-Label {
+	margin-top:20px;
+	font-family:"Lato";
+	font-weight:700;
+}
  
 
