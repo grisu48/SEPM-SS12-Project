@@ -13,8 +13,8 @@ public class CodeJava extends Code {
 	 * 
 	 * @param code
 	 */
-	CodeJava(String code) {
-		super(code, language);
+	CodeJava(String code, Snippet snippet) {
+		super(code, language, snippet);
 	}
 
 	@Override
