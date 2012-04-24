@@ -123,13 +123,16 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void writeNotification(List<Notification> notifications, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (notifications == null)
+			return;
 
+		for (Notification notification : notifications) {
+			writeNotification(notification, mode);
+		}
 	}
 
 	@Override
 	public void writeCode(Code code, int mode) throws IOException {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -164,39 +167,33 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public int writeVote(Integer vote, Comment comment, User user, int mode) throws IOException {
+	public void writeVote(Integer vote, Comment comment, User user, int mode) throws IOException {
 		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
-	public int votePositive(User user, Comment comment, int mode) throws IOException {
+	public void votePositive(User user, Comment comment, int mode) throws IOException {
 		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
-	public int voteNegative(User user, Comment comment, int mode) throws IOException {
+	public void voteNegative(User user, Comment comment, int mode) throws IOException {
 		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
-	public int unVote(User user, Comment comment, int mode) throws IOException {
+	public void unVote(User user, Comment comment, int mode) throws IOException {
 		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
-	public boolean addFavourite(Snippet snippet, User user, int mode) throws IOException {
+	public void addFavourite(Snippet snippet, User user, int mode) throws IOException {
 		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
-	public boolean removeFavourite(Snippet snippet, User user, int mode) throws IOException {
+	public void removeFavourite(Snippet snippet, User user, int mode) throws IOException {
 		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
