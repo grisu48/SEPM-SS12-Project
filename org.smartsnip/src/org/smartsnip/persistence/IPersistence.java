@@ -417,7 +417,7 @@ public interface IPersistence {
 	/**
 	 * 
 	 * @param category
-	 * @return the child categories in first order
+	 * @return the direct child categories in first order
 	 * @throws Exception
 	 */
 	public List<Category> getSubcategories(Category category) throws IOException;
@@ -430,4 +430,11 @@ public interface IPersistence {
 
 	public List<Snippet> search(String searchString) throws IOException;
 
+	public int getUserCount() throws IOException;
+
+	public int getCategoryCount() throws IOException;
+
+	public int getSnippetsCount() throws IOException;
+
+	public int getTagsCount() throws IOException;
 }
