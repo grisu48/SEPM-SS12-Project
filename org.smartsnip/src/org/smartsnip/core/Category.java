@@ -17,7 +17,7 @@ public class Category {
 	/** Description of the category */
 	private String description;
 	/** Parent category, if present, or null if a root category */
-	private Category parent;
+	private Category parent = null;
 	/** Sub-categories */
 	private final List<Category> subcategories;
 
@@ -164,6 +164,13 @@ public class Category {
 	 * @return the parent
 	 */
 	public Category getParent() {
+		try {
+			if (parent == null)
+			parent = Persistence.persistence.getParentCategory(this);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+		}
+		
 		return parent;
 	}
 
