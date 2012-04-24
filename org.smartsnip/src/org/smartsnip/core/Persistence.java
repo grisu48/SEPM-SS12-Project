@@ -12,7 +12,7 @@ import org.smartsnip.persistence.IPersistence;
 public class Persistence {
 
 	public static IPersistence persistence = null;
-	
+
 	public final static String testuser1 = "javajoe";
 	public final static String testuser2 = "rubyrupert";
 	public final static String testuser3 = "misterX";
@@ -48,7 +48,8 @@ public class Persistence {
 	 * This method creates the test environment
 	 */
 	public synchronized static void createTestEnvironment() {
-		if (testEnvironment) return;
+		if (testEnvironment)
+			return;
 
 		User user1 = User.createNewUser(testuser1, password1, "joe@java.com");
 		User user2 = User.createNewUser(testuser2, password2, "rupert@spam.com");
@@ -61,12 +62,12 @@ public class Persistence {
 		final String testCode = "// Not even hello world is found here :-/";
 		for (int i = 0; i < 10; i++) {
 
-			Snippet snippet = Snippet.createSnippet(user1, "Testsnippet" + i, "I am the test snippet #" + i,
-					new CodeJava(testCode));
+			Snippet snippet = Snippet.createSnippet(user1, "Testsnippet" + i, "I am the test snippet #" + i, testCode,
+					"Java");
 			snippet.setCategory(mainCategory);
 		}
 
-		Snippet snippet = Snippet.createSnippet(user1, "P2P", "P2P Example", new CodeJava(testCode));
+		Snippet snippet = Snippet.createSnippet(user1, "P2P", "P2P Example", testCode, "Java");
 		testSnippet = snippet;
 		snippet.setCategory(p2pCategory);
 
