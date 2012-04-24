@@ -267,7 +267,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws Exception
 	 */
-	public void writeRating( rating, Snippet snippet, User user, int mode)
+	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
 			throws Exception;
 
 	// XXX Vote not implemented yet.
@@ -289,7 +289,7 @@ public interface IPersistence {
 	 * @return the actual value of Comment.vote_sum
 	 * @throws Exception
 	 */
-	public int writeVote(Vote vote, Comment comment, User user, int mode)
+	public int writeVote(Integer vote, Comment comment, User user, int mode)
 			throws Exception;
 
 	/**
@@ -348,33 +348,32 @@ public interface IPersistence {
 	public int unVote(User user, Comment comment, int mode) throws Exception;
 
 	/**
-	 * Toggles the actual favourite-state of the snippet.
-	 * 
-	 * @param snippet
-	 *            the snippet to change state
-	 * @throws Exception
-	 */
-	public void toggleFavouriteState(Snippet snippet) throws Exception;
-
-	/**
 	 * Sets the favourite-state of the snippet.
 	 * 
 	 * @param snippet
 	 *            the snippet to change state
+	 * @param user the owner of the favorite list
+	 * @param mode
+	 *            the constraints for the write access. more than one constraint
+	 *            can be added by a logical or connection.
 	 * @return true if the state has changed
 	 * @throws Exception
 	 */
-	public boolean setFavouriteState(Snippet snippet) throws Exception;
+	public boolean addFavourite(Snippet snippet, User user, int mode) throws Exception;
 
 	/**
 	 * Clears the favourite-state of the snippet.
 	 * 
 	 * @param snippet
 	 *            the snippet to change state
+	 * @param user the owner of the favorite list
+	 * @param mode
+	 *            the constraints for the write access. more than one constraint
+	 *            can be added by a logical or connection.
 	 * @return true if the state has changed
 	 * @throws Exception
 	 */
-	public boolean clearFavouriteState(Snippet snippet) throws Exception;
+	public boolean removeFavourite(Snippet snippet, User user, int mode) throws Exception;
 
 	/**
 	 * get a user by his nickname
@@ -383,14 +382,14 @@ public interface IPersistence {
 	 * @throws Exception
 	 */
 	public User getUser(String nick) throws Exception;
+	
+	public User getUserByEmail(String email) throws Exception;
 
-	public List<User> getUser(String first, String last) throws Exception;
+	public List<User> findUser(String realName) throws Exception;
 
-	public boolean loginUser(String nick, String password) throws Exception;
+	public List<Snippet> getUserSnippets(User owner) throws Exception;
 
-	public List<Snippet> getSnippets(User owner) throws Exception;
-
-	public List<Snippet> getSnippets(User owner, Boolean favouritesOnly)
+	public List<Snippet> getFavorited(User owner)
 			throws Exception;
 
 	public List<Snippet> getSnippets(List<Tag> matchingTags) throws Exception;
@@ -403,25 +402,30 @@ public interface IPersistence {
 
 	public List<Tag> getAllTags() throws Exception;
 
-	public List<Notification> getNotifications(User user, boolean viewedOnly)
+	public List<Notification> getNotifications(User user, boolean unreadOnly)
 			throws Exception;
 
-	public List<Code> getCode(Snippet snippet) throws Exception;
+	public List<Code> getCodes(Snippet snippet) throws Exception;
 
 	public Category getCategory(Snippet snippet) throws Exception;
 
 	public Category getParentCategory(Category category) throws Exception;
 
-	public List<Category> getAllSubcategories(Category category)
+	/**
+	 * 
+	 * @param category
+	 * @return the child categories in first order
+	 * @throws Exception
+	 */
+	public List<Category> getSubcategories(Category category)
 			throws Exception;
-
-	public String getLanguage(Snippet snippet) throws Exception;
 
 	public List<String> getAllLanguages() throws Exception;
 
-	public List<Rating> getRatings(Snippet snippet) throws Exception;
+	public List<Pair<User, Integer>> getRatings(Snippet snippet) throws Exception;
 
-	public List<Vote> getVotes(Comment comment) throws Exception;
+	public List<Pair<User, Integer>> getVotes(Comment comment) throws Exception;
 	
-	public List<Snippet> search (Search search) throws Exception;
+	public List<Snippet> search (String searchString) throws Exception;
+	
 }
