@@ -22,6 +22,23 @@ import org.smartsnip.core.User;
  */
 public class SqlPersistence implements IPersistence {
 
+	/* Dummy implementation */
+
+	private static SqlPersistence instance = null;
+
+	private SqlPersistence() throws IOException {
+		super();
+	}
+
+	public static SqlPersistence createInstance() throws IOException {
+		if (instance == null) {
+			instance = new SqlPersistence();
+		}
+		return instance;
+	}
+
+	/* End of dummy implementation */
+
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#writeUser(org.smartsnip.core.User,
 	 *      int)
