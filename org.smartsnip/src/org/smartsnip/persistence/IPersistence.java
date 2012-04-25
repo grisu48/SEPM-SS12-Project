@@ -98,8 +98,8 @@ public interface IPersistence {
 	/**
 	 * Persist a new password into the database
 	 * 
-	 * @param username
-	 *            the nickname of the user
+	 * @param user
+	 *            the owner of the password
 	 * @param password
 	 *            to set for the user
 	 * @param mode
@@ -107,7 +107,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 */
-	public void writePassword(String username, String password, int mode) throws IOException;
+	public void writePassword(User user, String password, int mode) throws IOException;
 
 	/**
 	 * Persist a single Snippet-dataset.
