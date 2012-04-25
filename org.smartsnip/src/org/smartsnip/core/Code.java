@@ -1,5 +1,6 @@
 package org.smartsnip.core;
 
+
 public abstract class Code {
 	/** Concrete code */
 	public final String code;

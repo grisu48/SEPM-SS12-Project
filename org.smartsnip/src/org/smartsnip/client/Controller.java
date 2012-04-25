@@ -101,33 +101,23 @@ public class Controller {
 	 * 
 	 * @return the session ID of the current session
 	 */
-	static String getSessionID() {
-		String sid = Cookies.getCookie(COOKIE_SESSION);
-		if (sid == null) sid = createNewSession();
+	//static String getSessionID() {
+		//String sid = Cookies.getCookie(COOKIE_SESSION);
+		//if (sid == null) sid = createNewSession();
+		//return sid;
+	//}
 
-		return sid;
-	}
-
-	/**
-	 * Creates a new session
-	 * 
-	 * @return the session id of the newly generated session
-	 */
-	private static String createNewSession() {
-		Session session = Session.createNewSession();
-		session.addObserver(sessionObserver);
-		return session.getCookie();
-	}
+	
 
 	/**
 	 * Checks if the current session is logged in
 	 * 
 	 * @return true if the current session is logged in, otherwise false
 	 */
-	static boolean isLoggedIn() {
-		if (!hasSession()) return false;
-		return getSession().isLoggedIn();
-	}
+	//static boolean isLoggedIn() {
+	//	if (!hasSession()) return false;
+	//	return getSession().isLoggedIn();
+	//}
 
 	/**
 	 * Checks if the active client has an attached session
@@ -149,9 +139,9 @@ public class Controller {
 	 * 
 	 * @return the attached session of the current client
 	 */
-	private static Session getSession() {
-		return Session.getSession(getSessionID());
-	}
+	//private static Session getSession() {
+		//return Session.getSession(getSessionID());
+	//}
 
 	/**
 	 * Gets the username of the currently logged in user. If the current session
@@ -159,16 +149,16 @@ public class Controller {
 	 * 
 	 * @return the username of the currently logged in user
 	 */
-	public static String getUsername() {
-		if (!isLoggedIn()) return "anonym";
-		return getSession().getUsername();
-	}
+	//public static String getUsername() {
+		//if (!isLoggedIn()) return "anonym";
+		//return getSession().getUsername();
+	//}
 
 	/**
 	 * Logs the current session out
 	 */
-	public static void logout() {
-		if (!isLoggedIn()) return;
-		getSession().logout();
-	}
+	//public static void logout() {
+		//if (!isLoggedIn()) return;
+		//getSession().logout();
+	//}
 }
