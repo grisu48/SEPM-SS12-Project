@@ -23,6 +23,19 @@ import org.smartsnip.core.User;
  */
 public class MemPersistence implements IPersistence {
 
+	private static MemPersistence instance = null;
+
+	public static MemPersistence createInstance() throws IOException {
+		if (instance == null) {
+			instance = new MemPersistence();
+		}
+		return instance;
+	}
+
+	private MemPersistence() throws IOException {
+		super();
+	}
+
 	private class TreeItem<E> {
 		private final List<E> children = new ArrayList<E>();
 		private final List<TreeItem<E>> subTree = new ArrayList<TreeItem<E>>();
