@@ -25,14 +25,14 @@ public class MemPersistence implements IPersistence {
 
 	private static MemPersistence instance = null;
 
-	public static MemPersistence createInstance() throws IOException {
+	public static MemPersistence createInstance() {
 		if (instance == null) {
 			instance = new MemPersistence();
 		}
 		return instance;
 	}
 
-	private MemPersistence() throws IOException {
+	private MemPersistence() {
 		super();
 	}
 
