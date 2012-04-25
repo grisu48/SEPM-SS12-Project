@@ -1,4 +1,4 @@
-package org.smartsnip.server;
+package org.smartsnip.core;
 
 
 import org.smartsnip.client.ICommunication;
@@ -14,6 +14,6 @@ public class CommunicationImpl extends RemoteServiceServlet implements
 
 	@Override
 	public String testTalk(String name) throws IllegalArgumentException {
-				return "Hallo Client";
+				return "Hallo Client" + name;
 	}
 }

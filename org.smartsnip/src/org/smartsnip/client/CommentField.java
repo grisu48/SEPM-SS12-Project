@@ -1,6 +1,6 @@
 package org.smartsnip.client;
 
-import org.smartsnip.core.IComment;
+import org.smartsnip.shared.IComment;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;

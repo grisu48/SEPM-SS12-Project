@@ -1,4 +1,4 @@
-package org.smartsnip.core;
+package org.smartsnip.shared;
 
 /**
  * This class represents the access to a notification

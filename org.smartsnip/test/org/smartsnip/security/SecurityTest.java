@@ -5,10 +5,10 @@ import static org.junit.Assert.fail;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.smartsnip.core.ISnippet;
-import org.smartsnip.core.IUser;
 import org.smartsnip.core.Persistence;
 import org.smartsnip.core.Session;
+import org.smartsnip.shared.ISnippet;
+import org.smartsnip.shared.IUser;
 
 /**
  * Security policy tester
@@ -37,7 +37,9 @@ public class SecurityTest {
 	 */
 	@Test
 	public void createGuestSession() {
-		if (session.isLoggedIn()) fail("Guest session creation failure");
+		if (session.isLoggedIn()) {
+			fail("Guest session creation failure");
+		}
 	}
 
 	/**
@@ -47,7 +49,9 @@ public class SecurityTest {
 	public void testGuestPolicies() {
 		// TODO Extend with expanding IUser interface
 
-		if (session.getIUser() != null) fail("Guest session returned IUser interface");
+		if (session.getIUser() != null) {
+			fail("Guest session returned IUser interface");
+		}
 		IUser testuser = null;
 		try {
 			testuser = session.getIUser(Persistence.testuser1);

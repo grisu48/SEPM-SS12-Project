@@ -8,6 +8,12 @@ import java.util.List;
 import org.smartsnip.core.Code.UnsupportedLanguageException;
 import org.smartsnip.security.IAccessPolicy;
 import org.smartsnip.security.PrivilegeController;
+import org.smartsnip.shared.ICategory;
+import org.smartsnip.shared.IComment;
+import org.smartsnip.shared.INotification;
+import org.smartsnip.shared.ISessionObserver;
+import org.smartsnip.shared.ISnippet;
+import org.smartsnip.shared.IUser;
 
 public class Session {
 	/** Session storage, each session is identified with the cookie string */

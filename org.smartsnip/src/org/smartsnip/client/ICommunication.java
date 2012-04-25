@@ -9,4 +9,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("comm")
 public interface ICommunication extends RemoteService {
 	String testTalk(String name) throws IllegalArgumentException;
+	
+	
+	
+	
+	
 }

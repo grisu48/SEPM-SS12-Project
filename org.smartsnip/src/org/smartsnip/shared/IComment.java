@@ -1,4 +1,4 @@
-package org.smartsnip.core;
+package org.smartsnip.shared;
 
 import java.util.Date;
 
