@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
@@ -22,11 +23,66 @@ import org.smartsnip.core.User;
  */
 public class MemPersistence implements IPersistence {
 
+	private class TreeItem<E> {
+		private final List<E> children = new ArrayList<E>();
+		private final List<TreeItem<E>> subTree = new ArrayList<TreeItem<E>>();
+
+		public boolean contains(E e) {
+			if (e == null)
+				return false;
+
+			if (children.contains(e))
+				return true;
+			for (TreeItem<E> item : subTree) {
+				if (item.contains(e))
+					return true;
+			}
+
+			return false;
+		}
+
+		public E get(E item) {
+			if (item == null)
+				return null;
+
+			// If one of my children, then get it!
+			int index = children.indexOf(item);
+			if (index >= 0)
+				return children.get(index);
+
+			// Recursive call in all subtrees
+			for (TreeItem<E> current : subTree) {
+				E result = current.get(item);
+				if (result != null)
+					return result;
+			}
+
+			return null;
+
+		}
+
+		public int size() {
+			int size = children.size();
+			for (TreeItem<E> current : subTree) {
+				size += current.size();
+			}
+			return size;
+		}
+	}
+
 	private final HashMap<String, User> allUsers = new HashMap<String, User>();
 	private final HashMap<Integer, Snippet> allSippets = new HashMap<Integer, Snippet>();
-	private final HashMap<Snippet, Comment> allComments = new HashMap<Snippet, Comment>();
+	private final HashMap<Snippet, List<Comment>> allComments = new HashMap<Snippet, List<Comment>>();
 	private final List<Tag> allTags = new ArrayList<Tag>();
+	private final List<String> allLanguages = new ArrayList<String>();
+	private final HashMap<Snippet, List<Tag>> snippetTags = new HashMap<Snippet, List<Tag>>();
 	private final HashMap<User, List<Notification>> notifications = new HashMap<User, List<Notification>>();
+	private final HashMap<Snippet, List<Code>> allCodes = new HashMap<Snippet, List<Code>>();
+	private final TreeItem<Category> categoryTree = new TreeItem<Category>();
+	private final HashMap<Snippet, HashMap<User, Integer>> ratings = new HashMap<Snippet, HashMap<User, Integer>>();
+	private final HashMap<Comment, HashMap<User, Integer>> votings = new HashMap<Comment, HashMap<User, Integer>>();
+	private final HashMap<User, List<Snippet>> favorites = new HashMap<User, List<Snippet>>();
+	private final HashMap<User, String> passwords = new HashMap<User, String>();
 
 	private String toKey(String key) {
 		if (key == null)
@@ -75,7 +131,15 @@ public class MemPersistence implements IPersistence {
 		if (comment == null)
 			return;
 
-		allComments.put(comment.snippet, comment);
+		List<Comment> list = allComments.get(comment.snippet);
+		if (list == null) {
+			list = new ArrayList<Comment>();
+			allComments.put(comment.snippet, list);
+		}
+		if (list.contains(comment))
+			return;
+
+		list.add(comment);
 	}
 
 	@Override
@@ -133,19 +197,41 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void writeCode(Code code, int mode) throws IOException {
+		if (code == null)
+			return;
+
+		Snippet snippet = code.snippet;
+		List<Code> codes = allCodes.get(snippet);
+		if (codes == null) {
+			codes = new ArrayList<Code>();
+			allCodes.put(snippet, codes);
+		} else {
+			if (codes.contains(code))
+				return;
+		}
+
+		codes.add(code);
 
 	}
 
 	@Override
 	public void writeCode(List<Code> codes, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (codes == null)
+			return;
 
+		for (Code code : codes) {
+			writeCode(code, mode);
+		}
 	}
 
 	@Override
 	public void writeCategory(Category category, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (category == null)
+			return;
 
+		if (categoryTree.contains(category))
+			return;
+		// TODO Implement me
 	}
 
 	@Override
@@ -156,116 +242,226 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void writeLanguage(String language, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (language == null)
+			return;
+		language = language.trim();
+		if (language.isEmpty())
+			return;
 
+		// Check for existings
+		for (String lang : allLanguages)
+			if (lang.equalsIgnoreCase(language))
+				return;
+
+		allLanguages.add(language);
 	}
 
 	@Override
 	public void writeRating(Integer rating, Snippet snippet, User user, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (rating == null || snippet == null || user == null)
+			return;
 
+		HashMap<User, Integer> list = ratings.get(snippet);
+		if (list == null) {
+			list = new HashMap<User, Integer>();
+			ratings.put(snippet, list);
+		}
+		list.put(user, rating);
 	}
 
 	@Override
 	public void writeVote(Integer vote, Comment comment, User user, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (vote == null || comment == null || user == null)
+			return;
+
+		HashMap<User, Integer> list = votings.get(comment);
+		if (list == null) {
+			list = new HashMap<User, Integer>();
+			votings.put(comment, list);
+		}
+		list.put(user, vote);
+
 	}
 
 	@Override
 	public void votePositive(User user, Comment comment, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		writeVote(+1, comment, user, mode);
 	}
 
 	@Override
 	public void voteNegative(User user, Comment comment, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		writeVote(-1, comment, user, mode);
 	}
 
 	@Override
 	public void unVote(User user, Comment comment, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		writeVote(0, comment, user, mode);
 	}
 
 	@Override
 	public void addFavourite(Snippet snippet, User user, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (snippet == null || user == null)
+			return;
+
+		List<Snippet> userFav = favorites.get(user);
+		if (userFav == null) {
+			userFav = new ArrayList<Snippet>();
+			favorites.put(user, userFav);
+		} else if (userFav.contains(snippet))
+			return;
+		userFav.add(snippet);
 	}
 
 	@Override
 	public void removeFavourite(Snippet snippet, User user, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (snippet == null || user == null)
+			return;
+
+		List<Snippet> userFav = favorites.get(user);
+		if (userFav == null)
+			return;
+		if (!userFav.contains(snippet))
+			return;
+		userFav.remove(snippet);
 	}
 
 	@Override
 	public User getUser(String nick) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (nick == null || nick.isEmpty())
+			return null;
+		nick = toKey(nick);
+		return allUsers.get(nick);
 	}
 
 	@Override
 	public User getUserByEmail(String email) throws IOException {
-		// TODO Auto-generated method stub
+		if (email == null || email.isEmpty())
+			return null;
+
+		List<User> users = new ArrayList<User>(allUsers.values());
+		for (User user : users)
+			if (user.getEmail().equalsIgnoreCase(email))
+				return user;
 		return null;
 	}
 
 	@Override
 	public List<User> findUser(String realName) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (realName == null || realName.isEmpty())
+			return null;
+
+		realName = realName.toLowerCase();
+		List<User> users = new ArrayList<User>(allUsers.values());
+		List<User> results = new ArrayList<User>();
+		for (User user : users)
+			if (user.getRealName().contains(realName)) {
+				results.add(user);
+			}
+		return results;
 	}
 
 	@Override
 	public List<Snippet> getUserSnippets(User owner) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (owner == null)
+			return null;
+
+		List<Snippet> snippets = new ArrayList<Snippet>(allSippets.values());
+		List<Snippet> result = new ArrayList<Snippet>();
+		for (Snippet snippet : snippets)
+			if (snippet.owner == owner) {
+				result.add(snippet);
+			}
+		return result;
 	}
 
 	@Override
 	public List<Snippet> getFavorited(User owner) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (owner == null)
+			return null;
+
+		List<Snippet> result = favorites.get(owner);
+		if (result == null) {
+			result = new ArrayList<Snippet>();
+			favorites.put(owner, result);
+		}
+		return result;
 	}
 
 	@Override
 	public List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<Snippet>();
 	}
 
 	@Override
 	public List<Snippet> getSnippets(Category category) throws IOException {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<Snippet>();
 	}
 
 	@Override
 	public List<Comment> getComments(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (snippet == null)
+			return null;
+
+		List<Comment> comments = allComments.get(snippet);
+		if (comments == null) {
+			comments = new ArrayList<Comment>();
+			allComments.put(snippet, comments);
+		}
+		return comments;
 	}
 
 	@Override
 	public List<Tag> getTags(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (snippet == null)
+			return null;
+
+		List<Tag> tags = snippetTags.get(snippet);
+		if (tags == null) {
+			tags = new ArrayList<Tag>();
+			snippetTags.put(snippet, tags);
+		}
+		return tags;
 	}
 
 	@Override
 	public List<Tag> getAllTags() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return allTags;
 	}
 
 	@Override
 	public List<Notification> getNotifications(User user, boolean unreadOnly) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (user == null)
+			return null;
+
+		List<Notification> list = notifications.get(user);
+		if (list == null) {
+			list = new ArrayList<Notification>();
+			notifications.put(user, list);
+		}
+		if (unreadOnly) {
+			List<Notification> result = new ArrayList<Notification>();
+			for (Notification item : list)
+				if (!item.isRead()) {
+					result.add(item);
+				}
+			return result;
+		} else
+			return list;
 	}
 
 	@Override
 	public List<Code> getCodes(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (snippet == null)
+			return null;
+
+		List<Code> codes = allCodes.get(snippet);
+		if (codes == null) {
+			codes = new ArrayList<Code>();
+			allCodes.put(snippet, codes);
+		}
+		return codes;
 	}
 
 	@Override
@@ -288,20 +484,45 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<String> getAllLanguages() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return allLanguages;
 	}
 
 	@Override
 	public List<Pair<User, Integer>> getRatings(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (snippet == null)
+			return null;
+
+		HashMap<User, Integer> list = ratings.get(snippet);
+		if (list == null)
+			return new ArrayList<Pair<User, Integer>>();
+		List<Pair<User, Integer>> result = new ArrayList<Pair<User, Integer>>();
+		List<Entry<User, Integer>> set = new ArrayList<Entry<User, Integer>>(list.entrySet());
+		for (Entry<User, Integer> entry : set) {
+			result.add(new Pair<User, Integer>(entry.getKey(), entry.getValue()));
+		}
+		return result;
 	}
 
 	@Override
 	public Pair<Integer, Integer> getVotes(Comment comment) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		// Pair<positiveVotes, negativeVotes>
+		if (comment == null)
+			return null;
+
+		HashMap<User, Integer> votes = votings.get(comment);
+		if (votes == null)
+			return new Pair<Integer, Integer>(0, 0);
+		int chocolates = 0;
+		int lemons = 0;
+		List<Integer> iVotes = new ArrayList<Integer>(votes.values());
+		for (Integer i : iVotes)
+			if (i < 0) {
+				lemons++;
+			} else if (i > 0) {
+				chocolates++;
+			}
+
+		return new Pair<Integer, Integer>(chocolates, lemons);
 	}
 
 	@Override
@@ -312,47 +533,47 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public int getUserCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return allUsers.size();
 	}
 
 	@Override
 	public int getCategoryCount() throws IOException {
 		// TODO Auto-generated method stub
-		return 0;
+		return categoryTree.size();
 	}
 
 	@Override
 	public int getSnippetsCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return allSippets.size();
 	}
 
 	@Override
 	public int getTagsCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return allTags.size();
 	}
 
 	@Override
-	public void writePassword(Pair<String, String> userPass, int mode)
-			throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void writePassword(User user, String password, int mode) throws IOException {
+		if (user == null || password == null)
+			return;
+
+		passwords.put(user, password);
 	}
 
 	@Override
-	public String getPassword(User user) throws IOException,
-			UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
+	public String getPassword(User user) throws IOException, UnsupportedOperationException {
+		throw new UnsupportedOperationException("getPassword unsupported. Use verifyPassword");
 	}
 
 	@Override
-	public boolean verifyPassword(User user, String password)
-			throws IOException, UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean verifyPassword(User user, String password) throws IOException {
+		if (user == null || password == null || password.isEmpty())
+			return false;
+
+		String pass = passwords.get(user);
+		if (pass == null)
+			return false;
+		return password.equals(pass);
 	}
 
 }

@@ -7,16 +7,24 @@ package org.smartsnip.persistence;
 import java.io.IOException;
 import java.util.List;
 
-import org.smartsnip.core.*;
+import org.smartsnip.core.Category;
+import org.smartsnip.core.Code;
+import org.smartsnip.core.Comment;
+import org.smartsnip.core.Notification;
+import org.smartsnip.core.Pair;
+import org.smartsnip.core.Snippet;
+import org.smartsnip.core.Tag;
+import org.smartsnip.core.User;
 
 /**
  * @author littlelion
- *
+ * 
  */
 public class SqlPersistence implements IPersistence {
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeUser(org.smartsnip.core.User, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeUser(org.smartsnip.core.User,
+	 *      int)
 	 */
 	@Override
 	public void writeUser(User user, int mode) throws IOException {
@@ -25,7 +33,8 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeUser(java.util.List, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeUser(java.util.List,
+	 *      int)
 	 */
 	@Override
 	public void writeUser(List<User> users, int mode) throws IOException {
@@ -34,17 +43,18 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writePassword(org.smartsnip.core.Pair, int)
+	 * @see org.smartsnip.persistence.IPersistence#writePassword(org.smartsnip.core.Pair,
+	 *      int)
 	 */
 	@Override
-	public void writePassword(Pair<String, String> userPass, int mode)
-			throws IOException {
+	public void writePassword(User user, String password, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeSnippet(org.smartsnip.core.Snippet, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeSnippet(org.smartsnip.core.Snippet,
+	 *      int)
 	 */
 	@Override
 	public void writeSnippet(Snippet snippet, int mode) throws IOException {
@@ -53,17 +63,18 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeSnippet(java.util.List, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeSnippet(java.util.List,
+	 *      int)
 	 */
 	@Override
-	public void writeSnippet(List<Snippet> snippets, int mode)
-			throws IOException {
+	public void writeSnippet(List<Snippet> snippets, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeComment(org.smartsnip.core.Comment, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeComment(org.smartsnip.core.Comment,
+	 *      int)
 	 */
 	@Override
 	public void writeComment(Comment comment, int mode) throws IOException {
@@ -72,17 +83,18 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeComment(java.util.List, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeComment(java.util.List,
+	 *      int)
 	 */
 	@Override
-	public void writeComment(List<Comment> comments, int mode)
-			throws IOException {
+	public void writeComment(List<Comment> comments, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeTag(org.smartsnip.core.Tag, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeTag(org.smartsnip.core.Tag,
+	 *      int)
 	 */
 	@Override
 	public void writeTag(Tag tag, int mode) throws IOException {
@@ -100,27 +112,28 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeNotification(org.smartsnip.core.Notification, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeNotification(org.smartsnip.core.Notification,
+	 *      int)
 	 */
 	@Override
-	public void writeNotification(Notification notification, int mode)
-			throws IOException {
+	public void writeNotification(Notification notification, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeNotification(java.util.List, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeNotification(java.util.List,
+	 *      int)
 	 */
 	@Override
-	public void writeNotification(List<Notification> notifications, int mode)
-			throws IOException {
+	public void writeNotification(List<Notification> notifications, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeCode(org.smartsnip.core.Code, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeCode(org.smartsnip.core.Code,
+	 *      int)
 	 */
 	@Override
 	public void writeCode(Code code, int mode) throws IOException {
@@ -129,7 +142,8 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeCode(java.util.List, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeCode(java.util.List,
+	 *      int)
 	 */
 	@Override
 	public void writeCode(List<Code> codes, int mode) throws IOException {
@@ -138,7 +152,8 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeCategory(org.smartsnip.core.Category, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeCategory(org.smartsnip.core.Category,
+	 *      int)
 	 */
 	@Override
 	public void writeCategory(Category category, int mode) throws IOException {
@@ -147,17 +162,18 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeCategory(java.util.List, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeCategory(java.util.List,
+	 *      int)
 	 */
 	@Override
-	public void writeCategory(List<Category> categories, int mode)
-			throws IOException {
+	public void writeCategory(List<Category> categories, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeLanguage(java.lang.String, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeLanguage(java.lang.String,
+	 *      int)
 	 */
 	@Override
 	public void writeLanguage(String language, int mode) throws IOException {
@@ -166,47 +182,48 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeRating(java.lang.Integer, org.smartsnip.core.Snippet, org.smartsnip.core.User, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeRating(java.lang.Integer,
+	 *      org.smartsnip.core.Snippet, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
-			throws IOException {
+	public void writeRating(Integer rating, Snippet snippet, User user, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeVote(java.lang.Integer, org.smartsnip.core.Comment, org.smartsnip.core.User, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeVote(java.lang.Integer,
+	 *      org.smartsnip.core.Comment, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeVote(Integer vote, Comment comment, User user, int mode)
-			throws IOException {
+	public void writeVote(Integer vote, Comment comment, User user, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#votePositive(org.smartsnip.core.User, org.smartsnip.core.Comment, int)
+	 * @see org.smartsnip.persistence.IPersistence#votePositive(org.smartsnip.core.User,
+	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void votePositive(User user, Comment comment, int mode)
-			throws IOException {
+	public void votePositive(User user, Comment comment, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#voteNegative(org.smartsnip.core.User, org.smartsnip.core.Comment, int)
+	 * @see org.smartsnip.persistence.IPersistence#voteNegative(org.smartsnip.core.User,
+	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void voteNegative(User user, Comment comment, int mode)
-			throws IOException {
+	public void voteNegative(User user, Comment comment, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#unVote(org.smartsnip.core.User, org.smartsnip.core.Comment, int)
+	 * @see org.smartsnip.persistence.IPersistence#unVote(org.smartsnip.core.User,
+	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
 	public void unVote(User user, Comment comment, int mode) throws IOException {
@@ -215,21 +232,21 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#addFavourite(org.smartsnip.core.Snippet, org.smartsnip.core.User, int)
+	 * @see org.smartsnip.persistence.IPersistence#addFavourite(org.smartsnip.core.Snippet,
+	 *      org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void addFavourite(Snippet snippet, User user, int mode)
-			throws IOException {
+	public void addFavourite(Snippet snippet, User user, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeFavourite(org.smartsnip.core.Snippet, org.smartsnip.core.User, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeFavourite(org.smartsnip.core.Snippet,
+	 *      org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void removeFavourite(Snippet snippet, User user, int mode)
-			throws IOException {
+	public void removeFavourite(Snippet snippet, User user, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
 	}
@@ -256,18 +273,17 @@ public class SqlPersistence implements IPersistence {
 	 * @see org.smartsnip.persistence.IPersistence#getPassword(org.smartsnip.core.User)
 	 */
 	@Override
-	public String getPassword(User user) throws IOException,
-			UnsupportedOperationException {
+	public String getPassword(User user) throws IOException, UnsupportedOperationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#verifyPassword(org.smartsnip.core.User, java.lang.String)
+	 * @see org.smartsnip.persistence.IPersistence#verifyPassword(org.smartsnip.core.User,
+	 *      java.lang.String)
 	 */
 	@Override
-	public boolean verifyPassword(User user, String password)
-			throws IOException, UnsupportedOperationException {
+	public boolean verifyPassword(User user, String password) throws IOException, UnsupportedOperationException {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -345,11 +361,11 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getNotifications(org.smartsnip.core.User, boolean)
+	 * @see org.smartsnip.persistence.IPersistence#getNotifications(org.smartsnip.core.User,
+	 *      boolean)
 	 */
 	@Override
-	public List<Notification> getNotifications(User user, boolean unreadOnly)
-			throws IOException {
+	public List<Notification> getNotifications(User user, boolean unreadOnly) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -385,8 +401,7 @@ public class SqlPersistence implements IPersistence {
 	 * @see org.smartsnip.persistence.IPersistence#getSubcategories(org.smartsnip.core.Category)
 	 */
 	@Override
-	public List<Category> getSubcategories(Category category)
-			throws IOException {
+	public List<Category> getSubcategories(Category category) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -404,8 +419,7 @@ public class SqlPersistence implements IPersistence {
 	 * @see org.smartsnip.persistence.IPersistence#getRatings(org.smartsnip.core.Snippet)
 	 */
 	@Override
-	public List<Pair<User, Integer>> getRatings(Snippet snippet)
-			throws IOException {
+	public List<Pair<User, Integer>> getRatings(Snippet snippet) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -420,11 +434,11 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String, int, int)
+	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String, int,
+	 *      int)
 	 */
 	@Override
-	public List<Snippet> search(String searchString, int min, int max)
-			throws IOException {
+	public List<Snippet> search(String searchString, int min, int max) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
