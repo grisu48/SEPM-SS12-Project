@@ -4,12 +4,14 @@ import java.util.List;
 
 import org.smartsnip.core.Pair;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * This interface handles the interactions of the GUI on a concrete category. It
  * is given by the session to the GUI
  * 
  */
-public interface ICategory {
+public interface ICategory extends IsSerializable {
 	/**
 	 * @return the name of the category
 	 */

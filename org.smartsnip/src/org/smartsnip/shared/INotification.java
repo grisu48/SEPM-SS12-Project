@@ -1,12 +1,14 @@
 package org.smartsnip.shared;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * This class represents the access to a notification
  * 
  * @author phoenix
  * 
  */
-public interface INotification {
+public interface INotification extends IsSerializable {
 	/**
 	 * Marks the notification as read
 	 */

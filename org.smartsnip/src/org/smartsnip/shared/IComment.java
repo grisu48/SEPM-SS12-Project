@@ -2,12 +2,14 @@ package org.smartsnip.shared;
 
 import java.util.Date;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * This interface handles the interactions of the GUI on a concrete comment. It
  * is given by the session to the GUI
  * 
  */
-public interface IComment {
+public interface IComment extends IsSerializable {
 	/**
 	 * @return the comment's message text
 	 */

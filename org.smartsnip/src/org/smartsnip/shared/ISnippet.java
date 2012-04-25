@@ -2,12 +2,14 @@ package org.smartsnip.shared;
 
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * This interface handles the interactions of the GUI on a concrete snippet. It
  * is given by the session to the GUI
  * 
  */
-public interface ISnippet {
+public interface ISnippet extends IsSerializable {
 	/**
 	 * @return the name of the snippet
 	 */
