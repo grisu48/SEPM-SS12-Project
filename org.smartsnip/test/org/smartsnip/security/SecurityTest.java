@@ -37,7 +37,9 @@ public class SecurityTest {
 	 */
 	@Test
 	public void createGuestSession() {
-		if (session.isLoggedIn()) fail("Guest session creation failure");
+		if (session.isLoggedIn()) {
+			fail("Guest session creation failure");
+		}
 	}
 
 	/**
@@ -47,7 +49,9 @@ public class SecurityTest {
 	public void testGuestPolicies() {
 		// TODO Extend with expanding IUser interface
 
-		if (session.getIUser() != null) fail("Guest session returned IUser interface");
+		if (session.getIUser() != null) {
+			fail("Guest session returned IUser interface");
+		}
 		IUser testuser = null;
 		try {
 			testuser = session.getIUser(Persistence.testuser1);

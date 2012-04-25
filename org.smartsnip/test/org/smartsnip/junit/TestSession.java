@@ -1,15 +1,14 @@
 package org.smartsnip.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.smartsnip.core.*;
-import org.smartsnip.core.Session.SessionState;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.smartsnip.core.Session;
+import org.smartsnip.core.Session.SessionState;
 
 public class TestSession {
 
@@ -17,7 +16,7 @@ public class TestSession {
 	private Session testSession = null;
 
 	/** the test cookie String. We all love the Cookie Monster ;-) */
-	private String testCookie = "testCookieForTheCookieMonster";
+	private final String testCookie = "testCookieForTheCookieMonster";
 
 	@Before
 	public void setUp() throws Exception {
@@ -44,11 +43,13 @@ public class TestSession {
 		}
 		for (int i = 0; i < cookieCount; i++) {
 			Session sessionObject = Session.getSession(sids[i]);
-			if (sessionObject == null)
+			if (sessionObject == null) {
 				fail("Getting of session " + i + " failed. Cookie not found in session management");
+			}
 			sessionObject.deleteSession();
-			if (Session.existsCookie(sids[i]))
+			if (Session.existsCookie(sids[i])) {
 				fail("Delete session " + i + " failed. Session exists after deleteing it!");
+			}
 		}
 	}
 
@@ -140,10 +141,13 @@ public class TestSession {
 			}
 		} catch (InterruptedException e) {
 			System.err.println("testGetState() interrupted");
-			for (int i = 0; i < threadcount; i++)
+			for (int i = 0; i < threadcount; i++) {
 				threads[i].interrupt();
+			}
 		}
-		if (!success.get()) fail("testGetState() failure flag set");
+		if (!success.get()) {
+			fail("testGetState() failure flag set");
+		}
 
 	}
 
