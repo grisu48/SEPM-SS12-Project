@@ -1,4 +1,4 @@
-package org.smartsnip.server;
+package org.smartsnip.core;
 
 
 import org.smartsnip.client.ICommunication;

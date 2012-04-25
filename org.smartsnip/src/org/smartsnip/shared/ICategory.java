@@ -1,6 +1,8 @@
-package org.smartsnip.core;
+package org.smartsnip.shared;
 
 import java.util.List;
+
+import org.smartsnip.core.Pair;
 
 /**
  * This interface handles the interactions of the GUI on a concrete category. It

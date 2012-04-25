@@ -2,12 +2,12 @@ package org.smartsnip.client;
 
 import java.util.ArrayList;
 
-import org.smartsnip.core.ISessionObserver;
-import org.smartsnip.core.ISnippet;
 import org.smartsnip.core.Notification;
 import org.smartsnip.core.Session;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
+import org.smartsnip.shared.ISessionObserver;
+import org.smartsnip.shared.ISnippet;
 
 import com.google.gwt.user.client.Cookies;
 

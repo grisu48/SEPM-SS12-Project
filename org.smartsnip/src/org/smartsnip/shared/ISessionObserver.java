@@ -1,4 +1,7 @@
-package org.smartsnip.core;
+package org.smartsnip.shared;
+
+import org.smartsnip.core.Notification;
+import org.smartsnip.core.Session;
 
 /**
  * This class is the interface for the main observable pattern of the session.

@@ -5,10 +5,10 @@ import static org.junit.Assert.fail;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.smartsnip.core.ISnippet;
-import org.smartsnip.core.IUser;
 import org.smartsnip.core.Persistence;
 import org.smartsnip.core.Session;
+import org.smartsnip.shared.ISnippet;
+import org.smartsnip.shared.IUser;
 
 /**
  * Security policy tester

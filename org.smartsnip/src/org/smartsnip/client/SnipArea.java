@@ -1,6 +1,6 @@
 package org.smartsnip.client;
 
-import org.smartsnip.core.ISnippet;
+import org.smartsnip.shared.ISnippet;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;

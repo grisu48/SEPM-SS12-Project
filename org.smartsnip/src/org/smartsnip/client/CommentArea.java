@@ -2,7 +2,7 @@ package org.smartsnip.client;
 
 import java.util.ArrayList;
 
-import org.smartsnip.core.IComment;
+import org.smartsnip.shared.IComment;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
