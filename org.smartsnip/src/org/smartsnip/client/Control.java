@@ -3,6 +3,8 @@ package org.smartsnip.client;
 
 
 import org.smartsnip.core.Session;
+import org.smartsnip.shared.IRip;
+import org.smartsnip.shared.IRipAsync;
 import org.smartsnip.shared.NoAccessException;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -26,6 +28,9 @@ public class Control implements EntryPoint {
 	private static Control instance = null;
 	private final static String COOKIE_SESSION = "smartsnip_SID";
 	private final static ICommunicationAsync myComm = GWT.create(ICommunication.class);
+	private final static IRipAsync myTest = GWT.create(IRip.class);
+
+	
 	
 	private static GUI myGUI = new GUI();
 	private Control() {
@@ -42,6 +47,7 @@ public class Control implements EntryPoint {
 	public void onModuleLoad() {
 	myGUI.getReady();
 	Control.testCommunication();
+	
 	
 	}
 	
@@ -73,6 +79,7 @@ public class Control implements EntryPoint {
 	
 	public static void testCommunication() {
 		
+		/*
 		myComm.testTalk("test",
 				new AsyncCallback<String>() {
 			
@@ -84,6 +91,18 @@ public class Control implements EntryPoint {
 					public void onSuccess(String result) {
 						myGUI.showTestPopup(result);
 					}
+				});
+		*/
+		
+		myTest.testTalk("Schreib was",
+				new AsyncCallback<Boolean>() {
+			
+					public void onFailure(Throwable caught) {
+					}
+					public void onSuccess(Boolean result) {
+						myGUI.showTestPopup(result.toString());
+					}
+
 				});
 		
 	}

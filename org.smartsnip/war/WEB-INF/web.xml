@@ -17,6 +17,21 @@
     <url-pattern>/org_smartsnip/comm</url-pattern>
   </servlet-mapping>
   
+  
+  
+    <servlet>
+    <servlet-name>RipImpl</servlet-name>
+    <servlet-class>org.smartsnip.core.Rip</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>RipImpl</servlet-name>
+    <url-pattern>/org_smartsnip/rip</url-pattern>
+  </servlet-mapping>
+  
+  
+  
+  
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

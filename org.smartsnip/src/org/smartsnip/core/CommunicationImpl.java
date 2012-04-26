@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import org.smartsnip.client.ICommunication;
 import org.smartsnip.shared.IRip;
 import org.smartsnip.shared.ISnippet;
-import org.smartsnip.shared.Rip;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -48,9 +47,9 @@ public class CommunicationImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
-	@Override
-	public IRip getSnippet(String name) throws IllegalArgumentException {
+	//@Override
+	//public IRip getSnippet(String name) throws IllegalArgumentException {
 	//	TODO Auto-generated method stub
-		return null;
-		}
+		//return null;
+		//}
 }

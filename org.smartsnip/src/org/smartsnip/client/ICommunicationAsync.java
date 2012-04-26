@@ -2,10 +2,10 @@ package org.smartsnip.client;
 
 import java.util.ArrayList;
 
+import org.smartsnip.core.Rip;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.shared.IRip;
 import org.smartsnip.shared.ISnippet;
-import org.smartsnip.shared.Rip;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -21,6 +21,6 @@ public interface ICommunicationAsync {
 			throws IllegalArgumentException;
 	void search(String search, AsyncCallback<ArrayList<String>> callback)
 			throws IllegalArgumentException;
-	void getSnippet(String name, AsyncCallback<IRip> callback)
-			throws IllegalArgumentException;
+	//void getSnippet(String name, AsyncCallback<IRip> callback)
+			//throws IllegalArgumentException;
 }
