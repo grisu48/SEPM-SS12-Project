@@ -19,7 +19,7 @@ public interface ICommunication extends RemoteService {
 	Boolean login(String user, String password) throws IllegalArgumentException;
 	Boolean logout(String user, String password) throws IllegalArgumentException;
 	ArrayList<String> search(String search) throws IllegalArgumentException;
-	IRip getSnippet(String name) throws IllegalArgumentException;
+	//IRip getSnippet(String name) throws IllegalArgumentException;
 	
 	
 	

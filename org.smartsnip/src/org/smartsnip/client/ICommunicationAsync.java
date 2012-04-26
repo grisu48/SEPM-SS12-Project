@@ -21,6 +21,6 @@ public interface ICommunicationAsync {
 			throws IllegalArgumentException;
 	void search(String search, AsyncCallback<ArrayList<String>> callback)
 			throws IllegalArgumentException;
-	void getSnippet(String name, AsyncCallback<IRip> callback)
-			throws IllegalArgumentException;
+	//void getSnippet(String name, AsyncCallback<IRip> callback)
+			//throws IllegalArgumentException;
 }

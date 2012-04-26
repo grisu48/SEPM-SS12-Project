@@ -48,9 +48,9 @@ public class CommunicationImpl extends RemoteServiceServlet implements
 		return null;
 	}
 
-	@Override
-	public IRip getSnippet(String name) throws IllegalArgumentException {
+	//@Override
+	//public IRip getSnippet(String name) throws IllegalArgumentException {
 	//	TODO Auto-generated method stub
-		return null;
-		}
+		//return null;
+		//}
 }
