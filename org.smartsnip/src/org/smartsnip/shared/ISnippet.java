@@ -2,14 +2,16 @@ package org.smartsnip.shared;
 
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * This interface handles the interactions of the GUI on a concrete snippet. It
  * is given by the session to the GUI
  * 
  */
-public interface ISnippet extends IsSerializable {
+@RemoteServiceRelativePath("snippet")
+public interface ISnippet extends RemoteService {
 	/**
 	 * @return the name of the snippet
 	 */

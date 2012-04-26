@@ -12,16 +12,16 @@ public interface IUserAsync {
 	void getEmail(AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 	
-	void setEmail(String email, AsyncCallback<Boolean> callback)
+	void setEmail(String email, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 	
-	void setRealName(String email, AsyncCallback<Boolean> callback)
+	void setRealName(String email, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 	
 	void getRealName(AsyncCallback<String> callback)
 			throws IllegalArgumentException;
 	
-	void logout(AsyncCallback<Boolean> callback)
+	void logout(AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 	
 	void getSnippets(AsyncCallback<List<ISnippet>> callback)
@@ -30,7 +30,7 @@ public interface IUserAsync {
 	void getFavorites(AsyncCallback<List<ISnippet>> callback)
 			throws IllegalArgumentException;
 	
-	void report(String reason, AsyncCallback<Boolean> callback)
+	void report(String reason, AsyncCallback<Void> callback)
 			throws IllegalArgumentException;
 	
 

@@ -38,7 +38,7 @@ public interface IUser extends RemoteService {
 	 *             IllegalArgumentException Thrown if the given email-address is
 	 *             invalid
 	 */
-	public Boolean setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
+	public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
 
 	/**
 	 * Sets the real name of the user. If the name is null or empty, nothing is
@@ -49,7 +49,7 @@ public interface IUser extends RemoteService {
 	 * @throws NoAccessException
 	 *             Thrown if the current session cannot access this property
 	 */
-	public Boolean setRealName(String newName) throws NoAccessException;
+	public void setRealName(String newName) throws NoAccessException;
 
 	/**
 	 * @return the real name of the user
@@ -64,7 +64,7 @@ public interface IUser extends RemoteService {
 	 * @throws NoAccessException
 	 *             Thrown if the call cannot be executed by this session
 	 */
-	public Boolean logout() throws NoAccessException;
+	public void logout() throws NoAccessException;
 
 	/**
 	 * 
@@ -90,6 +90,6 @@ public interface IUser extends RemoteService {
 	 * @param reason
 	 *            Reason why the user is behaving abusive
 	 */
-	public Boolean report(String reason);
+	public void report(String reason);
 
 }
