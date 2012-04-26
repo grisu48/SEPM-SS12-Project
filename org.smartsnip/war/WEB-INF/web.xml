@@ -62,6 +62,27 @@
   </servlet-mapping>
   
   
+  <servlet>
+    <servlet-name>Category</servlet-name>
+    <servlet-class>org.smartsnip.core.Category</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>Category</servlet-name>
+    <url-pattern>/org_smartsnip/category</url-pattern>
+  </servlet-mapping>
+  
+    <servlet>
+    <servlet-name>Notification</servlet-name>
+    <servlet-class>org.smartsnip.core.Notification</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>Notification</servlet-name>
+    <url-pattern>/org_smartsnip/notification</url-pattern>
+  </servlet-mapping>
+  
+  
   
   <!-- Default page to serve -->
   <welcome-file-list>

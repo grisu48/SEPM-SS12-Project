@@ -5,13 +5,16 @@ import java.util.List;
 import org.smartsnip.core.Pair;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * This interface handles the interactions of the GUI on a concrete category. It
  * is given by the session to the GUI
  * 
  */
-public interface ICategory extends IsSerializable {
+@RemoteServiceRelativePath("category")
+public interface ICategory extends RemoteService {
 	/**
 	 * @return the name of the category
 	 */

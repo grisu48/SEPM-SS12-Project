@@ -1,6 +1,8 @@
 package org.smartsnip.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * This class represents the access to a notification
@@ -8,7 +10,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * @author phoenix
  * 
  */
-public interface INotification extends IsSerializable {
+@RemoteServiceRelativePath("notification")
+public interface INotification extends RemoteService {
 	/**
 	 * Marks the notification as read
 	 */
