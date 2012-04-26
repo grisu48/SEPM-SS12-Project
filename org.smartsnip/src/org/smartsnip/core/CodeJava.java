@@ -1,5 +1,6 @@
 package org.smartsnip.core;
 
+
 /**
  * Concrete code object for java code
  * 

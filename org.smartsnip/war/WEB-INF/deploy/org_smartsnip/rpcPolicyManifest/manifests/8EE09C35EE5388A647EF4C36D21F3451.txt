@@ -1,0 +1,2 @@
+serviceClass: org.smartsnip.shared.IRip
+path: 61C1361B5DDC26B5F4A3ACEEFA782084.gwt.rpc

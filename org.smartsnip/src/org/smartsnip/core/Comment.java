@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+
 public class Comment {
 	/** The owner of the message is fixed */
 	public final User owner;

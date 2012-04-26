@@ -2,12 +2,17 @@ package org.smartsnip.shared;
 
 import java.util.Date;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
 /**
  * This interface handles the interactions of the GUI on a concrete comment. It
  * is given by the session to the GUI
  * 
  */
-public interface IComment {
+@RemoteServiceRelativePath("comment")
+public interface IComment extends RemoteService {
 	/**
 	 * @return the comment's message text
 	 */
@@ -23,45 +28,45 @@ public interface IComment {
 	 * rated negative, the negative rate will be deleted, and instant a positive
 	 * rating applied
 	 * 
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the call cannot be executed by this session
 	 */
-	public void ratePositive() throws IllegalAccessException;
+	public void ratePositive() throws NoAccessException;
 
 	/**
 	 * Rates the comment negative. If already rated negative nothing happens. If
 	 * rated positive, the positive rate will be deleted, and instant a negative
 	 * rating applied
 	 * 
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the call cannot be executed by this session
 	 */
-	public void rateNegative() throws IllegalAccessException;
+	public void rateNegative() throws NoAccessException;
 
 	/**
 	 * Removes teh current rate given to this comment
 	 * 
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the call cannot be executed by this session
 	 */
-	public void removeRating() throws IllegalAccessException;
+	public void removeRating() throws NoAccessException;
 
 	/**
 	 * 
 	 * @return the owner of the comment
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown for security reasons if the call cannot be executed by
 	 *             this session
 	 */
-	public IUser getOwner() throws IllegalAccessException;
+	public IUser getOwner() throws NoAccessException;
 
 	/**
 	 * Deletes a comment from the system
 	 * 
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the access policy denies the process
 	 */
-	public void delete() throws IllegalAccessException;
+	public void delete() throws NoAccessException;
 
 	/**
 	 * Sets a new comment text. See the security restrictions to find out, who
@@ -71,17 +76,17 @@ public interface IComment {
 	 * 
 	 * @param newComment
 	 *            New comment that should be changed to.
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the access policy denies the process
 	 */
-	public void edit(String newComment) throws IllegalAccessException;
+	public void edit(String newComment) throws NoAccessException;
 
 	/**
 	 * Reports the comment as abusive.
 	 * 
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the access policy denies the process
 	 */
-	public void report() throws IllegalAccessException;
+	public void report() throws NoAccessException;
 
 }

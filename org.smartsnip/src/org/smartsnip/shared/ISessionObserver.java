@@ -3,6 +3,8 @@ package org.smartsnip.shared;
 import org.smartsnip.core.Notification;
 import org.smartsnip.core.Session;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * This class is the interface for the main observable pattern of the session.
  * Each observer must implement this.
@@ -10,7 +12,7 @@ import org.smartsnip.core.Session;
  * This interface is used in the GUI
  * 
  */
-public interface ISessionObserver {
+public interface ISessionObserver extends IsSerializable {
 
 	/**
 	 * If the session has been logged in with a given username

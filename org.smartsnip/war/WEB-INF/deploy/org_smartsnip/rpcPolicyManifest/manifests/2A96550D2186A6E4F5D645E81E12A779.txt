@@ -1,0 +1,2 @@
+serviceClass: org.smartsnip.client.ICommunication
+path: 0B87C17572F2E666C31C452A09C4312A.gwt.rpc

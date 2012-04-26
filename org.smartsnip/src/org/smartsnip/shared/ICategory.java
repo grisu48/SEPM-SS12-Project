@@ -4,12 +4,17 @@ import java.util.List;
 
 import org.smartsnip.core.Pair;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
 /**
  * This interface handles the interactions of the GUI on a concrete category. It
  * is given by the session to the GUI
  * 
  */
-public interface ICategory {
+@RemoteServiceRelativePath("category")
+public interface ICategory extends RemoteService {
 	/**
 	 * @return the name of the category
 	 */
@@ -20,11 +25,11 @@ public interface ICategory {
 	 * 
 	 * @param name
 	 *            new name of the category. Must not be null or empty
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the current session doesn't fit the necessary
 	 *             access privileges
 	 */
-	public void setName(String name) throws IllegalAccessException;
+	public void setName(String name) throws NoAccessException;
 
 	/**
 	 * 
@@ -37,10 +42,10 @@ public interface ICategory {
 	 * 
 	 * @param desc
 	 *            New description of the category. Must not be null or empty.
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the access privilege forbids this action.
 	 */
-	public void setDescription(String desc) throws IllegalAccessException;
+	public void setDescription(String desc) throws NoAccessException;
 
 	/**
 	 * Adds a new snippet to the category.
@@ -62,12 +67,12 @@ public interface ICategory {
 	 * @throws IllegalArgumentException
 	 *             Thrown if the language is not supported, or if an argument is
 	 *             null or empty
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the session has not the privileges to add snippets
 	 *             to this category
 	 */
 	public void addSnippet(String name, String description, String code, String language)
-			throws IllegalArgumentException, IllegalAccessException;
+			throws IllegalArgumentException, NoAccessException;
 
 	/**
 	 * @return A list containing pairs with all snippets. The integer value is

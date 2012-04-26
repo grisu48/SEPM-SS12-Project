@@ -2,12 +2,16 @@ package org.smartsnip.shared;
 
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
 /**
  * This interface handles the interactions of the GUI on a concrete snippet. It
  * is given by the session to the GUI
  * 
  */
-public interface ISnippet {
+@RemoteServiceRelativePath("snippet")
+public interface ISnippet extends RemoteService {
 	/**
 	 * @return the name of the snippet
 	 */
@@ -55,11 +59,11 @@ public interface ISnippet {
 	 * 
 	 * @param tag
 	 *            to be added. If null or empty the call doesn't do anything
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown as security exception if the current session is not
 	 *             allowed to do that
 	 */
-	public void addTag(String tag) throws IllegalAccessException;
+	public void addTag(String tag)  throws NoAccessException;
 
 	/**
 	 * Removes a tag from the snippet. If the snippet doesn't has this tag,
@@ -67,11 +71,11 @@ public interface ISnippet {
 	 * 
 	 * @param tag
 	 *            to be removed. If null or empty the call doesn't do anything
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown as security exception if the current session is not
 	 *             allowed to do that
 	 */
-	public void removeTag(String tag) throws IllegalAccessException;
+	public void removeTag(String tag) throws NoAccessException;
 
 	/**
 	 * Gets a list of the comments written to this snippet.
@@ -81,11 +85,11 @@ public interface ISnippet {
 	 * list.
 	 * 
 	 * @return a new list containing all currently available comments.
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown as security exception if the current session is not
 	 *             allowed to do that
 	 */
-	public List<IComment> getComments() throws IllegalAccessException;
+	public List<IComment> getComments() throws NoAccessException;
 
 	/**
 	 * @return the number of views of the snippet
@@ -95,10 +99,10 @@ public interface ISnippet {
 	/**
 	 * Increases the view count by one.
 	 * 
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Currently not used
 	 */
-	public void increaseViewCounter() throws IllegalAccessException;
+	public void increaseViewCounter()  throws NoAccessException;
 
 	/**
 	 * Adds a comment with the given user of the session to the snippet. If the
@@ -107,18 +111,18 @@ public interface ISnippet {
 	 * 
 	 * 
 	 * If no user is logged in with the session, a new
-	 * {@link IllegalAccessException} will be thrown.
+	 * {@link NoAccessException} will be thrown.
 	 * 
 	 * @param comment
 	 *            To be added to the snippet. If null or empty the call will
 	 *            return without a system modification and returns null
 	 * @return the created comment or null if the given comment string was null
 	 *         or empty
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown as security exception if the current session is not
 	 *             allowed to do that
 	 */
-	public IComment addComment(String comment) throws IllegalAccessException;
+	public IComment addComment(String comment) throws NoAccessException;
 
 	/**
 	 * Adds the snippet to the users' favorites
@@ -133,9 +137,9 @@ public interface ISnippet {
 	/**
 	 * Delete snippet.
 	 * 
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown as security exception if the current session is not
 	 *             allowed to do that
 	 */
-	public void delete() throws IllegalAccessException;
+	public void delete() throws NoAccessException;
 }

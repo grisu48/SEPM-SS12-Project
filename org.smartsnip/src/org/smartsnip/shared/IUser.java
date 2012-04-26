@@ -1,13 +1,17 @@
 package org.smartsnip.shared;
 
 import java.util.List;
+import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * This interface handles the interactions of the GUI on a concrete user. It is
  * given by the session to the GUI
  * 
  */
-public interface IUser {
+@RemoteServiceRelativePath("user")
+public interface IUser extends RemoteService {
 	/**
 	 * @return the name of the user
 	 */
@@ -15,10 +19,10 @@ public interface IUser {
 
 	/**
 	 * @return the email address
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the call is not permitted
 	 */
-	public String getEmail() throws IllegalAccessException;
+	public String getEmail() throws NoAccessException;
 
 	/**
 	 * Sets the email-address of the user. If the address is null or empty,
@@ -27,14 +31,14 @@ public interface IUser {
 	 * 
 	 * @param newAddress
 	 *            new email-address of the user
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the session cannot change the email-address of the
 	 *             user
 	 * @throws link
 	 *             IllegalArgumentException Thrown if the given email-address is
 	 *             invalid
 	 */
-	public void setEmail(String newAddress) throws IllegalAccessException, IllegalArgumentException;
+	public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
 
 	/**
 	 * Sets the real name of the user. If the name is null or empty, nothing is
@@ -42,43 +46,43 @@ public interface IUser {
 	 * 
 	 * @param newName
 	 *            New name of the user
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the current session cannot access this property
 	 */
-	public void setRealName(String newName) throws IllegalAccessException;
+	public void setRealName(String newName) throws NoAccessException;
 
 	/**
 	 * @return the real name of the user
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the call is not permitted
 	 */
-	public String getRealName() throws IllegalAccessException;
+	public String getRealName() throws NoAccessException;
 
 	/**
 	 * Closes the current session of the user
 	 * 
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the call cannot be executed by this session
 	 */
-	public void logout() throws IllegalAccessException;
+	public void logout() throws NoAccessException;
 
 	/**
 	 * 
 	 * @return a list containing all snippets of the user
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the call cannot be executed by this session
 	 * @obsolete A list with all interfaces is a waste of system resources.
 	 *           Check this!
 	 */
-	public List<ISnippet> getSnippets() throws IllegalAccessException;
+	public List<ISnippet> getSnippets() throws NoAccessException;
 
 	/**
 	 * 
 	 * @return a list containing all favourite snippets of the user
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown if the call cannot be executed by this session
 	 */
-	public List<ISnippet> getFavorites() throws IllegalAccessException;
+	public List<ISnippet> getFavorites() throws NoAccessException;
 
 	/**
 	 * Reports an abusive user.
