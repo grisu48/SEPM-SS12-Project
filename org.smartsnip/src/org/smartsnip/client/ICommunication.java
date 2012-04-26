@@ -2,10 +2,10 @@ package org.smartsnip.client;
 
 import java.util.ArrayList;
 
+import org.smartsnip.core.Rip;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.shared.IRip;
 import org.smartsnip.shared.ISnippet;
-import org.smartsnip.shared.Rip;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

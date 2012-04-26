@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import org.smartsnip.client.ICommunication;
 import org.smartsnip.shared.IRip;
 import org.smartsnip.shared.ISnippet;
-import org.smartsnip.shared.Rip;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
