@@ -3,6 +3,7 @@ package org.smartsnip.core;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Search {
 	/** Defined search string */
 	private final String searchString;

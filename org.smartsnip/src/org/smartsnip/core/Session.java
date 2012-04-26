@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.smartsnip.client.ICommunication;
 import org.smartsnip.core.Code.UnsupportedLanguageException;
 import org.smartsnip.security.IAccessPolicy;
 import org.smartsnip.security.PrivilegeController;
@@ -14,6 +15,9 @@ import org.smartsnip.shared.INotification;
 import org.smartsnip.shared.ISessionObserver;
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.IUser;
+import org.smartsnip.shared.NoAccessException;
+
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class Session {
 	/** Session storage, each session is identified with the cookie string */
@@ -53,6 +57,12 @@ public class Session {
 	 * Each method of the interface is implemented to redirect the call to the
 	 * observers.
 	 * */
+	
+	
+	
+	
+	
+	
 	private final ISessionObserver observable = new ISessionObserver() {
 
 		@Override
@@ -123,10 +133,13 @@ public class Session {
 		this.policy = PrivilegeController.getGuestAccessPolicty();
 	}
 
+	
+	
 	/**
 	 * @return the cookie of the session
 	 */
 	public String getCookie() {
+		
 		return cookie;
 	}
 
@@ -263,10 +276,10 @@ public class Session {
 
 	/**
 	 * Tries to do a login procedure. If currently a user is logged in a new
-	 * {@link IllegalAccessException} will be thrown. If the login fails also a
-	 * new {@link IllegalAccessException} will be thrown with a reason message.
+	 * {@link NoAccessException} will be thrown. If the login fails also a
+	 * new {@link NoAccessException} will be thrown with a reason message.
 	 * If the username or the password is null the login will fail, resulting in
-	 * an {@link IllegalAccessException}.
+	 * an {@link NoAccessException}.
 	 * 
 	 * In all cases before the login, a logout happens.
 	 * 
@@ -274,23 +287,23 @@ public class Session {
 	 *            Name of the user needed for the login
 	 * @param password
 	 *            Password of the user
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown as security exception when the login process fails.
 	 */
-	public synchronized void login(String username, String password) throws IllegalAccessException {
+	public synchronized void login(String username, String password) throws NoAccessException {
 		doActivity();
 		logout();
 
 		if (username.length() == 0 || password.length() == 0)
-			throw new IllegalAccessException("Login credentials missing");
+			throw new NoAccessException("Login credentials missing");
 		if (isLoggedIn())
-			throw new IllegalAccessException("The session is already logged in");
+			throw new NoAccessException("The session is already logged in");
 
 		if (!User.auth(username, password))
-			throw new IllegalAccessException("Invalid username or password");
+			throw new NoAccessException("Invalid username or password");
 		User user = User.getUser(username);
 		if (user == null)
-			throw new IllegalAccessException("Invalid username or password");
+			throw new NoAccessException("Invalid username or password");
 
 		this.user = user;
 		refreshPolicy();
@@ -305,16 +318,16 @@ public class Session {
 	 * If the given username is null or empty, null is returned instantaneous.
 	 * 
 	 * If the session is not allowed to do this call (or on that user) the
-	 * method throws a new {@link IllegalAccessException}.
+	 * method throws a new {@link NoAccessException}.
 	 * 
 	 * @param username
 	 *            Name of the user to be searched
 	 * @return the found user or null if not found
-	 * @throws IllegalAccessException
+	 * @throws NoAccessException
 	 *             Thrown as security exception when the session is not allowed
 	 *             to do that
 	 */
-	public IUser getIUser(String username) throws IllegalAccessException {
+	public IUser getIUser(String username) throws NoAccessException {
 		if (username == null || username.length() == 0)
 			return null;
 
@@ -411,16 +424,16 @@ public class Session {
 			List<ISnippet> favourites = emptyList;
 
 			@Override
-			public void logout() throws IllegalAccessException {
+			public void logout() throws NoAccessException {
 				if (user != Session.this.user)
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 				logout();
 			}
 
 			@Override
-			public List<ISnippet> getSnippets() throws IllegalAccessException {
+			public List<ISnippet> getSnippets() throws NoAccessException {
 				if (user != Session.this.user)
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 				return getUserSnippets(user);
 			}
 
@@ -430,16 +443,16 @@ public class Session {
 			}
 
 			@Override
-			public List<ISnippet> getFavorites() throws IllegalAccessException {
+			public List<ISnippet> getFavorites() throws NoAccessException {
 				if (!isLoggedIn()) {
 					if (user != null)
-						throw new IllegalAccessException("Cannot get favorites from foreign user");
+						throw new NoAccessException("Cannot get favorites from foreign user");
 
 					// TODO Implement guest user session favorites
 					return new ArrayList<ISnippet>();
 				} else {
 					if (!isLoggedInUser(user))
-						throw new IllegalAccessException("Cannot get favorites from foreign user");
+						throw new NoAccessException("Cannot get favorites from foreign user");
 
 					synchronized (favourites) {
 						if (favourites == emptyList) {
@@ -467,33 +480,33 @@ public class Session {
 			}
 
 			@Override
-			public String getEmail() throws IllegalAccessException {
+			public String getEmail() throws NoAccessException {
 				if (!isLoggedIn())
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				return user.getEmail();
 			}
 
 			@Override
-			public String getRealName() throws IllegalAccessException {
+			public String getRealName() throws NoAccessException {
 				if (!isLoggedIn())
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				return user.getRealName();
 			}
 
 			@Override
-			public void setEmail(String newAddress) throws IllegalAccessException, IllegalArgumentException {
+			public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException {
 				if (!policy.canEditUserData(Session.this, user))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				user.setEmail(newAddress);
 			}
 
 			@Override
-			public void setRealName(String newName) throws IllegalAccessException {
+			public void setRealName(String newName) throws NoAccessException {
 				if (!policy.canEditUserData(Session.this, user))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				user.setRealName(newName);
 			}
@@ -525,54 +538,54 @@ public class Session {
 			private final Session session = Session.this;
 
 			@Override
-			public void removeRating() throws IllegalAccessException {
+			public void removeRating() throws NoAccessException {
 				if (!policy.canRateSnippet(session, comment.snippet))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				comment.unvote(getUser());
 			}
 
 			@Override
-			public void ratePositive() throws IllegalAccessException {
+			public void ratePositive() throws NoAccessException {
 				if (!policy.canRateSnippet(session, comment.snippet))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				comment.votePositive(getUser());
 			}
 
 			@Override
-			public void rateNegative() throws IllegalAccessException {
+			public void rateNegative() throws NoAccessException {
 				if (!policy.canRateSnippet(session, comment.snippet))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				comment.voteNegative(getUser());
 			}
 
 			@Override
-			public IUser getOwner() throws IllegalAccessException {
+			public IUser getOwner() throws NoAccessException {
 				return createIUser(comment.owner);
 			}
 
 			@Override
-			public void delete() throws IllegalAccessException {
+			public void delete() throws NoAccessException {
 				if (!policy.canEditComment(session, comment))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				comment.delete();
 			}
 
 			@Override
-			public void edit(String newComment) throws IllegalAccessException {
+			public void edit(String newComment) throws NoAccessException {
 				if (newComment == null || newComment.isEmpty())
 					return;
 				if (!policy.canEditComment(session, comment))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				comment.edit(newComment);
 			}
 
 			@Override
-			public void report() throws IllegalAccessException {
+			public void report() throws NoAccessException {
 				// TODO Auto-generated method stub
 
 			}
@@ -602,9 +615,9 @@ public class Session {
 		return new ISnippet() {
 
 			@Override
-			public void removeTag(String tag) throws IllegalAccessException {
+			public void removeTag(String tag) throws NoAccessException {
 				if (!policy.canTagSnippet(Session.this, snippet))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				Tag objTag = Tag.getTag(tag);
 				if (objTag == null)
@@ -613,7 +626,7 @@ public class Session {
 			}
 
 			@Override
-			public void increaseViewCounter() throws IllegalAccessException {
+			public void increaseViewCounter() throws NoAccessException {
 				snippet.increaseViewCounter();
 			}
 
@@ -654,7 +667,7 @@ public class Session {
 			}
 
 			@Override
-			public List<IComment> getComments() throws IllegalAccessException {
+			public List<IComment> getComments() throws NoAccessException {
 				// TODO Auto-generated method stub
 				return new ArrayList<IComment>();
 			}
@@ -673,16 +686,16 @@ public class Session {
 			}
 
 			@Override
-			public void addTag(String tag) throws IllegalAccessException {
+			public void addTag(String tag) throws NoAccessException {
 				snippet.addTag(Tag.createTag(tag));
 			}
 
 			@Override
-			public IComment addComment(String comment) throws IllegalAccessException {
+			public IComment addComment(String comment) throws NoAccessException {
 				if (comment == null || comment.isEmpty())
 					return null;
 				if (!policy.canComment(Session.this))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				Comment objComment = Comment.createComment(user, snippet, comment);
 				snippet.addComment(objComment);
@@ -710,9 +723,9 @@ public class Session {
 			}
 
 			@Override
-			public void delete() throws IllegalAccessException {
+			public void delete() throws NoAccessException {
 				if (!policy.canDeleteSnippet(Session.this, snippet))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				snippet.delete();
 			}
@@ -957,7 +970,7 @@ public class Session {
 			return null;
 		try {
 			return getIUser(user.getUsername());
-		} catch (IllegalAccessException e) {
+		} catch (NoAccessException e) {
 			// Access denied
 			return null;
 		}
@@ -1011,21 +1024,21 @@ public class Session {
 			List<ISnippet> snippets = null;
 
 			@Override
-			public void setName(String name) throws IllegalAccessException {
+			public void setName(String name) throws NoAccessException {
 				if (name == null || name.isEmpty())
 					return;
 				if (!policy.canEditCategory(Session.this, category))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				category.setName(name);
 			}
 
 			@Override
-			public void setDescription(String desc) throws IllegalAccessException {
+			public void setDescription(String desc) throws NoAccessException {
 				if (desc == null || desc.isEmpty())
 					return;
 				if (!policy.canEditCategory(Session.this, category))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				// TODO Auto-generated method stub
 
@@ -1062,12 +1075,12 @@ public class Session {
 
 			@Override
 			public void addSnippet(String name, String description, String code, String language)
-					throws IllegalArgumentException, IllegalAccessException {
+					throws IllegalArgumentException, NoAccessException {
 				if (policy.canCreateSnippet(Session.this, category))
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 				/* This security call is hard-coded and remains as-it-is! */
 				if (user == null)
-					throw new IllegalAccessException();
+					throw new NoAccessException();
 
 				try {
 					// IllegalArgumentExceptions are created in this call
