@@ -17,8 +17,7 @@
     <url-pattern>/org_smartsnip/comm</url-pattern>
   </servlet-mapping>
   
-  
-  
+ 
     <servlet>
     <servlet-name>RipImpl</servlet-name>
     <servlet-class>org.smartsnip.core.Rip</servlet-class>
@@ -27,6 +26,17 @@
   <servlet-mapping>
     <servlet-name>RipImpl</servlet-name>
     <url-pattern>/org_smartsnip/rip</url-pattern>
+  </servlet-mapping>
+  
+  
+     <servlet>
+    <servlet-name>User</servlet-name>
+    <servlet-class>org.smartsnip.core.User</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>User</servlet-name>
+    <url-pattern>/org_smartsnip/user</url-pattern>
   </servlet-mapping>
   
   

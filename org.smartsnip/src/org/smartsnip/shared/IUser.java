@@ -2,13 +2,16 @@ package org.smartsnip.shared;
 
 import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * This interface handles the interactions of the GUI on a concrete user. It is
  * given by the session to the GUI
  * 
  */
-public interface IUser extends IsSerializable {
+@RemoteServiceRelativePath("user")
+public interface IUser extends RemoteService {
 	/**
 	 * @return the name of the user
 	 */
@@ -35,7 +38,7 @@ public interface IUser extends IsSerializable {
 	 *             IllegalArgumentException Thrown if the given email-address is
 	 *             invalid
 	 */
-	public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
+	public Boolean setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
 
 	/**
 	 * Sets the real name of the user. If the name is null or empty, nothing is
@@ -46,7 +49,7 @@ public interface IUser extends IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the current session cannot access this property
 	 */
-	public void setRealName(String newName) throws NoAccessException;
+	public Boolean setRealName(String newName) throws NoAccessException;
 
 	/**
 	 * @return the real name of the user
@@ -61,7 +64,7 @@ public interface IUser extends IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the call cannot be executed by this session
 	 */
-	public void logout() throws NoAccessException;
+	public Boolean logout() throws NoAccessException;
 
 	/**
 	 * 
@@ -87,6 +90,6 @@ public interface IUser extends IsSerializable {
 	 * @param reason
 	 *            Reason why the user is behaving abusive
 	 */
-	public void report(String reason);
+	public Boolean report(String reason);
 
 }
