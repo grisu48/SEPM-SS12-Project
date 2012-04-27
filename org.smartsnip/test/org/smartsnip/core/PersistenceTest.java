@@ -31,7 +31,8 @@ public class PersistenceTest {
 
 			for (int i = 0; i < usercount; i++) {
 				String name = "user" + i;
-				User user = User.createNewUser(name, "password", "email@mail.com");
+				User user = User.createNewUser(name, "password",
+						"email@mail.com");
 				if (User.getUser(name) != user) {
 					fail("Getting User: " + name);
 				}
@@ -66,14 +67,16 @@ public class PersistenceTest {
 
 			for (int i = 0; i < roots; i++) {
 				String name = "Category" + i;
-				Category root = Category.createCategory(name, "Testcategory " + i + " root", null);
+				Category root = Category.createCategory(name, "Testcategory "
+						+ i + " root", null);
 				if (Category.getCategory(name) != root) {
 					fail("Category get: " + name);
 				}
 				addedCategories.add(name);
 				for (int x = 0; x < children; x++) {
 					name = "Category" + i + "." + x;
-					Category child = Category.createCategory(name, "Testcategory " + i + " children " + x + " - Desc",
+					Category child = Category.createCategory(name,
+							"Testcategory " + i + " children " + x + " - Desc",
 							root);
 					if (Category.getCategory(name) != child) {
 						fail("Category get: " + name);
@@ -85,14 +88,16 @@ public class PersistenceTest {
 			int count = roots * (children + 1);
 			// TODO: Check categories count
 			if (count != Category.totalCount()) {
-				fail("Category count failure. Delta = " + (count - Category.totalCount()));
+				fail("Category count failure. Delta = "
+						+ (count - Category.totalCount()));
 			}
 		} finally {
 			for (String name : addedCategories) {
 				Category.deleteCategory(name);
 			}
 			if (Category.totalCount() != 0) {
-				fail("Category cleanup failed. Delta = " + Category.totalCount());
+				fail("Category cleanup failed. Delta = "
+						+ Category.totalCount());
 			}
 		}
 	}
@@ -104,24 +109,29 @@ public class PersistenceTest {
 	 * 
 	 * After this test the persistence layer contains some test objects,
 	 * therefore it MUST BE EXECUTED AFTER ALL OTHER TESTS!
+	 * 
+	 * @throws IllegalAccessException 
 	 */
 	@Test
-	public void testPersistenceTest() {
+	public void testPersistenceTest() throws IllegalAccessException {
 		// DO NOT EDIT THIS SETTINGS! They are hard-coded in the class
 		// Persistence
 		final int userCount = 3;
 		final int categoryCount = 3;
 		final int testSnippets = 11;
 
-		Persistence.initialize();
+		Persistence.initialize(true);
 		if (Session.getUserCount() != userCount) {
-			fail("Usercount not as expected. Delta = " + (userCount - Session.getUserCount()));
+			fail("Usercount not as expected. Delta = "
+					+ (userCount - Session.getUserCount()));
 		}
 		if (Session.getCategoryCount() != categoryCount) {
-			fail("Usercount not as expected. Delta = " + (categoryCount - Session.getCategoryCount()));
+			fail("Usercount not as expected. Delta = "
+					+ (categoryCount - Session.getCategoryCount()));
 		}
 		if (Session.getSnippetCount() != testSnippets) {
-			fail("Usercount not as expected. Delta = " + (testSnippets - Session.getSnippetCount()));
+			fail("Usercount not as expected. Delta = "
+					+ (testSnippets - Session.getSnippetCount()));
 		}
 	}
 }

@@ -118,7 +118,7 @@ public class Session {
 		try {
 			Persistence.initialize();
 
-		} catch (IOException e) {
+		} catch (IllegalAccessException e) {
 		}
 	}
 

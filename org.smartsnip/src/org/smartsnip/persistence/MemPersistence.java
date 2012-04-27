@@ -15,6 +15,8 @@ import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
 
+import sun.reflect.Reflection;
+
 /**
  * Testing persistence layer that is completely in the memory
  * 
@@ -23,17 +25,17 @@ import org.smartsnip.core.User;
  */
 public class MemPersistence implements IPersistence {
 
-	private static MemPersistence instance = null;
-
-	public static MemPersistence createInstance() {
-		if (instance == null) {
-			instance = new MemPersistence();
-		}
-		return instance;
-	}
-
-	private MemPersistence() {
+	/**
+	 * This constructor is protected against multiple instantiation to accomplish a singleton pattern.
+	 * It rejects any attempt to build an instance except it is called by the {@link PersistenceFactory#getInstance(int)} method.
+	 */
+	MemPersistence() throws IllegalAccessException {
 		super();
+		if (Reflection.getCallerClass(2) == null
+				|| Reflection.getCallerClass(2) != PersistenceFactory.class) {
+			throw new IllegalAccessException(
+					"Singleton pattern: caller must be PersistenceFactory class.");
+		}
 	}
 
 	private class TreeItem<E> {

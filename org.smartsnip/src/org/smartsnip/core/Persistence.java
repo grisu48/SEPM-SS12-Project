@@ -3,8 +3,7 @@ package org.smartsnip.core;
 import java.io.IOException;
 
 import org.smartsnip.persistence.IPersistence;
-import org.smartsnip.persistence.MemPersistence;
-import org.smartsnip.persistence.SqlPersistence;
+import org.smartsnip.persistence.PersistenceFactory;
 
 /**
  * This class is used to create some test objects in the application layer to
@@ -21,10 +20,11 @@ public class Persistence {
 	/**
 	 * Initialises the persistence layer with SQL persistence layer
 	 * 
+	 * @throws IllegalAccessException
 	 * @throws IllegalStateException
 	 *             Thrown if the persistence layer has already been initialised
 	 */
-	public static void initialize() throws IOException {
+	public static void initialize() throws IllegalAccessException {
 		initialize(false);
 	}
 
@@ -39,22 +39,29 @@ public class Persistence {
 	 * @param memOnly
 	 *            if true a memory-only persistence layer is used, if false the
 	 *            concrete SQL persistence layer is used
+	 * @throws IllegalAccessException
 	 * @throws IllegalStateException
 	 *             Thrown if the persistence layer has already been initialised
 	 */
-	public synchronized static void initialize(boolean memOnly) throws IOException {
-		if (instance != null)
-			throw new IllegalStateException("Persistence layer already initialised.");
-
+	public synchronized static void initialize(boolean memOnly)
+			throws IllegalAccessException {
+		if (instance != null) {
+			throw new IllegalStateException(
+					"Persistence layer already initialised.");
+		}
+		
 		// TODO
 		if (memOnly) {
-			instance = MemPersistence.createInstance();
+			PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
+			instance = PersistenceFactory.getInstance();
 		} else {
+			PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_SQL_DB);
 			try {
-				instance = SqlPersistence.createInstance();
-			} catch (IOException e) {
+				instance = PersistenceFactory.getInstance();
+			} catch (IllegalAccessException e) {
 				// Fail-safe method. Use memory persistance layer
-				instance = MemPersistence.createInstance();
+				PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
+				instance = PersistenceFactory.getInstance();
 				throw e;
 			}
 
