@@ -591,4 +591,23 @@ public class MemPersistence implements IPersistence {
 		return password.equals(pass);
 	}
 
+	@Override
+	public Float getAverageRating(Snippet snippet) throws IOException {
+		if (snippet == null)
+			return null;
+
+		HashMap<User, Integer> list = ratings.get(snippet);
+		if (list == null)
+			return new Float(0);
+		int sum = 0;
+		int num = 0;
+		List<Entry<User, Integer>> set = new ArrayList<Entry<User, Integer>>(list.entrySet());
+		if (set.size() == 0 ) return new Float(0);
+		for (Entry<User, Integer> entry : set) {
+			sum += entry.getValue();
+			++num;
+		}
+		return ((float)sum / (float)num);
+	}
+
 }
