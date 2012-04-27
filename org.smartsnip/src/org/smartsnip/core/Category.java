@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class Category {
 	/** List of all root categories */
 	private static List<Category> rootCategories = new ArrayList<Category>();
@@ -166,12 +165,13 @@ public class Category {
 	 */
 	public Category getParent() {
 		try {
-			if (parent == null)
-			parent = Persistence.persistence.getParentCategory(this);
+			if (parent == null) {
+				parent = Persistence.instance.getParentCategory(this);
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 		}
-		
+
 		return parent;
 	}
 

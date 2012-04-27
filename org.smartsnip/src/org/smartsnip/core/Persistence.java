@@ -1,6 +1,10 @@
 package org.smartsnip.core;
 
+import java.io.IOException;
+
 import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.persistence.MemPersistence;
+import org.smartsnip.persistence.SqlPersistence;
 
 /**
  * This class is used to create some test objects in the application layer to
@@ -11,67 +15,66 @@ import org.smartsnip.persistence.IPersistence;
  */
 public class Persistence {
 
-	public static IPersistence persistence = null;
-
-	public final static String testuser1 = "javajoe";
-	public final static String testuser2 = "rubyrupert";
-	public final static String testuser3 = "misterX";
-
-	public final static String password1 = "test";
-	public final static String password2 = "Test";
-	public final static String password3 = "TEST";
-
-	public final static String testCategory1 = "Main";
-	public final static String testCategory2 = "Network";
-	public final static String testCategory3 = "P2P";
-
-	public static Snippet testSnippet = null;
-	public static Comment testComment = null;
-
-	private static boolean testEnvironment = false;
+	/** The persistence layer, that is used. If null it is not initialised */
+	protected static IPersistence instance = null;
 
 	/**
-	 * Static constructor used to create some hard-coded test objects
+	 * Initialises the persistence layer with SQL persistence layer
+	 * 
+	 * @throws IllegalStateException
+	 *             Thrown if the persistence layer has already been initialised
 	 */
-	static {
-		createTestEnvironment();
+	public static void initialize() throws IOException {
+		initialize(false);
 	}
 
 	/**
-	 * Initialises the persistence layer
+	 * Initialises the persistence layer. If memOnly is false, the
+	 * SqlPersistence is initialised. If the initialisation of the
+	 * SQLPersistence fails, the MemPersistence is used instant, and the
+	 * resulting {@link IOException} is thrown.
+	 * 
+	 * So in all cases after this call a Persistence layer is active.
+	 * 
+	 * @param memOnly
+	 *            if true a memory-only persistence layer is used, if false the
+	 *            concrete SQL persistence layer is used
+	 * @throws IllegalStateException
+	 *             Thrown if the persistence layer has already been initialised
 	 */
-	public static void initialize() {
-		// Empty. All initialisation process is done in the static constructor
-	}
+	public synchronized static void initialize(boolean memOnly) throws IOException {
+		if (instance != null)
+			throw new IllegalStateException("Persistence layer already initialised.");
 
-	/**
-	 * This method creates the test environment
-	 */
-	public synchronized static void createTestEnvironment() {
-		if (testEnvironment)
-			return;
+		// TODO
+		if (memOnly) {
+			instance = MemPersistence.createInstance();
+		} else {
+			try {
+				instance = SqlPersistence.createInstance();
+			} catch (IOException e) {
+				// Fail-safe method. Use memory persistance layer
+				instance = MemPersistence.createInstance();
+				throw e;
+			}
 
-		User user1 = User.createNewUser(testuser1, password1, "joe@java.com");
-		User user2 = User.createNewUser(testuser2, password2, "rupert@spam.com");
-		User user3 = User.createNewUser(testuser3, password3, "misterX@hidemyass.com");
-
-		Category mainCategory = Category.createCategory(testCategory1, "Main category", null);
-		Category networkCategory = Category.createCategory(testCategory2, "Networking snippets", null);
-		Category p2pCategory = Category.createCategory(testCategory3, "Networking snippets", networkCategory);
-
-		final String testCode = "// Not even hello world is found here :-/";
-		for (int i = 0; i < 10; i++) {
-
-			Snippet snippet = Snippet.createSnippet(user1, "Testsnippet" + i, "I am the test snippet #" + i, testCode,
-					"Java");
-			snippet.setCategory(mainCategory);
 		}
+	}
 
-		Snippet snippet = Snippet.createSnippet(user1, "P2P", "P2P Example", testCode, "Java");
-		testSnippet = snippet;
-		snippet.setCategory(p2pCategory);
+	/**
+	 * 
+	 * @return true if the persistence layer has been initialised, otherwise
+	 *         false
+	 */
+	public static synchronized boolean isInitialized() {
+		return instance != null;
+	}
 
-		testComment = Comment.createComment(user2, snippet, "I like your snippet!");
-		testEnvironment = true;
+	/**
+	 * @return the used instance of the persistence layer or null if no one has
+	 *         been initialised
+	 */
+	public static IPersistence getInstance() {
+		return instance;
 	}
 }

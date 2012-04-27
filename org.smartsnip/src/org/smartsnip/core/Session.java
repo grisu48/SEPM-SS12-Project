@@ -1,11 +1,11 @@
 package org.smartsnip.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.smartsnip.client.ICommunication;
 import org.smartsnip.core.Code.UnsupportedLanguageException;
 import org.smartsnip.security.IAccessPolicy;
 import org.smartsnip.security.PrivilegeController;
@@ -16,8 +16,6 @@ import org.smartsnip.shared.ISessionObserver;
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
-
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class Session {
 	/** Session storage, each session is identified with the cookie string */
@@ -57,12 +55,7 @@ public class Session {
 	 * Each method of the interface is implemented to redirect the call to the
 	 * observers.
 	 * */
-	
-	
-	
-	
-	
-	
+
 	private final ISessionObserver observable = new ISessionObserver() {
 
 		@Override
@@ -122,7 +115,11 @@ public class Session {
 	 * Session initialisation
 	 */
 	static {
-		Persistence.initialize();
+		try {
+			Persistence.initialize();
+
+		} catch (IOException e) {
+		}
 	}
 
 	/**
@@ -133,13 +130,11 @@ public class Session {
 		this.policy = PrivilegeController.getGuestAccessPolicty();
 	}
 
-	
-	
 	/**
 	 * @return the cookie of the session
 	 */
 	public String getCookie() {
-		
+
 		return cookie;
 	}
 
@@ -276,10 +271,10 @@ public class Session {
 
 	/**
 	 * Tries to do a login procedure. If currently a user is logged in a new
-	 * {@link NoAccessException} will be thrown. If the login fails also a
-	 * new {@link NoAccessException} will be thrown with a reason message.
-	 * If the username or the password is null the login will fail, resulting in
-	 * an {@link NoAccessException}.
+	 * {@link NoAccessException} will be thrown. If the login fails also a new
+	 * {@link NoAccessException} will be thrown with a reason message. If the
+	 * username or the password is null the login will fail, resulting in an
+	 * {@link NoAccessException}.
 	 * 
 	 * In all cases before the login, a logout happens.
 	 * 
