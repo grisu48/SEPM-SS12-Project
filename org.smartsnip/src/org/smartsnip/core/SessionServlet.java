@@ -77,7 +77,7 @@ public class SessionServlet extends RemoteServiceServlet {
 	 * If the name is null or enmpty, null is returned.
 	 * 
 	 * @param name
-	 *            name of the cookoe
+	 *            name of the cookie
 	 * @return the stored cookie, or null if not existing. Returns also null, if
 	 *         the given name is null or empty
 	 */
