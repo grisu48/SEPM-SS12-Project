@@ -2,6 +2,8 @@ package org.smartsnip.shared;
 
 import java.util.Date;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -11,7 +13,19 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * 
  */
 @RemoteServiceRelativePath("comment")
-public interface IComment extends RemoteService {
+public interface IComment extends RemoteService, IsSerializable {
+
+	/** This class provides easy access to the proxy object */
+	public static class Util {
+		private static ICommentAsync instance = null;
+
+		/** Get the proxy object instance */
+		public static ICommentAsync getInstance() {
+			if (instance == null) instance = GWT.create(IComment.class);
+			return instance;
+		}
+	}
+
 	/**
 	 * @return the comment's message text
 	 */

@@ -2,7 +2,8 @@ package org.smartsnip.shared;
 
 import java.util.List;
 
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -12,7 +13,19 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * 
  */
 @RemoteServiceRelativePath("category")
-public interface ICategory extends RemoteService {
+public interface ICategory extends RemoteService, IsSerializable {
+
+	/** This class provides easy access to the proxy object */
+	public static class Util {
+		private static ICategoryAsync instance = null;
+
+		/** Get the proxy object instance */
+		public static ICategoryAsync getInstance() {
+			if (instance == null) instance = GWT.create(ICategory.class);
+			return instance;
+		}
+	}
+
 	/**
 	 * @return the name of the category
 	 */

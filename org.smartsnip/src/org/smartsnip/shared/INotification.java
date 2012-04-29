@@ -1,5 +1,6 @@
 package org.smartsnip.shared;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -11,7 +12,19 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * 
  */
 @RemoteServiceRelativePath("notification")
-public interface INotification extends RemoteService {
+public interface INotification extends RemoteService, IsSerializable {
+
+	/** This class provides easy access to the proxy object */
+	public static class Util {
+		private static INotificationAsync instance = null;
+
+		/** Get the proxy object instance */
+		public static INotificationAsync getInstance() {
+			if (instance == null) instance = GWT.create(INotification.class);
+			return instance;
+		}
+	}
+
 	/**
 	 * Marks the notification as read
 	 */

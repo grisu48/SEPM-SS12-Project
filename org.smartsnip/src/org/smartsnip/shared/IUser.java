@@ -1,6 +1,8 @@
 package org.smartsnip.shared;
 
 import java.util.List;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -11,7 +13,19 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * 
  */
 @RemoteServiceRelativePath("user")
-public interface IUser extends RemoteService {
+public interface IUser extends RemoteService, IsSerializable {
+
+	/** This class provides easy access to the proxy object */
+	public static class Util {
+		private static IUserAsync instance = null;
+
+		/** Get the proxy object instance */
+		public static IUserAsync getInstance() {
+			if (instance == null) instance = GWT.create(IUser.class);
+			return instance;
+		}
+	}
+
 	/**
 	 * @return the name of the user
 	 */

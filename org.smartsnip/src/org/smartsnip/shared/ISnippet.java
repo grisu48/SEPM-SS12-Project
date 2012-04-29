@@ -2,6 +2,7 @@ package org.smartsnip.shared;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -13,6 +14,18 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("snippet")
 public interface ISnippet extends RemoteService, IsSerializable {
+
+	/** This class provides easy access to the proxy object */
+	public static class Util {
+		private static ISnippetAsync instance = null;
+
+		/** Get the proxy object instance */
+		public static ISnippetAsync getInstance() {
+			if (instance == null) instance = GWT.create(ISnippet.class);
+			return instance;
+		}
+	}
+
 	/**
 	 * @return the name of the snippet
 	 */

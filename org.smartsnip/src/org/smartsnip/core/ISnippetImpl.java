@@ -8,13 +8,13 @@ import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
 
-public class SnippetImpl extends SessionServlet implements ISnippet {
+public class ISnippetImpl extends SessionServlet implements ISnippet {
 
 	/** Associated snippet */
 	protected final Snippet snippet;
 
 	/** Default constructors initialises comment */
-	public SnippetImpl(Snippet snippet) {
+	public ISnippetImpl(Snippet snippet) {
 		super();
 
 		if (snippet == null)

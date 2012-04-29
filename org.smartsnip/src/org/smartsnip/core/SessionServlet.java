@@ -1,8 +1,11 @@
 package org.smartsnip.core;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.catalina.HttpResponse;
 import org.smartsnip.shared.ISession;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -13,6 +16,9 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * 
  */
 public class SessionServlet extends RemoteServiceServlet {
+
+	/** Serialisation ID */
+	private static final long serialVersionUID = -5691219932423526109L;
 
 	/** Assosciated session for this servlet call */
 	protected final Session session;
@@ -42,13 +48,6 @@ public class SessionServlet extends RemoteServiceServlet {
 	}
 
 	/**
-	 * @return gets the HTTP session of the servlet
-	 */
-	protected HttpSession getSession() {
-		return getThreadLocalRequest().getSession(true);
-	}
-
-	/**
 	 * Adds a cookie to the http servlet session.
 	 * 
 	 * If the cookie is null nothing will be done
@@ -57,9 +56,15 @@ public class SessionServlet extends RemoteServiceServlet {
 	 *            to be added
 	 */
 	protected void addCookie(Cookie cookie) {
-		if (cookie == null)
+		if (cookie == null) return;
+
+		HttpServletResponse response = getThreadLocalResponse();
+		if (response == null) {
+			System.err.println("getThreadLocalResponse() delivered NULL");
 			return;
-		getThreadLocalResponse().addCookie(cookie);
+		}
+
+		response.addCookie(cookie);
 	}
 
 	/**
@@ -74,8 +79,7 @@ public class SessionServlet extends RemoteServiceServlet {
 	 *            Value of the cookie
 	 */
 	protected void addCookie(String name, String value) {
-		if (name == null || value == null || name.isEmpty())
-			return;
+		if (name == null || value == null || name.isEmpty()) return;
 
 		Cookie cookie = new Cookie(name, value);
 		cookie.setPath("/");
@@ -90,8 +94,7 @@ public class SessionServlet extends RemoteServiceServlet {
 	 *            of the cookie to be removed
 	 */
 	protected void removeCookie(String name) {
-		if (name == null)
-			return;
+		if (name == null) return;
 		Cookie cookie = this.getCookie(name);
 		if (cookie != null) {
 			cookie.setMaxAge(0);
@@ -111,14 +114,18 @@ public class SessionServlet extends RemoteServiceServlet {
 	 *         the given name is null or empty
 	 */
 	protected Cookie getCookie(String name) {
-		if (name == null || name.isEmpty())
-			return null;
+		if (name == null || name.isEmpty()) return null;
 
-		Cookie[] cookies = getThreadLocalRequest().getCookies();
+		HttpServletRequest request = getThreadLocalRequest();
+		if (request == null) {
+			System.err.println("getThreadLocalRequest() delivered NULL");
+			return null;
+		}
+
+		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals(name))
-					return cookie;
+				if (cookie.getName().equals(name)) return cookie;
 			}
 		}
 		return null;

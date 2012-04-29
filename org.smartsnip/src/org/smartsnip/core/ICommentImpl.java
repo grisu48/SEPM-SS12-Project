@@ -6,7 +6,7 @@ import org.smartsnip.shared.IComment;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
 
-public class CommentImpl extends SessionServlet implements IComment {
+public class ICommentImpl extends SessionServlet implements IComment {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = 5843093547608960627L;
@@ -15,7 +15,7 @@ public class CommentImpl extends SessionServlet implements IComment {
 	protected final Comment comment;
 
 	/** Default constructors initialises comment */
-	public CommentImpl(Comment comment) {
+	public ICommentImpl(Comment comment) {
 		super();
 
 		if (comment == null)

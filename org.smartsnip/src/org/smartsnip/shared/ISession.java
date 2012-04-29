@@ -1,5 +1,7 @@
 package org.smartsnip.shared;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -10,7 +12,18 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * 
  */
 @RemoteServiceRelativePath("session")
-public interface ISession extends RemoteService {
+public interface ISession extends RemoteService, IsSerializable {
+
+	/** This class provides easy access to the proxy object */
+	public static class Util {
+		private static ISessionAsync instance = null;
+
+		/** Get the proxy object instance */
+		public static ISessionAsync getInstance() {
+			if (instance == null) instance = GWT.create(ISession.class);
+			return instance;
+		}
+	}
 
 	/** Identifier for the session id cookie used by server and client */
 	public static final String cookie_Session_ID = "smartsnip_SID";
@@ -82,7 +95,7 @@ public interface ISession extends RemoteService {
 	 * @throws NoAccessException
 	 *             Thrown, if the access to the category was denied
 	 */
-	public ICategory getCategory(String name) throws NoAccessException;
+	public IsSerializable getCategory(String name) throws NoAccessException;
 
 	/**
 	 * Gets the access interface to a snippet, with the hash code of the
@@ -97,7 +110,7 @@ public interface ISession extends RemoteService {
 	 * @throws NoAccessException
 	 *             Thrown, if the access to the snippet was denied
 	 */
-	public ISnippet getSnippet(int hash) throws NoAccessException;
+	public IsSerializable getSnippet(int hash) throws NoAccessException;
 
 	/**
 	 * Gets an access interface to the user module, given with the username.
@@ -112,7 +125,7 @@ public interface ISession extends RemoteService {
 	 * @throws NoAccessException
 	 *             Thrown if the access to the given user was denied
 	 */
-	public IUser getUser(String username) throws NoAccessException;
+	public IsSerializable getUser(String username) throws NoAccessException;
 
 	/**
 	 * True if the current session is logged in, false if a guest session

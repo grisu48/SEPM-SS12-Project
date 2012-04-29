@@ -1,6 +1,7 @@
 package org.smartsnip.shared;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 public interface ISessionAsync {
 	public void getUsername(AsyncCallback<String> callback);
@@ -19,11 +20,11 @@ public interface ISessionAsync {
 
 	public void logout(@SuppressWarnings("rawtypes") AsyncCallback callback);
 
-	public void getCategory(String name, AsyncCallback<ICategory> callback) throws NoAccessException;
+	public void getCategory(String name, AsyncCallback<IsSerializable> callback) throws NoAccessException;
 
-	public void getSnippet(int hash, AsyncCallback<ISnippet> callback) throws NoAccessException;
+	public void getSnippet(int hash, AsyncCallback<IsSerializable> callback) throws NoAccessException;
 
-	public void getUser(String username, AsyncCallback<IUser> callback) throws NoAccessException;
+	public void getUser(String username, AsyncCallback<IsSerializable> callback) throws NoAccessException;
 
 	public void isLoggedIn(AsyncCallback<Boolean> callback);
 }

@@ -11,17 +11,20 @@ import org.smartsnip.shared.NoAccessException;
  * session and the client
  * 
  */
-public class SessionImpl extends SessionServlet implements ISession {
+public class ISessionImpl extends SessionServlet implements ISession {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = 51299L;
+
+	public ISessionImpl() {
+		System.out.println("Session servlet created.");
+	}
 
 	/** Gets the username that is currenlt logged in, or null if a guest session */
 	@Override
 	public String getUsername() {
 		User user = session.getUser();
-		if (user == null)
-			return null;
+		if (user == null) return null;
 		return user.getUsername();
 	}
 
@@ -52,10 +55,8 @@ public class SessionImpl extends SessionServlet implements ISession {
 
 	@Override
 	public boolean login(String username, String password) throws NoAccessException {
-		if (session.isLoggedIn())
-			return false;
-		if (username == null || password == null)
-			return false;
+		if (session.isLoggedIn()) return false;
+		if (username == null || password == null) return false;
 
 		// This method throws a NoAccessException, if the login fails
 		session.login(username, password);

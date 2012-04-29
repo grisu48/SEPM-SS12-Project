@@ -9,7 +9,7 @@ import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.Pair;
 
-public class CategoryImpl extends SessionServlet implements ICategory {
+public class ICategoryImpl extends SessionServlet implements ICategory {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = 6002779840902948383L;
@@ -17,9 +17,8 @@ public class CategoryImpl extends SessionServlet implements ICategory {
 	/** Associated category to this category object */
 	protected final Category category;
 
-	public CategoryImpl(Category category) {
-		if (category == null)
-			throw new NullPointerException();
+	public ICategoryImpl(Category category) {
+		if (category == null) throw new NullPointerException();
 		this.category = category;
 	}
 
@@ -30,8 +29,7 @@ public class CategoryImpl extends SessionServlet implements ICategory {
 
 	@Override
 	public synchronized void setName(String name) throws NoAccessException {
-		if (!session.getPolicy().canEditCategory(session, category))
-			throw new NoAccessException();
+		if (!session.getPolicy().canEditCategory(session, category)) throw new NoAccessException();
 		category.setName(name);
 	}
 
@@ -42,8 +40,7 @@ public class CategoryImpl extends SessionServlet implements ICategory {
 
 	@Override
 	public synchronized void setDescription(String desc) throws NoAccessException {
-		if (!session.getPolicy().canEditCategory(session, category))
-			throw new NoAccessException();
+		if (!session.getPolicy().canEditCategory(session, category)) throw new NoAccessException();
 
 		category.setDescription(desc);
 	}
@@ -51,12 +48,10 @@ public class CategoryImpl extends SessionServlet implements ICategory {
 	@Override
 	public synchronized void addSnippet(String name, String description, String code, String language)
 			throws IllegalArgumentException, NoAccessException {
-		if (!session.getPolicy().canCreateSnippet(session, category))
-			throw new NoAccessException();
+		if (!session.getPolicy().canCreateSnippet(session, category)) throw new NoAccessException();
 
 		User user = session.getUser();
-		if (user == null)
-			throw new NoAccessException();
+		if (user == null) throw new NoAccessException();
 		try {
 			Snippet snippet = Snippet.createSnippet(user, name, description, code, language);
 
