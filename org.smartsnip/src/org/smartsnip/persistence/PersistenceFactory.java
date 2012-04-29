@@ -66,7 +66,7 @@ public class PersistenceFactory {
 	/**
 	 * the default value for the method getInstance();
 	 */
-	public static int defaultType = PERSIST_SQL_DB;
+	private static int defaultType = PERSIST_SQL_DB;
 
 	/**
 	 * Keeps the type of the instantiated persistence object. If another type as
@@ -145,7 +145,7 @@ public class PersistenceFactory {
 	 * @throws IllegalAccessException
 	 *             on policy violations.
 	 */
-	public synchronized static IPersistence getInstance() throws IllegalAccessException {
+	public static IPersistence getInstance() throws IllegalAccessException {
 		if (instance == null) {
 			getInstance(defaultType);
 		}
