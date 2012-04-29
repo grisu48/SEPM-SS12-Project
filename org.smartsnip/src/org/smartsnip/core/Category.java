@@ -9,7 +9,7 @@ public class Category {
 	private static List<Category> rootCategories = new ArrayList<Category>();
 	/** All categories */
 	private static HashMap<String, Category> allCategories = new HashMap<String, Category>();
-	/** Snippets */
+	/** Snippet of the category */
 	private final List<Snippet> snippets = new ArrayList<Snippet>();
 
 	/** Name of the category */
@@ -77,9 +77,13 @@ public class Category {
 	 * @return the corresponding category or null, if not found
 	 */
 	synchronized static Category getCategory(String name) {
-		if (name == null || name.isEmpty())
+		if (name == null)
 			return null;
-		return allCategories.get(name.trim().toLowerCase());
+
+		name = name.trim().toLowerCase();
+		if (name.isEmpty())
+			return null;
+		return allCategories.get(name);
 	}
 
 	/**
@@ -104,6 +108,7 @@ public class Category {
 	synchronized static List<String> getCategories(String parent) {
 		if (parent == null || parent.isEmpty())
 			return getCategories();
+
 		Category prnt = getCategory(parent);
 		if (prnt == null)
 			return new ArrayList<String>();

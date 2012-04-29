@@ -4,12 +4,15 @@
  */
 package org.smartsnip.persistence;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.hibernate.TypeMismatchException;
 import org.junit.Test;
 import org.smartsnip.core.Persistence;
 
@@ -21,6 +24,7 @@ public class PersistenceFactoryTest {
 
 	/**
 	 * Test the unavalability of the constructor.
+	 * 
 	 * @throws Throwable
 	 */
 	@Test
@@ -29,9 +33,9 @@ public class PersistenceFactoryTest {
 			@SuppressWarnings("rawtypes")
 			Constructor[] c = PersistenceFactory.class.getDeclaredConstructors();
 			c[0].setAccessible(true);
-			
+
 			@SuppressWarnings("unused")
-			PersistenceFactory fct = (PersistenceFactory)c[0].newInstance();
+			PersistenceFactory fct = (PersistenceFactory) c[0].newInstance();
 			fail("InvocationTargetException expected");
 		} catch (InvocationTargetException e) {
 			assertTrue(e.getCause() instanceof IllegalAccessException);
@@ -42,7 +46,8 @@ public class PersistenceFactoryTest {
 	/**
 	 * Test method for
 	 * {@link org.smartsnip.persistence.PersistenceFactory#getInstance(int)}.
-	 * @throws Throwable 
+	 * 
+	 * @throws Throwable
 	 */
 	@Test
 	public void testGetInstance() throws Throwable {
@@ -54,10 +59,10 @@ public class PersistenceFactoryTest {
 			assertEquals("Type of persistence unknown.", iae.getMessage());
 		}
 		assertNull(instance);
-		
+
 		instance = PersistenceFactory.getInstance(PersistenceFactory.PERSIST_BLACKHOLE);
 		assertNotNull(instance);
-		
+
 		IPersistence duplicate = PersistenceFactory.getInstance(PersistenceFactory.PERSIST_BLACKHOLE);
 		assertTrue(instance == duplicate);
 
@@ -69,11 +74,12 @@ public class PersistenceFactoryTest {
 		}
 		assertTrue(instance == duplicate);
 	}
-	
+
 	/**
 	 * Test method for
 	 * {@link org.smartsnip.persistence.PersistenceFactory#getInstance()}.
-	 * @throws Throwable 
+	 * 
+	 * @throws Throwable
 	 */
 	@Test
 	public void testGetDefaultInstance() throws Throwable {
@@ -83,14 +89,14 @@ public class PersistenceFactoryTest {
 		instance = PersistenceFactory.getInstance();
 		assertNotNull(instance);
 		assertTrue(instance instanceof BlackholePersistence);
-		
+
 		PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
 		duplicate = PersistenceFactory.getInstance();
 		assertNotNull(duplicate);
 		assertTrue("instance is a BlackholePersistence", duplicate instanceof BlackholePersistence);
 		assertTrue("equality", instance == duplicate);
 	}
-	
+
 	@Test
 	public void testInstance() throws Throwable {
 		IPersistence instance = Persistence.getInstance();

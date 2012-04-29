@@ -11,10 +11,10 @@ import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
 import org.smartsnip.core.Comment;
 import org.smartsnip.core.Notification;
-import org.smartsnip.core.Pair;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
+import org.smartsnip.shared.Pair;
 
 import sun.reflect.Reflection;
 
@@ -58,7 +58,7 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writePassword(org.smartsnip.core.Pair,
+	 * @see org.smartsnip.persistence.IPersistence#writePassword(org.smartsnip.shared.Pair,
 	 *      int)
 	 */
 	@Override

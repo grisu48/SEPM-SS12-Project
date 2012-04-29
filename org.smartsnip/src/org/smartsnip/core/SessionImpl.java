@@ -1,9 +1,10 @@
 package org.smartsnip.core;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
-
+import org.smartsnip.shared.ICategory;
 import org.smartsnip.shared.ISession;
+import org.smartsnip.shared.ISnippet;
+import org.smartsnip.shared.IUser;
+import org.smartsnip.shared.NoAccessException;
 
 /**
  * This class acts as the servlet that coordiantes the transactions between the
@@ -18,48 +19,71 @@ public class SessionImpl extends SessionServlet implements ISession {
 	/** Gets the username that is currenlt logged in, or null if a guest session */
 	@Override
 	public String getUsername() {
-
-		// TODO Auto-generated method stub
-		return null;
+		User user = session.getUser();
+		if (user == null)
+			return null;
+		return user.getUsername();
 	}
 
 	@Override
-	protected HttpSession getSession() {
-		return getThreadLocalRequest().getSession(true);
+	public int getActiveSessionCount() {
+		return Session.activeCount();
 	}
 
 	@Override
-	protected void addCookie(Cookie cookie) {
-		getThreadLocalResponse().addCookie(cookie);
+	public int getGuestSessionCount() {
+		return Session.guestSessions();
 	}
 
 	@Override
-	protected void addCookie(String name, String value) {
-		Cookie cookie = new Cookie(name, value);
-		cookie.setPath("/");
-		addCookie(cookie);
+	public int getUserCount() {
+		return Session.getUserCount();
 	}
 
 	@Override
-	protected void removeCookie(String name) {
-		Cookie cookie = this.getCookie(name);
-		if (cookie != null) {
-			cookie.setMaxAge(0);
-			cookie.setPath("/");
-			addCookie(cookie);
-		}
+	public int getCategoryCount() {
+		return Session.getCategoryCount();
 	}
 
 	@Override
-	protected Cookie getCookie(String name) {
-		Cookie[] cookies = getThreadLocalRequest().getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals(name))
-					return cookie;
-			}
-		}
-		return null;
+	public int getSnippetCount() {
+		return Session.getSnippetCount();
 	}
 
+	@Override
+	public boolean login(String username, String password) throws NoAccessException {
+		if (session.isLoggedIn())
+			return false;
+		if (username == null || password == null)
+			return false;
+
+		// This method throws a NoAccessException, if the login fails
+		session.login(username, password);
+		return true;
+	}
+
+	@Override
+	public void logout() {
+		session.logout();
+	}
+
+	@Override
+	public ICategory getCategory(String name) throws NoAccessException {
+		return session.getICategory(name);
+	}
+
+	@Override
+	public ISnippet getSnippet(int hash) throws NoAccessException {
+		return session.getISnippet(hash);
+	}
+
+	@Override
+	public IUser getUser(String username) throws NoAccessException {
+		return session.getIUser(username);
+	}
+
+	@Override
+	public boolean isLoggedIn() {
+		return session.isLoggedIn();
+	}
 }

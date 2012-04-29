@@ -2,9 +2,7 @@ package org.smartsnip.shared;
 
 import java.util.List;
 
-import org.smartsnip.core.Pair;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 

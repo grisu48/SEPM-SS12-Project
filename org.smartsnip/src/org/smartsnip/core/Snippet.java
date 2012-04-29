@@ -1,9 +1,11 @@
 package org.smartsnip.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.smartsnip.persistence.IPersistence;
 
 /**
  * A snippet of the system. TODO: Write me
@@ -257,7 +259,12 @@ public class Snippet {
 			return;
 
 		this.name = name;
-		refreshDB();
+		try {
+			refreshDB();
+		} catch (IOException e) {
+			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			e.printStackTrace(Logging.err);
+		}
 	}
 
 	/**
@@ -281,7 +288,12 @@ public class Snippet {
 			return;
 
 		this.description = description;
-		refreshDB();
+		try {
+			refreshDB();
+		} catch (IOException e) {
+			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			e.printStackTrace(Logging.err);
+		}
 	}
 
 	/**
@@ -304,7 +316,12 @@ public class Snippet {
 			return;
 
 		this.code = code;
-		refreshDB();
+		try {
+			refreshDB();
+		} catch (IOException e) {
+			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			e.printStackTrace(Logging.err);
+		}
 	}
 
 	@Override
@@ -339,7 +356,12 @@ public class Snippet {
 		}
 		this.category = category;
 		category.addSnippet(this);
-		refreshDB();
+		try {
+			refreshDB();
+		} catch (IOException e) {
+			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			e.printStackTrace(Logging.err);
+		}
 	}
 
 	/**
@@ -362,7 +384,12 @@ public class Snippet {
 		if (this.license.equals(license))
 			return;
 		this.license = license;
-		refreshDB();
+		try {
+			refreshDB();
+		} catch (IOException e) {
+			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			e.printStackTrace(Logging.err);
+		}
 	}
 
 	/**
@@ -388,7 +415,13 @@ public class Snippet {
 				return;
 			tags.add(tag);
 		}
-		refreshDB();
+
+		try {
+			refreshDB();
+		} catch (IOException e) {
+			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			e.printStackTrace(Logging.err);
+		}
 	}
 
 	/**
@@ -406,7 +439,12 @@ public class Snippet {
 				return;
 			tags.remove(tag);
 		}
-		refreshDB();
+		try {
+			refreshDB();
+		} catch (IOException e) {
+			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			e.printStackTrace(Logging.err);
+		}
 	}
 
 	/**
@@ -425,7 +463,12 @@ public class Snippet {
 
 	synchronized void increaseViewCounter() {
 		viewcount++;
-		refreshDB();
+		try {
+			refreshDB();
+		} catch (IOException e) {
+			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			e.printStackTrace(Logging.err);
+		}
 	}
 
 	/**
@@ -436,14 +479,19 @@ public class Snippet {
 	 *            to be added
 	 */
 	void addComment(Comment comment) {
-		if (comment == null)
-			return;
-		synchronized (comments) {
-			if (comments.contains(comment))
+		try {
+			if (comment == null)
 				return;
-			comments.add(comment);
+			synchronized (comments) {
+				if (comments.contains(comment))
+					return;
+				comments.add(comment);
+			}
+			refreshDB();
+		} catch (IOException e) {
+			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			e.printStackTrace(Logging.err);
 		}
-		refreshDB();
 	}
 
 	/**
@@ -462,7 +510,12 @@ public class Snippet {
 				return;
 			comments.remove(comment);
 		}
-		refreshDB();
+		try {
+			refreshDB();
+		} catch (IOException e) {
+			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			e.printStackTrace(Logging.err);
+		}
 	}
 
 	/**
@@ -496,9 +549,11 @@ public class Snippet {
 
 	/**
 	 * Invokes the refreshing process for the database
+	 * 
+	 * @throws IOException
 	 */
-	protected void refreshDB() {
-		// TODO: Implement me!
+	protected synchronized void refreshDB() throws IOException {
+		Persistence.instance.writeSnippet(this, IPersistence.DB_DEFAULT);
 	}
 
 	/**

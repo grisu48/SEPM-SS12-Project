@@ -2,6 +2,7 @@ package org.smartsnip.shared;
 
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -11,7 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * 
  */
 @RemoteServiceRelativePath("snippet")
-public interface ISnippet extends RemoteService {
+public interface ISnippet extends RemoteService, IsSerializable {
 	/**
 	 * @return the name of the snippet
 	 */
@@ -63,7 +64,7 @@ public interface ISnippet extends RemoteService {
 	 *             Thrown as security exception if the current session is not
 	 *             allowed to do that
 	 */
-	public void addTag(String tag)  throws NoAccessException;
+	public void addTag(String tag) throws NoAccessException;
 
 	/**
 	 * Removes a tag from the snippet. If the snippet doesn't has this tag,
@@ -102,7 +103,7 @@ public interface ISnippet extends RemoteService {
 	 * @throws NoAccessException
 	 *             Currently not used
 	 */
-	public void increaseViewCounter()  throws NoAccessException;
+	public void increaseViewCounter() throws NoAccessException;
 
 	/**
 	 * Adds a comment with the given user of the session to the snippet. If the
@@ -110,8 +111,8 @@ public interface ISnippet extends RemoteService {
 	 * the system and returns null as well.
 	 * 
 	 * 
-	 * If no user is logged in with the session, a new
-	 * {@link NoAccessException} will be thrown.
+	 * If no user is logged in with the session, a new {@link NoAccessException}
+	 * will be thrown.
 	 * 
 	 * @param comment
 	 *            To be added to the snippet. If null or empty the call will

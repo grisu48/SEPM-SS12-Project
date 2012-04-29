@@ -1,6 +1,5 @@
 package org.smartsnip.core;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +15,7 @@ import org.smartsnip.shared.ISessionObserver;
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.Pair;
 
 public class Session {
 	/** Session storage, each session is identified with the cookie string */
@@ -23,6 +23,8 @@ public class Session {
 
 	/** Cookie with that the session is identified */
 	private final String cookie;
+
+	private static final Session staticGuestSession = new Session("");
 
 	/** State where the current session currently is in */
 	private SessionState state = SessionState.active;
@@ -327,6 +329,27 @@ public class Session {
 			return null;
 
 		return createIUser(User.getUser(username));
+	}
+
+	/**
+	 * Creates a new Interface to handle the user actions.
+	 * 
+	 * If the given user is null, null is returned
+	 * 
+	 * If the session is not allowed to do this call (or on that user) the
+	 * method throws a new {@link NoAccessException}.
+	 * 
+	 * @param user
+	 *            The user for witch the interface should be created
+	 * @return the user interface or null if the given user is null
+	 * @throws NoAccessException
+	 *             Thrown as security exception when the session is not allowed
+	 *             to do that
+	 */
+	public IUser getIUser(User user) {
+		if (user == null)
+			return null;
+		return createIUser(user);
 	}
 
 	/**
@@ -992,7 +1015,7 @@ public class Session {
 	 * @return An interface for the category or null, if no such category has
 	 *         been found
 	 */
-	public ICategory getCategory(String name) {
+	public ICategory getICategory(String name) {
 		if (name == null || name.isEmpty())
 			return null;
 
@@ -1141,5 +1164,129 @@ public class Session {
 			return null;
 
 		return createISnippet(snippet);
+	}
+
+	/**
+	 * Creates an interface to a snippet. If the given snippet null also null is
+	 * returned
+	 * 
+	 * @param snippet
+	 *            to whom the interface should be generated to
+	 * @return the interface to access the snippet, or null, if not such snippet
+	 *         exists
+	 */
+	public ISnippet getISnippet(Snippet snippet) {
+		if (snippet == null)
+			return null;
+		return createISnippet(snippet);
+	}
+
+	/**
+	 * 
+	 * @return gets the session instance for a static guest session with no
+	 *         cookie
+	 */
+	static Session getStaticGuestSession() {
+		return staticGuestSession;
+	}
+
+	/**
+	 * @return the {@link IAccessPolicy} of this session
+	 */
+	IAccessPolicy getPolicy() {
+		return policy;
+	}
+
+	/**
+	 * Reports a comment to a moderator. If the comment is null, nothing happens
+	 * 
+	 * @param comment
+	 *            to be reported.
+	 */
+	static void report(Comment comment) {
+		if (comment == null)
+			return;
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Generates the manipulation interface for the client out of a given
+	 * comment.
+	 * 
+	 * If the given comment is null, also null will be returned
+	 * 
+	 * @param comment
+	 *            for witch the client interface should be created
+	 * @return the created control interface, or null, of the given comment was
+	 *         null
+	 */
+	IComment getIComment(Comment comment) {
+		if (comment == null)
+			return null;
+
+		return createIComment(comment);
+	}
+
+	/**
+	 * Adds a favorited snippet to the session. If the snippet is null, nothing
+	 * happes
+	 * 
+	 * If the session is logged in, then the snippet is added to the user's
+	 * favorites.
+	 * 
+	 * If the session is a guest session, currently no action is done
+	 * 
+	 * @param snippet
+	 *            To be dadded
+	 */
+	public void addFavorite(Snippet snippet) {
+		if (snippet == null || !isLoggedIn())
+			return;
+		User owner = getUser();
+		if (owner == null)
+			return;
+
+		owner.addFavorite(snippet);
+
+	}
+
+	/**
+	 * Removes a favorited snippet from the session. If the snippet is null,
+	 * nothing happes
+	 * 
+	 * If the session is logged in, then the snippet is removed to the user's
+	 * favorites.
+	 * 
+	 * If the session is a guest session, currently no action is done
+	 * 
+	 * @param snippet
+	 *            To be removed
+	 */
+	public void removeFavorite(Snippet snippet) {
+		if (snippet == null || !isLoggedIn())
+			return;
+		User owner = getUser();
+		if (owner == null)
+			return;
+
+		owner.removeFavorite(snippet);
+
+	}
+
+	/**
+	 * Reposts a user with a given reason. If the reason is null, the method
+	 * does nothing. If the given user is null, nothing is done.
+	 * 
+	 * @param user
+	 *            to be reported.
+	 * @param reason
+	 *            of the report
+	 */
+	public static void report(User user, String reason) {
+		if (user == null || reason == null)
+			return;
+
+		// TODO Implement me
 	}
 }
