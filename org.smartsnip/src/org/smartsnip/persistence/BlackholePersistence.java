@@ -477,7 +477,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<Snippet> search(String searchString, int min, int max)
 			throws IOException {
-		return getUserSnippets(staticUser1);;
+		return getUserSnippets(staticUser1);
 	}
 
 	/**
