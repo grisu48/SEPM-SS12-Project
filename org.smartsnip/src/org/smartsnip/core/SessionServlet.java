@@ -3,6 +3,8 @@ package org.smartsnip.core;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
+import org.smartsnip.shared.ISession;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -11,6 +13,33 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * 
  */
 public class SessionServlet extends RemoteServiceServlet {
+
+	/** Assosciated session for this servlet call */
+	protected final Session session;
+
+	/**
+	 * Default constructor handles the session initialisation
+	 */
+	public SessionServlet() {
+		Cookie cookie = getCookie(ISession.cookie_Session_ID);
+
+		if (cookie == null) {
+			session = Session.createNewSession();
+			cookie = new Cookie(ISession.cookie_Session_ID, session.getCookie());
+			addCookie(cookie);
+		} else {
+			/** TODO: Check handling if cookies are disabled in browser */
+			String sid = cookie.getValue();
+			if (sid == null) {
+				session = Session.getStaticGuestSession();
+			} else {
+				session = Session.getSession(cookie.getValue());
+			}
+		}
+
+		// Does a activity on the running session
+		session.doActivity();
+	}
 
 	/**
 	 * @return gets the HTTP session of the servlet

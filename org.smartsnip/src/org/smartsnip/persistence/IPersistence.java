@@ -7,6 +7,7 @@ package org.smartsnip.persistence;
 import java.io.IOException;
 import java.util.List;
 import org.smartsnip.core.*;
+import org.smartsnip.shared.Pair;
 
 /**
  * Interface which contains all methods to persist or load data from the

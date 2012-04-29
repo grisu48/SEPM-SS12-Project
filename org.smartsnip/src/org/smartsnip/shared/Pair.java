@@ -1,4 +1,8 @@
-package org.smartsnip.core;
+package org.smartsnip.shared;
+
+import java.io.Serializable;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * A pair of objects
@@ -8,7 +12,10 @@ package org.smartsnip.core;
  * @param <V>
  *            Second object
  */
-public class Pair<E, V> {
+public class Pair<E, V> implements Serializable, IsSerializable {
+	/** Serialisation ID */
+	private static final long serialVersionUID = -2215994228066675515L;
+
 	/** The first item of the pair */
 	public final E first;
 	/** The second item of the pair */
