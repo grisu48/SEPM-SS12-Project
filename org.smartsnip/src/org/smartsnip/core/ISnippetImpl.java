@@ -17,8 +17,7 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 	public ISnippetImpl(Snippet snippet) {
 		super();
 
-		if (snippet == null)
-			throw new NullPointerException();
+		if (snippet == null) throw new NullPointerException();
 		this.snippet = snippet;
 	}
 
@@ -29,6 +28,8 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 
 	@Override
 	public IUser getOwner() {
+		Session session = getSession();
+
 		return session.getIUser(snippet.owner);
 	}
 
@@ -71,20 +72,21 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 
 	@Override
 	public void addTag(String tag) throws NoAccessException {
-		if (!session.getPolicy().canTagSnippet(session, snippet))
-			throw new NoAccessException();
+		Session session = getSession();
+
+		if (!session.getPolicy().canTagSnippet(session, snippet)) throw new NoAccessException();
 
 		snippet.addTag(Tag.createTag(tag));
 	}
 
 	@Override
 	public void removeTag(String tag) throws NoAccessException {
-		if (!session.getPolicy().canTagSnippet(session, snippet))
-			throw new NoAccessException();
+		Session session = getSession();
+
+		if (!session.getPolicy().canTagSnippet(session, snippet)) throw new NoAccessException();
 
 		Tag tagO = Tag.getTag(tag);
-		if (tagO == null)
-			return; // Tag doesn't exists
+		if (tagO == null) return; // Tag doesn't exists
 
 		snippet.removeTag(tagO);
 
@@ -92,6 +94,8 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 
 	@Override
 	public List<IComment> getComments() throws NoAccessException {
+		Session session = getSession();
+
 		List<Comment> comments = snippet.getComments();
 		ArrayList<IComment> result = new ArrayList<IComment>();
 
@@ -116,14 +120,13 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 
 	@Override
 	public IComment addComment(String comment) throws NoAccessException {
-		if (comment == null || comment.isEmpty())
-			return null;
-		if (!session.getPolicy().canComment(session))
-			throw new NoAccessException();
+		Session session = getSession();
+
+		if (comment == null || comment.isEmpty()) return null;
+		if (!session.getPolicy().canComment(session)) throw new NoAccessException();
 
 		User user = session.getUser();
-		if (user == null)
-			throw new NoAccessException();
+		if (user == null) throw new NoAccessException();
 		Comment result = Comment.createComment(user, snippet, comment);
 		snippet.addComment(result);
 		return session.getIComment(result);
@@ -131,18 +134,23 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 
 	@Override
 	public void addFavorite() {
+		Session session = getSession();
+
 		session.addFavorite(snippet);
 	}
 
 	@Override
 	public void removeFavorite() {
+		Session session = getSession();
+
 		session.removeFavorite(snippet);
 	}
 
 	@Override
 	public void delete() throws NoAccessException {
-		if (!session.getPolicy().canDeleteSnippet(session, snippet))
-			throw new NoAccessException();
+		Session session = getSession();
+
+		if (!session.getPolicy().canDeleteSnippet(session, snippet)) throw new NoAccessException();
 
 		snippet.delete();
 	}

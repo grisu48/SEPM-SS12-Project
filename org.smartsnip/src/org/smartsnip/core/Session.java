@@ -186,18 +186,20 @@ public class Session {
 	 *            Used for session identification
 	 * @return Session identified by the cookie
 	 */
-	public synchronized static Session getSession(String cookie) {
+	public static Session getSession(String cookie) {
 		if (cookie == null || cookie.length() == 0) return null;
 
-		Session result = storedSessions.get(cookie);
-		if (result == null) {
-			result = createNewSession(cookie);
-		} else if (result.isDead()) {
-			storedSessions.remove(cookie);
-			result = null;
+		synchronized (storedSessions) {
+			Session result = storedSessions.get(cookie);
+			if (result == null) {
+				result = createNewSession(cookie);
+			} else if (result.isDead()) {
+				storedSessions.remove(cookie);
+				result = null;
+			}
+			return result;
 		}
 
-		return result;
 	}
 
 	/**
@@ -212,15 +214,17 @@ public class Session {
 	 * @return true if the given cookie exists, false if not existing or the
 	 *         given cookie is null or empty
 	 */
-	public synchronized static boolean existsCookie(String cookie) {
+	public static boolean existsCookie(String cookie) {
 		if (cookie == null || cookie.length() == 0) return false;
-		Session result = storedSessions.get(cookie);
-		if (result == null) return false;
-		if (result.isDead()) {
-			storedSessions.remove(cookie);
-			return false;
+		synchronized (storedSessions) {
+			Session result = storedSessions.get(cookie);
+			if (result == null) return false;
+			if (result.isDead()) {
+				storedSessions.remove(cookie);
+				return false;
+			}
+			return true;
 		}
-		return true;
 	}
 
 	/**
@@ -232,11 +236,13 @@ public class Session {
 	 *            new Session's cookie
 	 * @return Created session
 	 */
-	private synchronized static Session createNewSession(String cookie) {
+	private static Session createNewSession(String cookie) {
 		if (cookie == null || cookie.length() == 0)
 			throw new NullPointerException("Cannot create session with null cookie");
 		Session newSession = new Session(cookie);
-		storedSessions.put(cookie, newSession);
+		synchronized (storedSessions) {
+			storedSessions.put(cookie, newSession);
+		}
 		return newSession;
 	}
 
@@ -908,6 +914,8 @@ public class Session {
 			session = createNewSession(sid);
 			// XXX: Maybe a new created session can have a reduced lifetime ...
 			storedSessions.put(sid, session);
+			System.out.println("New session with SID=\"" + sid + "\" created. (total=" + activeCount()
+					+ " active session");
 		}
 
 		return session;
@@ -1079,15 +1087,19 @@ public class Session {
 	 */
 	public static int activeCount() {
 		// TODO Implement me
-		return 0;
+		return storedSessions.size();
 	}
 
 	/**
 	 * @return the number of currently active guest sessions
 	 */
 	public static int guestSessions() {
-		// TODO Implement me
-		return 0;
+		int count = 0;
+		List<Session> sessions = new ArrayList<Session>(storedSessions.values());
+		for (Session session : sessions) {
+			if (!session.isLoggedIn()) count++;
+		}
+		return count;
 	}
 
 	/**

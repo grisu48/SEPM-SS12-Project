@@ -18,8 +18,7 @@ public class UserImpl extends SessionServlet implements IUser {
 	public UserImpl(User user) {
 		super();
 
-		if (user == null)
-			throw new NullPointerException();
+		if (user == null) throw new NullPointerException();
 		this.user = user;
 	}
 
@@ -35,15 +34,17 @@ public class UserImpl extends SessionServlet implements IUser {
 
 	@Override
 	public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException {
-		if (!session.getPolicy().canEditUserData(session, user))
-			throw new NoAccessException();
+		Session session = getSession();
+
+		if (!session.getPolicy().canEditUserData(session, user)) throw new NoAccessException();
 		user.setEmail(newAddress);
 	}
 
 	@Override
 	public void setRealName(String newName) throws NoAccessException {
-		if (!session.getPolicy().canEditUserData(session, user))
-			throw new NoAccessException();
+		Session session = getSession();
+
+		if (!session.getPolicy().canEditUserData(session, user)) throw new NoAccessException();
 
 		user.setRealName(newName);
 	}
@@ -55,8 +56,9 @@ public class UserImpl extends SessionServlet implements IUser {
 
 	@Override
 	public void logout() throws NoAccessException {
-		if (!user.equals(session.getUser()))
-			throw new NoAccessException();
+		Session session = getSession();
+
+		if (!user.equals(session.getUser())) throw new NoAccessException();
 	}
 
 	@Override
@@ -87,8 +89,9 @@ public class UserImpl extends SessionServlet implements IUser {
 	 * @return
 	 */
 	private List<ISnippet> toISnippets(List<Snippet> snippets) {
-		if (snippets == null)
-			return null;
+		Session session = getSession();
+
+		if (snippets == null) return null;
 		List<ISnippet> result = new ArrayList<ISnippet>();
 
 		for (Snippet snippet : snippets) {

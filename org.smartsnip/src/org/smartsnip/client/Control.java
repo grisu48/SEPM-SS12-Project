@@ -5,12 +5,15 @@ import org.smartsnip.shared.IRip;
 import org.smartsnip.shared.IRipAsync;
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.ISessionAsync;
+import org.smartsnip.shared.ISnippet;
+import org.smartsnip.shared.ISnippetAsync;
 import org.smartsnip.shared.NoAccessException;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * The controller according to a MVC pattern.
@@ -69,19 +72,43 @@ public class Control implements EntryPoint {
 	}
 
 	public static void testCommunication() {
-		session.getActiveSessionCount(new AsyncCallback<Integer>() {
+		try {
+			session.getSnippet(0, new AsyncCallback<IsSerializable>() {
 
-			@Override
-			public void onSuccess(Integer result) {
-				myGUI.showTestPopup("Active sessions: " + result);
-			}
+				ISnippetAsync snippet = null;
 
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				@Override
+				public void onFailure(Throwable caught) {
+					myGUI.showTestPopup("Something went wrong: " + caught.getMessage());
+				}
 
-			}
-		});
+				@Override
+				public void onSuccess(IsSerializable result) {
+					try {
+						snippet = (ISnippetAsync) result;
+
+						snippet.getName(new AsyncCallback<String>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								myGUI.showTestPopup("Snippet got, but something went wrong getting the name of it: "
+										+ caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(String result) {
+								myGUI.showTestPopup("Snippet(hash=0).name = " + result + "\nSuccess!!");
+							}
+						});
+
+					} catch (ClassCastException e) {
+
+					}
+
+				}
+			});
+		} catch (NoAccessException e) {
+			myGUI.showTestPopup("Access denial");
+		}
 	}
-
 }

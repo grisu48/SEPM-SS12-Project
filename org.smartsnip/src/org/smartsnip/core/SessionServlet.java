@@ -21,30 +21,12 @@ public class SessionServlet extends RemoteServiceServlet {
 	private static final long serialVersionUID = -5691219932423526109L;
 
 	/** Assosciated session for this servlet call */
-	protected final Session session;
+	private Session session = null;
 
 	/**
 	 * Default constructor handles the session initialisation
 	 */
 	public SessionServlet() {
-		Cookie cookie = getCookie(ISession.cookie_Session_ID);
-
-		if (cookie == null) {
-			session = Session.createNewSession();
-			cookie = new Cookie(ISession.cookie_Session_ID, session.getCookie());
-			addCookie(cookie);
-		} else {
-			/** TODO: Check handling if cookies are disabled in browser */
-			String sid = cookie.getValue();
-			if (sid == null) {
-				session = Session.getStaticGuestSession();
-			} else {
-				session = Session.getSession(cookie.getValue());
-			}
-		}
-
-		// Does a activity on the running session
-		session.doActivity();
 	}
 
 	/**
@@ -131,4 +113,40 @@ public class SessionServlet extends RemoteServiceServlet {
 		return null;
 	}
 
+	/**
+	 * Gets the session for this servlet object
+	 * 
+	 * @return the session for this revlet object
+	 */
+	protected final Session getSession() {
+		if (session != null) return session;
+
+		synchronized (this) {
+			/*
+			 * Thread-Saftey: This call MUST be executed once again in the
+			 * synchronized block!!
+			 */
+			if (session != null) return session;
+
+			Cookie cookie = getCookie(ISession.cookie_Session_ID);
+
+			if (cookie == null) {
+				session = Session.createNewSession();
+				cookie = new Cookie(ISession.cookie_Session_ID, session.getCookie());
+				addCookie(cookie);
+			} else {
+				/** TODO: Check handling if cookies are disabled in browser */
+				String sid = cookie.getValue();
+				if (sid == null) {
+					session = Session.getStaticGuestSession();
+				} else {
+					session = Session.getSession(sid);
+				}
+			}
+
+			// Does a activity on the running session
+			session.doActivity();
+			return session;
+		}
+	}
 }

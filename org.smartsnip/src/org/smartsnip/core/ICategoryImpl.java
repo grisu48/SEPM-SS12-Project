@@ -29,6 +29,8 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 
 	@Override
 	public synchronized void setName(String name) throws NoAccessException {
+		Session session = getSession();
+
 		if (!session.getPolicy().canEditCategory(session, category)) throw new NoAccessException();
 		category.setName(name);
 	}
@@ -40,6 +42,8 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 
 	@Override
 	public synchronized void setDescription(String desc) throws NoAccessException {
+		Session session = getSession();
+
 		if (!session.getPolicy().canEditCategory(session, category)) throw new NoAccessException();
 
 		category.setDescription(desc);
@@ -48,6 +52,8 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 	@Override
 	public synchronized void addSnippet(String name, String description, String code, String language)
 			throws IllegalArgumentException, NoAccessException {
+		Session session = getSession();
+
 		if (!session.getPolicy().canCreateSnippet(session, category)) throw new NoAccessException();
 
 		User user = session.getUser();
@@ -76,6 +82,7 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 
 	@Override
 	public synchronized List<ISnippet> getISnippets() {
+		Session session = getSession();
 		List<Snippet> snippets = category.getSnippets();
 
 		ArrayList<ISnippet> result = new ArrayList<ISnippet>();
