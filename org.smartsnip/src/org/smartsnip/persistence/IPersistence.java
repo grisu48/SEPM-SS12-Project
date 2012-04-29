@@ -602,6 +602,16 @@ public interface IPersistence {
 			throws IOException;
 
 	/**
+	 * get the average rating belonging to the given snippet
+	 * 
+	 * @param snippet
+	 * @return the average of all ratings
+	 * @throws IOException
+	 */
+	public Float getAverageRating(Snippet snippet)
+			throws IOException;
+
+	/**
 	 * Creates a pair with the votes for a comment.
 	 * <p>
 	 * The first parameter gives the positive votes, the seconds parameter of

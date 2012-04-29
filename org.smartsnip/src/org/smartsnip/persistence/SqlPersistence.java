@@ -440,6 +440,15 @@ public class SqlPersistence implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getAverageRating(org.smartsnip.core.Snippet)
+	 */
+	@Override
+	public Float getAverageRating(Snippet snippet) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getVotes(org.smartsnip.core.Comment)
 	 */
 	@Override
