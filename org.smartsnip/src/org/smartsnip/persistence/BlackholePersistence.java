@@ -515,4 +515,10 @@ public class BlackholePersistence implements IPersistence {
 		return 0;
 	}
 
+	@Override
+	public Float getAverageRating(Snippet snippet) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
