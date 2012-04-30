@@ -7,7 +7,7 @@ package org.smartsnip.persistence;
 import java.io.IOException;
 import java.util.List;
 
-import org.smartsnip.*;
+import org.smartsnip.core.*;
 import org.smartsnip.shared.Pair;
 
 /**
@@ -88,6 +88,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeUser(User user, int mode) throws IOException;
 
@@ -100,6 +101,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeUser(List<User> users, int mode) throws IOException;
 
@@ -114,6 +116,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writePassword(User user, String password, int mode)
 			throws IOException;
@@ -127,6 +130,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeSnippet(Snippet snippet, int mode) throws IOException;
 
@@ -139,6 +143,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeSnippet(List<Snippet> snippets, int mode)
 			throws IOException;
@@ -152,6 +157,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeComment(Comment comment, int mode) throws IOException;
 
@@ -164,6 +170,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeComment(List<Comment> comments, int mode)
 			throws IOException;
@@ -177,6 +184,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeTag(Tag tag, int mode) throws IOException;
 
@@ -189,6 +197,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeTag(List<Tag> tags, int mode) throws IOException;
 
@@ -201,6 +210,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeNotification(Notification notification, int mode)
 			throws IOException;
@@ -214,6 +224,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeNotification(List<Notification> notifications, int mode)
 			throws IOException;
@@ -227,6 +238,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeCode(Code code, int mode) throws IOException;
 
@@ -239,6 +251,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeCode(List<Code> codes, int mode) throws IOException;
 
@@ -251,6 +264,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeCategory(Category category, int mode) throws IOException;
 
@@ -263,6 +277,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeCategory(List<Category> categories, int mode)
 			throws IOException;
@@ -276,6 +291,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeLanguage(String language, int mode) throws IOException;
 
@@ -296,6 +312,7 @@ public interface IPersistence {
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
 			throws IOException;
@@ -317,6 +334,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void writeVote(Integer vote, Comment comment, User user, int mode)
 			throws IOException;
@@ -336,6 +354,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void votePositive(User user, Comment comment, int mode)
 			throws IOException;
@@ -355,6 +374,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void voteNegative(User user, Comment comment, int mode)
 			throws IOException;
@@ -373,6 +393,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void unVote(User user, Comment comment, int mode) throws IOException;
 
@@ -388,6 +409,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @return true if the state has changed
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void addFavourite(Snippet snippet, User user, int mode)
 			throws IOException;
@@ -404,6 +426,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @return true if the state has changed
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void removeFavourite(Snippet snippet, User user, int mode)
 			throws IOException;
@@ -415,6 +438,7 @@ public interface IPersistence {
 	 *            the nickname of the user as key
 	 * @return the user object
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public User getUser(String nick) throws IOException;
 
@@ -425,6 +449,7 @@ public interface IPersistence {
 	 *            the email address
 	 * @return the user object
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public User getUserByEmail(String email) throws IOException;
 
@@ -435,6 +460,7 @@ public interface IPersistence {
 	 *            the user
 	 * @return the password string
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 * @throws UnsupportedOperationException
 	 *             if the method is not supported by the persistence framework.
 	 *             If this happens, use {@link #verifyPassword(User, String)}
@@ -450,6 +476,7 @@ public interface IPersistence {
 	 * @param password
 	 * @return true if the password is correct
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public boolean verifyPassword(User user, String password)
 			throws IOException;
@@ -462,6 +489,7 @@ public interface IPersistence {
 	 *            word order is unimportant.
 	 * @return the users where all given words match with the name entry
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<User> findUser(String realName) throws IOException;
 
@@ -472,6 +500,7 @@ public interface IPersistence {
 	 *            a user owning the snippets
 	 * @return all matching snippets
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Snippet> getUserSnippets(User owner) throws IOException;
 
@@ -483,6 +512,7 @@ public interface IPersistence {
 	 *            the user who attached the favourite tags
 	 * @return all matching snippets
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Snippet> getFavorited(User user) throws IOException;
 
@@ -493,6 +523,7 @@ public interface IPersistence {
 	 *            a list of tags
 	 * @return all matching snippets
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException;
 
@@ -503,8 +534,37 @@ public interface IPersistence {
 	 *            the category
 	 * @return all matching snippets
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Snippet> getSnippets(Category category) throws IOException;
+
+	/**
+	 * get all snippets of a given category
+	 * 
+	 * @param category
+	 *            the category
+	 * @param start
+	 *            the starting index of the results set, null or 0 for start at
+	 *            the first index
+	 * @param count
+	 *            the number of entries, null if no upper limit is wanted
+	 * @return all matching snippets
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public List<Snippet> getSnippets(Category category, int start, int count)
+			throws IOException;
+
+	/**
+	 * get the comment by it's identifier
+	 * 
+	 * @param id
+	 * @return the comment
+	 * @throws IOException
+	 *             at a problem retrieving the data at a problem retrieving the
+	 *             data, e.g. if the comment doesn't exist
+	 */
+	public Comment getComment(long id) throws IOException;
 
 	/**
 	 * get all comments attached to the given snippet
@@ -512,6 +572,7 @@ public interface IPersistence {
 	 * @param snippet
 	 * @return all matching comments
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Comment> getComments(Snippet snippet) throws IOException;
 
@@ -521,6 +582,7 @@ public interface IPersistence {
 	 * @param snippet
 	 * @return the list of tags
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Tag> getTags(Snippet snippet) throws IOException;
 
@@ -529,6 +591,7 @@ public interface IPersistence {
 	 * 
 	 * @return a list of all tags
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Tag> getAllTags() throws IOException;
 
@@ -542,6 +605,7 @@ public interface IPersistence {
 	 *            now
 	 * @return all (new) notifications
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Notification> getNotifications(User user, boolean unreadOnly)
 			throws IOException;
@@ -552,8 +616,17 @@ public interface IPersistence {
 	 * @param snippet
 	 * @return all code fragments
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Code> getCodes(Snippet snippet) throws IOException;
+
+	/**
+	 * get all category names
+	 * 
+	 * @return all categories by name
+	 * @throws IOException
+	 */
+	public List<String> getAllCategories() throws IOException;
 
 	/**
 	 * get the category the snippet belongs to
@@ -561,15 +634,28 @@ public interface IPersistence {
 	 * @param snippet
 	 * @return the category
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public Category getCategory(Snippet snippet) throws IOException;
+
+	/**
+	 * get the category by name
+	 * 
+	 * @param name
+	 *            the name of the category as key
+	 * @return the category object
+	 * @throws IOException
+	 */
+	public Category getCategory(String name) throws IOException;
 
 	/**
 	 * get the immediate parent of a category
 	 * 
 	 * @param category
+	 *            the child category
 	 * @return the parent category or null if the given category is a root
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public Category getParentCategory(Category category) throws IOException;
 
@@ -577,11 +663,26 @@ public interface IPersistence {
 	 * get the immediate subcategories
 	 * 
 	 * @param category
+	 *            the parent category
 	 * @return the direct child categories in first order. If the given category
 	 *         is a leaf an empty list is returned.
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Category> getSubcategories(Category category)
+			throws IOException;
+
+	/**
+	 * get the immediate subcategories as string
+	 * 
+	 * @param category
+	 *            the parent category
+	 * @return the direct child categories in first order. If the given category
+	 *         is a leaf an empty list is returned.
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public List<String> getSubcategoryNames(Category category)
 			throws IOException;
 
 	/**
@@ -589,6 +690,7 @@ public interface IPersistence {
 	 * 
 	 * @return a list of all languages
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<String> getAllLanguages() throws IOException;
 
@@ -598,6 +700,7 @@ public interface IPersistence {
 	 * @param snippet
 	 * @return a list of pairs of user objects and ratings as integer
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public List<Pair<User, Integer>> getRatings(Snippet snippet)
 			throws IOException;
@@ -608,9 +711,9 @@ public interface IPersistence {
 	 * @param snippet
 	 * @return the average of all ratings
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
-	public Float getAverageRating(Snippet snippet)
-			throws IOException;
+	public Float getAverageRating(Snippet snippet) throws IOException;
 
 	/**
 	 * Creates a pair with the votes for a comment.
@@ -621,6 +724,7 @@ public interface IPersistence {
 	 * @param comment
 	 * @return a pair of two integers
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public Pair<Integer, Integer> getVotes(Comment comment) throws IOException;
 
@@ -629,15 +733,16 @@ public interface IPersistence {
 	 * 
 	 * @param searchString
 	 *            the string to search for
-	 * @param min
-	 *            the index of the first result, null or 0 if no lower limit is
-	 *            wanted
-	 * @param max
-	 *            the index of the last result, null if no upper limit is wanted
+	 * @param start
+	 *            the starting index of the results set, null or 0 for start at
+	 *            the first index
+	 * @param count
+	 *            the number of entries, null if no upper limit is wanted
 	 * @return a list of snippets which contain the given arguments
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
-	public List<Snippet> search(String searchString, int min, int max)
+	public List<Snippet> search(String searchString, int start, int count)
 			throws IOException;
 
 	/**
@@ -645,6 +750,7 @@ public interface IPersistence {
 	 * 
 	 * @return the count
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public int getUserCount() throws IOException;
 
@@ -653,6 +759,7 @@ public interface IPersistence {
 	 * 
 	 * @return the count
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public int getCategoryCount() throws IOException;
 
@@ -661,6 +768,7 @@ public interface IPersistence {
 	 * 
 	 * @return the count
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public int getSnippetsCount() throws IOException;
 
@@ -669,17 +777,7 @@ public interface IPersistence {
 	 * 
 	 * @return the count
 	 * @throws IOException
+	 *             at a problem retrieving the data
 	 */
 	public int getTagsCount() throws IOException;
-
-	public List<String> getCategories() throws IOException;
-
-	public Category getCategory(String name) throws IOException;
-
-	public List<String> getCategories(Category prnt) throws IOException;
-
-	public List<Snippet> getSnippets(Category category, int start, int count) throws IOException;
-
-	public Comment getComment(long hash) throws IOException;
-
 }
