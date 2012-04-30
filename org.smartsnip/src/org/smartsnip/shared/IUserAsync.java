@@ -18,4 +18,6 @@ public interface IUserAsync {
 
 	void getFavorites(AsyncCallback<List<XSnippet>> callback);
 
+	void getServerStatus(AsyncCallback<XServerStatus> callback);
+
 }
