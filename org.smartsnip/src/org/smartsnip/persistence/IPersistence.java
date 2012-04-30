@@ -6,7 +6,14 @@ package org.smartsnip.persistence;
 
 import java.io.IOException;
 import java.util.List;
-import org.smartsnip.core.*;
+
+import org.smartsnip.core.Category;
+import org.smartsnip.core.Code;
+import org.smartsnip.core.Comment;
+import org.smartsnip.core.Notification;
+import org.smartsnip.core.Snippet;
+import org.smartsnip.core.Tag;
+import org.smartsnip.core.User;
 import org.smartsnip.shared.Pair;
 
 /**
@@ -19,10 +26,8 @@ import org.smartsnip.shared.Pair;
  * <pre>
  * MyPersistence() throws IllegalAccessException {
  * 	super();
- * 	if (Reflection.getCallerClass(2) == null
- * 			|| Reflection.getCallerClass(2) != PersistenceFactory.class) {
- * 		throw new IllegalAccessException(
- * 				&quot;Singleton pattern: caller must be PersistenceFactory class.&quot;);
+ * 	if (Reflection.getCallerClass(2) == null || Reflection.getCallerClass(2) != PersistenceFactory.class) {
+ * 		throw new IllegalAccessException(&quot;Singleton pattern: caller must be PersistenceFactory class.&quot;);
  * 	}
  * }
  * </pre>
@@ -114,8 +119,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 */
-	public void writePassword(User user, String password, int mode)
-			throws IOException;
+	public void writePassword(User user, String password, int mode) throws IOException;
 
 	/**
 	 * Persist a single Snippet-dataset.
@@ -139,8 +143,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 */
-	public void writeSnippet(List<Snippet> snippets, int mode)
-			throws IOException;
+	public void writeSnippet(List<Snippet> snippets, int mode) throws IOException;
 
 	/**
 	 * Persist a single Comment-dataset.
@@ -164,8 +167,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 */
-	public void writeComment(List<Comment> comments, int mode)
-			throws IOException;
+	public void writeComment(List<Comment> comments, int mode) throws IOException;
 
 	/**
 	 * Persist a single Tag-dataset.
@@ -201,8 +203,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 */
-	public void writeNotification(Notification notification, int mode)
-			throws IOException;
+	public void writeNotification(Notification notification, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Notification-datasets.
@@ -214,8 +215,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 */
-	public void writeNotification(List<Notification> notifications, int mode)
-			throws IOException;
+	public void writeNotification(List<Notification> notifications, int mode) throws IOException;
 
 	/**
 	 * Persist a single Code-dataset.
@@ -263,8 +263,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 */
-	public void writeCategory(List<Category> categories, int mode)
-			throws IOException;
+	public void writeCategory(List<Category> categories, int mode) throws IOException;
 
 	/**
 	 * Persist a language.
@@ -296,8 +295,7 @@ public interface IPersistence {
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 */
-	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
-			throws IOException;
+	public void writeRating(Integer rating, Snippet snippet, User user, int mode) throws IOException;
 
 	/**
 	 * Persist a vote. This operation updates an existing vote if the user has
@@ -317,8 +315,7 @@ public interface IPersistence {
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
 	 */
-	public void writeVote(Integer vote, Comment comment, User user, int mode)
-			throws IOException;
+	public void writeVote(Integer vote, Comment comment, User user, int mode) throws IOException;
 
 	/**
 	 * Persist a positive vote. This operation updates an existing vote if the
@@ -336,8 +333,7 @@ public interface IPersistence {
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
 	 */
-	public void votePositive(User user, Comment comment, int mode)
-			throws IOException;
+	public void votePositive(User user, Comment comment, int mode) throws IOException;
 
 	/**
 	 * Persist a negative vote. This operation updates an existing vote if the
@@ -355,8 +351,7 @@ public interface IPersistence {
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
 	 */
-	public void voteNegative(User user, Comment comment, int mode)
-			throws IOException;
+	public void voteNegative(User user, Comment comment, int mode) throws IOException;
 
 	/**
 	 * Remove a vote. This operation updates an existing vote to 'none' in
@@ -388,8 +383,7 @@ public interface IPersistence {
 	 * @return true if the state has changed
 	 * @throws IOException
 	 */
-	public void addFavourite(Snippet snippet, User user, int mode)
-			throws IOException;
+	public void addFavourite(Snippet snippet, User user, int mode) throws IOException;
 
 	/**
 	 * Clears the favourite-state of the snippet.
@@ -404,8 +398,7 @@ public interface IPersistence {
 	 * @return true if the state has changed
 	 * @throws IOException
 	 */
-	public void removeFavourite(Snippet snippet, User user, int mode)
-			throws IOException;
+	public void removeFavourite(Snippet snippet, User user, int mode) throws IOException;
 
 	/**
 	 * get a user by his nickname
@@ -439,8 +432,7 @@ public interface IPersistence {
 	 *             If this happens, use {@link #verifyPassword(User, String)}
 	 *             instant, that has to be implemented
 	 */
-	public String getPassword(User user) throws IOException,
-			UnsupportedOperationException;
+	public String getPassword(User user) throws IOException, UnsupportedOperationException;
 
 	/**
 	 * verifies the password of the given user
@@ -450,8 +442,7 @@ public interface IPersistence {
 	 * @return true if the password is correct
 	 * @throws IOException
 	 */
-	public boolean verifyPassword(User user, String password)
-			throws IOException;
+	public boolean verifyPassword(User user, String password) throws IOException;
 
 	/**
 	 * find all users with matching names
@@ -542,8 +533,7 @@ public interface IPersistence {
 	 * @return all (new) notifications
 	 * @throws IOException
 	 */
-	public List<Notification> getNotifications(User user, boolean unreadOnly)
-			throws IOException;
+	public List<Notification> getNotifications(User user, boolean unreadOnly) throws IOException;
 
 	/**
 	 * get all code fragments of a given snippet
@@ -580,8 +570,7 @@ public interface IPersistence {
 	 *         is a leaf an empty list is returned.
 	 * @throws IOException
 	 */
-	public List<Category> getSubcategories(Category category)
-			throws IOException;
+	public List<Category> getSubcategories(Category category) throws IOException;
 
 	/**
 	 * get all available programming-languages
@@ -598,8 +587,7 @@ public interface IPersistence {
 	 * @return a list of pairs of user objects and ratings as integer
 	 * @throws IOException
 	 */
-	public List<Pair<User, Integer>> getRatings(Snippet snippet)
-			throws IOException;
+	public List<Pair<User, Integer>> getRatings(Snippet snippet) throws IOException;
 
 	/**
 	 * get the average rating belonging to the given snippet
@@ -608,8 +596,7 @@ public interface IPersistence {
 	 * @return the average of all ratings
 	 * @throws IOException
 	 */
-	public Float getAverageRating(Snippet snippet)
-			throws IOException;
+	public Float getAverageRating(Snippet snippet) throws IOException;
 
 	/**
 	 * Creates a pair with the votes for a comment.
@@ -636,8 +623,7 @@ public interface IPersistence {
 	 * @return a list of snippets which contain the given arguments
 	 * @throws IOException
 	 */
-	public List<Snippet> search(String searchString, int min, int max)
-			throws IOException;
+	public List<Snippet> search(String searchString, int min, int max) throws IOException;
 
 	/**
 	 * get the number of users which are currently in the database
@@ -670,4 +656,12 @@ public interface IPersistence {
 	 * @throws IOException
 	 */
 	public int getTagsCount() throws IOException;
+
+	public List<String> getCategories() throws IOException;
+
+	public Category getCategory(String name) throws IOException;
+
+	public List<String> getCategories(Category prnt) throws IOException;
+
+	public List<Snippet> getSnippets(Category category, int start, int count) throws IOException;
 }
