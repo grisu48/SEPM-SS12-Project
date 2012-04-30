@@ -610,4 +610,36 @@ public class MemPersistence implements IPersistence {
 		return ((float)sum / (float)num);
 	}
 
+	@Override
+	public List<Snippet> getSnippets(Category category, int start, int count)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Comment getComment(long id) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getAllCategories() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Category getCategory(String name) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getSubcategoryNames(Category category)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
