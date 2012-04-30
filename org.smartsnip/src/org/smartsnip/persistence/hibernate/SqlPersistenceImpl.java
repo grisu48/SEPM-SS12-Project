@@ -7,16 +7,10 @@ package org.smartsnip.persistence.hibernate;
 import java.io.IOException;
 import java.util.List;
 
-import org.smartsnip.core.Category;
-import org.smartsnip.core.Code;
-import org.smartsnip.core.Comment;
-import org.smartsnip.core.Notification;
-import org.smartsnip.core.Pair;
-import org.smartsnip.core.Snippet;
-import org.smartsnip.core.Tag;
-import org.smartsnip.core.User;
-import org.smartsnip.persistence.IPersistence;
-import org.smartsnip.persistence.PersistenceFactory;
+import org.smartsnip.core.*;
+import org.smartsnip.persistence.*;
+import org.smartsnip.shared.Pair;
+
 
 import sun.reflect.Reflection;
 
@@ -349,6 +343,25 @@ public class SqlPersistenceImpl implements IPersistence {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getSnippets(org.smartsnip.core.Category, int, int)
+	 */
+	@Override
+	public List<Snippet> getSnippets(Category category, int start, int count)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getComment(long)
+	 */
+	@Override
+	public Comment getComment(long id) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#getComments(org.smartsnip.core.Snippet)
@@ -397,10 +410,28 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getAllCategories()
+	 */
+	@Override
+	public List<String> getAllCategories() throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getCategory(org.smartsnip.core.Snippet)
 	 */
 	@Override
 	public Category getCategory(Snippet snippet) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getCategory(java.lang.String)
+	 */
+	@Override
+	public Category getCategory(String name) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -423,6 +454,16 @@ public class SqlPersistenceImpl implements IPersistence {
 		return null;
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getSubcategoryNames(org.smartsnip.core.Category)
+	 */
+	@Override
+	public List<String> getSubcategoryNames(Category category)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#getAllLanguages()
 	 */
@@ -504,5 +545,4 @@ public class SqlPersistenceImpl implements IPersistence {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
 }
