@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import org.junit.Test;
+import org.smartsnip.persistence.hibernate.SqlPersistenceImpl;
 
 /**
  * @author littlelion
@@ -62,20 +63,20 @@ public class PersistenceFactoryTest {
 		assertNull(instance);
 
 		// get an instance
-		PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_BLACKHOLE);
+		PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_SQL_DB);
 		instance = PersistenceFactory.getInstance();
 		assertNotNull(instance);
-		assertTrue(instance instanceof BlackholePersistence);
+		assertTrue(instance instanceof SqlPersistenceImpl);
 
 		// Test on duplicate
 		IPersistence duplicate = PersistenceFactory
-				.getInstance(PersistenceFactory.PERSIST_BLACKHOLE);
+				.getInstance(PersistenceFactory.PERSIST_SQL_DB);
 		assertTrue(instance == duplicate);
 
 		// test on duplicate of different type
 		try {
 			duplicate = PersistenceFactory
-					.getInstance(PersistenceFactory.PERSIST_SQL_DB);
+					.getInstance(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
 			fail("IllegalAccessException expected.");
 		} catch (IllegalAccessException ie) {
 			assertEquals(
@@ -86,11 +87,11 @@ public class PersistenceFactoryTest {
 
 		// test on duplicate with changed default type - ignore default
 		PersistenceFactory
-				.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
+				.setDefaultType(PersistenceFactory.PERSIST_BLACKHOLE);
 		duplicate = PersistenceFactory.getInstance();
 		assertNotNull(duplicate);
-		assertTrue("instance is not a BlackholePersistence",
-				duplicate instanceof BlackholePersistence);
+		assertTrue("instance is not an SqlPersistence",
+				duplicate instanceof SqlPersistenceImpl);
 		assertTrue("equality", instance == duplicate);
 	}
 }
