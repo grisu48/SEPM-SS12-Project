@@ -6,7 +6,9 @@ package org.smartsnip.persistence;
 
 import java.io.IOException;
 import java.util.List;
-import org.smartsnip.core.*;
+
+import org.smartsnip.*;
+import org.smartsnip.shared.Pair;
 
 /**
  * Interface which contains all methods to persist or load data from the
@@ -669,4 +671,15 @@ public interface IPersistence {
 	 * @throws IOException
 	 */
 	public int getTagsCount() throws IOException;
+
+	public List<String> getCategories() throws IOException;
+
+	public Category getCategory(String name) throws IOException;
+
+	public List<String> getCategories(Category prnt) throws IOException;
+
+	public List<Snippet> getSnippets(Category category, int start, int count) throws IOException;
+
+	public Comment getComment(long hash) throws IOException;
+
 }
