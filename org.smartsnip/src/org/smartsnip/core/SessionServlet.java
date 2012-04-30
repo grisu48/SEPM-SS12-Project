@@ -3,10 +3,9 @@ package org.smartsnip.core;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import org.apache.catalina.HttpResponse;
 import org.smartsnip.shared.ISession;
+import org.smartsnip.shared.XServerStatus;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -38,7 +37,8 @@ public class SessionServlet extends RemoteServiceServlet {
 	 *            to be added
 	 */
 	protected void addCookie(Cookie cookie) {
-		if (cookie == null) return;
+		if (cookie == null)
+			return;
 
 		HttpServletResponse response = getThreadLocalResponse();
 		if (response == null) {
@@ -61,7 +61,8 @@ public class SessionServlet extends RemoteServiceServlet {
 	 *            Value of the cookie
 	 */
 	protected void addCookie(String name, String value) {
-		if (name == null || value == null || name.isEmpty()) return;
+		if (name == null || value == null || name.isEmpty())
+			return;
 
 		Cookie cookie = new Cookie(name, value);
 		cookie.setPath("/");
@@ -76,7 +77,8 @@ public class SessionServlet extends RemoteServiceServlet {
 	 *            of the cookie to be removed
 	 */
 	protected void removeCookie(String name) {
-		if (name == null) return;
+		if (name == null)
+			return;
 		Cookie cookie = this.getCookie(name);
 		if (cookie != null) {
 			cookie.setMaxAge(0);
@@ -96,7 +98,8 @@ public class SessionServlet extends RemoteServiceServlet {
 	 *         the given name is null or empty
 	 */
 	protected Cookie getCookie(String name) {
-		if (name == null || name.isEmpty()) return null;
+		if (name == null || name.isEmpty())
+			return null;
 
 		HttpServletRequest request = getThreadLocalRequest();
 		if (request == null) {
@@ -107,7 +110,8 @@ public class SessionServlet extends RemoteServiceServlet {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals(name)) return cookie;
+				if (cookie.getName().equals(name))
+					return cookie;
 			}
 		}
 		return null;
@@ -119,14 +123,16 @@ public class SessionServlet extends RemoteServiceServlet {
 	 * @return the session for this revlet object
 	 */
 	protected final Session getSession() {
-		if (session != null) return session;
+		if (session != null)
+			return session;
 
 		synchronized (this) {
 			/*
 			 * Thread-Saftey: This call MUST be executed once again in the
 			 * synchronized block!!
 			 */
-			if (session != null) return session;
+			if (session != null)
+				return session;
 
 			Cookie cookie = getCookie(ISession.cookie_Session_ID);
 
@@ -148,5 +154,18 @@ public class SessionServlet extends RemoteServiceServlet {
 			session.doActivity();
 			return session;
 		}
+	}
+
+	public XServerStatus getServerStatus() {
+		HttpServletRequest request = getThreadLocalRequest();
+		Runtime runtime = Runtime.getRuntime();
+
+		XServerStatus result = new XServerStatus();
+		result.servername = request.getServerName();
+		result.totalMemory = runtime.totalMemory();
+		result.freeMemory = runtime.freeMemory();
+		result.maxMemory = runtime.maxMemory();
+
+		return result;
 	}
 }

@@ -10,6 +10,9 @@ import org.smartsnip.shared.XSnippet;
 
 public class ICategoryImpl extends SessionServlet implements ICategory {
 
+	/** Serialisation ID */
+	private static final long serialVersionUID = -314215751195418750L;
+
 	@Override
 	public XCategory getCategory(String name) {
 		if (name == null || name.isEmpty())

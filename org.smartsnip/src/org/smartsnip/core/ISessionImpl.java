@@ -1,7 +1,10 @@
 package org.smartsnip.core;
 
+import java.util.List;
+
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.XSnippet;
 
 /**
  * This class acts as the servlet that coordiantes the transactions between the
@@ -65,8 +68,20 @@ public class ISessionImpl extends SessionServlet implements ISession {
 
 	@Override
 	public boolean isLoggedIn() {
+		Session session = getSession();
+		return session.isLoggedIn();
+	}
+
+	@Override
+	public List<XSnippet> doSearch(String searchString, List<String> tags, List<String> category) {
 		// TODO Auto-generated method stub
-		return false;
+		return null;
+	}
+
+	@Override
+	public List<XSnippet> doSearch(String searchString, List<String> tags, List<String> category, int start, int count) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -8,6 +8,9 @@ import org.smartsnip.shared.XSnippet;
 
 public class ISnippetImpl extends SessionServlet implements ISnippet {
 
+	/** Serialisation ID */
+	private static final long serialVersionUID = -1493947420774219096L;
+
 	@Override
 	public List<XComment> getComments(int snippet, int start, int count) {
 		// TODO Auto-generated method stub
