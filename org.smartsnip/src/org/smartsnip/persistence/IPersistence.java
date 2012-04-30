@@ -664,4 +664,7 @@ public interface IPersistence {
 	public List<String> getCategories(Category prnt) throws IOException;
 
 	public List<Snippet> getSnippets(Category category, int start, int count) throws IOException;
+
+	public Comment getComment(long hash) throws IOException;
+
 }
