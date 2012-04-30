@@ -13,7 +13,7 @@ public class Comment {
 	private String message = "";
 
 	/** Hash code of the comment */
-	private final long hashcode;
+	private long hashcode;
 
 	/** Last change time */
 	private Date time = null;
@@ -221,5 +221,12 @@ public class Comment {
 	@Override
 	public int hashCode() {
 		return ((Long) hashcode).hashCode();
+	}
+
+	/**
+	 * @return The internal unique hash code of the comment
+	 */
+	long getHash() {
+		return hashcode;
 	}
 }
