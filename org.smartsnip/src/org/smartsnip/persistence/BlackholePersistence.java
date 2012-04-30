@@ -342,16 +342,33 @@ public class BlackholePersistence implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getSnippets(org.smartsnip.core.Category, int, int)
+	 */
+	@Override
+	public List<Snippet> getSnippets(Category category, int start, int count)
+			throws IOException {
+		return getSnippets(category);
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getComments(org.smartsnip.core.Snippet)
 	 */
 	@Override
 	public List<Comment> getComments(Snippet snippet) throws IOException {
 		List<Comment> list = new ArrayList<Comment>();
-		Comment comm1 = Comment.createComment(user1, snippet, "commented by nobody");
-		Comment comm2 = Comment.createComment(user2, snippet, "commented by bin_da");
+		Comment comm1 = Comment.createComment(staticUser1, snippet, "commented by nobody");
+		Comment comm2 = Comment.createComment(staticUser2, snippet, "commented by bin_da");
 		list.add(comm1);
 		list.add(comm2);
 		return list;
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getComment(long)
+	 */
+	@Override
+	public Comment getComment(long id) throws IOException {
+		return getComments(null).get(0);
 	}
 
 	/**
@@ -402,11 +419,45 @@ public class BlackholePersistence implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getAllCategories()
+	 */
+	@Override
+	public List<String> getAllCategories() throws IOException {
+		List<String> result = new ArrayList<String>();
+		result.add(getCategory("0").getName());
+		for(Category cat: getSubcategories(getCategory("0"))) {
+			result.add(cat.getName());
+		}
+		return result;
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getCategory(java.lang.String)
+	 */
+	@Override
+	public Category getCategory(String name) throws IOException {
+		return Category.createCategory("search", "Searching algorithms", null);
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getSubcategoryNames(org.smartsnip.core.Category)
+	 */
+	@Override
+	public List<String> getSubcategoryNames(Category category)
+			throws IOException {
+		List<String> result = new ArrayList<String>();
+		for (Category cat: getSubcategories(category)) {
+			result.add(cat.getName());
+		}
+		return result;
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getCategory(org.smartsnip.core.Snippet)
 	 */
 	@Override
 	public Category getCategory(Snippet snippet) throws IOException {
-		return Category.createCategory("search", "Searching algorithms", null);
+		return getCategory("0");
 	}
 
 	/**
