@@ -5,16 +5,10 @@
 package org.smartsnip.persistence;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.smartsnip.core.Category;
-import org.smartsnip.core.Code;
-import org.smartsnip.core.Comment;
-import org.smartsnip.core.Notification;
-import org.smartsnip.core.Snippet;
-import org.smartsnip.core.Tag;
-import org.smartsnip.core.User;
-import org.smartsnip.shared.Pair;
+import org.smartsnip.core.*;
 
 import sun.reflect.Reflection;
 
@@ -27,6 +21,10 @@ import sun.reflect.Reflection;
  */
 public class BlackholePersistence implements IPersistence {
 
+	private static User staticUser1 = User.createNewUser("nobody", "blabla", "nobody@anonymus.org");
+	private static User staticUser2 = User.createNewUser("bin_da", "asdfgh", "bd@finger.net");
+	private static Code staticCode = Code.createCode("/* There's nothing interesting to know.*/", "java", null);
+			
 	/**
 	 * This constructor is protected against multiple instantiation to accomplish a singleton pattern.
 	 * It rejects any attempt to build an instance except it is called by the {@link PersistenceFactory#getInstance(int)} method.
@@ -46,8 +44,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void writeUser(User user, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -56,8 +53,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void writeUser(List<User> users, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -67,8 +63,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void writePassword(User user, String password, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -77,8 +72,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void writeSnippet(Snippet snippet, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -88,8 +82,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void writeSnippet(List<Snippet> snippets, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -98,8 +91,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void writeComment(Comment comment, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -109,8 +101,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void writeComment(List<Comment> comments, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -119,8 +110,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void writeTag(Tag tag, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -128,8 +118,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void writeTag(List<Tag> tags, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -139,8 +128,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void writeNotification(Notification notification, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -150,8 +138,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void writeNotification(List<Notification> notifications, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -160,8 +147,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void writeCode(Code code, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -170,8 +156,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void writeCode(List<Code> codes, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -180,8 +165,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void writeCategory(Category category, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -191,8 +175,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void writeCategory(List<Category> categories, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -201,8 +184,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void writeLanguage(String language, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -212,8 +194,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -223,8 +204,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void writeVote(Integer vote, Comment comment, User user, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -234,8 +214,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void votePositive(User user, Comment comment, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -245,8 +224,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void voteNegative(User user, Comment comment, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -255,8 +233,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public void unVote(User user, Comment comment, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -266,8 +243,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void addFavourite(Snippet snippet, User user, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -277,8 +253,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public void removeFavourite(Snippet snippet, User user, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		// do nothing -> data vanish in the black hole!
 	}
 
 	/**
@@ -286,8 +261,8 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public User getUser(String nick) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		User result = User.createNewUser(nick, "blabla", nick + "@anonymus.org");
+		return result;
 	}
 
 	/**
@@ -295,8 +270,8 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public User getUserByEmail(String email) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		User result = User.createNewUser("nobody", "blabla", email);
+		return result;
 	}
 
 	/**
@@ -305,8 +280,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public String getPassword(User user) throws IOException,
 			UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("Use method verifyPassword(User, String) instead.");
 	}
 
 	/**
@@ -316,8 +290,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public boolean verifyPassword(User user, String password)
 			throws IOException {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	/**
@@ -325,8 +298,10 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public List<User> findUser(String realName) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		List<User> list = new ArrayList<User>();
+		list.add(User.createNewUser("nobody", "blabla", "nobody@anonymus.org"));
+		list.add(User.createNewUser("bin_da", "asdfgh", "bd@finger.net"));
+		return list;
 	}
 
 	/**
@@ -334,7 +309,11 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getUserSnippets(User owner) throws IOException {
-		// TODO Auto-generated method stub
+		List<Snippet> snips = new ArrayList<Snippet>();
+		Snippet snip = Snippet.createSnippet(owner, "Some Content", "This is an example entry", null, 0);
+		Code code = Code.createCode("/* There's nothing interesting to know.*/", "java", snip);
+		snip.setCode(code);
+		snips.add(snip);
 		return null;
 	}
 
@@ -343,8 +322,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getFavorited(User user) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return getUserSnippets(user);
 	}
 
 	/**
@@ -352,8 +330,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return getUserSnippets(staticUser1);
 	}
 
 	/**
@@ -361,8 +338,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getSnippets(Category category) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return getUserSnippets(staticUser1);
 	}
 
 	/**
@@ -370,8 +346,12 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public List<Comment> getComments(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Comment> list = new ArrayList<Comment>();
+		Comment comm1 = Comment.createComment(user1, snippet, "commented by nobody");
+		Comment comm2 = Comment.createComment(user2, snippet, "commented by bin_da");
+		list.add(comm1);
+		list.add(comm2);
+		return list;
 	}
 
 	/**
@@ -379,8 +359,12 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public List<Tag> getTags(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Tag> list = new ArrayList<Tag>();
+		Tag tag1 = Tag.createTag("java");
+		Tag tag2 = Tag.createTag("sort");
+		list.add(tag1);
+		list.add(tag2);
+		return list;
 	}
 
 	/**
@@ -388,8 +372,9 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public List<Tag> getAllTags() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Tag> list = getTags(null);
+		list.add(Tag.createTag("merge"));
+		return list;
 	}
 
 	/**
@@ -399,8 +384,11 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<Notification> getNotifications(User user, boolean unreadOnly)
 			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Notification> list = new ArrayList<Notification>();
+		Notification not1 = new Notification();
+		not1.markUnread();
+		list.add(not1);
+		return list;
 	}
 
 	/**
@@ -408,8 +396,9 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public List<Code> getCodes(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Code> list = new ArrayList<Code>();
+		list.add(staticCode);
+		return list;
 	}
 
 	/**
@@ -417,8 +406,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public Category getCategory(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return Category.createCategory("search", "Searching algorithms", null);
 	}
 
 	/**
@@ -426,8 +414,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public Category getParentCategory(Category category) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return Category.createCategory("search", "Searching algorithms", null);
 	}
 
 	/**
@@ -436,8 +423,12 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<Category> getSubcategories(Category category)
 			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Category> list = new ArrayList<Category>();
+		Category cat1 = Category.createCategory("arraysearch", "Searching algorithms for arrays", category);
+		Category cat2 = Category.createCategory("listsearch", "Searching algorithms for list", category);
+		list.add(cat1);
+		list.add(cat2);
+		return list;
 	}
 
 	/**
@@ -445,8 +436,10 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public List<String> getAllLanguages() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> list = new ArrayList<String>();
+		list.add(new String("c"));
+		list.add(new String("java"));
+		return list;
 	}
 
 	/**
@@ -455,8 +448,18 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<Pair<User, Integer>> getRatings(Snippet snippet)
 			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		List<Pair<User, Integer>> list = new ArrayList<Pair<User,Integer>>();
+		list.add(new Pair<User, Integer>(staticUser1, 4));
+		list.add(new Pair<User, Integer>(staticUser2, 3));
+		return list;
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getAverageRating(org.smartsnip.core.Snippet)
+	 */
+	@Override
+	public Float getAverageRating(Snippet snippet) throws IOException {
+		return new Float(3.5);
 	}
 
 	/**
@@ -464,8 +467,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public Pair<Integer, Integer> getVotes(Comment comment) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return new Pair<Integer, Integer>(new Integer(7), new Integer(4));
 	}
 
 	/**
@@ -475,8 +477,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<Snippet> search(String searchString, int min, int max)
 			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return getUserSnippets(staticUser1);
 	}
 
 	/**
@@ -484,8 +485,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public int getUserCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return 3;
 	}
 
 	/**
@@ -493,8 +493,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public int getCategoryCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return 2;
 	}
 
 	/**
@@ -502,8 +501,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public int getSnippetsCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return 4;
 	}
 
 	/**
@@ -511,14 +509,6 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public int getTagsCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return 3;
 	}
-
-	@Override
-	public Float getAverageRating(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
