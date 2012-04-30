@@ -1,25 +1,20 @@
 package org.smartsnip.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
+import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.shared.XCategory;
+
 public class Category {
-	/** List of all root categories */
-	private static List<Category> rootCategories = new ArrayList<Category>();
-	/** All categories */
-	private static HashMap<String, Category> allCategories = new HashMap<String, Category>();
-	/** Snippet of the category */
-	private final List<Snippet> snippets = new ArrayList<Snippet>();
 
 	/** Name of the category */
-	private String name;
+	private final String name;
 	/** Description of the category */
 	private String description;
 	/** Parent category, if present, or null if a root category */
 	private Category parent = null;
-	/** Sub-categories */
-	private final List<Category> subcategories;
 
 	/**
 	 * Constructor for a new category. If one of the fields (except parent) if
@@ -45,7 +40,6 @@ public class Category {
 		this.name = name;
 		this.description = description;
 		this.parent = parent;
-		this.subcategories = new ArrayList<Category>();
 	}
 
 	/**
@@ -62,8 +56,10 @@ public class Category {
 	 *            Parent category. If null, the new category is added as root
 	 *            category
 	 * @return the newly created category
+	 * @throws IOException
+	 *             Thrown if occuring during access to IPersistence
 	 */
-	synchronized static Category createCategory(String name, String description, Category parent) {
+	synchronized static Category createCategory(String name, String description, Category parent) throws IOException {
 		Category category = new Category(name, description, parent);
 		addToDB(category);
 		return category;
@@ -77,13 +73,11 @@ public class Category {
 	 * @return the corresponding category or null, if not found
 	 */
 	synchronized static Category getCategory(String name) {
-		if (name == null)
+		if (name == null || name.isEmpty())
 			return null;
 
-		name = name.trim().toLowerCase();
-		if (name.isEmpty())
-			return null;
-		return allCategories.get(name);
+		// TODO return Persistence.instance.getCategory(name);
+		return null;
 	}
 
 	/**
@@ -92,10 +86,8 @@ public class Category {
 	synchronized static List<String> getCategories() {
 		List<String> result = new ArrayList<String>();
 
-		for (Category item : rootCategories) {
-			result.add(item.name);
-		}
-		return result;
+		// TODO return Persistence.instance.getCategories();
+		return null;
 	}
 
 	/**
@@ -109,16 +101,9 @@ public class Category {
 		if (parent == null || parent.isEmpty())
 			return getCategories();
 
-		Category prnt = getCategory(parent);
-		if (prnt == null)
-			return new ArrayList<String>();
-
-		List<String> result = new ArrayList<String>(prnt.subcategories.size());
-		for (Category item : prnt.subcategories) {
-			result.add(item.name);
-		}
-
-		return result;
+		// Category prnt = getCategory(parent);
+		// TODO return Persistence.instance.getCategories(prnt);
+		return null;
 	}
 
 	/**
@@ -126,21 +111,6 @@ public class Category {
 	 */
 	public String getName() {
 		return name;
-	}
-
-	/**
-	 * Sets the name of the category. If null or empty, nothing happends
-	 * 
-	 * @param name
-	 *            the name to set
-	 */
-	void setName(String name) {
-		if (name == null || name.length() == 0)
-			return;
-		if (this.name.equals(name))
-			return;
-		this.name = name;
-		refreshDB();
 	}
 
 	/**
@@ -173,8 +143,9 @@ public class Category {
 			if (parent == null) {
 				parent = Persistence.instance.getParentCategory(this);
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			return null;
 		}
 
 		return parent;
@@ -203,10 +174,8 @@ public class Category {
 	void addSubCategory(Category category) {
 		if (category == null)
 			return;
-		if (subcategories.contains(category))
-			return;
-		subcategories.add(category);
-		refreshDB();
+
+		// TODO Implement me
 	}
 
 	/**
@@ -219,20 +188,8 @@ public class Category {
 	void removeSubCategory(Category category) {
 		if (category == null)
 			return;
-		if (!subcategories.contains(category))
-			return;
-		subcategories.remove(category);
-		refreshDB();
-	}
 
-	/**
-	 * Gets the list of snippets of this category
-	 * 
-	 * @return the list of snippets for this category
-	 */
-	List<Snippet> getSnippets() {
-		// TODO: Implement me!
-		return new ArrayList<Snippet>();
+		// TODO Implement me
 	}
 
 	/**
@@ -247,27 +204,14 @@ public class Category {
 	 * 
 	 * @param category
 	 *            to be added.
+	 * @throws IOException
+	 *             The {@link IOException} of IPersistence is not caught
 	 */
-	synchronized protected static void addToDB(Category category) {
+	synchronized protected static void addToDB(Category category) throws IOException {
 		if (category == null)
 			return;
-		String name = category.name.trim().toLowerCase();
 
-		if (category.parent == null) {
-			// Root category
-			if (!rootCategories.contains(category)) {
-				rootCategories.add(category);
-			}
-		} else {
-			// Subcategory
-			if (!category.parent.subcategories.contains(category)) {
-				category.parent.subcategories.add(category);
-			}
-		}
-
-		allCategories.put(name, category);
-
-		// TODO Implement me!
+		Persistence.instance.writeCategory(category, IPersistence.DB_NEW_ONLY);
 	}
 
 	/**
@@ -283,9 +227,7 @@ public class Category {
 		if (snippet == null)
 			return;
 
-		if (!snippets.contains(snippet))
-			return;
-		snippets.remove(snippet);
+		// TODO Write me
 	}
 
 	/**
@@ -299,16 +241,26 @@ public class Category {
 		if (snippet == null)
 			return;
 
-		if (snippets.contains(snippet))
-			return;
-		snippets.add(snippet);
+		// TODO Write me
 	}
 
 	/**
+	 * Gets the total number of categories or -1 if 1 {@link IOException}
+	 * occurs.
+	 * 
+	 * If the {@link IOException} occurs the exception is written into
+	 * System.err
+	 * 
 	 * @return the total number of categories
 	 */
 	synchronized static int totalCount() {
-		return allCategories.size();
+		try {
+			return Persistence.instance.getCategoryCount();
+		} catch (IOException e) {
+			System.err.println(e.getMessage() + " while getting category count: ");
+			e.printStackTrace(System.err);
+			return -1;
+		}
 	}
 
 	/**
@@ -319,17 +271,7 @@ public class Category {
 	 *            the name of the category to be deleted
 	 */
 	synchronized static void deleteCategory(String name) {
-		if (!exists(name))
-			return;
-
-		name = name.trim().toLowerCase();
-		Category category = allCategories.get(name);
-		if (category == null)
-			return;
-		if (category.parent != null) {
-			category.parent.subcategories.remove(category);
-		}
-		allCategories.remove(name);
+		// TODO Implement me
 	}
 
 	/**
@@ -341,10 +283,64 @@ public class Category {
 	 * @return true if existing, otherwise false
 	 */
 	synchronized static boolean exists(String name) {
-		if (name == null || name.isEmpty())
-			return false;
+		// TODO Implement me
+		return false;
+	}
 
-		name = name.trim().toLowerCase();
-		return allCategories.containsKey(name);
+	/**
+	 * Gets a list with the direct subcategories of this category.
+	 * 
+	 * If an {@link IOException} happens during the access to the persistence,
+	 * the result is null and the exception is written to the System.err
+	 * 
+	 * @return A list containing all subcategories of this category
+	 */
+	private List<Category> getSubCategories() {
+		try {
+			return Persistence.instance.getSubcategories(this);
+		} catch (IOException e) {
+			System.err.println("IOException getting subcategories of " + this.name);
+			e.printStackTrace(System.err);
+			return null;
+		}
+	}
+
+	/**
+	 * Gets a list of all snippets of this category. Returns null, if an
+	 * {@link IOException} occurs during access to the persistence. In tihs case
+	 * the exception is printed to System.err
+	 * 
+	 * @return a list containing all snippets of this category
+	 */
+	private List<Snippet> getSnippets() {
+		try {
+			return Persistence.instance.getSnippets(this);
+		} catch (IOException e) {
+			System.err.println("IOException getting snippets of " + this.name);
+			e.printStackTrace(System.err);
+			return null;
+		}
+	}
+
+	XCategory toXCategory() {
+		XCategory result = null;
+		List<String> childs = new ArrayList<String>();
+		List<Category> subTree = getSubCategories();
+		for (Category root : subTree) {
+			childs.add(root.name);
+		}
+
+		if (isRoot()) {
+			result = new XCategory(name, description, null, childs);
+		} else {
+			result = new XCategory(name, description, parent.name, childs);
+		}
+
+		return result;
+	}
+
+	private boolean isRoot() {
+		// TODO Implement me ...
+		return parent == null;
 	}
 }
