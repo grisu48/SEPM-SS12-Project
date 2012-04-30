@@ -1,5 +1,7 @@
 package org.smartsnip.shared;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ISessionAsync {
@@ -20,4 +22,11 @@ public interface ISessionAsync {
 	public void logout(@SuppressWarnings("rawtypes") AsyncCallback callback);
 
 	public void isLoggedIn(AsyncCallback<Boolean> callback);
+
+	void doSearch(String searchString, List<String> tags, List<String> category, int start, int count,
+			AsyncCallback<List<XSnippet>> callback);
+
+	void doSearch(String searchString, List<String> tags, List<String> category, AsyncCallback<List<XSnippet>> callback);
+
+	void getServerStatus(AsyncCallback<XServerStatus> callback);
 }

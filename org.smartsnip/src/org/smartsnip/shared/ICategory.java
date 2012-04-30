@@ -115,4 +115,9 @@ public interface ICategory extends RemoteService {
 	 *             Thrown if the server denies the access
 	 */
 	public void delete(String name) throws NoAccessException;
+
+	/**
+	 * @return Gets the server status object
+	 */
+	public XServerStatus getServerStatus();
 }

@@ -52,12 +52,16 @@ public interface IUser extends RemoteService, IsSerializable {
 	 */
 	public void logout();
 
-	void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
+	public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
 
-	void setRealName(String newName) throws NoAccessException;
+	public void setRealName(String newName) throws NoAccessException;
 
-	List<XSnippet> getSnippets() throws NoAccessException;
+	public List<XSnippet> getSnippets() throws NoAccessException;
 
-	List<XSnippet> getFavorites() throws NoAccessException;
+	public List<XSnippet> getFavorites() throws NoAccessException;
 
+	/**
+	 * @return Gets the server status object
+	 */
+	public XServerStatus getServerStatus();
 }

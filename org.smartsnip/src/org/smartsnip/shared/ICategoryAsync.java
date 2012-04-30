@@ -20,4 +20,6 @@ public interface ICategoryAsync {
 
 	void getCategories(String root, AsyncCallback<List<XCategory>> callback);
 
+	void getServerStatus(AsyncCallback<XServerStatus> callback);
+
 }

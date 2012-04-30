@@ -12,4 +12,6 @@ public interface ISnippetAsync {
 
 	void getSnippet(int snippet, AsyncCallback<XSnippet> callback);
 
+	void getServerStatus(AsyncCallback<XServerStatus> callback);
+
 }

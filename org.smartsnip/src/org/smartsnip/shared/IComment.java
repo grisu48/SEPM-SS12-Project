@@ -26,4 +26,8 @@ public interface IComment extends RemoteService, IsSerializable {
 		}
 	}
 
+	/**
+	 * @return Gets the server status object
+	 */
+	public XServerStatus getServerStatus();
 }

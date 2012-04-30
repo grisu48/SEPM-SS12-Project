@@ -65,4 +65,9 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 *         or null, if no such snippet exists
 	 */
 	public XSnippet getSnippet(int snippet);
+
+	/**
+	 * @return Gets the server status object
+	 */
+	public XServerStatus getServerStatus();
 }
