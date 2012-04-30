@@ -76,18 +76,27 @@ public class Category {
 		if (name == null || name.isEmpty())
 			return null;
 
-		// TODO return Persistence.instance.getCategory(name);
-		return null;
+		try {
+			return Persistence.instance.getCategory(name);
+
+		} catch (IOException e) {
+			System.err.println("IOException during getCategory(" + name + "): " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 
 	/**
 	 * @return a String list containing all root categories
 	 */
 	synchronized static List<String> getCategories() {
-		List<String> result = new ArrayList<String>();
-
-		// TODO return Persistence.instance.getCategories();
-		return null;
+		try {
+			return Persistence.instance.getCategories();
+		} catch (IOException e) {
+			System.err.println("IOException during getCategories(): " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 
 	/**
@@ -101,9 +110,16 @@ public class Category {
 		if (parent == null || parent.isEmpty())
 			return getCategories();
 
-		// Category prnt = getCategory(parent);
-		// TODO return Persistence.instance.getCategories(prnt);
-		return null;
+		Category prnt = getCategory(parent);
+		if (prnt == null)
+			return null;
+		try {
+			return Persistence.instance.getCategories(prnt);
+		} catch (IOException e) {
+			System.err.println("IOException during getCategories(" + prnt.getName() + "): " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 
 	/**
@@ -144,7 +160,8 @@ public class Category {
 				parent = Persistence.instance.getParentCategory(this);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.err.println("IOException during getParent(): " + e.getMessage());
+			e.printStackTrace(System.err);
 			return null;
 		}
 
@@ -196,7 +213,12 @@ public class Category {
 	 * Invokes the refreshing process for the database
 	 */
 	synchronized protected void refreshDB() {
-
+		try {
+			Persistence.instance.writeCategory(this, IPersistence.DB_DEFAULT);
+		} catch (IOException e) {
+			System.err.println("IOException during refreshDB of Category " + name + ": " + e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 
 	/**
@@ -340,7 +362,7 @@ public class Category {
 	}
 
 	private boolean isRoot() {
-		// TODO Implement me ...
+		getParent();
 		return parent == null;
 	}
 
@@ -349,8 +371,8 @@ public class Category {
 	 * @return the number of snippets of the category
 	 */
 	public int getSnippetCount() {
-		// TODO Implement me
-		return 0;
+		// XXX Increase performance
+		return getSnippets().size();
 	}
 
 	/**
@@ -363,7 +385,12 @@ public class Category {
 	 * @return List containing the reduced set of the categories snippets
 	 */
 	public List<Snippet> getSnippets(int start, int count) {
-		// TODO Implement me
-		return null;
+		try {
+			return Persistence.instance.getSnippets(this, start, count);
+		} catch (IOException e) {
+			System.err.println(e.getMessage() + " while getting category count: ");
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 }
