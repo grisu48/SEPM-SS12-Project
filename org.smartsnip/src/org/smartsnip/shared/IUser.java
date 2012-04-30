@@ -21,89 +21,43 @@ public interface IUser extends RemoteService, IsSerializable {
 
 		/** Get the proxy object instance */
 		public static IUserAsync getInstance() {
-			if (instance == null) instance = GWT.create(IUser.class);
+			if (instance == null) {
+				instance = GWT.create(IUser.class);
+			}
 			return instance;
 		}
 	}
 
 	/**
-	 * @return the name of the user
-	 */
-	public String getName();
-
-	/**
-	 * @return the email address
-	 * @throws NoAccessException
-	 *             Thrown if the call is not permitted
-	 */
-	public String getEmail() throws NoAccessException;
-
-	/**
-	 * Sets the email-address of the user. If the address is null or empty,
-	 * nothing is done. If the address does not match the format of an
-	 * email-address, a new {@link IllegalArgumentException} is thrown.
+	 * Tries to login this session with the given username and password.
 	 * 
-	 * @param newAddress
-	 *            new email-address of the user
-	 * @throws NoAccessException
-	 *             Thrown if the session cannot change the email-address of the
-	 *             user
-	 * @throws link
-	 *             IllegalArgumentException Thrown if the given email-address is
-	 *             invalid
-	 */
-	public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
-
-	/**
-	 * Sets the real name of the user. If the name is null or empty, nothing is
-	 * done.
+	 * If the login fails, a new {@link NoAccessException} is thrown.
 	 * 
-	 * @param newName
-	 *            New name of the user
-	 * @throws NoAccessException
-	 *             Thrown if the current session cannot access this property
-	 */
-	public void setRealName(String newName) throws NoAccessException;
-
-	/**
-	 * @return the real name of the user
-	 * @throws NoAccessException
-	 *             Thrown if the call is not permitted
-	 */
-	public String getRealName() throws NoAccessException;
-
-	/**
-	 * Closes the current session of the user
+	 * If the session is already logged in, the method returns false, and
+	 * nothing else is done
 	 * 
+	 * @param username
+	 *            to be logged in with
+	 * @param password
+	 *            to be logged in with
+	 * @return true if successful. Returns false, if the current session is
+	 *         already logged in
 	 * @throws NoAccessException
-	 *             Thrown if the call cannot be executed by this session
+	 *             Thrown if the login process fails
 	 */
-	public void logout() throws NoAccessException;
+	public boolean login(String username, String password) throws NoAccessException;
 
 	/**
-	 * 
-	 * @return a list containing all snippets of the user
-	 * @throws NoAccessException
-	 *             Thrown if the call cannot be executed by this session
-	 * @obsolete A list with all interfaces is a waste of system resources.
-	 *           Check this!
+	 * Logs the session out
 	 */
-	public List<ISnippet> getSnippets() throws NoAccessException;
+	public void logout();
 
-	/**
-	 * 
-	 * @return a list containing all favourite snippets of the user
-	 * @throws NoAccessException
-	 *             Thrown if the call cannot be executed by this session
-	 */
-	public List<ISnippet> getFavorites() throws NoAccessException;
+	void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
 
-	/**
-	 * Reports an abusive user.
-	 * 
-	 * @param reason
-	 *            Reason why the user is behaving abusive
-	 */
-	public void report(String reason);
+	void setRealName(String newName) throws NoAccessException;
+
+	List<XSnippet> getSnippets() throws NoAccessException;
+
+	List<XSnippet> getFavorites() throws NoAccessException;
 
 }

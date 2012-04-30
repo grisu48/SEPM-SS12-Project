@@ -1,21 +1,13 @@
 package org.smartsnip.core;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.smartsnip.core.Code.UnsupportedLanguageException;
 import org.smartsnip.security.IAccessPolicy;
 import org.smartsnip.security.PrivilegeController;
-import org.smartsnip.shared.ICategory;
-import org.smartsnip.shared.IComment;
-import org.smartsnip.shared.INotification;
 import org.smartsnip.shared.ISessionObserver;
-import org.smartsnip.shared.ISnippet;
-import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
-import org.smartsnip.shared.Pair;
 
 public class Session {
 	/** Session storage, each session is identified with the cookie string */
@@ -60,28 +52,6 @@ public class Session {
 
 	private final ISessionObserver observable = new ISessionObserver() {
 
-		@Override
-		public void notification(Notification notification) {
-			if (notification == null) return;
-
-			for (ISessionObserver observer : observers) {
-				observer.notification(notification);
-			}
-		}
-
-		@Override
-		public void logout() {
-			for (ISessionObserver observer : observers) {
-				observer.logout();
-			}
-		}
-
-		@Override
-		public void login(String username) {
-			for (ISessionObserver observer : observers) {
-				observer.login(username);
-			}
-		}
 	};
 
 	/**
@@ -187,7 +157,8 @@ public class Session {
 	 * @return Session identified by the cookie
 	 */
 	public static Session getSession(String cookie) {
-		if (cookie == null || cookie.length() == 0) return null;
+		if (cookie == null || cookie.length() == 0)
+			return null;
 
 		synchronized (storedSessions) {
 			Session result = storedSessions.get(cookie);
@@ -215,10 +186,12 @@ public class Session {
 	 *         given cookie is null or empty
 	 */
 	public static boolean existsCookie(String cookie) {
-		if (cookie == null || cookie.length() == 0) return false;
+		if (cookie == null || cookie.length() == 0)
+			return false;
 		synchronized (storedSessions) {
 			Session result = storedSessions.get(cookie);
-			if (result == null) return false;
+			if (result == null)
+				return false;
 			if (result.isDead()) {
 				storedSessions.remove(cookie);
 				return false;
@@ -268,7 +241,8 @@ public class Session {
 	 * @return true if the user matches the session user
 	 */
 	public synchronized boolean isLoggedInUser(User user) {
-		if (user == null) return this.user == null;
+		if (user == null)
+			return this.user == null;
 		return user == this.user;
 	}
 
@@ -292,59 +266,19 @@ public class Session {
 		doActivity();
 		logout();
 
-		if (username.length() == 0 || password.length() == 0) throw new NoAccessException("Login credentials missing");
-		if (isLoggedIn()) throw new NoAccessException("The session is already logged in");
+		if (username.length() == 0 || password.length() == 0)
+			throw new NoAccessException("Login credentials missing");
+		if (isLoggedIn())
+			throw new NoAccessException("The session is already logged in");
 
-		if (!User.auth(username, password)) throw new NoAccessException("Invalid username or password");
+		if (!User.auth(username, password))
+			throw new NoAccessException("Invalid username or password");
 		User user = User.getUser(username);
-		if (user == null) throw new NoAccessException("Invalid username or password");
+		if (user == null)
+			throw new NoAccessException("Invalid username or password");
 
 		this.user = user;
 		refreshPolicy();
-		observable.login(user.getUsername());
-	}
-
-	/**
-	 * The session wants to gain access to a user account. It returns a new
-	 * Interface to handle the user actions if found, or null if the user cannot
-	 * be found.
-	 * 
-	 * If the given username is null or empty, null is returned instantaneous.
-	 * 
-	 * If the session is not allowed to do this call (or on that user) the
-	 * method throws a new {@link NoAccessException}.
-	 * 
-	 * @param username
-	 *            Name of the user to be searched
-	 * @return the found user or null if not found
-	 * @throws NoAccessException
-	 *             Thrown as security exception when the session is not allowed
-	 *             to do that
-	 */
-	public IUser getIUser(String username) throws NoAccessException {
-		if (username == null || username.length() == 0) return null;
-
-		return createIUser(User.getUser(username));
-	}
-
-	/**
-	 * Creates a new Interface to handle the user actions.
-	 * 
-	 * If the given user is null, null is returned
-	 * 
-	 * If the session is not allowed to do this call (or on that user) the
-	 * method throws a new {@link NoAccessException}.
-	 * 
-	 * @param user
-	 *            The user for witch the interface should be created
-	 * @return the user interface or null if the given user is null
-	 * @throws NoAccessException
-	 *             Thrown as security exception when the session is not allowed
-	 *             to do that
-	 */
-	public IUser getIUser(User user) {
-		if (user == null) return null;
-		return createIUser(user);
 	}
 
 	/**
@@ -359,7 +293,6 @@ public class Session {
 
 		user = null;
 		refreshPolicy();
-		observable.logout();
 	}
 
 	/**
@@ -371,8 +304,10 @@ public class Session {
 	 */
 	public void addObserver(ISessionObserver observer) {
 		synchronized (observers) {
-			if (observer == null) return;
-			if (observers.contains(observer)) return;
+			if (observer == null)
+				return;
+			if (observers.contains(observer))
+				return;
 			observers.add(observer);
 		}
 	}
@@ -387,396 +322,12 @@ public class Session {
 	 */
 	public void removeObserver(ISessionObserver observer) {
 		synchronized (observers) {
-			if (observer == null) return;
-			if (!observers.contains(observer)) return;
+			if (observer == null)
+				return;
+			if (!observers.contains(observer))
+				return;
 			observers.remove(observer);
 		}
-	}
-
-	/**
-	 * Creates a list with interfaces for all snippets of a given user.
-	 * 
-	 * This call currently is very ineffective and considered therefore obsolete
-	 * 
-	 * @param user
-	 * @return
-	 * @obsolete
-	 */
-	private List<ISnippet> getUserSnippets(User user) {
-		if (user == null) return new ArrayList<ISnippet>();
-		List<Snippet> snippets = user.getMySnippets();
-		List<ISnippet> result = new ArrayList<ISnippet>(snippets.size());
-
-		for (final Snippet snippet : snippets) {
-			result.add(createISnippet(snippet));
-		}
-
-		return result;
-	}
-
-	/**
-	 * Returns a new interface for the session to manipulate the user data. If
-	 * currently no user has been logged in, null is returned
-	 * 
-	 * @return interface for the sesssion to manipulate the user date of the
-	 *         logged in user.
-	 */
-	private IUser createIUser(final User user) {
-		if (user == null) return null;
-
-		return new IUser() {
-
-			/** Cached list of favourite snippets */
-			final List<ISnippet> emptyList = new ArrayList<ISnippet>();
-			List<ISnippet> favourites = emptyList;
-
-			@Override
-			public void logout() throws NoAccessException {
-				if (user != Session.this.user) throw new NoAccessException();
-				logout();
-			}
-
-			@Override
-			public List<ISnippet> getSnippets() throws NoAccessException {
-				if (user != Session.this.user) throw new NoAccessException();
-				return getUserSnippets(user);
-			}
-
-			@Override
-			public String getName() {
-				return user.username;
-			}
-
-			@Override
-			public List<ISnippet> getFavorites() throws NoAccessException {
-				if (!isLoggedIn()) {
-					if (user != null) throw new NoAccessException("Cannot get favorites from foreign user");
-
-					// TODO Implement guest user session favorites
-					return new ArrayList<ISnippet>();
-				} else {
-					if (!isLoggedInUser(user)) throw new NoAccessException("Cannot get favorites from foreign user");
-
-					synchronized (favourites) {
-						if (favourites == emptyList) {
-							createFavourites();
-						}
-
-						return favourites;
-					}
-				}
-			}
-
-			/**
-			 * Creates the favourite list of snippets
-			 */
-			private void createFavourites() {
-				synchronized (favourites) {
-					List<Snippet> snippets = user.getFavoriteSnippets();
-					favourites = new ArrayList<ISnippet>();
-
-					for (Snippet snippet : snippets) {
-						favourites.add(createISnippet(snippet));
-					}
-				}
-
-			}
-
-			@Override
-			public String getEmail() throws NoAccessException {
-				if (!isLoggedIn()) throw new NoAccessException();
-
-				return user.getEmail();
-			}
-
-			@Override
-			public String getRealName() throws NoAccessException {
-				if (!isLoggedIn()) throw new NoAccessException();
-
-				return user.getRealName();
-			}
-
-			@Override
-			public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException {
-				if (!policy.canEditUserData(Session.this, user)) throw new NoAccessException();
-
-				user.setEmail(newAddress);
-			}
-
-			@Override
-			public void setRealName(String newName) throws NoAccessException {
-				if (!policy.canEditUserData(Session.this, user)) throw new NoAccessException();
-
-				user.setRealName(newName);
-			}
-
-			@Override
-			public void report(String reason) {
-				// TODO Auto-generated method stub
-
-			}
-		};
-	}
-
-	/**
-	 * Creates a comment interface for the GUI for this session. If the given
-	 * comment is null, null is also the result.
-	 * 
-	 * @param comment
-	 *            entity where the interface belongs to
-	 * @return interface providing access from the GUI or null if the given
-	 *         comment is null
-	 */
-	private IComment createIComment(final Comment comment) {
-		if (comment == null) return null;
-
-		return new IComment() {
-
-			// Just for reasons of readability
-			private final Session session = Session.this;
-
-			@Override
-			public void removeRating() throws NoAccessException {
-				if (!policy.canRateSnippet(session, comment.snippet)) throw new NoAccessException();
-
-				comment.unvote(getUser());
-			}
-
-			@Override
-			public void ratePositive() throws NoAccessException {
-				if (!policy.canRateSnippet(session, comment.snippet)) throw new NoAccessException();
-
-				comment.votePositive(getUser());
-			}
-
-			@Override
-			public void rateNegative() throws NoAccessException {
-				if (!policy.canRateSnippet(session, comment.snippet)) throw new NoAccessException();
-
-				comment.voteNegative(getUser());
-			}
-
-			@Override
-			public IUser getOwner() throws NoAccessException {
-				return createIUser(comment.owner);
-			}
-
-			@Override
-			public void delete() throws NoAccessException {
-				if (!policy.canEditComment(session, comment)) throw new NoAccessException();
-
-				comment.delete();
-			}
-
-			@Override
-			public void edit(String newComment) throws NoAccessException {
-				if (newComment == null || newComment.isEmpty()) return;
-				if (!policy.canEditComment(session, comment)) throw new NoAccessException();
-
-				comment.edit(newComment);
-			}
-
-			@Override
-			public void report() throws NoAccessException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public String getMessage() {
-				return comment.getMessage();
-			}
-
-			@Override
-			public Date getLastModificationTime() {
-				return comment.getTime();
-			}
-		};
-	}
-
-	/**
-	 * Creates a snippet interface for the GUI for this session. If the given
-	 * snippet is null, null is also the result.
-	 * 
-	 * @param snippet
-	 *            entity where the interface belongs to
-	 * @return interface providing access from the GUI or null if the given
-	 *         snippet is null
-	 */
-	private ISnippet createISnippet(final Snippet snippet) {
-		return new ISnippet() {
-
-			@Override
-			public void removeTag(String tag) throws NoAccessException {
-				if (!policy.canTagSnippet(Session.this, snippet)) throw new NoAccessException();
-
-				Tag objTag = Tag.getTag(tag);
-				if (objTag == null) return;
-				snippet.removeTag(objTag);
-			}
-
-			@Override
-			public void increaseViewCounter() throws NoAccessException {
-				snippet.increaseViewCounter();
-			}
-
-			@Override
-			public int getViewCount() {
-				return snippet.getViewcount();
-			}
-
-			@Override
-			public List<String> getTags() {
-				// TODO Auto-generated method stub
-				return new ArrayList<String>();
-			}
-
-			@Override
-			public IUser getOwner() {
-				return createIUser(snippet.owner);
-			}
-
-			@Override
-			public String getName() {
-				return snippet.getName();
-			}
-
-			@Override
-			public String getLanguage() {
-				return snippet.getCode().getLanguage();
-			}
-
-			@Override
-			public int getHash() {
-				return snippet.hash;
-			}
-
-			@Override
-			public String getDesc() {
-				return snippet.getDescription();
-			}
-
-			@Override
-			public List<IComment> getComments() throws NoAccessException {
-				// TODO Auto-generated method stub
-				return new ArrayList<IComment>();
-			}
-
-			@Override
-			public String getCodeHTML() {
-				return snippet.getCode().getFormattedHTML();
-			}
-
-			@Override
-			public String getCategory() {
-				Category category = snippet.getCategory();
-				if (category == null) return "";
-				return snippet.getCategory().getName();
-			}
-
-			@Override
-			public void addTag(String tag) throws NoAccessException {
-				snippet.addTag(Tag.createTag(tag));
-			}
-
-			@Override
-			public IComment addComment(String comment) throws NoAccessException {
-				if (comment == null || comment.isEmpty()) return null;
-				if (!policy.canComment(Session.this)) throw new NoAccessException();
-
-				Comment objComment = Comment.createComment(user, snippet, comment);
-				snippet.addComment(objComment);
-
-				// TODO Auto-generated method stub
-				return createIComment(objComment);
-			}
-
-			@Override
-			public void addFavorite() {
-				if (Session.this.user == null)
-				// TODO Add support for guest user favorites
-					return;
-
-				Session.this.user.addFavorite(snippet);
-			}
-
-			@Override
-			public void removeFavorite() {
-				if (Session.this.user == null)
-				// TODO Add support for guest user favorites
-					return;
-
-				Session.this.user.removeFavorite(snippet);
-			}
-
-			@Override
-			public void delete() throws NoAccessException {
-				if (!policy.canDeleteSnippet(Session.this, snippet)) throw new NoAccessException();
-
-				snippet.delete();
-			}
-		};
-	}
-
-	/**
-	 * Creates a notification interface for the GUI for this session. If the
-	 * given notification is null, null is also the result.
-	 * 
-	 * This FactoryMethod is a bit different from the others: The interface does
-	 * not include security check mechanisms. If the currenly logged in user is
-	 * not the same as the notification's owner, the result will be null.
-	 * 
-	 * @param notification
-	 *            entity where the interface belongs to
-	 * @return interface providing access from the GUI or null if the given
-	 *         notification is null
-	 */
-	private INotification createINotification(final Notification notification) {
-		if (notification == null) return null;
-		if (!isLoggedIn()) return null;
-		if (user != notification.getOwner()) return null;
-
-		return new INotification() {
-
-			@Override
-			public void markUnread() {
-				notification.markUnread();
-			}
-
-			@Override
-			public void markRead() {
-				notification.markRead();
-			}
-
-			@Override
-			public boolean isRead() {
-				return notification.isRead();
-			}
-
-			@Override
-			public String getTime() {
-				return notification.getTime();
-			}
-
-			@Override
-			public String getSource() {
-				return notification.getSource();
-			}
-
-			@Override
-			public String getMessage() {
-				return notification.getMessage();
-			}
-
-			@Override
-			public void delete() {
-				// Here the check takes place, because this call is criitcal to
-				// user data
-				if (notification.getOwner() != user) return;
-
-				// TODO Implement me
-			}
-		};
 	}
 
 	/**
@@ -803,7 +354,8 @@ public class Session {
 	 */
 	public void doActivity() {
 		synchronized (state) {
-			if (getState() == SessionState.deleted) throw new IllegalStateException();
+			if (getState() == SessionState.deleted)
+				throw new IllegalStateException();
 			this.lastActivityTime = System.currentTimeMillis();
 			if (this.state != SessionState.active) {
 				refreshSessionState();
@@ -819,7 +371,8 @@ public class Session {
 	 */
 	private void refreshSessionState() {
 		synchronized (state) {
-			if (getState() == SessionState.deleted) throw new IllegalStateException();
+			if (getState() == SessionState.deleted)
+				throw new IllegalStateException();
 			long delay = System.currentTimeMillis() - this.lastActivityTime;
 			if (delay > this.deleteDelay) {
 				deleteSession();
@@ -856,10 +409,12 @@ public class Session {
 	 *            of the session to be deleted.
 	 */
 	public static void deleteSession(String cookie) {
-		if (cookie == null || cookie.length() == 0) return;
+		if (cookie == null || cookie.length() == 0)
+			return;
 
 		Session session = getSession(cookie);
-		if (session == null) return;
+		if (session == null)
+			return;
 		session.deleteSession();
 	}
 
@@ -871,7 +426,8 @@ public class Session {
 	 */
 	private void inactivateSession() {
 		synchronized (state) {
-			if (getState() == SessionState.deleted) throw new IllegalStateException();
+			if (getState() == SessionState.deleted)
+				throw new IllegalStateException();
 			this.state = SessionState.inactive;
 		}
 	}
@@ -909,7 +465,8 @@ public class Session {
 		synchronized (storedSessions) {
 			int maxTries = storedSessions.size() * 1000;
 			while (storedSessions.containsKey((sid = getRandomizedSID())))
-				if (maxTries-- <= 0) throw new RuntimeException("Session creation failure");
+				if (maxTries-- <= 0)
+					throw new RuntimeException("Session creation failure");
 
 			session = createNewSession(sid);
 			// XXX: Maybe a new created session can have a reduced lifetime ...
@@ -938,127 +495,15 @@ public class Session {
 	}
 
 	/**
-	 * Creates the IUser interface for the currently logged in user, or null, if
-	 * it is a guest session
-	 * 
-	 * @return the IUser interface for the session user
-	 */
-	public IUser getIUser() {
-		if (!isLoggedIn()) return null;
-		try {
-			return getIUser(user.getUsername());
-		} catch (NoAccessException e) {
-			// Access denied
-			return null;
-		}
-	}
-
-	/**
 	 * Gets the username of the currently logged in user, or "guest" if it is a
 	 * guest session
 	 * 
 	 * @return the username or "guest" if a guest session
 	 */
 	public String getUsername() {
-		if (!isLoggedIn()) return "guest";
+		if (!isLoggedIn())
+			return "guest";
 		return user.getUsername();
-	}
-
-	/**
-	 * Gets a concrete category interface out of a category with a name. Returns
-	 * null if no such category exists, or if the input string is null or empty.
-	 * 
-	 * @param name
-	 *            Name of the category to be searched for
-	 * @return An interface for the category or null, if no such category has
-	 *         been found
-	 */
-	public ICategory getICategory(String name) {
-		if (name == null || name.isEmpty()) return null;
-
-		Category category = Category.getCategory(name);
-		if (category == null) return null;
-
-		return createICategory(category);
-	}
-
-	/**
-	 * Creates an interface for the GUI to handle a category
-	 * 
-	 * @param category
-	 *            the interface should be created for
-	 * @return the created interface
-	 */
-	private ICategory createICategory(final Category category) {
-		if (category == null) return null;
-
-		return new ICategory() {
-
-			List<ISnippet> snippets = null;
-
-			@Override
-			public void setName(String name) throws NoAccessException {
-				if (name == null || name.isEmpty()) return;
-				if (!policy.canEditCategory(Session.this, category)) throw new NoAccessException();
-
-				category.setName(name);
-			}
-
-			@Override
-			public void setDescription(String desc) throws NoAccessException {
-				if (desc == null || desc.isEmpty()) return;
-				if (!policy.canEditCategory(Session.this, category)) throw new NoAccessException();
-
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public List<Pair<Integer, String>> getSnippets() {
-				List<Pair<Integer, String>> result = new ArrayList<Pair<Integer, String>>();
-				for (Snippet snippet : category.getSnippets()) {
-					result.add(new Pair<Integer, String>(snippet.hash, snippet.getName()));
-				}
-				return result;
-			}
-
-			@Override
-			public List<ISnippet> getISnippets() {
-				if (snippets == null) {
-					for (Snippet snippet : category.getSnippets()) {
-						snippets.add(createISnippet(snippet));
-					}
-				}
-				return snippets;
-			}
-
-			@Override
-			public String getName() {
-				return category.getName();
-			}
-
-			@Override
-			public String getDescription() {
-				return category.getDescription();
-			}
-
-			@Override
-			public void addSnippet(String name, String description, String code, String language)
-					throws IllegalArgumentException, NoAccessException {
-				if (policy.canCreateSnippet(Session.this, category)) throw new NoAccessException();
-				/* This security call is hard-coded and remains as-it-is! */
-				if (user == null) throw new NoAccessException();
-
-				try {
-					// IllegalArgumentExceptions are created in this call
-					Snippet snippet = Snippet.createSnippet(user, name, description, code, language);
-					category.addSnippet(snippet);
-				} catch (UnsupportedLanguageException e) {
-					throw new IllegalArgumentException("Language not supported: " + language, e);
-				}
-			}
-		};
-
 	}
 
 	/**
@@ -1097,39 +542,11 @@ public class Session {
 		int count = 0;
 		List<Session> sessions = new ArrayList<Session>(storedSessions.values());
 		for (Session session : sessions) {
-			if (!session.isLoggedIn()) count++;
+			if (!session.isLoggedIn()) {
+				count++;
+			}
 		}
 		return count;
-	}
-
-	/**
-	 * Creates an interface to a snippet. If the given hash was not found, null
-	 * is returned
-	 * 
-	 * @param hash
-	 *            of the snippet
-	 * @return the interface to access the snippet, or null, if not such snippet
-	 *         exists
-	 */
-	public synchronized ISnippet getISnippet(int hash) {
-		Snippet snippet = Snippet.getSnippet(hash);
-		if (snippet == null) return null;
-
-		return createISnippet(snippet);
-	}
-
-	/**
-	 * Creates an interface to a snippet. If the given snippet null also null is
-	 * returned
-	 * 
-	 * @param snippet
-	 *            to whom the interface should be generated to
-	 * @return the interface to access the snippet, or null, if not such snippet
-	 *         exists
-	 */
-	public ISnippet getISnippet(Snippet snippet) {
-		if (snippet == null) return null;
-		return createISnippet(snippet);
 	}
 
 	/**
@@ -1155,26 +572,10 @@ public class Session {
 	 *            to be reported.
 	 */
 	static void report(Comment comment) {
-		if (comment == null) return;
+		if (comment == null)
+			return;
 		// TODO Auto-generated method stub
 
-	}
-
-	/**
-	 * Generates the manipulation interface for the client out of a given
-	 * comment.
-	 * 
-	 * If the given comment is null, also null will be returned
-	 * 
-	 * @param comment
-	 *            for witch the client interface should be created
-	 * @return the created control interface, or null, of the given comment was
-	 *         null
-	 */
-	IComment getIComment(Comment comment) {
-		if (comment == null) return null;
-
-		return createIComment(comment);
 	}
 
 	/**
@@ -1190,9 +591,11 @@ public class Session {
 	 *            To be dadded
 	 */
 	public void addFavorite(Snippet snippet) {
-		if (snippet == null || !isLoggedIn()) return;
+		if (snippet == null || !isLoggedIn())
+			return;
 		User owner = getUser();
-		if (owner == null) return;
+		if (owner == null)
+			return;
 
 		owner.addFavorite(snippet);
 
@@ -1211,9 +614,11 @@ public class Session {
 	 *            To be removed
 	 */
 	public void removeFavorite(Snippet snippet) {
-		if (snippet == null || !isLoggedIn()) return;
+		if (snippet == null || !isLoggedIn())
+			return;
 		User owner = getUser();
-		if (owner == null) return;
+		if (owner == null)
+			return;
 
 		owner.removeFavorite(snippet);
 
@@ -1229,7 +634,8 @@ public class Session {
 	 *            of the report
 	 */
 	public static void report(User user, String reason) {
-		if (user == null || reason == null) return;
+		if (user == null || reason == null)
+			return;
 
 		// TODO Implement me
 	}

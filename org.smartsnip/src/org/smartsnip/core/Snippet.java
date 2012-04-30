@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.shared.XSnippet;
 
 /**
  * A snippet of the system. TODO: Write me
@@ -270,7 +271,7 @@ public class Snippet {
 	/**
 	 * @return the description
 	 */
-	String getDescription() {
+	public String getDescription() {
 		return description;
 	}
 
@@ -576,5 +577,38 @@ public class Snippet {
 	void delete() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public List<String> getStringTags() {
+		List<String> result = new ArrayList<String>();
+		for (Tag tag : tags) {
+			result.add(tag.name);
+		}
+		return result;
+	}
+
+	public List<Integer> getCommentIndices() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getCommentCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * Converts this snippet to a XSnippet parameter object
+	 * 
+	 * @return
+	 */
+	public XSnippet toXSnippet() {
+		List<String> sTags = new ArrayList<String>();
+		for (Tag tag : tags) {
+			sTags.add(tag.name);
+		}
+
+		// TODO Implement me
+		return null;
 	}
 }

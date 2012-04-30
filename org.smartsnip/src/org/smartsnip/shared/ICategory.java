@@ -3,7 +3,6 @@ package org.smartsnip.shared;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -13,7 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * 
  */
 @RemoteServiceRelativePath("category")
-public interface ICategory extends RemoteService, IsSerializable {
+public interface ICategory extends RemoteService {
 
 	/** This class provides easy access to the proxy object */
 	public static class Util {
@@ -21,82 +20,99 @@ public interface ICategory extends RemoteService, IsSerializable {
 
 		/** Get the proxy object instance */
 		public static ICategoryAsync getInstance() {
-			if (instance == null) instance = GWT.create(ICategory.class);
+			if (instance == null) {
+				instance = GWT.create(ICategory.class);
+			}
 			return instance;
 		}
 	}
 
 	/**
-	 * @return the name of the category
-	 */
-	public String getName();
-
-	/**
-	 * Sets the name of the category
+	 * Gets a concrete category object by it's name. If the given category name
+	 * doesn't exists, null is returned.
 	 * 
 	 * @param name
-	 *            new name of the category. Must not be null or empty
+	 *            Name of the category to get
+	 * @return A new {@link XCategory} object, containing the attributes of the
+	 *         category
 	 * @throws NoAccessException
-	 *             Thrown if the current session doesn't fit the necessary
-	 *             access privileges
+	 *             Thrown if the server denies the access to this category
 	 */
-	public void setName(String name) throws NoAccessException;
+	public XCategory getCategory(String name);
 
 	/**
+	 * Gets list of child-categories of a given category. If the given root
+	 * category name is null or empty, the method returns all root categories.
 	 * 
-	 * @return Description of the category
+	 * @param root
+	 *            Name of the parent category
+	 * @return List containing all direct childs of the given root (parent)
+	 *         category
 	 */
-	public String getDescription();
+	public List<XCategory> getCategories(String root);
 
 	/**
-	 * Sets the description of the category. Must not be null or empty.
+	 * Gets a list of {@link XSnippet} of a given category (given by it's name)
+	 * If the given category doesn't exists, null is returned.
 	 * 
-	 * @param desc
-	 *            New description of the category. Must not be null or empty.
+	 * There can be multiple snippets. The parameter start gives the starting
+	 * indices of all snippets, and the parameter count the number of snippets
+	 * to get with this call.
+	 * 
+	 * @param category
+	 *            Name of the category the snippets should get from
+	 * @param start
+	 *            Starting index of the snippets
+	 * @param count
+	 *            Number of snippets maximal to pull
+	 * @return A list containing at most count snippets or null, if the given
+	 *         category is not found
 	 * @throws NoAccessException
-	 *             Thrown if the access privilege forbids this action.
+	 *             Thrown if the server denies the access to this category
 	 */
-	public void setDescription(String desc) throws NoAccessException;
+	public List<XSnippet> getSnippets(String category, int start, int count);
 
 	/**
-	 * Adds a new snippet to the category.
+	 * Gets the number of snippets of a given category. If the category doesn't
+	 * exists, the result value is -1.
+	 * 
+	 * @return the number of snippets in this category
+	 */
+	public int getSnippetCount(String name);
+
+	/**
+	 * @return a list containing all direct child categories
+	 */
+	public List<XCategory> getChildCategories();
+
+	/**
+	 * Adds a category with the given name as child of parent.
+	 * 
+	 * If parent is null or empty, the category will be a new root category. If
+	 * the given parent category is not found, null will be returned, without
+	 * adding a category.
+	 * 
+	 * If creating the new category succeeds, the newly created category is
+	 * returned.
 	 * 
 	 * @param name
-	 *            Name of the new snippet. Must not be null or empty, otherwise
-	 *            a new {@link IllegalArgumentException} is thrown
-	 * @param description
-	 *            Description of the snippet. Must not be null or empty,
-	 *            otherwise a new {@link IllegalArgumentException} is thrown
-	 * @param code
-	 *            Concrete code of the snippet. Must not be null or empty,
-	 *            otherwise a new {@link IllegalArgumentException} is thrown
-	 * @param language
-	 *            Code language of the snippet. Must not be null or empty,
-	 *            otherwise a new {@link IllegalArgumentException} is thrown. If
-	 *            the code language is not supported, also a new
-	 *            {@link IllegalArgumentException} is thrown
-	 * @throws IllegalArgumentException
-	 *             Thrown if the language is not supported, or if an argument is
-	 *             null or empty
+	 *            Name of the category to be added
+	 * @param parent
+	 *            Parent category of the new category
 	 * @throws NoAccessException
-	 *             Thrown if the session has not the privileges to add snippets
-	 *             to this category
+	 *             Thrown if the server denies the access
+	 * @return The newly created category if success, or null, if the method
+	 *         fails
 	 */
-	public void addSnippet(String name, String description, String code, String language)
-			throws IllegalArgumentException, NoAccessException;
+	public XCategory add(String name, String parent) throws NoAccessException;
 
 	/**
-	 * @return A list containing pairs with all snippets. The integer value is
-	 *         the hash code of the snippets, the string is the name of the
-	 *         snippets
-	 */
-	public List<Pair<Integer, String>> getSnippets();
-
-	/**
-	 * This call creates interfaces for all snippets of the category. Be
-	 * careful, this method may be a performance brake!
+	 * Deletes a category and all of it's snippets out of the system
 	 * 
-	 * @return a list containing interfaces to all snippets of the category.
+	 * @param name
+	 *            Name of the category to be deleted
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
 	 */
-	public List<ISnippet> getISnippets();
+	public void delete(String name) throws NoAccessException;
 }

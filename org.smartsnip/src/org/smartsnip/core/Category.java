@@ -312,7 +312,7 @@ public class Category {
 	 * 
 	 * @return a list containing all snippets of this category
 	 */
-	private List<Snippet> getSnippets() {
+	List<Snippet> getSnippets() {
 		try {
 			return Persistence.instance.getSnippets(this);
 		} catch (IOException e) {
@@ -342,5 +342,28 @@ public class Category {
 	private boolean isRoot() {
 		// TODO Implement me ...
 		return parent == null;
+	}
+
+	/**
+	 * 
+	 * @return the number of snippets of the category
+	 */
+	public int getSnippetCount() {
+		// TODO Implement me
+		return 0;
+	}
+
+	/**
+	 * Gets a reduced set of snippets of this category.
+	 * 
+	 * @param start
+	 *            Start index of the reduced set
+	 * @param count
+	 *            Maximal number of snippets to get
+	 * @return List containing the reduced set of the categories snippets
+	 */
+	public List<Snippet> getSnippets(int start, int count) {
+		// TODO Implement me
+		return null;
 	}
 }

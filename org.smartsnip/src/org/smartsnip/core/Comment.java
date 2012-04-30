@@ -1,11 +1,8 @@
 package org.smartsnip.core;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-
 
 public class Comment {
 	/** The owner of the message is fixed */
@@ -14,6 +11,9 @@ public class Comment {
 	public final Snippet snippet;
 	/** Comment message. */
 	private String message = "";
+
+	/** Hash code of the comment */
+	private final long hashcode;
 
 	/** Last change time */
 	private Date time = null;
@@ -42,13 +42,17 @@ public class Comment {
 	 *            of the comment
 	 */
 	Comment(User owner, Snippet snippet, String message) {
-		if (owner == null || snippet == null || message == null) throw new NullPointerException();
-		if (message.length() == 0) throw new IllegalArgumentException("Cannot create empty comment box");
+		if (owner == null || snippet == null || message == null)
+			throw new NullPointerException();
+		if (message.length() == 0)
+			throw new IllegalArgumentException("Cannot create empty comment box");
 
 		this.owner = owner;
 		this.snippet = snippet;
 		this.message = message;
 		setCurrentSystemTime();
+
+		// TODO Implement a way to get a hash code
 	}
 
 	/**
@@ -81,7 +85,9 @@ public class Comment {
 	 *            that wants to vote
 	 */
 	synchronized void votePositive(User user) {
-		if (votes.containsKey(user)) if (Math.abs(votes.get(user)) == 1) return;
+		if (votes.containsKey(user))
+			if (Math.abs(votes.get(user)) == 1)
+				return;
 		chocolates++;
 		votes.put(user, 1);
 		refreshDB();
@@ -95,7 +101,9 @@ public class Comment {
 	 *            that wants to vote
 	 */
 	synchronized void voteNegative(User user) {
-		if (votes.containsKey(user)) if (Math.abs(votes.get(user)) == 1) return;
+		if (votes.containsKey(user))
+			if (Math.abs(votes.get(user)) == 1)
+				return;
 		chocolates++;
 		votes.put(user, -1);
 		refreshDB();
@@ -109,7 +117,8 @@ public class Comment {
 	 *            that wants to unvote
 	 */
 	synchronized void unvote(User user) {
-		if (!votes.containsKey(user)) return;
+		if (!votes.containsKey(user))
+			return;
 		int vote = votes.get(user);
 		if (vote == 1) {
 			chocolates--;
@@ -183,7 +192,8 @@ public class Comment {
 	 * @param newMessage
 	 */
 	void edit(String newMessage) {
-		if (newMessage == null || newMessage.isEmpty()) return;
+		if (newMessage == null || newMessage.isEmpty())
+			return;
 
 		// TODO: Message change history
 
@@ -203,5 +213,13 @@ public class Comment {
 	 */
 	protected void removeFromDB() {
 		// Nothing to do yet
+	}
+
+	/**
+	 * The hash code of the comment object
+	 */
+	@Override
+	public int hashCode() {
+		return ((Long) hashcode).hashCode();
 	}
 }

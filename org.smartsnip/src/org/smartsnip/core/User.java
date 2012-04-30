@@ -249,7 +249,7 @@ public class User {
 	/**
 	 * @return the username
 	 */
-	String getUsername() {
+	public String getUsername() {
 		return username;
 	}
 

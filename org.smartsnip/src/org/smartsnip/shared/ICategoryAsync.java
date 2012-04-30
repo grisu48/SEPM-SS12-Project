@@ -2,24 +2,22 @@ package org.smartsnip.shared;
 
 import java.util.List;
 
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ICategoryAsync {
-	
-	void getName(AsyncCallback<String> callback)
-			throws IllegalArgumentException;
-	void setName(String name, AsyncCallback<Void> callback)
-			throws IllegalArgumentException;
-	void getDescription(AsyncCallback<String> callback)
-			throws IllegalArgumentException;
-	void setDescription(String desc, AsyncCallback<Void> callback)
-			throws IllegalArgumentException;
-	void addSnippet(String name, String description, String code, String language, AsyncCallback<Void> callback)
-			throws IllegalArgumentException;
-	void getSnippets(AsyncCallback<List<Pair<Integer, String>>> callback)
-			throws IllegalArgumentException;
-	void getISnippets(AsyncCallback<List<ISnippet>> callback)
-			throws IllegalArgumentException;
+
+	void getCategory(String name, AsyncCallback<XCategory> callback);
+
+	void getSnippets(String category, int start, int count, AsyncCallback<List<XSnippet>> callback);
+
+	void getSnippetCount(String name, AsyncCallback<Integer> callback);
+
+	void getChildCategories(AsyncCallback<List<XCategory>> callback);
+
+	void add(String name, String parent, AsyncCallback<XCategory> callback);
+
+	void delete(String name, AsyncCallback<Void> callback);
+
+	void getCategories(String root, AsyncCallback<List<XCategory>> callback);
 
 }
