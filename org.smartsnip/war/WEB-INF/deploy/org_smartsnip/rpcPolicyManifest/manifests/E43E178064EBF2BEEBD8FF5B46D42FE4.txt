@@ -1,0 +1,2 @@
+serviceClass: org.smartsnip.shared.ISession
+path: 7E322218A7776078C2939116577C90A2.gwt.rpc
