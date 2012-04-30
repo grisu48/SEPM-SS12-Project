@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+<!-- console output -->
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="info"/>
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ABSOLUTE} [%t] %-5p %c{1} - %m%n"/>
+        </layout>
+    </appender>
+    
+<!-- append to log file -->
+    <appender name="rolling-file" class="org.apache.log4j.RollingFileAppender">
+        <param name="file" value="logs/Smartsnip.log"/>
+        <param name="MaxFileSize" value="1000KB"/>
+    <!-- Keep one backup file -->
+        <param name="MaxBackupIndex" value="4"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d [%t] %-5p %l - %m%n"/>
+        </layout>
+    </appender>
+
+<!-- define here the main properties of the logger -->
+    <root>
+    <!-- available priority levels: ALL, DEBUG, INFO, WARN, ERROR, FATAL -->
+        <priority value ="DEBUG" />
+        
+    <!-- comment out the following appender you don't need -->
+        <appender-ref ref="console" />
+        <appender-ref ref="rolling-file" />
+    </root>
+</log4j:configuration>
