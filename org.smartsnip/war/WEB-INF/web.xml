@@ -5,16 +5,7 @@
          version="2.5"
          xmlns="http://java.sun.com/xml/ns/javaee">
   <!-- Servlets -->
-  
-  <servlet>
-    <servlet-name>communicationImpl</servlet-name>
-    <servlet-class>org.smartsnip.core.CommunicationImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>communicationImpl</servlet-name>
-    <url-pattern>/org_smartsnip/comm</url-pattern>
-  </servlet-mapping>
+ 
   
 
 
