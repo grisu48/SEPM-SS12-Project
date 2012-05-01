@@ -50,7 +50,7 @@ public class User {
 	 * validated or not
 	 * 
 	 */
-	enum UserState {
+	public enum UserState {
 		unvalidated, validated
 	}
 
@@ -399,5 +399,12 @@ public class User {
 		if (!favorites.contains(snippet))
 			return;
 		favorites.remove(snippet);
+	}
+
+	/**
+	 * @return the current user state
+	 */
+	public UserState getState() {
+		return state;
 	}
 }
