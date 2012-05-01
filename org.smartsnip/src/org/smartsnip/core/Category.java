@@ -15,8 +15,6 @@ public class Category {
 	private String description;
 	/** Parent category, if present, or null if a root category */
 	private Category parent = null;
-	/** List with the names of the direct subcategories (1st order children) */
-	private final List<String> subcategories = new ArrayList<String>();
 	/** List with the hash codes of the snippets of the category */
 	private final List<Integer> snippets = new ArrayList<Integer>();
 
@@ -197,29 +195,7 @@ public class Category {
 		if (category == null)
 			return;
 
-		String name = category.getName();
-		if (subcategories.contains(name))
-			return;
-		subcategories.add(name);
-		refreshDB();
-	}
-
-	/**
-	 * Removes a subcategory to the category. If null or not in the
-	 * subcategories list, nothing happens will happen
-	 * 
-	 * @param category
-	 *            to be removed
-	 */
-	void removeSubCategory(Category category) {
-		if (category == null)
-			return;
-
-		String name = category.getName();
-		if (!subcategories.contains(name))
-			return;
-		subcategories.remove(name);
-		refreshDB();
+		category.setParent(this);
 	}
 
 	/**
@@ -250,29 +226,9 @@ public class Category {
 	}
 
 	/**
-	 * Removes a snippet from this category. If the snippet is null or not
-	 * listed in this category, nothing happens
-	 * 
-	 * This call does not affect the snippet's internal category.
-	 * 
-	 * @param snippet
-	 *            to be removed
-	 */
-	void removeSnippet(Snippet snippet) {
-		if (snippet == null)
-			return;
-
-		int hash = snippet.hash;
-		if (!snippets.contains(hash))
-			return;
-		snippets.remove(hash);
-		refreshDB();
-	}
-
-	/**
 	 * Adds a snippet to this category. If the snippet is null, nothing happens.
 	 * 
-	 * This call does not affect the snippet's internal category.
+	 * This method changes the snippets category to the current category.
 	 * 
 	 * @param snippet
 	 */
@@ -280,11 +236,7 @@ public class Category {
 		if (snippet == null)
 			return;
 
-		int hash = snippet.hash;
-		if (snippets.contains(hash))
-			return;
-		snippets.add(hash);
-		refreshDB();
+		snippet.setCategory(this);
 	}
 
 	/**
