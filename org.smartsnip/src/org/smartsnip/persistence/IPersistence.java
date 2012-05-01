@@ -10,8 +10,6 @@ import java.util.List;
 import org.smartsnip.core.*;
 import org.smartsnip.shared.Pair;
 
-import com.gargoylesoftware.htmlunit.ObjectInstantiationException;
-
 /**
  * Interface which contains all methods to persist or load data from the
  * underlying database.
@@ -57,27 +55,28 @@ public interface IPersistence {
 	/**
 	 * constant for the argument 'mode' of the writeXxx() methods: reject to
 	 * write if the element already exists in the database. This constant
-	 * overrides DB_UPDATE_ONLY.
+	 * overrides {@link IPersistence#DB_UPDATE_ONLY}.
 	 */
 	public static int DB_NEW_ONLY = 1;
 
 	/**
 	 * constant for the argument 'mode' of the writeXxx() methods: reject the
 	 * request if the element to update doesn't exist. This constant has no
-	 * effect if DB_NEW_ONLY is set.
+	 * effect if {@link IPersistence#DB_NEW_ONLY} is set.
 	 */
 	public static int DB_UPDATE_ONLY = 2;
 
 	/**
 	 * constant for the argument 'mode' of the writeXxx() methods: don't delete
-	 * contents of the database. This constant overrides DB_FORCE_DELETE.
+	 * contents of the database. This constant overrides
+	 * {@link IPersistence#DB_FORCE_DELETE}.
 	 */
 	public static int DB_NO_DELETE = 4;
 
 	/**
 	 * constant for the argument 'mode' of the writeXxx() methods: don't delete
-	 * contents of the database. This constant has no effect if DB_NEW_ONLY is
-	 * set.
+	 * contents of the database. This constant has no effect if
+	 * {@link IPersistence#DB_NEW_ONLY} is set.
 	 */
 	public static int DB_FORCE_DELETE = 8;
 
@@ -213,10 +212,11 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
+	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeNotification(Notification notification, int mode)
+	public long writeNotification(Notification notification, int mode)
 			throws IOException;
 
 	/**
@@ -304,8 +304,8 @@ public interface IPersistence {
 	/**
 	 * Persist a rating. This operation updates an existing rating if the user
 	 * has rated already for the given snippet. This operation will be rejected
-	 * in DB_NEW_ONLY mode if an update on an existing rating should be
-	 * performed.
+	 * in {@link IPersistence#DB_NEW_ONLY} mode if an update on an existing
+	 * rating should be performed.
 	 * 
 	 * @param rating
 	 *            the rating to write
@@ -325,8 +325,9 @@ public interface IPersistence {
 
 	/**
 	 * Remove a rating. This operation updates an existing rating to '0' in
-	 * DB_NO_DELETE mode which is currently the default behavior. In
-	 * DB_FORCE_DELETE mode the given database entry is deleted.
+	 * {@link IPersistence#DB_NO_DELETE} mode which is currently the default
+	 * behavior. In {@link IPersistence#DB_FORCE_DELETE} mode the given database
+	 * entry is deleted.
 	 * 
 	 * @param user
 	 *            the user who rated
@@ -343,7 +344,8 @@ public interface IPersistence {
 	/**
 	 * Persist a vote. This operation updates an existing vote if the user has
 	 * voted already for the given comment. This operation will be rejected in
-	 * DB_NEW_ONLY mode if an update on an existing vote should be performed.
+	 * {@link IPersistence#DB_NEW_ONLY} mode if an update on an existing vote
+	 * should be performed.
 	 * 
 	 * @param vote
 	 *            the vote to write
@@ -365,8 +367,8 @@ public interface IPersistence {
 	/**
 	 * Persist a positive vote. This operation updates an existing vote if the
 	 * user has voted already for the given comment. This operation will be
-	 * rejected in DB_NEW_ONLY mode if an update on an existing vote should be
-	 * performed.
+	 * rejected in {@link IPersistence#DB_NEW_ONLY} mode if an update on an
+	 * existing vote should be performed.
 	 * 
 	 * @param user
 	 *            the user who voted
@@ -375,7 +377,7 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @return the actual value of Comment.vote_sum
+	 * @return the actual value of {@code Comment.vote_sum}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -385,8 +387,8 @@ public interface IPersistence {
 	/**
 	 * Persist a negative vote. This operation updates an existing vote if the
 	 * user has voted already for the given comment. This operation will be
-	 * rejected in DB_NEW_ONLY mode if an update on an existing vote should be
-	 * performed.
+	 * rejected in {@link IPersistence#DB_NEW_ONLY} mode if an update on an
+	 * existing vote should be performed.
 	 * 
 	 * @param user
 	 *            the user who voted
@@ -404,8 +406,9 @@ public interface IPersistence {
 
 	/**
 	 * Remove a vote. This operation updates an existing vote to 'none' in
-	 * DB_NO_DELETE mode which is currently the default behavior. In
-	 * DB_FORCE_DELETE mode the given database entry is deleted.
+	 * {@link IPersistence#DB_NO_DELETE} mode which is currently the default
+	 * behavior. In {@link IPersistence#DB_FORCE_DELETE} mode the given database
+	 * entry is deleted.
 	 * 
 	 * @param user
 	 *            the user who voted
@@ -455,31 +458,137 @@ public interface IPersistence {
 
 	/**
 	 * remove the User from the database
+	 * <p>
+	 * Due to database constraints, the Password-, Favourite- and
+	 * Notification-entries are removed also.
 	 * 
 	 * @param nickname
-	 *            the id of the object
+	 *            the user's nickname as key of the object to remove
 	 * @param mode
 	 *            the constraints for the write access. The default is
-	 *            DB_FORCE_DELETE
+	 *            {@link IPersistence#DB_FORCE_DELETE}
 	 * @throws IOException
+	 *             at a problem committing the data
 	 */
 	public void removeUser(String nickname, int mode) throws IOException;
 
-	//TODO comments
+	/**
+	 * remove the Snippet from the database
+	 * <p>
+	 * Due to database constraints, all Comment-, Code-, Rating- and
+	 * Vote-entries are removed also.
+	 * 
+	 * @param snippetId
+	 *            the id of the object to remove
+	 * @param mode
+	 *            the constraints for the write access. The default is
+	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
 	public void removeSnippet(Long snippetId, int mode) throws IOException;
-	
+
+	/**
+	 * remove the Comment from the database
+	 * <p>
+	 * Due to database constraints, all Vote-entrys are removed also.
+	 * 
+	 * @param commentId
+	 *            the id of the object to remove
+	 * @param mode
+	 *            the constraints for the write access. The default is
+	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
 	public void removeComment(Long commentId, int mode) throws IOException;
-	
+
+	/**
+	 * remove the Tag from the database
+	 * 
+	 * @param tag
+	 *            the tag to remove
+	 * @param mode
+	 *            the constraints for the write access. The default is
+	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
 	public void removeTag(Tag tag, int mode) throws IOException;
-	
-	public void removeNotification(Notification notification, int mode) throws IOException;
-	
+
+	/**
+	 * remove the Notification from the database
+	 * 
+	 * @param notificationId
+	 *            the id of the object to remove
+	 * @param mode
+	 *            the constraints for the write access. The default is
+	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
+	public void removeNotification(Long notificationId, int mode)
+			throws IOException;
+
+	/**
+	 * remove all read notifications owned by a user
+	 * 
+	 * @param user
+	 *            the user's nickname as owner of the objects to remove
+	 * @param mode
+	 *            the constraints for the write access. The default is
+	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
+	public void removeReadNotifications(User user, int mode) throws IOException;
+
+	/**
+	 * remove the Code from the database
+	 * 
+	 * @param codeId
+	 *            the id of the object to remove
+	 * @param mode
+	 *            the constraints for the write access. The default is
+	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
 	public void removeCode(Long codeId, int mode) throws IOException;
-	
+
+	/**
+	 * remove the Category from the database
+	 * <p>
+	 * The parent category inherits all subcategories of the deleted category.
+	 * <p>
+	 * An attempt to delete a {@code Category} entry used by a {@link Snippet}
+	 * is restricted by the database constraints.
+	 * 
+	 * @param categoryId
+	 *            the id of the object to remove
+	 * @param mode
+	 *            the constraints for the write access. The default is
+	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
 	public void removeCategory(Long categoryId, int mode) throws IOException;
-	
+
+	/**
+	 * remove the Language from the database
+	 * <p>
+	 * An attempt to delete a {@code Language} entry used by a {@link Code} is
+	 * restricted by the database constraints.
+	 * 
+	 * @param language
+	 *            the language to remove
+	 * @param mode
+	 *            the constraints for the write access. The default is
+	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
 	public void removeLanguage(String language, int mode) throws IOException;
-	
 
 	/**
 	 * get a user by his nickname
