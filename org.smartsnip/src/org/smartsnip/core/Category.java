@@ -15,6 +15,10 @@ public class Category {
 	private String description;
 	/** Parent category, if present, or null if a root category */
 	private Category parent = null;
+	/** List with the names of the direct subcategories (1st order children) */
+	private final List<String> subcategories = new ArrayList<String>();
+	/** List with the hash codes of the snippets of the category */
+	private final List<Integer> snippets = new ArrayList<Integer>();
 
 	/**
 	 * Constructor for a new category. If one of the fields (except parent) if
@@ -91,7 +95,8 @@ public class Category {
 	 */
 	synchronized static List<String> getCategories() {
 		try {
-			return Persistence.instance.getCategories();
+			return Persistence.instance.getAllCategories();
+
 		} catch (IOException e) {
 			System.err.println("IOException during getCategories(): " + e.getMessage());
 			e.printStackTrace(System.err);
@@ -114,7 +119,7 @@ public class Category {
 		if (prnt == null)
 			return null;
 		try {
-			return Persistence.instance.getCategories(prnt);
+			return Persistence.instance.getSubcategoryNames(prnt);
 		} catch (IOException e) {
 			System.err.println("IOException during getCategories(" + prnt.getName() + "): " + e.getMessage());
 			e.printStackTrace(System.err);
@@ -192,7 +197,11 @@ public class Category {
 		if (category == null)
 			return;
 
-		// TODO Implement me
+		String name = category.getName();
+		if (subcategories.contains(name))
+			return;
+		subcategories.add(name);
+		refreshDB();
 	}
 
 	/**
@@ -206,7 +215,11 @@ public class Category {
 		if (category == null)
 			return;
 
-		// TODO Implement me
+		String name = category.getName();
+		if (!subcategories.contains(name))
+			return;
+		subcategories.remove(name);
+		refreshDB();
 	}
 
 	/**
@@ -249,7 +262,11 @@ public class Category {
 		if (snippet == null)
 			return;
 
-		// TODO Write me
+		int hash = snippet.hash;
+		if (!snippets.contains(hash))
+			return;
+		snippets.remove(hash);
+		refreshDB();
 	}
 
 	/**
@@ -263,7 +280,11 @@ public class Category {
 		if (snippet == null)
 			return;
 
-		// TODO Write me
+		int hash = snippet.hash;
+		if (snippets.contains(hash))
+			return;
+		snippets.add(hash);
+		refreshDB();
 	}
 
 	/**

@@ -1,8 +1,11 @@
 package org.smartsnip.core;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
+
+import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.shared.Pair;
 
 public class Comment {
 	/** The owner of the message is fixed */
@@ -22,12 +25,6 @@ public class Comment {
 	private int chocolates = 0;
 	/** Negative votes are stored as lemons */
 	private int lemons = 0;
-
-	/**
-	 * Votes that are given for this comment. A 1 as key indicates a chocolate,
-	 * a -1 a lemon. All other entries are ignored
-	 */
-	private final HashMap<User, Integer> votes = new HashMap<User, Integer>();
 
 	/**
 	 * Creates a new comment. If one of the arguments if null a new
@@ -52,7 +49,8 @@ public class Comment {
 		this.message = message;
 		setCurrentSystemTime();
 
-		// TODO Implement a way to get a hash code
+		chocolates = 0;
+		lemons = 0;
 	}
 
 	/**
@@ -85,12 +83,15 @@ public class Comment {
 	 *            that wants to vote
 	 */
 	synchronized void votePositive(User user) {
-		if (votes.containsKey(user))
-			if (Math.abs(votes.get(user)) == 1)
-				return;
-		chocolates++;
-		votes.put(user, 1);
-		refreshDB();
+		if (user == null)
+			return;
+		try {
+			Persistence.instance.votePositive(user, this, IPersistence.DB_DEFAULT);
+			updateVotes();
+		} catch (IOException e) {
+			System.err.println("IOException during votePositive(" + user.getUsername() + ") " + e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 
 	/**
@@ -101,12 +102,16 @@ public class Comment {
 	 *            that wants to vote
 	 */
 	synchronized void voteNegative(User user) {
-		if (votes.containsKey(user))
-			if (Math.abs(votes.get(user)) == 1)
-				return;
-		chocolates++;
-		votes.put(user, -1);
-		refreshDB();
+		if (user == null)
+			return;
+		try {
+			Persistence.instance.voteNegative(user, this, IPersistence.DB_DEFAULT);
+			updateVotes();
+		} catch (IOException e) {
+			System.err.println("IOException during voteNegative(" + user.getUsername() + ") " + e.getMessage());
+			e.printStackTrace(System.err);
+		}
+
 	}
 
 	/**
@@ -117,22 +122,22 @@ public class Comment {
 	 *            that wants to unvote
 	 */
 	synchronized void unvote(User user) {
-		if (!votes.containsKey(user))
+		if (user == null)
 			return;
-		int vote = votes.get(user);
-		if (vote == 1) {
-			chocolates--;
-		} else if (vote == -1) {
-			lemons--;
+		try {
+			Persistence.instance.unVote(user, this, IPersistence.DB_DEFAULT);
+			updateVotes();
+		} catch (IOException e) {
+			System.err.println("IOException during unvote(" + user.getUsername() + ") " + e.getMessage());
+			e.printStackTrace(System.err);
 		}
-		votes.remove(user);
-		refreshDB();
 	}
 
 	/**
 	 * @return the negative votes of the comment
 	 */
 	public synchronized int getNegativeVotes() {
+		updateVotes();
 		return lemons;
 	}
 
@@ -140,6 +145,7 @@ public class Comment {
 	 * @return the positive votes of the comment
 	 */
 	public synchronized int getPositiveVotes() {
+		updateVotes();
 		return chocolates;
 	}
 
@@ -147,6 +153,7 @@ public class Comment {
 	 * @return the total votes of the comment
 	 */
 	public synchronized int getTotalVotes() {
+		updateVotes();
 		return lemons + chocolates;
 	}
 
@@ -228,5 +235,20 @@ public class Comment {
 	 */
 	long getHash() {
 		return hashcode;
+	}
+
+	/**
+	 * Updates the votes
+	 */
+	private void updateVotes() {
+		Pair<Integer, Integer> votes;
+		try {
+			votes = Persistence.instance.getVotes(this);
+			chocolates = votes.first;
+			lemons = votes.second;
+		} catch (IOException e) {
+			System.err.println("IOException during getVotes() " + e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 }
