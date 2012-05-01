@@ -49,7 +49,7 @@ class DBUser {
 	 * @param grantLogin
 	 */
 	DBUser(String nickName, String fullName, String email,
-			UserState userState, Boolean grantLogin) {
+			User.UserState userState, Boolean grantLogin) {
 		super();
 		this.nickName = nickName;
 		this.fullName = fullName;
