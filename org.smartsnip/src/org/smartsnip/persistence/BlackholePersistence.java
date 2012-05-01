@@ -80,7 +80,8 @@ public class BlackholePersistence implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeSnippet(Snippet snippet, int mode) throws IOException {
+	public Long writeSnippet(Snippet snippet, int mode) throws IOException {
+		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -95,11 +96,13 @@ public class BlackholePersistence implements IPersistence {
 	}
 
 	/**
+	 * @return 
 	 * @see org.smartsnip.persistence.IPersistence#writeComment(org.smartsnip.core.Comment,
 	 *      int)
 	 */
 	@Override
-	public void writeComment(Comment comment, int mode) throws IOException {
+	public Long writeComment(Comment comment, int mode) throws IOException {
+		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -131,12 +134,14 @@ public class BlackholePersistence implements IPersistence {
 	}
 
 	/**
+	 * @return 
 	 * @see org.smartsnip.persistence.IPersistence#writeNotification(org.smartsnip.core.Notification,
 	 *      int)
 	 */
 	@Override
-	public void writeNotification(Notification notification, int mode)
+	public Long writeNotification(Notification notification, int mode)
 			throws IOException {
+				return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -151,11 +156,13 @@ public class BlackholePersistence implements IPersistence {
 	}
 
 	/**
+	 * @return 
 	 * @see org.smartsnip.persistence.IPersistence#writeCode(org.smartsnip.core.Code,
 	 *      int)
 	 */
 	@Override
-	public void writeCode(Code code, int mode) throws IOException {
+	public Long writeCode(Code code, int mode) throws IOException {
+		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -169,11 +176,13 @@ public class BlackholePersistence implements IPersistence {
 	}
 
 	/**
+	 * @return 
 	 * @see org.smartsnip.persistence.IPersistence#writeCategory(org.smartsnip.core.Category,
 	 *      int)
 	 */
 	@Override
-	public void writeCategory(Category category, int mode) throws IOException {
+	public Long writeCategory(Category category, int mode) throws IOException {
+		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -384,10 +393,10 @@ public class BlackholePersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getComment(long)
+	 * @see org.smartsnip.persistence.IPersistence#getComment(Long)
 	 */
 	@Override
-	public Comment getComment(long id) throws IOException {
+	public Comment getComment(Long id) throws IOException {
 		return getComments(null).get(0);
 	}
 
@@ -582,5 +591,78 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public int getTagsCount() throws IOException {
 		return 3;
+	}
+
+	@Override
+	public void unRate(User user, Snippet snippet, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeUser(String nickname, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeSnippet(Long snippetId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeComment(Long commentId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeTag(Tag tag, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeNotification(Long notificationId, int mode)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeReadNotifications(User user, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeCode(Long codeId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeCategory(Long categoryId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeLanguage(String language, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Integer getVote(User user, Comment comment) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getTagFrequency(Tag tag) throws IOException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

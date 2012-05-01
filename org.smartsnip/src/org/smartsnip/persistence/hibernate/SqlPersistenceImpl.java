@@ -68,9 +68,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeSnippet(Snippet snippet, int mode) throws IOException {
+	public Long writeSnippet(Snippet snippet, int mode) throws IOException {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	/**
@@ -88,9 +88,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeComment(Comment comment, int mode) throws IOException {
+	public Long writeComment(Comment comment, int mode) throws IOException {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	/**
@@ -127,9 +127,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeNotification(Notification notification, int mode) throws IOException {
+	public Long writeNotification(Notification notification, int mode) throws IOException {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	/**
@@ -147,9 +147,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeCode(Code code, int mode) throws IOException {
+	public Long writeCode(Code code, int mode) throws IOException {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	/**
@@ -167,9 +167,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeCategory(Category category, int mode) throws IOException {
+	public Long writeCategory(Category category, int mode) throws IOException {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	/**
@@ -202,6 +202,14 @@ public class SqlPersistenceImpl implements IPersistence {
 
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#unRate(org.smartsnip.core.User, org.smartsnip.core.Snippet, int)
+	 */
+	@Override
+	public void unRate(User user, Snippet snippet, int mode) throws IOException {
+		// TODO Auto-generated method stub
+	}
+	
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#writeVote(java.lang.Integer,
 	 *      org.smartsnip.core.Comment, org.smartsnip.core.User, int)
@@ -260,6 +268,88 @@ public class SqlPersistenceImpl implements IPersistence {
 	public void removeFavourite(Snippet snippet, User user, int mode) throws IOException {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeUser(java.lang.String, int)
+	 */
+	@Override
+	public void removeUser(String nickname, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeSnippet(java.lang.Long, int)
+	 */
+	@Override
+	public void removeSnippet(Long snippetId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeComment(java.lang.Long, int)
+	 */
+	@Override
+	public void removeComment(Long commentId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeTag(org.smartsnip.core.Tag, int)
+	 */
+	@Override
+	public void removeTag(Tag tag, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeNotification(java.lang.Long, int)
+	 */
+	@Override
+	public void removeNotification(Long notificationId, int mode)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeReadNotifications(org.smartsnip.core.User, int)
+	 */
+	@Override
+	public void removeReadNotifications(User user, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeCode(java.lang.Long, int)
+	 */
+	@Override
+	public void removeCode(Long codeId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeCategory(java.lang.Long, int)
+	 */
+	@Override
+	public void removeCategory(Long categoryId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeLanguage(java.lang.String, int)
+	 */
+	@Override
+	public void removeLanguage(String language, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**
@@ -358,7 +448,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 * @see org.smartsnip.persistence.IPersistence#getComment(long)
 	 */
 	@Override
-	public Comment getComment(long id) throws IOException {
+	public Comment getComment(Long id) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -501,6 +591,15 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getVote(org.smartsnip.core.User, org.smartsnip.core.Comment)
+	 */
+	@Override
+	public Integer getVote(User user, Comment comment) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String, int,
 	 *      int)
 	 */
@@ -542,6 +641,15 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public int getTagsCount() throws IOException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getTagFrequency(org.smartsnip.core.Tag)
+	 */
+	@Override
+	public int getTagFrequency(Tag tag) throws IOException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
