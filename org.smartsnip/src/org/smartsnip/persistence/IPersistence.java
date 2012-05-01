@@ -134,7 +134,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public long writeSnippet(Snippet snippet, int mode) throws IOException;
+	public Long writeSnippet(Snippet snippet, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Snippet-datasets.
@@ -162,7 +162,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public long writeComment(Comment comment, int mode) throws IOException;
+	public Long writeComment(Comment comment, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Comment-datasets.
@@ -216,7 +216,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public long writeNotification(Notification notification, int mode)
+	public Long writeNotification(Notification notification, int mode)
 			throws IOException;
 
 	/**
@@ -245,7 +245,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public long writeCode(Code code, int mode) throws IOException;
+	public Long writeCode(Code code, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Code-datasets.
@@ -272,7 +272,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public long writeCategory(Category category, int mode) throws IOException;
+	public Long writeCategory(Category category, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Category-datasets.
@@ -723,7 +723,7 @@ public interface IPersistence {
 	 *             at a problem retrieving the data at a problem retrieving the
 	 *             data, e.g. if the comment doesn't exist
 	 */
-	public Comment getComment(long id) throws IOException;
+	public Comment getComment(Long id) throws IOException;
 
 	/**
 	 * get all comments attached to the given snippet
