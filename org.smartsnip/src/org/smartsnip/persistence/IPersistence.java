@@ -10,6 +10,8 @@ import java.util.List;
 import org.smartsnip.core.*;
 import org.smartsnip.shared.Pair;
 
+import com.gargoylesoftware.htmlunit.ObjectInstantiationException;
+
 /**
  * Interface which contains all methods to persist or load data from the
  * underlying database.
@@ -129,10 +131,11 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
+	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeSnippet(Snippet snippet, int mode) throws IOException;
+	public long writeSnippet(Snippet snippet, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Snippet-datasets.
@@ -156,10 +159,11 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
+	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeComment(Comment comment, int mode) throws IOException;
+	public long writeComment(Comment comment, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Comment-datasets.
@@ -237,10 +241,11 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
+	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeCode(Code code, int mode) throws IOException;
+	public long writeCode(Code code, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Code-datasets.
@@ -263,10 +268,11 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
+	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeCategory(Category category, int mode) throws IOException;
+	public long writeCategory(Category category, int mode) throws IOException;
 
 	/**
 	 * Persist multiple Category-datasets.
@@ -316,6 +322,23 @@ public interface IPersistence {
 	 */
 	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
 			throws IOException;
+
+	/**
+	 * Remove a rating. This operation updates an existing rating to '0' in
+	 * DB_NO_DELETE mode which is currently the default behavior. In
+	 * DB_FORCE_DELETE mode the given database entry is deleted.
+	 * 
+	 * @param user
+	 *            the user who rated
+	 * @param snippet
+	 *            the snippet to rate for
+	 * @param mode
+	 *            the constraints for the write access. more than one constraint
+	 *            can be added by a logical or connection.
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
+	public void unRate(User user, Snippet snippet, int mode) throws IOException;
 
 	/**
 	 * Persist a vote. This operation updates an existing vote if the user has
@@ -391,7 +414,6 @@ public interface IPersistence {
 	 * @param mode
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -430,6 +452,34 @@ public interface IPersistence {
 	 */
 	public void removeFavourite(Snippet snippet, User user, int mode)
 			throws IOException;
+
+	/**
+	 * remove the User from the database
+	 * 
+	 * @param nickname
+	 *            the id of the object
+	 * @param mode
+	 *            the constraints for the write access. The default is
+	 *            DB_FORCE_DELETE
+	 * @throws IOException
+	 */
+	public void removeUser(String nickname, int mode) throws IOException;
+
+	//TODO comments
+	public void removeSnippet(Long snippetId, int mode) throws IOException;
+	
+	public void removeComment(Long commentId, int mode) throws IOException;
+	
+	public void removeTag(Tag tag, int mode) throws IOException;
+	
+	public void removeNotification(Notification notification, int mode) throws IOException;
+	
+	public void removeCode(Long codeId, int mode) throws IOException;
+	
+	public void removeCategory(Long categoryId, int mode) throws IOException;
+	
+	public void removeLanguage(String language, int mode) throws IOException;
+	
 
 	/**
 	 * get a user by his nickname
@@ -640,6 +690,8 @@ public interface IPersistence {
 
 	/**
 	 * get the category by name
+	 * <p>
+	 * This method returns a Category with the parent field set to null.
 	 * 
 	 * @param name
 	 *            the name of the category as key
@@ -650,10 +702,15 @@ public interface IPersistence {
 
 	/**
 	 * get the immediate parent of a category
+	 * <p>
+	 * This method returns a generated Category object if the parameter is root.
+	 * The marker contains the string "_you_asked_for_root_parent" in the name
+	 * field.
 	 * 
 	 * @param category
 	 *            the child category
-	 * @return the parent category or null if the given category is a root
+	 * @return the parent category or a generated marker object if the given
+	 *         category is a root
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
@@ -729,6 +786,17 @@ public interface IPersistence {
 	public Pair<Integer, Integer> getVotes(Comment comment) throws IOException;
 
 	/**
+	 * get the state of a user's vote according to a comment
+	 * 
+	 * @param user
+	 * @param comment
+	 * @return the vote, 0 if no vote exists or it has been undone.
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public Integer getVote(User user, Comment comment) throws IOException;
+
+	/**
 	 * search for the arguments of the given search-string.
 	 * 
 	 * @param searchString
@@ -780,4 +848,15 @@ public interface IPersistence {
 	 *             at a problem retrieving the data
 	 */
 	public int getTagsCount() throws IOException;
+
+	/**
+	 * get the number of entries where the tag is used
+	 * 
+	 * @param tag
+	 * @return the number the tag is used. 0 if the tag is unused or doesn't
+	 *         exist.
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public int getTagFrequency(Tag tag) throws IOException;
 }
