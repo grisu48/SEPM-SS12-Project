@@ -2,7 +2,6 @@ package org.smartsnip.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.smartsnip.persistence.IPersistence;
@@ -15,9 +14,6 @@ import org.smartsnip.shared.XSnippet;
  * 
  */
 public class Snippet {
-	/** All stored snippets of the system */
-	private final static HashMap<Integer, Snippet> allSnippets = new HashMap<Integer, Snippet>();
-
 	/** Internal hash counter used to get the next hash */
 	private static int hashCounter = 0;
 
@@ -32,7 +28,7 @@ public class Snippet {
 	/** Snippet associated category */
 	private Category category;
 	/** Tags of the snippet */
-	private final List<Tag> tags = new ArrayList<Tag>();
+	private final List<String> tags = new ArrayList<String>();
 	/** Comments of the snippet */
 	private final List<Comment> comments = new ArrayList<Comment>();
 	/** Concrete snippet code */
@@ -224,7 +220,14 @@ public class Snippet {
 	 * @return true if already registered hash, otherwise false
 	 */
 	synchronized static boolean exists(int hash) {
-		return allSnippets.containsKey(hash);
+		try {
+			Snippet snippet = Persistence.instance.getSnippet(hash);
+			return snippet != null;
+		} catch (IOException e) {
+			System.err.println("IOException while exists(" + hash + ") " + e.getMessage());
+			e.printStackTrace(System.err);
+			return false;
+		}
 	}
 
 	/**
@@ -236,7 +239,14 @@ public class Snippet {
 	 * @return the found snippet or null if not existsing
 	 */
 	synchronized static Snippet getSnippet(int hash) {
-		return allSnippets.get(hash);
+		try {
+			Snippet snippet = Persistence.instance.getSnippet(hash);
+			return snippet;
+		} catch (IOException e) {
+			System.err.println("IOException while getSnippet(" + hash + ") " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 
 	/**
@@ -260,12 +270,7 @@ public class Snippet {
 			return;
 
 		this.name = name;
-		try {
-			refreshDB();
-		} catch (IOException e) {
-			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
-			e.printStackTrace(Logging.err);
-		}
+		refreshDB();
 	}
 
 	/**
@@ -289,12 +294,7 @@ public class Snippet {
 			return;
 
 		this.description = description;
-		try {
-			refreshDB();
-		} catch (IOException e) {
-			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
-			e.printStackTrace(Logging.err);
-		}
+		refreshDB();
 	}
 
 	/**
@@ -317,12 +317,7 @@ public class Snippet {
 			return;
 
 		this.code = code;
-		try {
-			refreshDB();
-		} catch (IOException e) {
-			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
-			e.printStackTrace(Logging.err);
-		}
+		refreshDB();
 	}
 
 	@Override
@@ -347,22 +342,15 @@ public class Snippet {
 	 *            the category to set
 	 */
 	void setCategory(Category category) {
-		if (category == null)
-			return;
-		if (this.category == category)
+		if (category == null || this.category.equals(category))
 			return;
 
-		if (this.category != null) {
-			this.category.removeSnippet(this);
-		}
+		// IMPORTANT: This command must be in this order,
+		// oderwise we are in an endless loop!
 		this.category = category;
 		category.addSnippet(this);
-		try {
-			refreshDB();
-		} catch (IOException e) {
-			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
-			e.printStackTrace(Logging.err);
-		}
+
+		refreshDB();
 	}
 
 	/**
@@ -385,19 +373,18 @@ public class Snippet {
 		if (this.license.equals(license))
 			return;
 		this.license = license;
-		try {
-			refreshDB();
-		} catch (IOException e) {
-			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
-			e.printStackTrace(Logging.err);
-		}
+		refreshDB();
 	}
 
 	/**
 	 * @return the tags of the snippet
 	 */
-	List<Tag> getTags() {
-		return tags;
+	synchronized List<Tag> getTags() {
+		List<Tag> result = new ArrayList<Tag>();
+		for (String item : tags) {
+			result.add(Tag.createTag(item));
+		}
+		return result;
 	}
 
 	/**
@@ -408,21 +395,16 @@ public class Snippet {
 	 * @param tag
 	 *            to be added to the snippet
 	 */
-	void addTag(Tag tag) {
+	synchronized void addTag(Tag tag) {
 		if (tag == null)
 			return;
-		synchronized (tags) {
-			if (tags.contains(tag))
-				return;
-			tags.add(tag);
-		}
+		String sTag = tag.name;
+		if (tags.contains(sTag))
+			return;
 
-		try {
-			refreshDB();
-		} catch (IOException e) {
-			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
-			e.printStackTrace(Logging.err);
-		}
+		tags.add(sTag);
+
+		refreshDB();
 	}
 
 	/**
@@ -432,20 +414,18 @@ public class Snippet {
 	 * @param tag
 	 *            to be removed from the snippet
 	 */
-	void removeTag(Tag tag) {
+	synchronized void removeTag(Tag tag) {
 		if (tag == null)
 			return;
-		synchronized (tags) {
-			if (!tags.contains(tag))
-				return;
-			tags.remove(tag);
-		}
-		try {
-			refreshDB();
-		} catch (IOException e) {
-			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
-			e.printStackTrace(Logging.err);
-		}
+
+		String sTag = tag.name;
+		if (!tags.contains(sTag))
+			return;
+
+		tags.remove(sTag);
+
+		refreshDB();
+
 	}
 
 	/**
@@ -464,12 +444,7 @@ public class Snippet {
 
 	synchronized void increaseViewCounter() {
 		viewcount++;
-		try {
-			refreshDB();
-		} catch (IOException e) {
-			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
-			e.printStackTrace(Logging.err);
-		}
+		refreshDB();
 	}
 
 	/**
@@ -483,14 +458,13 @@ public class Snippet {
 		try {
 			if (comment == null)
 				return;
-			synchronized (comments) {
-				if (comments.contains(comment))
-					return;
-				comments.add(comment);
-			}
-			refreshDB();
+			if (!comment.snippet.equals(this))
+				throw new IOException("Comment owner not equals snippet to be added");
+
+			Persistence.instance.writeComment(comment, IPersistence.DB_DEFAULT);
+
 		} catch (IOException e) {
-			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
+			Logging.printError("IOException during addComment(Comment object) " + e.getMessage(), e);
 			e.printStackTrace(Logging.err);
 		}
 	}
@@ -506,17 +480,8 @@ public class Snippet {
 	void removeComment(Comment comment) {
 		if (comment == null)
 			return;
-		synchronized (comments) {
-			if (!comments.contains(comment))
-				return;
-			comments.remove(comment);
-		}
-		try {
-			refreshDB();
-		} catch (IOException e) {
-			Logging.printError("IOException accessing Persistence: " + e.getMessage(), e);
-			e.printStackTrace(Logging.err);
-		}
+
+		// TODO Implement this
 	}
 
 	/**
@@ -545,16 +510,26 @@ public class Snippet {
 	 * @return the total number of snippets in the system
 	 */
 	static int totalCount() {
-		return allSnippets.size();
+		try {
+			return Persistence.instance.getSnippetsCount();
+		} catch (IOException e) {
+			System.err.println("IOException while totalCount() " + e.getMessage());
+			e.printStackTrace(System.err);
+			return 0;
+		}
 	}
 
 	/**
 	 * Invokes the refreshing process for the database
-	 * 
-	 * @throws IOException
 	 */
-	protected synchronized void refreshDB() throws IOException {
-		Persistence.instance.writeSnippet(this, IPersistence.DB_DEFAULT);
+	protected synchronized void refreshDB() {
+		try {
+			Persistence.instance.writeSnippet(this, IPersistence.DB_DEFAULT);
+		} catch (IOException e) {
+			System.err.println("Error writing snippet " + name + " (" + hash + "): " + e.getMessage());
+			e.printStackTrace(System.err);
+			return;
+		}
 	}
 
 	/**
@@ -567,8 +542,14 @@ public class Snippet {
 		if (snippet == null)
 			return;
 
-		allSnippets.put(snippet.hash, snippet);
-		// TODO: Implement me!
+		try {
+			Persistence.instance.writeSnippet(snippet, IPersistence.DB_NEW_ONLY);
+		} catch (IOException e) {
+			System.err.println("Error adding a new snippet " + snippet.name + " (" + snippet.hash + "): "
+					+ e.getMessage());
+			e.printStackTrace(System.err);
+			return;
+		}
 	}
 
 	/**
@@ -581,8 +562,8 @@ public class Snippet {
 
 	public List<String> getStringTags() {
 		List<String> result = new ArrayList<String>();
-		for (Tag tag : tags) {
-			result.add(tag.name);
+		for (String tag : tags) {
+			result.add(tag);
 		}
 		return result;
 	}
@@ -602,13 +583,11 @@ public class Snippet {
 	 * 
 	 * @return
 	 */
-	public XSnippet toXSnippet() {
-		List<String> sTags = new ArrayList<String>();
-		for (Tag tag : tags) {
-			sTags.add(tag.name);
-		}
+	synchronized public XSnippet toXSnippet() {
+		List<Integer> commentList = new ArrayList<>();
+		// TODO Comment list with hash codes
 
-		// TODO Implement me
-		return null;
+		return new XSnippet(owner.getUsername(), hash, description, tags, commentList, code.getCode(),
+				code.getFormattedHTML(), code.getLanguage(), license, viewcount);
 	}
 }
