@@ -124,11 +124,12 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeSnippet(Snippet snippet, int mode) throws IOException {
+	public Long writeSnippet(Snippet snippet, int mode) throws IOException {
 		if (snippet == null)
-			return;
+			return null;
 
 		allSippets.put(snippet.hash, snippet);
+		return new Long(snippet.hash);
 	}
 
 	@Override
@@ -142,9 +143,9 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeComment(Comment comment, int mode) throws IOException {
+	public Long writeComment(Comment comment, int mode) throws IOException {
 		if (comment == null)
-			return;
+			return null;
 
 		List<Comment> list = allComments.get(comment.snippet);
 		if (list == null) {
@@ -152,9 +153,10 @@ public class MemPersistence implements IPersistence {
 			allComments.put(comment.snippet, list);
 		}
 		if (list.contains(comment))
-			return;
+			return new Long(list.indexOf(comment));
 
 		list.add(comment);
+		return new Long(list.indexOf(comment));
 	}
 
 	@Override
@@ -188,9 +190,9 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeNotification(Notification notification, int mode) throws IOException {
+	public Long writeNotification(Notification notification, int mode) throws IOException {
 		if (notification == null)
-			return;
+			return null;
 
 		User owner = notification.getOwner();
 		List<Notification> notifications = this.notifications.get(owner);
@@ -198,6 +200,7 @@ public class MemPersistence implements IPersistence {
 			notifications = new ArrayList<Notification>();
 			this.notifications.put(owner, notifications);
 		}
+		return new Long(this.notifications.get(owner).indexOf(notification));
 	}
 
 	@Override
@@ -211,9 +214,9 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeCode(Code code, int mode) throws IOException {
+	public Long writeCode(Code code, int mode) throws IOException {
 		if (code == null)
-			return;
+			return null;
 
 		Snippet snippet = code.snippet;
 		List<Code> codes = allCodes.get(snippet);
@@ -222,11 +225,11 @@ public class MemPersistence implements IPersistence {
 			allCodes.put(snippet, codes);
 		} else {
 			if (codes.contains(code))
-				return;
+				return new Long(codes.indexOf(code));
 		}
 
 		codes.add(code);
-
+		return new Long(codes.indexOf(code));
 	}
 
 	@Override
@@ -240,13 +243,15 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeCategory(Category category, int mode) throws IOException {
+	public Long writeCategory(Category category, int mode) throws IOException {
 		if (category == null)
-			return;
+			return null;
 
 		if (categoryTree.contains(category))
-			return;
+			// TODO Implement an indexer
+			return 0L;
 		// TODO Implement me
+		return 0L;
 	}
 
 	@Override
@@ -618,7 +623,7 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public Comment getComment(long id) throws IOException {
+	public Comment getComment(Long id) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -640,6 +645,79 @@ public class MemPersistence implements IPersistence {
 			throws IOException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void unRate(User user, Snippet snippet, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeUser(String nickname, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeSnippet(Long snippetId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeComment(Long commentId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeTag(Tag tag, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeNotification(Long notificationId, int mode)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeReadNotifications(User user, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeCode(Long codeId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeCategory(Long categoryId, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeLanguage(String language, int mode) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Integer getVote(User user, Comment comment) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getTagFrequency(Tag tag) throws IOException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
