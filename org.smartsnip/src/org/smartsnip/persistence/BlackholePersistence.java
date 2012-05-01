@@ -6,9 +6,11 @@ package org.smartsnip.persistence;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.smartsnip.core.*;
+import org.smartsnip.shared.Pair;
 
 import sun.reflect.Reflection;
 
@@ -21,13 +23,20 @@ import sun.reflect.Reflection;
  */
 public class BlackholePersistence implements IPersistence {
 
-	private static User staticUser1 = User.createNewUser("nobody", "blabla", "nobody@anonymus.org");
-	private static User staticUser2 = User.createNewUser("bin_da", "asdfgh", "bd@finger.net");
-	private static Code staticCode = Code.createCode("/* There's nothing interesting to know.*/", "java", null);
-			
+	private PersistenceHelper helper = new PersistenceHelper();
+
+	private User staticUser1 = this.helper.createUser("nobody", "blabla",
+			"nobody@anonymus.org", User.UserState.validated, null);
+	private User staticUser2 = this.helper.createUser("bin_da", "asdfgh",
+			"bd@finger.net", User.UserState.validated, null);
+	private Code staticCode = this.helper.createCode(
+			"/* There's nothing interesting to know.*/", "java", null, 0);
+
 	/**
-	 * This constructor is protected against multiple instantiation to accomplish a singleton pattern.
-	 * It rejects any attempt to build an instance except it is called by the {@link PersistenceFactory#getInstance(int)} method.
+	 * This constructor is protected against multiple instantiation to
+	 * accomplish a singleton pattern. It rejects any attempt to build an
+	 * instance except it is called by the
+	 * {@link PersistenceFactory#getInstance(int)} method.
 	 */
 	BlackholePersistence() throws IllegalAccessException {
 		super();
@@ -261,7 +270,8 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public User getUser(String nick) throws IOException {
-		User result = User.createNewUser(nick, "blabla", nick + "@anonymus.org");
+		User result = this.helper.createUser(nick, "blabla", nick
+				+ "@anonymus.org", User.UserState.validated, null);
 		return result;
 	}
 
@@ -270,7 +280,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public User getUserByEmail(String email) throws IOException {
-		User result = User.createNewUser("nobody", "blabla", email);
+		User result = this.helper.createUser("nobody", "some anonymous writer", email, User.UserState.validated, null);
 		return result;
 	}
 
@@ -280,7 +290,8 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public String getPassword(User user) throws IOException,
 			UnsupportedOperationException {
-		throw new UnsupportedOperationException("Use method verifyPassword(User, String) instead.");
+		throw new UnsupportedOperationException(
+				"Use method verifyPassword(User, String) instead.");
 	}
 
 	/**
@@ -299,8 +310,10 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<User> findUser(String realName) throws IOException {
 		List<User> list = new ArrayList<User>();
-		list.add(User.createNewUser("nobody", "blabla", "nobody@anonymus.org"));
-		list.add(User.createNewUser("bin_da", "asdfgh", "bd@finger.net"));
+		list.add(this.helper.createUser("nobody", "blabla",
+				"nobody@anonymus.org", User.UserState.validated, null));
+		list.add(this.helper.createUser("bin_da", "asdfgh", "bd@finger.net",
+				User.UserState.validated, null));
 		return list;
 	}
 
@@ -310,9 +323,13 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<Snippet> getUserSnippets(User owner) throws IOException {
 		List<Snippet> snips = new ArrayList<Snippet>();
-		Snippet snip = Snippet.createSnippet(owner, "Some Content", "This is an example entry", null, 0);
-		Code code = Code.createCode("/* There's nothing interesting to know.*/", "java", snip);
-		snip.setCode(code);
+		Snippet snip = this.helper
+				.createSnippet(owner, "Some Content", this.helper
+						.createCategory("undefined", "Undefined Content", 0),
+						new ArrayList<Tag>(), new ArrayList<Comment>(),
+						this.helper.createCode("/* There's nothing interesting to know.*/",
+								"java", null, 0),
+						"license free", 0);
 		snips.add(snip);
 		return null;
 	}
@@ -342,7 +359,8 @@ public class BlackholePersistence implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getSnippets(org.smartsnip.core.Category, int, int)
+	 * @see org.smartsnip.persistence.IPersistence#getSnippets(org.smartsnip.core.Category,
+	 *      int, int)
 	 */
 	@Override
 	public List<Snippet> getSnippets(Category category, int start, int count)
@@ -356,8 +374,10 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<Comment> getComments(Snippet snippet) throws IOException {
 		List<Comment> list = new ArrayList<Comment>();
-		Comment comm1 = Comment.createComment(staticUser1, snippet, "commented by nobody");
-		Comment comm2 = Comment.createComment(staticUser2, snippet, "commented by bin_da");
+		Comment comm1 = this.helper.createComment(staticUser1, snippet,
+				"commented by nobody", 1L, new Date(System.currentTimeMillis() - 86400000), 5, 3);
+		Comment comm2 = this.helper.createComment(staticUser2, snippet,
+				"commented by bin_da", 2L, new Date(System.currentTimeMillis() - 3600000), 1, 0);
 		list.add(comm1);
 		list.add(comm2);
 		return list;
@@ -377,8 +397,8 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<Tag> getTags(Snippet snippet) throws IOException {
 		List<Tag> list = new ArrayList<Tag>();
-		Tag tag1 = Tag.createTag("java");
-		Tag tag2 = Tag.createTag("sort");
+		Tag tag1 = this.helper.createTag("java");
+		Tag tag2 = this.helper.createTag("sort");
 		list.add(tag1);
 		list.add(tag2);
 		return list;
@@ -390,7 +410,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<Tag> getAllTags() throws IOException {
 		List<Tag> list = getTags(null);
-		list.add(Tag.createTag("merge"));
+		list.add(this.helper.createTag("merge"));
 		return list;
 	}
 
@@ -402,8 +422,7 @@ public class BlackholePersistence implements IPersistence {
 	public List<Notification> getNotifications(User user, boolean unreadOnly)
 			throws IOException {
 		List<Notification> list = new ArrayList<Notification>();
-		Notification not1 = new Notification();
-		not1.markUnread();
+		Notification not1 = this.helper.createNotification("Some obscure things happened.", false, "12. 3. 2012, 13.00", "unknown");
 		list.add(not1);
 		return list;
 	}
@@ -425,7 +444,7 @@ public class BlackholePersistence implements IPersistence {
 	public List<String> getAllCategories() throws IOException {
 		List<String> result = new ArrayList<String>();
 		result.add(getCategory("0").getName());
-		for(Category cat: getSubcategories(getCategory("0"))) {
+		for (Category cat : getSubcategories(getCategory("0"))) {
 			result.add(cat.getName());
 		}
 		return result;
@@ -436,7 +455,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public Category getCategory(String name) throws IOException {
-		return Category.createCategory("search", "Searching algorithms", null);
+		return this.helper.createCategory("search", "Searching algorithms", 0L);
 	}
 
 	/**
@@ -446,7 +465,7 @@ public class BlackholePersistence implements IPersistence {
 	public List<String> getSubcategoryNames(Category category)
 			throws IOException {
 		List<String> result = new ArrayList<String>();
-		for (Category cat: getSubcategories(category)) {
+		for (Category cat : getSubcategories(category)) {
 			result.add(cat.getName());
 		}
 		return result;
@@ -465,7 +484,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public Category getParentCategory(Category category) throws IOException {
-		return Category.createCategory("search", "Searching algorithms", null);
+		return this.helper.createCategory("search", "Searching algorithms", 1L);
 	}
 
 	/**
@@ -475,8 +494,10 @@ public class BlackholePersistence implements IPersistence {
 	public List<Category> getSubcategories(Category category)
 			throws IOException {
 		List<Category> list = new ArrayList<Category>();
-		Category cat1 = Category.createCategory("arraysearch", "Searching algorithms for arrays", category);
-		Category cat2 = Category.createCategory("listsearch", "Searching algorithms for list", category);
+		Category cat1 = this.helper.createCategory("arraysearch",
+				"Searching algorithms for arrays", 0);
+		Category cat2 = this.helper.createCategory("listsearch",
+				"Searching algorithms for list", 0);
 		list.add(cat1);
 		list.add(cat2);
 		return list;
@@ -499,7 +520,7 @@ public class BlackholePersistence implements IPersistence {
 	@Override
 	public List<Pair<User, Integer>> getRatings(Snippet snippet)
 			throws IOException {
-		List<Pair<User, Integer>> list = new ArrayList<Pair<User,Integer>>();
+		List<Pair<User, Integer>> list = new ArrayList<Pair<User, Integer>>();
 		list.add(new Pair<User, Integer>(staticUser1, 4));
 		list.add(new Pair<User, Integer>(staticUser2, 3));
 		return list;
