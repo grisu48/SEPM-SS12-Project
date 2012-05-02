@@ -333,8 +333,8 @@ public class BlackholePersistence implements IPersistence {
 	public List<Snippet> getUserSnippets(User owner) throws IOException {
 		List<Snippet> snips = new ArrayList<Snippet>();
 		Snippet snip = this.helper
-				.createSnippet(owner, "Some Content", this.helper
-						.createCategory("undefined", "Undefined Content", 0),
+				.createSnippet(owner, "The Header", "Some Content", this.helper
+						.createCategory("undefined", "Undefined Content", null),
 						new ArrayList<Tag>(), new ArrayList<Comment>(),
 						this.helper.createCode("/* There's nothing interesting to know.*/",
 								"java", null, 0),
@@ -464,7 +464,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public Category getCategory(String name) throws IOException {
-		return this.helper.createCategory("search", "Searching algorithms", 0L);
+		return this.helper.createCategory("search", "Searching algorithms", null);
 	}
 
 	/**
@@ -493,7 +493,7 @@ public class BlackholePersistence implements IPersistence {
 	 */
 	@Override
 	public Category getParentCategory(Category category) throws IOException {
-		return this.helper.createCategory("search", "Searching algorithms", 1L);
+		return this.helper.createCategory("search", "Searching algorithms", null);
 	}
 
 	/**
@@ -504,9 +504,9 @@ public class BlackholePersistence implements IPersistence {
 			throws IOException {
 		List<Category> list = new ArrayList<Category>();
 		Category cat1 = this.helper.createCategory("arraysearch",
-				"Searching algorithms for arrays", 0);
+				"Searching algorithms for arrays", category);
 		Category cat2 = this.helper.createCategory("listsearch",
-				"Searching algorithms for list", 0);
+				"Searching algorithms for list", category);
 		list.add(cat1);
 		list.add(cat2);
 		return list;
