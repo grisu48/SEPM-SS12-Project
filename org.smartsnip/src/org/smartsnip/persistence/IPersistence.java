@@ -676,6 +676,15 @@ public interface IPersistence {
 	public List<Snippet> getFavorited(User user) throws IOException;
 
 	/**
+	 * get the snippet with the given tag or null, if not existing
+	 * @param hash of the snippet
+	 * @return the snippet with the given tag or null, if not existing 
+	 * @throws IOException 
+	 *             at a problem retrieving the data
+	 */
+	public Snippet getSnippet(int hash) throws IOException;
+	
+	/**
 	 * get all snippets which contain all of the given tags in their tag-list
 	 * 
 	 * @param matchingTags
