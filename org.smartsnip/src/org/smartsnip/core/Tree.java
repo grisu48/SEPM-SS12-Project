@@ -23,7 +23,7 @@ public class Tree<E> {
 	 */
 	public class TreeItem<E> {
 		private TreeItem<E> parent = null;
-		private final E value;
+		private E value;
 		private final List<TreeItem<E>> subTree = new ArrayList<TreeItem<E>>();
 		
 		public TreeItem(E value, TreeItem<E> parent) {
@@ -70,11 +70,14 @@ public class Tree<E> {
 		 */
 		public synchronized TreeItem<E> put(E item) {
 			if(item == null) return null;
-			if (contains(item)) return null;
-			
-			TreeItem<E> treeitem = new TreeItem<E>(item, this);
-			this.subTree.add(treeitem);
-			return treeitem;
+			TreeItem<E> treeItem = get(item);
+			if (treeItem != null) {
+				treeItem.value = item;
+			} else {
+				treeItem = new TreeItem<E>(item, this);
+				this.subTree.add(treeItem);
+			}
+			return treeItem;
 		}
 		
 		/**
