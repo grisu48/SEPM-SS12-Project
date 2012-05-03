@@ -168,7 +168,7 @@ public class Tree<E> {
 	/**
 	 * @return the number of items in the tree
 	 */
-	private synchronized int size() {
+	public synchronized int size() {
 		return root.size();
 	}
 }
