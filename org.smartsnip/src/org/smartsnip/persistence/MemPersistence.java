@@ -38,7 +38,14 @@ public class MemPersistence implements IPersistence {
 		}
 	}
 
+	
+	/**
+	 * An internal tree that is build with this items
+	 *
+	 * @param <E>
+	 */
 	private class TreeItem<E> {
+		private TreeItem<E> parent = null;
 		private final List<E> children = new ArrayList<E>();
 		private final List<TreeItem<E>> subTree = new ArrayList<TreeItem<E>>();
 
@@ -83,11 +90,39 @@ public class MemPersistence implements IPersistence {
 			}
 			return size;
 		}
+
+		/**
+		 * Puts an entry into the category
+		 * 
+		 * @param category that should be added
+		 * @param parent of the category, null if added as a new root category
+		 */
+		public void put(E category, E parent) {
+			if (category == null) return;
+			TreeItem<E> item = new TreeItem<E>();
+			if (parent == null) {
+				
+			} else {
+				item.parent = new TreeItem<E>();
+			}
+			
+			
+			// TODO Implement me
+		}
+		
+		public TreeItem<E> getRoot() {
+			TreeItem<E> root = parent;
+			if(root == null) return root;
+			while(root.parent != null)
+				root = root.parent;
+			return root;
+		}
 	}
 
 	private final HashMap<String, User> allUsers = new HashMap<String, User>();
 	private final HashMap<Integer, Snippet> allSippets = new HashMap<Integer, Snippet>();
 	private final HashMap<Snippet, List<Comment>> allComments = new HashMap<Snippet, List<Comment>>();
+	private final HashMap<Integer, Comment> commentMap = new HashMap<Integer, Comment>();
 	private final List<Tag> allTags = new ArrayList<Tag>();
 	private final List<String> allLanguages = new ArrayList<String>();
 	private final HashMap<Snippet, List<Tag>> snippetTags = new HashMap<Snippet, List<Tag>>();
@@ -99,6 +134,8 @@ public class MemPersistence implements IPersistence {
 	private final HashMap<User, List<Snippet>> favorites = new HashMap<User, List<Snippet>>();
 	private final HashMap<User, String> passwords = new HashMap<User, String>();
 
+	
+	
 	private String toKey(String key) {
 		if (key == null)
 			return "";
@@ -248,10 +285,11 @@ public class MemPersistence implements IPersistence {
 			return null;
 
 		if (categoryTree.contains(category))
-			// TODO Implement an indexer
-			return 0L;
-		// TODO Implement me
-		return 0L;
+			return (long) category.hashCode();
+
+		
+		categoryTree.put(category, category.getParent());
+		return (long) category.hashCode();
 	}
 
 	@Override
@@ -558,7 +596,6 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public int getCategoryCount() throws IOException {
-		// TODO Auto-generated method stub
 		return categoryTree.size();
 	}
 
@@ -624,8 +661,8 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Comment getComment(Long id) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (id == null) return null;
+		return commentMap.get(id);
 	}
 
 	@Override
