@@ -720,4 +720,10 @@ public class MemPersistence implements IPersistence {
 		return 0;
 	}
 
+	@Override
+	public Snippet getSnippet(int hash) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
