@@ -95,6 +95,38 @@ public class Tree<E> {
 			}
 			return null;
 		}
+
+		/**
+		 * Searches the tree for an item by it's hash code
+		 * @param hash
+		 * @return
+		 */
+		public TreeItem<E> getbyhash(int hash) {
+			if (hash == hashCode()) return this;
+			for (TreeItem<E> e : subTree) {
+				TreeItem<E> result = e.getbyhash(hash);
+				if (result != null) return result;
+			}
+			return null;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) return false;
+			if (obj instanceof TreeItem) {
+				@SuppressWarnings("rawtypes")
+				TreeItem item = (TreeItem) obj;
+				if (item.value == null) return false;
+				return item.value.equals(obj);
+			}
+			return obj.equals(value);
+		}
+		
+		@Override
+		public int hashCode() {
+			if (value == null) return 0;
+			return value.hashCode();
+		}
 	}
 	
 	/**
@@ -124,6 +156,15 @@ public class Tree<E> {
 		}
 	}
 
+	/**
+	 * Gets an item given by it's hash code. Returns null if no such item was found
+	 * @param hash hash code of the item to be searched for
+	 * @return the found item, or null if not found
+	 */
+	public synchronized E get(int hash) {
+		return root.getbyhash(hash).value;
+	}
+	
 	/**
 	 * @return the number of items in the tree
 	 */
