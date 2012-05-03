@@ -12,6 +12,7 @@ import org.smartsnip.core.Comment;
 import org.smartsnip.core.Notification;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
+import org.smartsnip.core.Tree;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.Pair;
 
@@ -38,87 +39,6 @@ public class MemPersistence implements IPersistence {
 		}
 	}
 
-	
-	/**
-	 * An internal tree that is build with this items
-	 *
-	 * @param <E>
-	 */
-	private class TreeItem<E> {
-		private TreeItem<E> parent = null;
-		private final List<E> children = new ArrayList<E>();
-		private final List<TreeItem<E>> subTree = new ArrayList<TreeItem<E>>();
-
-		public boolean contains(E e) {
-			if (e == null)
-				return false;
-
-			if (children.contains(e))
-				return true;
-			for (TreeItem<E> item : subTree) {
-				if (item.contains(e))
-					return true;
-			}
-
-			return false;
-		}
-
-		public E get(E item) {
-			if (item == null)
-				return null;
-
-			// If one of my children, then get it!
-			int index = children.indexOf(item);
-			if (index >= 0)
-				return children.get(index);
-
-			// Recursive call in all subtrees
-			for (TreeItem<E> current : subTree) {
-				E result = current.get(item);
-				if (result != null)
-					return result;
-			}
-
-			return null;
-
-		}
-
-		public int size() {
-			int size = children.size();
-			for (TreeItem<E> current : subTree) {
-				size += current.size();
-			}
-			return size;
-		}
-
-		/**
-		 * Puts an entry into the category
-		 * 
-		 * @param category that should be added
-		 * @param parent of the category, null if added as a new root category
-		 */
-		public void put(E category, E parent) {
-			if (category == null) return;
-			TreeItem<E> item = new TreeItem<E>();
-			if (parent == null) {
-				
-			} else {
-				item.parent = new TreeItem<E>();
-			}
-			
-			
-			// TODO Implement me
-		}
-		
-		public TreeItem<E> getRoot() {
-			TreeItem<E> root = parent;
-			if(root == null) return root;
-			while(root.parent != null)
-				root = root.parent;
-			return root;
-		}
-	}
-
 	private final HashMap<String, User> allUsers = new HashMap<String, User>();
 	private final HashMap<Integer, Snippet> allSippets = new HashMap<Integer, Snippet>();
 	private final HashMap<Snippet, List<Comment>> allComments = new HashMap<Snippet, List<Comment>>();
@@ -128,7 +48,7 @@ public class MemPersistence implements IPersistence {
 	private final HashMap<Snippet, List<Tag>> snippetTags = new HashMap<Snippet, List<Tag>>();
 	private final HashMap<User, List<Notification>> notifications = new HashMap<User, List<Notification>>();
 	private final HashMap<Snippet, List<Code>> allCodes = new HashMap<Snippet, List<Code>>();
-	private final TreeItem<Category> categoryTree = new TreeItem<Category>();
+	private final Tree<Category> categoryTree = new Tree<Category>();
 	private final HashMap<Snippet, HashMap<User, Integer>> ratings = new HashMap<Snippet, HashMap<User, Integer>>();
 	private final HashMap<Comment, HashMap<User, Integer>> votings = new HashMap<Comment, HashMap<User, Integer>>();
 	private final HashMap<User, List<Snippet>> favorites = new HashMap<User, List<Snippet>>();
@@ -284,12 +204,9 @@ public class MemPersistence implements IPersistence {
 		if (category == null)
 			return null;
 
-		if (categoryTree.contains(category))
-			return (long) category.hashCode();
-
+		Category parent = category.getParent();
+		return (long) categoryTree.put(category, parent).hashCode();
 		
-		categoryTree.put(category, category.getParent());
-		return (long) category.hashCode();
 	}
 
 	@Override
