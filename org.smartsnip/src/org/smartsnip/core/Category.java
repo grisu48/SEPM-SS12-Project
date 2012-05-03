@@ -366,4 +366,20 @@ public class Category {
 			return null;
 		}
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (! (obj instanceof Category)) return false;
+		
+		Category toCheck = (Category)obj;
+		if (!toCheck.name.equals(this.name))return false; 
+		
+		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }

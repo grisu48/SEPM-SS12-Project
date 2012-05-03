@@ -584,7 +584,7 @@ public class Snippet {
 	 * @return
 	 */
 	synchronized public XSnippet toXSnippet() {
-		List<Integer> commentList = new ArrayList<>();
+		List<Integer> commentList = new ArrayList<Integer>();
 		// TODO Comment list with hash codes
 
 		return new XSnippet(owner.getUsername(), hash, description, tags, commentList, code.getCode(),

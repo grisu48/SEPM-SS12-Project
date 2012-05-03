@@ -298,11 +298,6 @@ public class User {
 	}
 
 	@Override
-	public int hashCode() {
-		return username.hashCode();
-	}
-
-	@Override
 	public String toString() {
 		return username;
 	}
@@ -406,5 +401,21 @@ public class User {
 	 */
 	public UserState getState() {
 		return state;
+	}
+	
+
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (! (obj instanceof User)) return false;
+		
+		User user = (User)obj;
+		return user.username.equals(this.username);
+	}
+	
+	@Override
+	public int hashCode() {
+		return username.hashCode();
 	}
 }

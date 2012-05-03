@@ -68,6 +68,11 @@ public abstract class Code {
 			return this.code.equals(obj);
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {
+		return code.hashCode();
+	}
 
 	@Override
 	public String toString() {

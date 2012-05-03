@@ -251,4 +251,16 @@ public class Comment {
 			e.printStackTrace(System.err);
 		}
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (! (obj instanceof Comment)) return false;
+		
+		Comment comment = (Comment)obj;
+		if (!comment.message.equals(this.message)) return false;
+		if (!comment.owner.equals(this.owner)) return false;
+		
+		return true;
+	}
 }

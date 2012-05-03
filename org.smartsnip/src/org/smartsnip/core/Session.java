@@ -639,4 +639,21 @@ public class Session {
 
 		// TODO Implement me
 	}
+	
+
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (! (obj instanceof Session)) return false;
+		Session session = (Session)obj;
+		
+		if (!session.cookie.equals(this.cookie)) return false;
+		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		return cookie.hashCode();
+	}
 }

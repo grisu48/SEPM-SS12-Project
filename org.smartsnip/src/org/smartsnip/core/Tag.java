@@ -99,4 +99,21 @@ public class Tag {
 	static protected void refreshDB() {
 
 	}
+	
+
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (! (obj instanceof Tag)) return false;
+		
+		Tag tag = (Tag)obj;
+		return tag.equals(this.name);
+		
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
 }
