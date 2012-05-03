@@ -665,4 +665,10 @@ public class BlackholePersistence implements IPersistence {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public Snippet getSnippet(int hash) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
