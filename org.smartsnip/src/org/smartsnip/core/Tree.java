@@ -133,9 +133,9 @@ public class Tree<E> {
 	 * Puts a new item into the root. If the given item is null, nothing happens
 	 * @param item to be put to
 	 */
-	public synchronized void put(E item) {
-		if (item == null) return;
-		root.put(item);
+	public synchronized TreeItem<E> put(E item) {
+		if (item == null) return null;
+		return root.put(item);
 	}
 	
 	/**
@@ -145,14 +145,14 @@ public class Tree<E> {
 	 * @param item To be added
 	 * @param parent Parent of the new item, or null, if it should be added as root item
 	 */
-	public synchronized void put(E item, E parent) {
-		if (item == null) return;
+	public synchronized TreeItem<E> put(E item, E parent) {
+		if (item == null) return null;
 		TreeItem<E> root = this.root.get(parent);
 		
 		if (root == null) {
-			put(item);
+			return put(item);
 		} else {
-			root.put(item);
+			return root.put(item);
 		}
 	}
 
