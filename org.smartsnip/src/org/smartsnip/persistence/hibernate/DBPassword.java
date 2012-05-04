@@ -5,8 +5,11 @@
 package org.smartsnip.persistence.hibernate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Database OR mapping class for table Password
@@ -19,11 +22,13 @@ class DBPassword {
 	
 	@Id
 	@OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-	@ForeignKey(name="DBUser.user_name")
-	@Column(name="user_name", nullable=false, unique=true)
+	@ForeignKey(name="DBUser.userName")
+	@OnDelete(action=OnDeleteAction.CASCADE)
+	@Column(name="user_name")
 	String user;
 	
-	@Column(name="pwd_string", nullable=false)
+	@NotNull
+	@Column(name="pwd_string")
 	String password;
 
 	/**

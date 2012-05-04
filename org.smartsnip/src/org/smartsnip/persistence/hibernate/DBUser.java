@@ -4,7 +4,13 @@
  */
 package org.smartsnip.persistence.hibernate;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.smartsnip.core.User;
 
@@ -17,20 +23,22 @@ import org.smartsnip.core.User;
 @Table(name = "User")
 class DBUser {
 	@Id
-	@Column(name = "user_name", nullable=false, unique=true)
-	private String nickName;
+	@Column(name = "user_name", length=20)
+	private String userName;
 
-	@Column(name = "full_name", nullable=true)
+	@Column(name = "full_name", length=200)
 	private String fullName;
 	
-	@Column(name= "email", nullable=true)
+	@Column(name= "email", length=200)
 	private String email;
 	
-	@Column(name="user_state", nullable=false)
+	@NotNull
+	@Column(name="user_state")
 	@Enumerated(EnumType.STRING)
 	private User.UserState userState;
 	
-	@Column(name="grant_login", nullable=false)
+	@NotNull
+	@Column(name="grant_login")
 	private Boolean grantLogin;
 
 	/**
@@ -42,7 +50,7 @@ class DBUser {
 
 	
 	/**
-	 * @param nickName
+	 * @param userName
 	 * @param fullName
 	 * @param email
 	 * @param userState
@@ -51,7 +59,7 @@ class DBUser {
 	DBUser(String nickName, String fullName, String email,
 			User.UserState userState, Boolean grantLogin) {
 		super();
-		this.nickName = nickName;
+		this.userName = nickName;
 		this.fullName = fullName;
 		this.email = email;
 		this.userState = userState;
@@ -59,17 +67,17 @@ class DBUser {
 	}
 
 	/**
-	 * @return the nickName
+	 * @return the userName
 	 */
 	public String getNickName() {
-		return this.nickName;
+		return this.userName;
 	}
 
 	/**
-	 * @param nickName the nickName to set
+	 * @param userName the userName to set
 	 */
-	public void setNickName(String nickName) {
-		this.nickName = nickName;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	/**

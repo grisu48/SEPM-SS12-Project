@@ -33,7 +33,7 @@ public class DBSessionFactory {
 
 				serviceRegistry = new ServiceRegistryBuilder().applySettings(
 						configuration.getProperties()).buildServiceRegistry();
-				factory = configuration.buildSessionFactory();
+				factory = configuration.buildSessionFactory(serviceRegistry);
 			} catch (Throwable ex) {
 				System.err.println("Failed to create sessionFactory object."
 						+ ex);

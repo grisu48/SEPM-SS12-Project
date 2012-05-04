@@ -5,9 +5,15 @@
 package org.smartsnip.persistence.hibernate;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Database OR mapping class for table Tag
+ * 
  * @author littlelion
  * 
  */
@@ -15,10 +21,15 @@ import javax.persistence.*;
 @Table(name = "Tag")
 class DBTag {
 	@Id
-	@Column(name = "name", nullable=false, unique=true)
+	@Column(name = "name", length = 50)
+	@ManyToMany(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
+	@ForeignKey(name = "DBTag.name", inverseName = "DBSnippet.tag_name")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private String name;
 
-	@Column(name = "usage_freq", nullable=false, unique=false)
+	@NotNull
+	@GeneratedValue
+	@Column(name = "usage_freq", insertable = false, updatable = false)
 	private int usageFrequence;
 
 	DBTag() {
@@ -36,7 +47,8 @@ class DBTag {
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -50,7 +62,8 @@ class DBTag {
 	}
 
 	/**
-	 * @param usageFrequence the usageFrequence to set
+	 * @param usageFrequence
+	 *            the usageFrequence to set
 	 */
 	public void setUsageFrequence(int usageFrequence) {
 		this.usageFrequence = usageFrequence;

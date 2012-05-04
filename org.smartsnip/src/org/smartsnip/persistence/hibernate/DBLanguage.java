@@ -19,7 +19,7 @@ import javax.persistence.Table;
 public class DBLanguage {
 
 	@Id
-	@Column(name = "name", nullable=false, unique=true)
+	@Column(name = "language", length=50)
 	String language;
 
 	/**
