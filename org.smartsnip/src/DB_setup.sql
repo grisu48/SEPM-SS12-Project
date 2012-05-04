@@ -87,7 +87,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
 CREATE TABLE `Snippet` (
   `snippet_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   `headline` VARCHAR(200)  DEFAULT NULL,
-  `description` text  DEFAULT NULL,
+  `description` TEXT DEFAULT NULL,
   `viewcount` INTEGER UNSIGNED DEFAULT NULL,
   `rating_average` FLOAT NOT NULL DEFAULT 0,
   `last_edited` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
@@ -192,6 +192,7 @@ CREATE TABLE `Code` (
   `snippet_id` INTEGER UNSIGNED NOT NULL,
   `language` VARCHAR(50) NOT NULL,
   `file` TEXT  DEFAULT NULL,
+  `version` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`code_id`),
   CONSTRAINT `fk_code_snippet` FOREIGN KEY `fk_code_snippet` (`snippet_id`)
     REFERENCES `Snippet` (`snippet_id`)
@@ -241,7 +242,7 @@ CREATE TABLE `Comment` (
   `user_name` VARCHAR(20)  DEFAULT NULL,
   `pos_votes_sum` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `neg_votes_sum` INTEGER UNSIGNED NOT NULL DEFAULT 0,
-  PRIMARY KEY (`comment_id`, `snippet_id`),
+  PRIMARY KEY (`comment_id`),
   CONSTRAINT `fk_comm_snippet` FOREIGN KEY `fk_comm_snippet` (`snippet_id`)
     REFERENCES `Snippet` (`snippet_id`)
     ON DELETE CASCADE
@@ -263,7 +264,7 @@ CREATE TABLE `Vote` (
   `comment_id` INTEGER UNSIGNED NOT NULL,
   `user_name` VARCHAR(20)  DEFAULT NULL,
   `vote` ENUM("none","negative","positive")  NOT NULL DEFAULT "none",
-  PRIMARY KEY (`comment_id`),
+  PRIMARY KEY (`comment_id`, `user_name`),
   CONSTRAINT `fk_vote_comm` FOREIGN KEY `fk_vote_comm` (`comment_id`)
     REFERENCES `Comment` (`comment_id`)
     ON DELETE CASCADE
