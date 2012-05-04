@@ -27,35 +27,41 @@ import sun.reflect.Reflection;
 public class MemPersistence implements IPersistence {
 
 	/**
-	 * This constructor is protected against multiple instantiation to accomplish a singleton pattern.
-	 * It rejects any attempt to build an instance except it is called by the {@link PersistenceFactory#getInstance(int)} method.
+	 * This constructor is protected against multiple instantiation to
+	 * accomplish a singleton pattern. It rejects any attempt to build an
+	 * instance except it is called by the
+	 * {@link PersistenceFactory#getInstance(int)} method.
 	 */
 	MemPersistence() throws IllegalAccessException {
 		super();
-		if (Reflection.getCallerClass(2) == null
-				|| Reflection.getCallerClass(2) != PersistenceFactory.class) {
-			throw new IllegalAccessException(
-					"Singleton pattern: caller must be PersistenceFactory class.");
-		}
+		if (Reflection.getCallerClass(2) == null || Reflection.getCallerClass(2) != PersistenceFactory.class)
+			throw new IllegalAccessException("Singleton pattern: caller must be PersistenceFactory class.");
 	}
 
 	private final HashMap<String, User> allUsers = new HashMap<String, User>();
-	private final HashMap<Integer, Snippet> allSippets = new HashMap<Integer, Snippet>();
+	private final HashMap<Long, Snippet> allSippets = new HashMap<Long, Snippet>();
+
 	private final HashMap<Snippet, List<Comment>> allComments = new HashMap<Snippet, List<Comment>>();
-	private final HashMap<Integer, Comment> commentMap = new HashMap<Integer, Comment>();
+	private final HashMap<Long, Comment> commentMap = new HashMap<Long, Comment>();
+
 	private final List<Tag> allTags = new ArrayList<Tag>();
 	private final List<String> allLanguages = new ArrayList<String>();
+
 	private final HashMap<Snippet, List<Tag>> snippetTags = new HashMap<Snippet, List<Tag>>();
+
 	private final HashMap<User, List<Notification>> notifications = new HashMap<User, List<Notification>>();
+
 	private final HashMap<Snippet, List<Code>> allCodes = new HashMap<Snippet, List<Code>>();
+
 	private final Tree<Category> categoryTree = new Tree<Category>();
+
 	private final HashMap<Snippet, HashMap<User, Integer>> ratings = new HashMap<Snippet, HashMap<User, Integer>>();
 	private final HashMap<Comment, HashMap<User, Integer>> votings = new HashMap<Comment, HashMap<User, Integer>>();
+
 	private final HashMap<User, List<Snippet>> favorites = new HashMap<User, List<Snippet>>();
+
 	private final HashMap<User, String> passwords = new HashMap<User, String>();
 
-	
-	
 	private String toKey(String key) {
 		if (key == null)
 			return "";
@@ -85,8 +91,9 @@ public class MemPersistence implements IPersistence {
 		if (snippet == null)
 			return null;
 
-		allSippets.put(snippet.hash, snippet);
-		return new Long(snippet.hash);
+		allSippets.put(snippet.id, snippet);
+		// TODO snippetTags.put(snippet, sni);
+		return new Long(snippet.id);
 	}
 
 	@Override
@@ -206,7 +213,7 @@ public class MemPersistence implements IPersistence {
 
 		Category parent = category.getParent();
 		return (long) categoryTree.put(category, parent).hashCode();
-		
+
 	}
 
 	@Override
@@ -401,11 +408,6 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Tag> getAllTags() throws IOException {
-		return allTags;
-	}
-
-	@Override
 	public List<Notification> getNotifications(User user, boolean unreadOnly) throws IOException {
 		if (user == null)
 			return null;
@@ -561,29 +563,30 @@ public class MemPersistence implements IPersistence {
 		int sum = 0;
 		int num = 0;
 		List<Entry<User, Integer>> set = new ArrayList<Entry<User, Integer>>(list.entrySet());
-		if (set.size() == 0 ) return new Float(0);
+		if (set.size() == 0)
+			return new Float(0);
 		for (Entry<User, Integer> entry : set) {
 			sum += entry.getValue();
 			++num;
 		}
-		return ((float)sum / (float)num);
+		return ((float) sum / (float) num);
 	}
 
 	@Override
-	public List<Snippet> getSnippets(Category category, int start, int count)
-			throws IOException {
+	public List<Snippet> getSnippets(Category category, int start, int count) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Comment getComment(Long id) throws IOException {
-		if (id == null) return null;
+		if (id == null)
+			return null;
 		return commentMap.get(id);
 	}
 
 	@Override
-	public List<String> getAllCategories() throws IOException {
+	public List<Category> getAllCategories() throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -595,71 +598,21 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<String> getSubcategoryNames(Category category)
-			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void unRate(User user, Snippet snippet, int mode) throws IOException {
 		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void removeUser(String nickname, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeSnippet(Long snippetId, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeComment(Long commentId, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void removeTag(Tag tag, int mode) throws IOException {
 		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void removeNotification(Long notificationId, int mode)
-			throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeReadNotifications(User user, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeCode(Long codeId, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeCategory(Long categoryId, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void removeLanguage(String language, int mode) throws IOException {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -669,13 +622,49 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public int getTagFrequency(Tag tag) throws IOException {
+	public Snippet getSnippet(int hash) throws IOException {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
-	public Snippet getSnippet(int hash) throws IOException {
+	public void removeUser(User user, int mode) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeSnippet(Snippet snippet, int mode) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeComment(Comment comment, int mode) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeNotification(Notification notification, int mode) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeCode(Code code, int mode) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeCategory(Category category, int mode) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public List<Tag> getAllTags(int start, int count) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
