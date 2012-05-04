@@ -22,7 +22,7 @@ public class Snippet {
 	/** Snippet name */
 	private String name;
 	/** Unique hash code of the snippet */
-	public final int hash;
+	public Long hash = null;
 	/** Snippet description */
 	private String description;
 	/** Snippet associated category */
