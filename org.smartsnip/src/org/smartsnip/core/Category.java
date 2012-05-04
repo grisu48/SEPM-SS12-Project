@@ -16,7 +16,40 @@ public class Category {
 	/** Parent category, if present, or null if a root category */
 	private Category parent = null;
 	/** List with the hash codes of the snippets of the category */
-	private final List<Integer> snippets = new ArrayList<Integer>();
+	private final List<Snippet> snippets;
+
+	/**
+	 * Constructor for a new category. If one of the fields (except parent) if
+	 * null, a {@link NullPointerException} will be thrown If the name or the
+	 * description is empty, a {@link IllegalArgumentException} is thrown
+	 * 
+	 * This normally should be done by the DB to crete a new category object
+	 * 
+	 * @param name
+	 *            of the category. Must not be null or empty
+	 * @param description
+	 *            of the category. Must not be null or empty
+	 * @param parent
+	 *            of the category. If null, the category is a rot category
+	 * @param snippets
+	 *            Snippets of the category. Must not be null
+	 */
+	Category(String name, String description, Category parent, List<Snippet> snippets) {
+		super();
+		if (name == null || description == null)
+			throw new NullPointerException();
+		if (name.length() == 0)
+			throw new IllegalArgumentException("Empty category name not allowed");
+		if (description.length() == 0)
+			throw new IllegalArgumentException("Empty category description not allowed");
+		if (snippets == null)
+			throw new IllegalArgumentException("Empty snippet list in db-constructor not allowed");
+
+		this.name = name;
+		this.description = description;
+		this.parent = parent;
+		this.snippets = snippets;
+	}
 
 	/**
 	 * Constructor for a new category. If one of the fields (except parent) if
@@ -28,7 +61,7 @@ public class Category {
 	 * @param description
 	 *            of the category. Must not be null or empty
 	 * @param parent
-	 *            of the category. Can be null
+	 *            of the category. If null, the category is a rot category
 	 */
 	private Category(String name, String description, Category parent) {
 		super();
@@ -42,6 +75,7 @@ public class Category {
 		this.name = name;
 		this.description = description;
 		this.parent = parent;
+		this.snippets = new ArrayList<Snippet>();
 	}
 
 	/**
@@ -61,7 +95,8 @@ public class Category {
 	 * @throws IOException
 	 *             Thrown if occuring during access to IPersistence
 	 */
-	synchronized static Category createCategory(String name, String description, Category parent) throws IOException {
+	public synchronized static Category createCategory(String name, String description, Category parent)
+			throws IOException {
 		Category category = new Category(name, description, parent);
 		addToDB(category);
 		return category;
@@ -232,7 +267,7 @@ public class Category {
 	 * @throws IOException
 	 *             The {@link IOException} of IPersistence is not caught
 	 */
-	synchronized protected static void addToDB(Category category) throws IOException {
+	protected synchronized static void addToDB(Category category) throws IOException {
 		if (category == null)
 			return;
 
@@ -354,7 +389,7 @@ public class Category {
 	 * @return a list containing all snippets of this category
 	 */
 	@Deprecated
-	List<Snippet> getSnippets() {
+	private List<Snippet> getSnippets() {
 		try {
 			return Persistence.instance.getSnippets(this);
 		} catch (IOException e) {
