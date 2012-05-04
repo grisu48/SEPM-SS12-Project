@@ -445,6 +445,15 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getSnippet(int)
+	 */
+	@Override
+	public Snippet getSnippet(int hash) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getComment(long)
 	 */
 	@Override
