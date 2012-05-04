@@ -81,7 +81,7 @@ public class User {
 	 *            Name of the user that should be searched
 	 * @return found user with the given username or null if not found
 	 */
-	synchronized static User getUser(String username) {
+	public synchronized static User getUser(String username) {
 		if (username.length() == 0)
 			return null;
 		username = username.toLowerCase();
@@ -256,7 +256,7 @@ public class User {
 	/**
 	 * @return the total count of registered users in the system
 	 */
-	static int totalCount() {
+	public static int totalCount() {
 		return allUsers.size();
 	}
 
@@ -290,7 +290,7 @@ public class User {
 	 * @return true if the login is successful, otherwise false (without reason
 	 *         message)
 	 */
-	static boolean auth(String username, String password) {
+	public static boolean auth(String username, String password) {
 		User user = getUser(username);
 		if (user == null)
 			return false;
@@ -305,7 +305,7 @@ public class User {
 	/**
 	 * @return a list of the snippets created by the user
 	 */
-	List<Snippet> getMySnippets() {
+	public List<Snippet> getMySnippets() {
 		// TODO: Implement me
 		return new ArrayList<Snippet>();
 	}
@@ -321,7 +321,7 @@ public class User {
 	/**
 	 * @return a list of the users' favourite snippets
 	 */
-	List<Snippet> getFavoriteSnippets() {
+	public List<Snippet> getFavoriteSnippets() {
 		List<Snippet> result = new ArrayList<Snippet>(favorites.size());
 		for (Snippet snippet : favorites) {
 			result.add(snippet);
@@ -333,8 +333,8 @@ public class User {
 	/**
 	 * @return a list of the hash codes of the users' favourite snippets
 	 */
-	List<Integer> getFavoriteSnippetsHash() {
-		List<Integer> result = new ArrayList<Integer>(favorites.size());
+	List<Long> getFavoriteSnippetsHash() {
+		List<Long> result = new ArrayList<Long>(favorites.size());
 		for (Snippet snippet : favorites) {
 			result.add(snippet.hash);
 		}
@@ -402,18 +402,18 @@ public class User {
 	public UserState getState() {
 		return state;
 	}
-	
 
-	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (! (obj instanceof User)) return false;
-		
-		User user = (User)obj;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof User))
+			return false;
+
+		User user = (User) obj;
 		return user.username.equals(this.username);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return username.hashCode();

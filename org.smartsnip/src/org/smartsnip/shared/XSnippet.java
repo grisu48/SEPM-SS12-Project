@@ -6,7 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class XSnippet implements IsSerializable {
 	public final String owner;
-	public final int hash;
+	public final long hash;
 	public final String description;
 	public final List<String> tags;
 	public final List<Integer> comment;
@@ -16,7 +16,7 @@ public class XSnippet implements IsSerializable {
 	public final String license;
 	public final int viewcount;
 
-	public XSnippet(String owner, int hash, String description, List<String> tags, List<Integer> comment, String code,
+	public XSnippet(String owner, long hash, String description, List<String> tags, List<Integer> comment, String code,
 			String codeHTML, String language, String license, int viewcount) {
 		this.owner = owner;
 		this.hash = hash;

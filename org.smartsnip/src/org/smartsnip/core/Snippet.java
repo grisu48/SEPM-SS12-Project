@@ -40,7 +40,7 @@ public class Snippet {
 
 	@Override
 	public int hashCode() {
-		return hash;
+		return hash.hashCode();
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class Snippet {
 		this.name = name;
 		this.description = description;
 		this.code = code;
-		this.hash = hash;
+		this.hash = Long.valueOf(hash);
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class Snippet {
 		this.name = name;
 		this.description = description;
 		this.code = Code.createCode(code, language, this);
-		this.hash = hash;
+		this.hash = Long.valueOf(hash);
 	}
 
 	/**
@@ -238,7 +238,7 @@ public class Snippet {
 	 *            hash code of the snippet
 	 * @return the found snippet or null if not existsing
 	 */
-	synchronized static Snippet getSnippet(int hash) {
+	public synchronized static Snippet getSnippet(int hash) {
 		try {
 			Snippet snippet = Persistence.instance.getSnippet(hash);
 			return snippet;
@@ -509,7 +509,7 @@ public class Snippet {
 	 * 
 	 * @return the total number of snippets in the system
 	 */
-	static int totalCount() {
+	public static int totalCount() {
 		try {
 			return Persistence.instance.getSnippetsCount();
 		} catch (IOException e) {
@@ -579,7 +579,7 @@ public class Snippet {
 	}
 
 	/**
-	 * Converts this snippet to a XSnippet parameter object
+	 * Converts this snippet to a {@link XSnippet} parameter object
 	 * 
 	 * @return
 	 */
@@ -589,5 +589,12 @@ public class Snippet {
 
 		return new XSnippet(owner.getUsername(), hash, description, tags, commentList, code.getCode(),
 				code.getFormattedHTML(), code.getLanguage(), license, viewcount);
+	}
+
+	/**
+	 * @return the id hash code of the snippet
+	 */
+	public Long getHash() {
+		return hash;
 	}
 }

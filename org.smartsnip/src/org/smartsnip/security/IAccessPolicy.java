@@ -1,6 +1,7 @@
 package org.smartsnip.security;
 
 import org.smartsnip.core.*;
+import org.smartsnip.server.Session;
 
 /**
  * Interface that is used for concrete access policies

@@ -1,6 +1,5 @@
 package org.smartsnip.core;
 
-
 public abstract class Code {
 	/** Concrete code */
 	public final String code;
@@ -10,6 +9,9 @@ public abstract class Code {
 	public final Snippet snippet;
 	/** Version of this code object, auto incrementing */
 	private int version;
+
+	/** Identifier of this code segment */
+	private long id;
 
 	/**
 	 * Exception that is used to express, that a given coding language is not
@@ -68,7 +70,7 @@ public abstract class Code {
 			return this.code.equals(obj);
 		return false;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return code.hashCode();
@@ -161,5 +163,22 @@ public abstract class Code {
 		if (result == null)
 			throw new UnsupportedLanguageException("Language \"" + language + "\" is not supported");
 		return result;
+	}
+
+	/**
+	 * @return the identifier object of this code object
+	 */
+	public long getID() {
+		return id;
+	}
+
+	/**
+	 * Sets the identifier of this code object
+	 * 
+	 * @param id
+	 *            to be set to
+	 */
+	void setID(long id) {
+		this.id = id;
 	}
 }

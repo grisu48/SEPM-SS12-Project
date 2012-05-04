@@ -74,7 +74,7 @@ public class Category {
 	 *            to be searched for
 	 * @return the corresponding category or null, if not found
 	 */
-	synchronized static Category getCategory(String name) {
+	public synchronized static Category getCategory(String name) {
 		if (name == null || name.isEmpty())
 			return null;
 
@@ -93,7 +93,14 @@ public class Category {
 	 */
 	synchronized static List<String> getCategories() {
 		try {
-			return Persistence.instance.getAllCategories();
+			List<String> result = new ArrayList<String>();
+			List<Category> categories = Persistence.instance.getAllCategories();
+
+			for (Category category : categories) {
+				result.add(category.getName());
+			}
+
+			return result;
 
 		} catch (IOException e) {
 			System.err.println("IOException during getCategories(): " + e.getMessage());
@@ -117,7 +124,14 @@ public class Category {
 		if (prnt == null)
 			return null;
 		try {
-			return Persistence.instance.getSubcategoryNames(prnt);
+			List<String> result = new ArrayList<String>();
+			List<Category> categories = Persistence.instance.getSubcategories(prnt);
+
+			for (Category category : categories) {
+				result.add(category.getName());
+			}
+
+			return result;
 		} catch (IOException e) {
 			System.err.println("IOException during getCategories(" + prnt.getName() + "): " + e.getMessage());
 			e.printStackTrace(System.err);
@@ -237,6 +251,7 @@ public class Category {
 			return;
 
 		snippet.setCategory(this);
+		snippet.refreshDB();
 	}
 
 	/**
@@ -248,7 +263,7 @@ public class Category {
 	 * 
 	 * @return the total number of categories
 	 */
-	synchronized static int totalCount() {
+	public synchronized static int totalCount() {
 		try {
 			return Persistence.instance.getCategoryCount();
 		} catch (IOException e) {
@@ -266,7 +281,28 @@ public class Category {
 	 *            the name of the category to be deleted
 	 */
 	synchronized static void deleteCategory(String name) {
-		// TODO Implement me
+		if (name == null || name.isEmpty())
+			return;
+
+		try {
+			Category category = Persistence.instance.getCategory(name);
+			if (category != null) {
+				category.delete();
+			}
+		} catch (IOException e) {
+			// TODO Error handling
+		}
+	}
+
+	/**
+	 * Deletes this category instance
+	 */
+	synchronized void delete() {
+		try {
+			Persistence.instance.removeCategory(this, IPersistence.DB_DEFAULT);
+		} catch (IOException e) {
+			// TODO Error handling
+		}
 	}
 
 	/**
@@ -278,8 +314,18 @@ public class Category {
 	 * @return true if existing, otherwise false
 	 */
 	synchronized static boolean exists(String name) {
-		// TODO Implement me
-		return false;
+		if (name == null || name.isEmpty())
+			return false;
+
+		try {
+			Category category = Persistence.instance.getCategory(name);
+			return (category != null);
+
+		} catch (IOException e) {
+			System.err.println("IOException checking existence of category \"" + name + "\": " + e.getMessage());
+			e.printStackTrace(System.err);
+			return false;
+		}
 	}
 
 	/**
@@ -290,7 +336,7 @@ public class Category {
 	 * 
 	 * @return A list containing all subcategories of this category
 	 */
-	private List<Category> getSubCategories() {
+	public List<Category> getSubCategories() {
 		try {
 			return Persistence.instance.getSubcategories(this);
 		} catch (IOException e) {
@@ -307,6 +353,7 @@ public class Category {
 	 * 
 	 * @return a list containing all snippets of this category
 	 */
+	@Deprecated
 	List<Snippet> getSnippets() {
 		try {
 			return Persistence.instance.getSnippets(this);
@@ -317,7 +364,12 @@ public class Category {
 		}
 	}
 
-	XCategory toXCategory() {
+	/**
+	 * Converts this category to a {@link XCategory} object.
+	 * 
+	 * @return a copy of this object to a {@link XCategory} object
+	 */
+	public XCategory toXCategory() {
 		XCategory result = null;
 		List<String> childs = new ArrayList<String>();
 		List<Category> subTree = getSubCategories();
@@ -366,18 +418,21 @@ public class Category {
 			return null;
 		}
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (! (obj instanceof Category)) return false;
-		
-		Category toCheck = (Category)obj;
-		if (!toCheck.name.equals(this.name))return false; 
-		
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Category))
+			return false;
+
+		Category toCheck = (Category) obj;
+		if (!toCheck.name.equals(this.name))
+			return false;
+
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return super.hashCode();
