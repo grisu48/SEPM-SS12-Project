@@ -1,6 +1,5 @@
 package org.smartsnip.core;
 
-
 /**
  * Concrete code object for java code
  * 
@@ -13,15 +12,21 @@ public class CodeJava extends Code {
 	 * Creates a new java code. The given code must not be null or empty.
 	 * 
 	 * @param code
+	 *            Java code of the snippet
+	 * @param snippet
+	 *            Owner snippet
+	 * @param ID
+	 *            of the code object. If null, it has not been assigned form the
+	 *            persistence yet
 	 */
-	CodeJava(String code, Snippet snippet) {
-		super(code, language, snippet);
+	CodeJava(String code, Snippet snippet, Long id) {
+		super(code, language, snippet, id);
 	}
 
 	@Override
 	public String getFormattedHTML() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 	@Override

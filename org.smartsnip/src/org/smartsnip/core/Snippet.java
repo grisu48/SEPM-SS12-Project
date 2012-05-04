@@ -22,15 +22,15 @@ public class Snippet {
 	/** Snippet name */
 	private String name;
 	/** Unique hash code of the snippet */
-	public Long hash = null;
+	public Long id = null;
 	/** Snippet description */
 	private String description;
 	/** Snippet associated category */
 	private Category category;
 	/** Tags of the snippet */
-	private final List<String> tags = new ArrayList<String>();
+	private List<Tag> tags = new ArrayList<Tag>();
 	/** Comments of the snippet */
-	private final List<Comment> comments = new ArrayList<Comment>();
+	private List<Comment> comments = new ArrayList<Comment>();
 	/** Concrete snippet code */
 	private Code code;
 	/** Licence of the snippet. By default GPLv3 */
@@ -38,168 +38,182 @@ public class Snippet {
 	/** View counter */
 	private int viewcount = 0;
 
-	@Override
-	public int hashCode() {
-		return hash.hashCode();
-	}
-
 	/**
-	 * Constructor with all fields that MUST be initialised. If one of the field
-	 * is null a {@link NullPointerException} will be thrown. If one of the
-	 * field is empty, a {@link IllegalArgumentException} will be thrown
+	 * DB constructor must initialise all fields.
+	 * 
+	 * If a field is empty or null, a new {@link IllegalArgumentException} is
+	 * thrown
 	 * 
 	 * @param owner
-	 *            the owner of the snippet
+	 *            of the new snippet. Must not be null
 	 * @param name
-	 *            snippet's name
+	 *            of the new snippet. Must not be null
 	 * @param description
-	 *            a short description
+	 *            of the new snippet. Must not be null
+	 * @param id
+	 *            of the new snippet. Must not be null
 	 * @param code
-	 *            the code of the snippet
-	 * @param hash
-	 *            hash code of the snippet
+	 *            of the new snippet. Must not be null
+	 * @param category
+	 *            of the new snippet. Must not be null
+	 * @param license
+	 *            of the new snippet. Must not be null
+	 * @param tags
+	 *            of the new snippet. Must not be null
+	 * @param comments
+	 *            of the new snippet. Must not be null
+	 * @param viewcount
+	 *            of the new snippet. If less than zero, will be set to zero
 	 * @throws IllegalArgumentException
-	 *             Thrown if one of the arguments is illegal
-	 * @throws IllegalStateException
-	 *             Thrown if the hash code is already in the system
+	 *             Thrown, if at least one of the arguments is null or empty
 	 */
-	private Snippet(User owner, String name, String description, Code code, int hash) {
-		if (owner == null || name == null || description == null || code == null)
-			throw new NullPointerException();
-		if (name.isEmpty())
-			throw new IllegalArgumentException("Snippet name cannot be empty");
-		if (description.isEmpty())
-			throw new IllegalArgumentException("Snippet description cannot be empty");
-		if (exists(hash))
-			throw new IllegalStateException("Given hash code already exists");
+	Snippet(User owner, String name, String description, long id, Code code, Category category, String license,
+			List<Tag> tags, List<Comment> comments, int viewcount) {
+
+		if (owner == null)
+			throw new IllegalArgumentException("Owner of snippet cannot be null");
+		if (name == null || name.isEmpty())
+			throw new IllegalArgumentException("Name of snippet cannot be null");
+		if (description == null || description.isEmpty())
+			throw new IllegalArgumentException("Description of snippet cannot be null");
+		if (code == null)
+			throw new IllegalArgumentException("Code of snippet cannot be null");
+		if (category == null)
+			throw new IllegalArgumentException("Category of snippet cannot be null");
+		if (name == null || name.isEmpty())
+			throw new IllegalArgumentException("Name of snippet cannot be null");
+		if (license == null || license.isEmpty())
+			throw new IllegalArgumentException("Licence of snippet cannot be null");
+		if (tags == null)
+			throw new IllegalArgumentException("Tags of snippet cannot be null");
+		if (comments == null)
+			throw new IllegalArgumentException("Comments of snippet cannot be null");
+		if (viewcount < 0) {
+			viewcount = 0;
+		}
 
 		this.owner = owner;
 		this.name = name;
 		this.description = description;
 		this.code = code;
-		this.hash = Long.valueOf(hash);
+		this.id = id;
+		this.category = category;
+		this.license = license;
+		this.tags = tags;
+		this.comments = comments;
+		this.viewcount = viewcount;
 	}
 
 	/**
-	 * Constructor with all fields that MUST be initialised. If one of the field
-	 * is null a {@link NullPointerException} will be thrown. If one of the
-	 * field is empty, a {@link IllegalArgumentException} will be thrown
+	 * Default constructor must initialise all fields except hash id.
+	 * 
+	 * If a field is empty or null, a new {@link IllegalArgumentException} is
+	 * thrown
 	 * 
 	 * @param owner
-	 *            the owner of the snippet
+	 *            of the new snippet. Must not be null
 	 * @param name
-	 *            snippet's name
+	 *            of the new snippet. Must not be null
 	 * @param description
-	 *            a short description
+	 *            of the new snippet. Must not be null
 	 * @param code
-	 *            the code of the snippet
-	 * @param language
-	 *            the coding language of the string
-	 * @param hash
-	 *            hash code of the snippet
+	 *            of the new snippet. Must not be null
+	 * @param category
+	 *            of the new snippet. Must not be null
+	 * @param license
+	 *            of the new snippet. Must not be null
+	 * @param tags
+	 *            of the new snippet. Must not be null
+	 * @param comments
+	 *            of the new snippet. Must not be null
+	 * @param viewcount
+	 *            of the new snippet. If less than zero, will be set to zero
 	 * @throws IllegalArgumentException
-	 *             Thrown if one of the arguments is illegal
-	 * @throws IllegalStateException
-	 *             Thrown if the hash code is already in the system
+	 *             Thrown, if at least one of the arguments is null or empty
 	 */
-	private Snippet(User owner, String name, String description, String code, String language, int hash) {
-		if (owner == null || name == null || description == null || code == null)
-			throw new NullPointerException();
-		if (name.isEmpty())
-			throw new IllegalArgumentException("Snippet name cannot be empty");
-		if (description.isEmpty())
-			throw new IllegalArgumentException("Snippet description cannot be empty");
-		if (exists(hash))
-			throw new IllegalStateException("Given hash code already exists");
+	private Snippet(User owner, String name, String description, Code code, Category category, String license,
+			List<Tag> tags, List<Comment> comments, int viewcount) {
+
+		if (owner == null)
+			throw new IllegalArgumentException("Owner of snippet cannot be null");
+		if (name == null || name.isEmpty())
+			throw new IllegalArgumentException("Name of snippet cannot be null");
+		if (description == null || description.isEmpty())
+			throw new IllegalArgumentException("Description of snippet cannot be null");
+		if (code == null)
+			throw new IllegalArgumentException("Code of snippet cannot be null");
+		if (category == null)
+			throw new IllegalArgumentException("Category of snippet cannot be null");
+		if (name == null || name.isEmpty())
+			throw new IllegalArgumentException("Name of snippet cannot be null");
+		if (license == null || license.isEmpty())
+			throw new IllegalArgumentException("Licence of snippet cannot be null");
+		if (tags == null)
+			throw new IllegalArgumentException("Tags of snippet cannot be null");
+		if (comments == null)
+			throw new IllegalArgumentException("Comments of snippet cannot be null");
+		if (viewcount < 0) {
+			viewcount = 0;
+		}
 
 		this.owner = owner;
 		this.name = name;
 		this.description = description;
-		this.code = Code.createCode(code, language, this);
-		this.hash = Long.valueOf(hash);
+		this.code = code;
+		this.id = null;
+		this.category = category;
+		this.license = license;
+		this.tags = tags;
+		this.comments = comments;
+		this.viewcount = viewcount;
+	}
+
+	@Override
+	public int hashCode() {
+		if (id == null)
+			return 0;
+		return id.hashCode();
 	}
 
 	/**
-	 * Creates a new snippet with the given parameters.
+	 * Creates a snippet with the given parameters and adds the snippet to the
+	 * database. If the given snippet is alredy in the database, the given
+	 * snippet is not overwritten!
 	 * 
-	 * The hash code is automatically generated by getting the next available
-	 * hash code.
-	 * 
-	 * 
-	 * @param owner
-	 *            of the snippet. Must not be null
-	 * @param name
-	 *            of the snippet. Must not be null or empty
-	 * @param description
-	 *            of the snippet. Must not be null or empty
-	 * @param code
-	 *            of the snippet. Must not be a null objet.
-	 * @return the generated snippet
-	 * @throws NullPointerException
-	 *             Thrown if one of the arguments if null
-	 * @throws IllegalArgumentException
-	 *             Thrown if one of the arguments if empty or not in the right
-	 *             format. If this exception is thrown a description is set
-	 */
-	synchronized static Snippet createSnippet(User owner, String name, String description, Code code) {
-		return createSnippet(owner, name, description, code, getNextHashCode());
-	}
-
-	/**
-	 * Creates a new snippet with the given parameters.
-	 * 
-	 * The hash code is automatically generated by getting the next available
-	 * hash code.
-	 * 
+	 * Throws an {@link IllegalArgumentException} if an argument is invalid
 	 * 
 	 * @param owner
-	 *            of the snippet. Must not be null
+	 *            of the new snippet
 	 * @param name
-	 *            of the snippet. Must not be null or empty
+	 *            of the new snippet
 	 * @param description
-	 *            of the snippet. Must not be null or empty
-	 * @param code
-	 *            of the snippet. Must not be a null object.
+	 *            of the new snippet
 	 * @param hash
-	 *            the new hashcode of the object
-	 * @return the generated snippet
-	 * @throws NullPointerException
-	 *             Thrown if one of the arguments if null
-	 * @throws IllegalArgumentException
-	 *             Thrown if one of the arguments if empty or not in the right
-	 *             format. If this exception is thrown a description is set
-	 */
-	synchronized static Snippet createSnippet(User owner, String name, String description, Code code, int hash) {
-		Snippet snippet = new Snippet(owner, name, description, code, hash);
-		addToDB(snippet);
-		return snippet;
-	}
-
-	/**
-	 * Creates a new snippet with the given parameters.
-	 * 
-	 * The hash code is automatically generated by getting the next available
-	 * hash code.
-	 * 
-	 * 
-	 * @param owner
-	 *            of the snippet. Must not be null
-	 * @param name
-	 *            of the snippet. Must not be null or empty
-	 * @param description
-	 *            of the snippet. Must not be null or empty
+	 *            of the new snippet
 	 * @param code
-	 *            of the snippet. Must not be a null objet.
-	 * @return the generated snippet
-	 * @throws NullPointerException
-	 *             Thrown if one of the arguments if null
+	 *            of the new snippet
+	 * @param category
+	 *            of the new snippet
+	 * @param license
+	 *            of the new snippet
+	 * @param tags
+	 *            of the new snippet
+	 * @param comments
+	 *            of the new snippet
+	 * @param viewcount
+	 *            of the new snippet
 	 * @throws IllegalArgumentException
-	 *             Thrown if one of the arguments if empty or not in the right
-	 *             format. If this exception is thrown a description is set
+	 *             Thrown if an argument is null or empty
+	 * @return the newly created snippet
 	 */
-	static Snippet createSnippet(User user, String name, String description, String code, String language) {
-		// TODO Auto-generated method stub
-		return null;
+	public static Snippet createSnippet(User owner, String name, String description, long hash, Code code,
+			Category category, String license, List<Tag> tags, List<Comment> comments, int viewcount)
+			throws IOException {
+
+		Snippet snippet = new Snippet(owner, name, description, code, category, license, tags, comments, viewcount);
+		addToDB(snippet);
+
+		return snippet;
 	}
 
 	/**
@@ -379,12 +393,8 @@ public class Snippet {
 	/**
 	 * @return the tags of the snippet
 	 */
-	synchronized List<Tag> getTags() {
-		List<Tag> result = new ArrayList<Tag>();
-		for (String item : tags) {
-			result.add(Tag.createTag(item));
-		}
-		return result;
+	public List<Tag> getTags() {
+		return tags;
 	}
 
 	/**
@@ -398,12 +408,10 @@ public class Snippet {
 	synchronized void addTag(Tag tag) {
 		if (tag == null)
 			return;
-		String sTag = tag.name;
-		if (tags.contains(sTag))
+		if (tags.contains(tag))
 			return;
 
-		tags.add(sTag);
-
+		tags.add(tag);
 		refreshDB();
 	}
 
@@ -418,11 +426,10 @@ public class Snippet {
 		if (tag == null)
 			return;
 
-		String sTag = tag.name;
-		if (!tags.contains(sTag))
+		if (!tags.contains(tag))
 			return;
 
-		tags.remove(sTag);
+		tags.remove(tag);
 
 		refreshDB();
 
@@ -526,7 +533,7 @@ public class Snippet {
 		try {
 			Persistence.instance.writeSnippet(this, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("Error writing snippet " + name + " (" + hash + "): " + e.getMessage());
+			System.err.println("Error writing snippet " + name + " (" + id + "): " + e.getMessage());
 			e.printStackTrace(System.err);
 			return;
 		}
@@ -538,18 +545,11 @@ public class Snippet {
 	 * @param snippet
 	 *            to be added.
 	 */
-	static protected void addToDB(Snippet snippet) {
+	static protected void addToDB(Snippet snippet) throws IOException {
 		if (snippet == null)
 			return;
 
-		try {
-			Persistence.instance.writeSnippet(snippet, IPersistence.DB_NEW_ONLY);
-		} catch (IOException e) {
-			System.err.println("Error adding a new snippet " + snippet.name + " (" + snippet.hash + "): "
-					+ e.getMessage());
-			e.printStackTrace(System.err);
-			return;
-		}
+		snippet.id = Persistence.instance.writeSnippet(snippet, IPersistence.DB_NEW_ONLY);
 	}
 
 	/**
@@ -562,20 +562,14 @@ public class Snippet {
 
 	public List<String> getStringTags() {
 		List<String> result = new ArrayList<String>();
-		for (String tag : tags) {
-			result.add(tag);
+		for (Tag tag : tags) {
+			result.add(tag.name);
 		}
 		return result;
 	}
 
-	public List<Integer> getCommentIndices() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public int getCommentCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return comments.size();
 	}
 
 	/**
@@ -587,7 +581,7 @@ public class Snippet {
 		List<Integer> commentList = new ArrayList<Integer>();
 		// TODO Comment list with hash codes
 
-		return new XSnippet(owner.getUsername(), hash, description, tags, commentList, code.getCode(),
+		return new XSnippet(owner.getUsername(), id, description, getStringTags(), commentList, code.getCode(),
 				code.getFormattedHTML(), code.getLanguage(), license, viewcount);
 	}
 
@@ -595,6 +589,6 @@ public class Snippet {
 	 * @return the id hash code of the snippet
 	 */
 	public Long getHash() {
-		return hash;
+		return id;
 	}
 }

@@ -1,9 +1,10 @@
 package org.smartsnip.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
+import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.security.IHash;
 import org.smartsnip.security.MD5;
 
@@ -16,11 +17,6 @@ import org.smartsnip.security.MD5;
  * 
  */
 public class User {
-	/**
-	 * Container for all users of the system. The key is the username for all
-	 * users, stored in lower case
-	 */
-	private final static HashMap<String, User> allUsers = new HashMap<String, User>();
 
 	/** This hash algorithm is used for password hashing */
 	private final static IHash hashAlgorithm = MD5.getInstance();
@@ -38,12 +34,16 @@ public class User {
 	private String email = "";
 
 	/** State of the user */
-	private final UserState state = UserState.unvalidated;
+	private UserState state = UserState.unvalidated;
+
+	synchronized void setState(UserState state) {
+		this.state = state;
+	}
 
 	/**
 	 * List of favourite snippets of the user
 	 */
-	private final List<Snippet> favorites = new ArrayList<Snippet>();
+	private final List<Snippet> favorites;
 
 	/**
 	 * Determines the status of the user, currently if the user has been
@@ -52,6 +52,60 @@ public class User {
 	 */
 	public enum UserState {
 		unvalidated, validated
+	}
+
+	/**
+	 * Constructor for the DB
+	 * 
+	 * Generates a new user with the given parameters. All arguments except
+	 * realName and favorites must not be null or empty, otherwise a new
+	 * {@link IllegalArgumentException} is thrown.
+	 * 
+	 * The password must alreadby be encrypted. Here the password is stored as
+	 * given, in all other cases the password is first encrypted, and then
+	 * stored in the system.
+	 * 
+	 * @param username
+	 *            of the new user
+	 * @param realName
+	 *            the real name of the user. Can be null or empty.
+	 * @param email
+	 *            of the new user
+	 * @param password
+	 *            encrypted password for the user.
+	 * @param favorites
+	 *            Favorited snippets of the user. If null, a new list is created
+	 * 
+	 * @throws IllegalArgumentException
+	 *             Thrown if one of the arguments is null or empty
+	 */
+	User(String username, String realName, String email, UserState state, List<Snippet> favorites) {
+		if (username == null || username.isEmpty())
+			throw new IllegalArgumentException("Cannot create user with empty username");
+		if (realName == null) {
+			realName = "";
+		}
+		if (email == null || email.isEmpty())
+			throw new IllegalArgumentException("Cannot create user with empty email");
+		if (password == null || password.isEmpty())
+			throw new IllegalArgumentException("Cannot create user with empty password");
+		if (favorites == null) {
+			favorites = new ArrayList<Snippet>();
+		}
+
+		this.username = username.toLowerCase();
+		this.realName = realName;
+		this.email = email;
+		this.state = state;
+
+		this.favorites = favorites;
+
+		/* MUST be the last thing to check */
+		try {
+			this.password = Persistence.instance.getPassword(this);
+		} catch (IOException e) {
+			this.password = null;
+		}
 	}
 
 	/**
@@ -70,6 +124,8 @@ public class User {
 		this.username = username.toLowerCase();
 		this.email = email;
 		this.password = hashAlgorithm.hash(password);
+
+		this.favorites = new ArrayList<Snippet>();
 	}
 
 	/**
@@ -86,7 +142,13 @@ public class User {
 			return null;
 		username = username.toLowerCase();
 
-		return allUsers.get(username);
+		try {
+			return Persistence.instance.getUser(username);
+		} catch (IOException e) {
+			System.err.println("IOException during getting User \"" + username + "\":" + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 
 	/**
@@ -98,10 +160,7 @@ public class User {
 	 * @return true if existing otherwise false
 	 */
 	synchronized static boolean exists(String username) {
-		if (username.length() == 0)
-			return false;
-		username = username.toLowerCase();
-		return allUsers.containsKey(username);
+		return getUser(username) != null;
 	}
 
 	/**
@@ -120,8 +179,8 @@ public class User {
 	 *             the strings is empty, the username is already taken or if the
 	 *             email-address is invalid
 	 */
-	synchronized static User createNewUser(String username, String password, String email)
-			throws IllegalArgumentException {
+	public static synchronized User createNewUser(String username, String password, String email)
+			throws IllegalArgumentException, IOException {
 		if (username.length() == 0)
 			throw new IllegalArgumentException("Username cannot be empty");
 		if (email.length() == 0)
@@ -135,7 +194,7 @@ public class User {
 
 		// All test passed. Create new user
 		User newUser = new User(username, email, password);
-		allUsers.put(username, newUser);
+		addToDB(newUser);
 		return newUser;
 	}
 
@@ -161,7 +220,12 @@ public class User {
 		if (user == null)
 			return;
 
-		removeFromDB(user);
+		try {
+			Persistence.instance.removeUser(user, IPersistence.DB_DEFAULT);
+		} catch (IOException e) {
+			System.err.println("IOException during deleteUser(" + user.username + "): " + e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 
 	/**
@@ -189,11 +253,23 @@ public class User {
 	 * 
 	 * @param password
 	 *            to be checked
-	 * @return
+	 * @return true if the password check is positive, false if a password
+	 *         denial happens
 	 */
 	boolean checkPassword(String password) {
 		password = hashAlgorithm.hash(password);
-		return this.password.equals(password);
+
+		if (this.password != null)
+			return this.password.equals(password);
+
+		try {
+			return Persistence.instance.verifyPassword(this, password);
+		} catch (IOException e) {
+			System.err.println("IOException during checking password for user \"" + username + "\": " + e.getMessage());
+			e.printStackTrace(System.err);
+			return false;
+		}
+
 	}
 
 	/**
@@ -257,7 +333,13 @@ public class User {
 	 * @return the total count of registered users in the system
 	 */
 	public static int totalCount() {
-		return allUsers.size();
+		try {
+			return Persistence.instance.getUserCount();
+		} catch (IOException e) {
+			System.err.println("IOException during getUserCount(): " + e.getMessage());
+			e.printStackTrace(System.err);
+			return -1;
+		}
 	}
 
 	/**
@@ -322,6 +404,7 @@ public class User {
 	 * @return a list of the users' favourite snippets
 	 */
 	public List<Snippet> getFavoriteSnippets() {
+		/* Copy list */
 		List<Snippet> result = new ArrayList<Snippet>(favorites.size());
 		for (Snippet snippet : favorites) {
 			result.add(snippet);
@@ -336,7 +419,7 @@ public class User {
 	List<Long> getFavoriteSnippetsHash() {
 		List<Long> result = new ArrayList<Long>(favorites.size());
 		for (Snippet snippet : favorites) {
-			result.add(snippet.hash);
+			result.add(snippet.id);
 		}
 		return result;
 
@@ -353,15 +436,12 @@ public class User {
 	 * Invokes the refreshing process for the database
 	 */
 	protected void refreshDB() {
-
-	}
-
-	protected static void removeFromDB(User user) {
-		if (user == null)
-			return;
-
-		String name = user.getUsername().toLowerCase();
-		allUsers.remove(name);
+		try {
+			Persistence.instance.writeUser(this, IPersistence.DB_DEFAULT);
+		} catch (IOException e) {
+			System.err.println("IOException writing out user \"" + username + "\": " + e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 
 	/**
@@ -378,6 +458,7 @@ public class User {
 		if (favorites.contains(snippet))
 			return;
 		favorites.add(snippet);
+		refreshDB();
 	}
 
 	/**
@@ -394,6 +475,7 @@ public class User {
 		if (!favorites.contains(snippet))
 			return;
 		favorites.remove(snippet);
+		refreshDB();
 	}
 
 	/**
@@ -417,5 +499,22 @@ public class User {
 	@Override
 	public int hashCode() {
 		return username.hashCode();
+	}
+
+	/**
+	 * Writes a user out to the database. If the user is null, nothing happens
+	 * 
+	 * The database is told not to overwrite an existing user.
+	 * 
+	 * @param user
+	 *            to be written out
+	 * @throws IOException
+	 *             thrown if occuring during perisistence access
+	 */
+	protected static synchronized void addToDB(User user) throws IOException {
+		if (user == null)
+			return;
+
+		Persistence.instance.writeUser(user, IPersistence.DB_NEW_ONLY);
 	}
 }

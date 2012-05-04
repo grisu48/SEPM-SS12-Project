@@ -15,8 +15,8 @@ public class Comment {
 	/** Comment message. */
 	private String message = "";
 
-	/** Hash code of the comment */
-	private long hashcode;
+	/** Hash id of the comment */
+	private long id;
 
 	/** Last change time */
 	private Date time = null;
@@ -38,7 +38,37 @@ public class Comment {
 	 * @param message
 	 *            of the comment
 	 */
-	Comment(User owner, Snippet snippet, String message) {
+	Comment(User owner, Snippet snippet, String message, long id, Date time, int posVotes, int negVotes) {
+		if (owner == null || snippet == null || message == null)
+			throw new NullPointerException();
+		if (message.length() == 0)
+			throw new IllegalArgumentException("Cannot create empty comment box");
+		if (time == null)
+			throw new IllegalArgumentException("Cannot create comment with not creation time");
+
+		this.owner = owner;
+		this.snippet = snippet;
+		this.message = message;
+		this.time = time;
+		this.id = id;
+
+		this.chocolates = posVotes;
+		this.lemons = negVotes;
+	}
+
+	/**
+	 * Creates a new comment. If one of the arguments if null a new
+	 * {@link NullPointerException} will be thrown, and if the message is empty
+	 * a new {@link IllegalArgumentException} will be thrown
+	 * 
+	 * @param owner
+	 *            of the comment
+	 * @param snippet
+	 *            of the comment
+	 * @param message
+	 *            of the comment
+	 */
+	private Comment(User owner, Snippet snippet, String message) {
 		if (owner == null || snippet == null || message == null)
 			throw new NullPointerException();
 		if (message.length() == 0)
@@ -68,10 +98,14 @@ public class Comment {
 	 *            of the comment
 	 * @return the newly created comment if success
 	 */
-	static Comment createComment(User owner, Snippet snippet, String message) {
+	public static Comment createComment(User owner, Snippet snippet, String message) throws IOException {
 		Comment comment = new Comment(owner, snippet, message);
 		snippet.addComment(comment);
 		comment.setCurrentSystemTime();
+
+		addToDB(comment);
+		snippet.refreshDB();
+
 		return comment;
 	}
 
@@ -189,7 +223,13 @@ public class Comment {
 	 */
 	void delete() {
 		snippet.removeComment(this);
-		removeFromDB();
+
+		try {
+			Persistence.instance.removeComment(this, IPersistence.DB_DEFAULT);
+		} catch (IOException e) {
+			System.err.println("IOException during delete of comment (id=" + getHashID() + "): " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -216,25 +256,27 @@ public class Comment {
 	}
 
 	/**
-	 * Removes this object from the database
-	 */
-	protected void removeFromDB() {
-		// Nothing to do yet
-	}
-
-	/**
 	 * The hash code of the comment object
 	 */
 	@Override
 	public int hashCode() {
-		return ((Long) hashcode).hashCode();
+		return Long.valueOf(id).hashCode();
 	}
 
 	/**
 	 * @return The internal unique hash code of the comment
 	 */
-	long getHash() {
-		return hashcode;
+	public long getHashID() {
+		return id;
+	}
+
+	/**
+	 * @return The internal unique hash code of the comment
+	 * @deprecated Use getHashID due to name conventions
+	 */
+	@Deprecated
+	public long getHash() {
+		return id;
 	}
 
 	/**
@@ -251,16 +293,38 @@ public class Comment {
 			e.printStackTrace(System.err);
 		}
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (! (obj instanceof Comment)) return false;
-		
-		Comment comment = (Comment)obj;
-		if (!comment.message.equals(this.message)) return false;
-		if (!comment.owner.equals(this.owner)) return false;
-		
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Comment))
+			return false;
+
+		Comment comment = (Comment) obj;
+		if (!comment.message.equals(this.message))
+			return false;
+		if (!comment.owner.equals(this.owner))
+			return false;
+
 		return true;
+	}
+
+	/**
+	 * writes a given comment out to the persistence layer. The database is
+	 * told, not to overwrite an existing object.
+	 * 
+	 * If the comment is null, nothing happens
+	 * 
+	 * @param comment
+	 *            to be written
+	 * @throws IOException
+	 *             if occuring in the persistence
+	 */
+	synchronized static void addToDB(Comment comment) throws IOException {
+		if (comment == null)
+			return;
+
+		comment.id = Persistence.instance.writeComment(comment, IPersistence.DB_NEW_ONLY);
 	}
 }

@@ -1,5 +1,9 @@
 package org.smartsnip.core;
 
+import java.io.IOException;
+
+import org.smartsnip.persistence.IPersistence;
+
 public abstract class Code {
 	/** Concrete code */
 	public final String code;
@@ -11,7 +15,7 @@ public abstract class Code {
 	private int version;
 
 	/** Identifier of this code segment */
-	private long id;
+	private long id = 0L;
 
 	/**
 	 * Exception that is used to express, that a given coding language is not
@@ -42,7 +46,17 @@ public abstract class Code {
 		}
 	}
 
-	Code(String code, String language, Snippet snippet) {
+	/**
+	 * Constructor of a new code object
+	 * 
+	 * @param code
+	 * @param language
+	 * @param snippet
+	 * @param id
+	 *            of the object. If null, the id has not been assigned from the
+	 *            persistence yet
+	 */
+	Code(String code, String language, Snippet snippet, Long id) {
 		if (code.length() == 0)
 			throw new IllegalArgumentException("Cannot create snippet with no code");
 		if (language.length() == 0)
@@ -52,6 +66,11 @@ public abstract class Code {
 		this.code = formatCode(code);
 		this.language = language;
 		this.snippet = snippet;
+
+		// If the id is null, it has not been assigned from the peristence yet
+		if (id != null) {
+			this.id = id;
+		}
 	}
 
 	public boolean equals(Code code) {
@@ -137,12 +156,15 @@ public abstract class Code {
 	 * @return The newly generated code object
 	 * @throws UnsupportedLanguageException
 	 *             Thrown if the given language is not supported
+	 * @throws IOException
+	 *             Thrown, if occuring during database access
 	 * @throws NullPointerException
 	 *             Thrown if the code or the language or the snippet is null
 	 * @throws IllegalArgumentException
 	 *             Thrown if the code or if the language is empty
 	 */
-	static Code createCode(String code, String language, Snippet owner) throws UnsupportedLanguageException {
+	public static Code createCode(String code, String language, Snippet owner) throws UnsupportedLanguageException,
+			IOException {
 		if (code == null || language == null)
 			throw new NullPointerException();
 		if (code.isEmpty())
@@ -157,11 +179,70 @@ public abstract class Code {
 		/* Here the language inspection takes place */
 		Code result = null;
 		if (language.equals("java")) { // Java object
-			result = new CodeJava(code, owner);
+			result = new CodeJava(code, owner, null);
 		}
 
 		if (result == null)
 			throw new UnsupportedLanguageException("Language \"" + language + "\" is not supported");
+
+		addToDB(result);
+		return result;
+	}
+
+	/**
+	 * Creates a new code object with the given code and the language.
+	 * 
+	 * This method should only be used by the database to create object in the
+	 * application layer!
+	 * 
+	 * The method automatically detects the concrete class by inspecting the
+	 * language. If the given language is not supported, a new
+	 * {@link UnsupportedLanguageException} is thrown. The inspection is not
+	 * case-sensitive.
+	 * 
+	 * @param code
+	 *            concrete code. Must not be null or empty
+	 * @param language
+	 *            Coding language. It must be supported by the system, otherwise
+	 *            a new {@link UnsupportedLanguageException} is thrown.
+	 * @param owner
+	 *            The owner snippet of the code
+	 * @return The newly generated code object
+	 * @throws UnsupportedLanguageException
+	 *             Thrown if the given language is not supported
+	 * @throws IOException
+	 *             Thrown, if occuring during database access
+	 * @throws NullPointerException
+	 *             Thrown if the code or the language or the snippet is null
+	 * @throws IllegalArgumentException
+	 *             Thrown if the code or if the language is empty
+	 */
+	public static Code createCodeDB(String code, String language, Snippet owner, long id)
+			throws UnsupportedLanguageException {
+		if (code == null || language == null)
+			throw new NullPointerException();
+		if (code.isEmpty())
+			throw new IllegalArgumentException("Cannot create code object with no code");
+		if (language.isEmpty())
+			throw new IllegalArgumentException("Cannot create code object with no language");
+		if (owner == null)
+			throw new NullPointerException("Cannot create code segment without a snippet");
+
+		language = language.trim().toLowerCase();
+
+		/* Here the language inspection takes place */
+		Code result = null;
+		if (language.equals("java")) { // Java object
+			result = new CodeJava(code, owner, id);
+		}
+
+		if (result == null)
+			throw new UnsupportedLanguageException("Language \"" + language + "\" is not supported");
+
+		/*
+		 * THIS METHOD IS CALLED FROM THE DB, DO NOT WRITE INTO THE DB!!
+		 */
+
 		return result;
 	}
 
@@ -173,12 +254,12 @@ public abstract class Code {
 	}
 
 	/**
-	 * Sets the identifier of this code object
-	 * 
-	 * @param id
-	 *            to be set to
+	 * Adds
 	 */
-	void setID(long id) {
-		this.id = id;
+	protected static synchronized void addToDB(Code code) throws IOException {
+		if (code == null)
+			return;
+
+		Persistence.instance.writeCode(code, IPersistence.DB_NEW_ONLY);
 	}
 }
