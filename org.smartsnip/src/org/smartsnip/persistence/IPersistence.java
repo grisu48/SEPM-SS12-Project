@@ -470,7 +470,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeUser(String nickname, int mode) throws IOException;
+	public void removeUser(User user, int mode) throws IOException;
 
 	/**
 	 * remove the Snippet from the database
@@ -486,7 +486,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeSnippet(Long snippetId, int mode) throws IOException;
+	public void removeSnippet(Snippet snippet, int mode) throws IOException;
 
 	/**
 	 * remove the Comment from the database
@@ -501,7 +501,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeComment(Long commentId, int mode) throws IOException;
+	public void removeComment(Comment comment, int mode) throws IOException;
 
 	/**
 	 * remove the Tag from the database
@@ -527,21 +527,8 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeNotification(Long notificationId, int mode)
+	public void removeNotification(Notification notification, int mode)
 			throws IOException;
-
-	/**
-	 * remove all read notifications owned by a user
-	 * 
-	 * @param user
-	 *            the user's nickname as owner of the objects to remove
-	 * @param mode
-	 *            the constraints for the write access. The default is
-	 *            {@link IPersistence#DB_FORCE_DELETE}
-	 * @throws IOException
-	 *             at a problem committing the data
-	 */
-	public void removeReadNotifications(User user, int mode) throws IOException;
 
 	/**
 	 * remove the Code from the database
@@ -554,7 +541,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeCode(Long codeId, int mode) throws IOException;
+	public void removeCode(Code code, int mode) throws IOException;
 
 	/**
 	 * remove the Category from the database
@@ -572,7 +559,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeCategory(Long categoryId, int mode) throws IOException;
+	public void removeCategory(Category category, int mode) throws IOException;
 
 	/**
 	 * remove the Language from the database
@@ -693,6 +680,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
+	@Deprecated
 	public List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException;
 
 	/**
@@ -704,6 +692,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
+	@Deprecated
 	public List<Snippet> getSnippets(Category category) throws IOException;
 
 	/**
@@ -752,6 +741,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
+	@Deprecated
 	public List<Tag> getTags(Snippet snippet) throws IOException;
 
 	/**
@@ -761,7 +751,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public List<Tag> getAllTags() throws IOException;
+	public List<Tag> getAllTags(int start, int count) throws IOException;
 
 	/**
 	 * get all notifications belonging to the given user
@@ -789,12 +779,12 @@ public interface IPersistence {
 	public List<Code> getCodes(Snippet snippet) throws IOException;
 
 	/**
-	 * get all category names
+	 * get all categories
 	 * 
-	 * @return all categories by name
+	 * @return all categories
 	 * @throws IOException
 	 */
-	public List<String> getAllCategories() throws IOException;
+	public List<Category> getAllCategories() throws IOException;
 
 	/**
 	 * get the category the snippet belongs to
@@ -845,19 +835,6 @@ public interface IPersistence {
 	 *             at a problem retrieving the data
 	 */
 	public List<Category> getSubcategories(Category category)
-			throws IOException;
-
-	/**
-	 * get the immediate subcategories as string
-	 * 
-	 * @param category
-	 *            the parent category
-	 * @return the direct child categories in first order. If the given category
-	 *         is a leaf an empty list is returned.
-	 * @throws IOException
-	 *             at a problem retrieving the data
-	 */
-	public List<String> getSubcategoryNames(Category category)
 			throws IOException;
 
 	/**
@@ -967,14 +944,16 @@ public interface IPersistence {
 	 */
 	public int getTagsCount() throws IOException;
 
-	/**
-	 * get the number of entries where the tag is used
-	 * 
-	 * @param tag
-	 * @return the number the tag is used. 0 if the tag is unused or doesn't
-	 *         exist.
-	 * @throws IOException
-	 *             at a problem retrieving the data
-	 */
-	public int getTagFrequency(Tag tag) throws IOException;
+//	/**
+//	 * get the number of entries where the tag is used
+//	 * 
+//	 * @param tag
+//	 * @return the number the tag is used. 0 if the tag is unused or doesn't
+//	 *         exist.
+//	 * @throws IOException
+//	 *             at a problem retrieving the data
+//	 */
+//	public int getTagFrequency(Tag tag) throws IOException;
+
+
 }
