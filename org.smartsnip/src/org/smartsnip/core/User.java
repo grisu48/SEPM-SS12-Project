@@ -119,12 +119,14 @@ public class User {
 	 *            of the new user
 	 * @param password
 	 *            cleartext password for the user. Password will be encrypted
+	 * @param realName
+	 *            Real name of the user
 	 */
-	private User(String username, String email, String password) {
+	private User(String username, String email, String password, String realName) {
 		this.username = username.toLowerCase();
 		this.email = email;
 		this.password = hashAlgorithm.hash(password);
-
+		this.realName = realName;
 		this.favorites = new ArrayList<Snippet>();
 	}
 
@@ -169,17 +171,27 @@ public class User {
 	 * {@link IllegalArgumentException} will be thrown. If the email-address is
 	 * invalid a new {@link IllegalArgumentException} will be thrown
 	 * 
+	 * The real name of the new user is set to be the password
+	 * 
 	 * @param username
 	 *            for the new user. Will be lower-cased
 	 * @param email
 	 *            for the user. Must be valid according to the
 	 *            isValidEmailAddress-Method
+	 * @param realname
+	 *            The displayed real name of the user. If null or empty it will
+	 *            be replaced with the username
 	 * @throws IllegalArgumentException
 	 *             Thrown if an Argument is invalid. This is the case if one of
 	 *             the strings is empty, the username is already taken or if the
 	 *             email-address is invalid
 	 */
 	public static synchronized User createNewUser(String username, String password, String email)
+			throws IllegalArgumentException, IOException {
+		return createNewUser(username, password, email, username);
+	}
+
+	public static synchronized User createNewUser(String username, String password, String email, String realname)
 			throws IllegalArgumentException, IOException {
 		if (username.length() == 0)
 			throw new IllegalArgumentException("Username cannot be empty");
@@ -191,9 +203,12 @@ public class User {
 		username = username.toLowerCase();
 		if (exists(username))
 			throw new IllegalArgumentException("Username already taken");
+		if (realname == null || realname.isEmpty()) {
+			realname = username;
+		}
 
 		// All test passed. Create new user
-		User newUser = new User(username, email, password);
+		User newUser = new User(username, email, password, realname);
 		addToDB(newUser);
 		return newUser;
 	}

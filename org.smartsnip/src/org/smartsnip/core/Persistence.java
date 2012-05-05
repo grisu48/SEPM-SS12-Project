@@ -3,6 +3,7 @@ package org.smartsnip.core;
 import java.io.IOException;
 
 import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.persistence.MemPersistence;
 import org.smartsnip.persistence.PersistenceFactory;
 
 /**
@@ -43,13 +44,10 @@ public class Persistence {
 	 * @throws IllegalStateException
 	 *             Thrown if the persistence layer has already been initialised
 	 */
-	public synchronized static void initialize(boolean memOnly)
-			throws IllegalAccessException {
-		if (instance != null) {
-			throw new IllegalStateException(
-					"Persistence layer already initialised.");
-		}
-		
+	public synchronized static void initialize(boolean memOnly) throws IllegalAccessException {
+		if (instance != null)
+			throw new IllegalStateException("Persistence layer already initialised.");
+
 		// TODO
 		if (memOnly) {
 			PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
@@ -78,10 +76,29 @@ public class Persistence {
 	}
 
 	/**
+	 * @return true if the initialised persistence layer is a memory only
+	 *         persistence layer
+	 */
+	public static synchronized boolean isMemoryOnly() {
+		// Ex falso quodlibet
+		if (instance == null)
+			return true;
+		return (instance instanceof MemPersistence);
+	}
+
+	/**
 	 * @return the used instance of the persistence layer or null if no one has
 	 *         been initialised
 	 */
 	public static IPersistence getInstance() {
 		return instance;
+	}
+
+	/**
+	 * Clean shutdown
+	 */
+	public static void close() {
+		// TODO Auto-generated method stub
+
 	}
 }

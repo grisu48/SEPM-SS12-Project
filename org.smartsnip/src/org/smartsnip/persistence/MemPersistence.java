@@ -3,6 +3,7 @@ package org.smartsnip.persistence;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -19,9 +20,12 @@ import org.smartsnip.shared.Pair;
 import sun.reflect.Reflection;
 
 /**
- * Testing persistence layer that is completely in the memory
+ * This persistence layer lifes completely in the memory and should be used for
+ * testing purposes and as failback-layer, if the SQL layer is down.
  * 
- * @author phoenix
+ * Currently it does <b>NOT</b> support any saving mechanisms, so after you
+ * restart the server, all changes are gone
+ * 
  * 
  */
 public class MemPersistence implements IPersistence {
@@ -39,9 +43,9 @@ public class MemPersistence implements IPersistence {
 	}
 
 	private final HashMap<String, User> allUsers = new HashMap<String, User>();
-	private final HashMap<Long, Snippet> allSippets = new HashMap<Long, Snippet>();
+	private final HashMap<Long, Snippet> allSnippets = new HashMap<Long, Snippet>();
 
-	private final HashMap<Snippet, List<Comment>> allComments = new HashMap<Snippet, List<Comment>>();
+	private final HashMap<Snippet, HashMap<Integer, Comment>> allComments = new HashMap<Snippet, HashMap<Integer, Comment>>();
 	private final HashMap<Long, Comment> commentMap = new HashMap<Long, Comment>();
 
 	private final List<Tag> allTags = new ArrayList<Tag>();
@@ -51,7 +55,7 @@ public class MemPersistence implements IPersistence {
 
 	private final HashMap<User, List<Notification>> notifications = new HashMap<User, List<Notification>>();
 
-	private final HashMap<Snippet, List<Code>> allCodes = new HashMap<Snippet, List<Code>>();
+	private final HashMap<Snippet, HashMap<Integer, Code>> allCodes = new HashMap<Snippet, HashMap<Integer, Code>>();
 
 	private final Tree<Category> categoryTree = new Tree<Category>();
 
@@ -81,9 +85,8 @@ public class MemPersistence implements IPersistence {
 		if (users == null)
 			return;
 
-		for (User user : users) {
+		for (User user : users)
 			writeUser(user, mode);
-		}
 	}
 
 	@Override
@@ -91,7 +94,7 @@ public class MemPersistence implements IPersistence {
 		if (snippet == null)
 			return null;
 
-		allSippets.put(snippet.id, snippet);
+		allSnippets.put(snippet.id, snippet);
 		// TODO snippetTags.put(snippet, sni);
 		return new Long(snippet.id);
 	}
@@ -101,26 +104,24 @@ public class MemPersistence implements IPersistence {
 		if (snippets == null)
 			return;
 
-		for (Snippet snippet : snippets) {
+		for (Snippet snippet : snippets)
 			writeSnippet(snippet, mode);
-		}
 	}
 
 	@Override
 	public Long writeComment(Comment comment, int mode) throws IOException {
 		if (comment == null)
 			return null;
+		int key = comment.hashCode();
 
-		List<Comment> list = allComments.get(comment.snippet);
-		if (list == null) {
-			list = new ArrayList<Comment>();
-			allComments.put(comment.snippet, list);
+		HashMap<Integer, Comment> comments = allComments.get(comment.snippet);
+		if (comments == null) {
+			comments = new HashMap<Integer, Comment>();
+			allComments.put(comment.snippet, comments);
 		}
-		if (list.contains(comment))
-			return new Long(list.indexOf(comment));
 
-		list.add(comment);
-		return new Long(list.indexOf(comment));
+		comments.put(key, comment);
+		return (long) key;
 	}
 
 	@Override
@@ -128,9 +129,8 @@ public class MemPersistence implements IPersistence {
 		if (comments == null)
 			return;
 
-		for (Comment comment : comments) {
+		for (Comment comment : comments)
 			writeComment(comment, mode);
-		}
 	}
 
 	@Override
@@ -148,13 +148,13 @@ public class MemPersistence implements IPersistence {
 		if (tags == null)
 			return;
 
-		for (Tag tag : tags) {
+		for (Tag tag : tags)
 			writeTag(tag, mode);
-		}
 	}
 
 	@Override
 	public Long writeNotification(Notification notification, int mode) throws IOException {
+		// XXX In current version not used, and therefore not yet tested
 		if (notification == null)
 			return null;
 
@@ -169,31 +169,29 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void writeNotification(List<Notification> notifications, int mode) throws IOException {
+		// XXX In current version not used, and therefore not yet tested
 		if (notifications == null)
 			return;
 
-		for (Notification notification : notifications) {
+		for (Notification notification : notifications)
 			writeNotification(notification, mode);
-		}
 	}
 
 	@Override
 	public Long writeCode(Code code, int mode) throws IOException {
 		if (code == null)
 			return null;
+		int key = code.hashCode();
 
 		Snippet snippet = code.snippet;
-		List<Code> codes = allCodes.get(snippet);
+		HashMap<Integer, Code> codes = allCodes.get(snippet);
 		if (codes == null) {
-			codes = new ArrayList<Code>();
+			codes = new HashMap<Integer, Code>();
 			allCodes.put(snippet, codes);
-		} else {
-			if (codes.contains(code))
-				return new Long(codes.indexOf(code));
-		}
+		} else
+			codes.put(key, code);
 
-		codes.add(code);
-		return new Long(codes.indexOf(code));
+		return (long) key;
 	}
 
 	@Override
@@ -201,9 +199,8 @@ public class MemPersistence implements IPersistence {
 		if (codes == null)
 			return;
 
-		for (Code code : codes) {
+		for (Code code : codes)
 			writeCode(code, mode);
-		}
 	}
 
 	@Override
@@ -213,13 +210,15 @@ public class MemPersistence implements IPersistence {
 
 		Category parent = category.getParent();
 		return (long) categoryTree.put(category, parent).hashCode();
-
 	}
 
 	@Override
 	public void writeCategory(List<Category> categories, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (categories == null)
+			return;
 
+		for (Category category : categories)
+			writeCategory(category, mode);
 	}
 
 	@Override
@@ -336,9 +335,8 @@ public class MemPersistence implements IPersistence {
 		List<User> users = new ArrayList<User>(allUsers.values());
 		List<User> results = new ArrayList<User>();
 		for (User user : users)
-			if (user.getRealName().contains(realName)) {
+			if (user.getRealName().contains(realName))
 				results.add(user);
-			}
 		return results;
 	}
 
@@ -347,12 +345,11 @@ public class MemPersistence implements IPersistence {
 		if (owner == null)
 			return null;
 
-		List<Snippet> snippets = new ArrayList<Snippet>(allSippets.values());
+		List<Snippet> snippets = new ArrayList<Snippet>(allSnippets.values());
 		List<Snippet> result = new ArrayList<Snippet>();
 		for (Snippet snippet : snippets)
-			if (snippet.owner == owner) {
+			if (snippet.owner == owner)
 				result.add(snippet);
-			}
 		return result;
 	}
 
@@ -371,14 +368,40 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException {
-		// TODO Auto-generated method stub
-		return new ArrayList<Snippet>();
+		if (matchingTags == null)
+			return null;
+
+		List<Snippet> result = new ArrayList<Snippet>();
+		List<Snippet> snippets = new ArrayList<Snippet>(allSnippets.values());
+
+		for (Snippet snippet : snippets)
+			if (snippetMatchesTags(snippet, matchingTags))
+				result.add(snippet);
+		return result;
+
+	}
+
+	private boolean snippetMatchesTags(Snippet snippet, List<Tag> matchingTags) {
+		List<Tag> tags = snippet.getTags();
+
+		for (Tag tag : matchingTags)
+			if (!tags.contains(tag))
+				return false;
+		return true;
 	}
 
 	@Override
 	public List<Snippet> getSnippets(Category category) throws IOException {
-		// TODO Auto-generated method stub
-		return new ArrayList<Snippet>();
+		if (category == null)
+			return null;
+
+		List<Snippet> result = new ArrayList<Snippet>();
+		List<Snippet> snippets = new ArrayList<Snippet>(allSnippets.values());
+
+		for (Snippet snippet : snippets)
+			if (snippet.getCategory().equals(category))
+				result.add(snippet);
+		return result;
 	}
 
 	@Override
@@ -386,12 +409,12 @@ public class MemPersistence implements IPersistence {
 		if (snippet == null)
 			return null;
 
-		List<Comment> comments = allComments.get(snippet);
+		HashMap<Integer, Comment> comments = allComments.get(snippet);
 		if (comments == null) {
-			comments = new ArrayList<Comment>();
+			comments = new HashMap<Integer, Comment>();
 			allComments.put(snippet, comments);
 		}
-		return comments;
+		return new ArrayList<Comment>(comments.values());
 	}
 
 	@Override
@@ -409,6 +432,8 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Notification> getNotifications(User user, boolean unreadOnly) throws IOException {
+		// XXX This method is not yet needed and therefore not tested
+
 		if (user == null)
 			return null;
 
@@ -420,9 +445,8 @@ public class MemPersistence implements IPersistence {
 		if (unreadOnly) {
 			List<Notification> result = new ArrayList<Notification>();
 			for (Notification item : list)
-				if (!item.isRead()) {
+				if (!item.isRead())
 					result.add(item);
-				}
 			return result;
 		} else
 			return list;
@@ -433,30 +457,32 @@ public class MemPersistence implements IPersistence {
 		if (snippet == null)
 			return null;
 
-		List<Code> codes = allCodes.get(snippet);
+		HashMap<Integer, Code> codes = allCodes.get(snippet);
 		if (codes == null) {
-			codes = new ArrayList<Code>();
+			codes = new HashMap<Integer, Code>();
 			allCodes.put(snippet, codes);
 		}
-		return codes;
+		return new ArrayList<Code>(codes.values());
 	}
 
 	@Override
 	public Category getCategory(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (snippet == null)
+			return null;
+		return snippet.getCategory();
 	}
 
 	@Override
 	public Category getParentCategory(Category category) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return categoryTree.getParent(category).value();
 	}
 
 	@Override
 	public List<Category> getSubcategories(Category category) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (category == null)
+			return null;
+
+		return categoryTree.getChildren(category);
 	}
 
 	@Override
@@ -474,9 +500,8 @@ public class MemPersistence implements IPersistence {
 			return new ArrayList<Pair<User, Integer>>();
 		List<Pair<User, Integer>> result = new ArrayList<Pair<User, Integer>>();
 		List<Entry<User, Integer>> set = new ArrayList<Entry<User, Integer>>(list.entrySet());
-		for (Entry<User, Integer> entry : set) {
+		for (Entry<User, Integer> entry : set)
 			result.add(new Pair<User, Integer>(entry.getKey(), entry.getValue()));
-		}
 		return result;
 	}
 
@@ -493,18 +518,17 @@ public class MemPersistence implements IPersistence {
 		int lemons = 0;
 		List<Integer> iVotes = new ArrayList<Integer>(votes.values());
 		for (Integer i : iVotes)
-			if (i < 0) {
+			if (i < 0)
 				lemons++;
-			} else if (i > 0) {
+			else if (i > 0)
 				chocolates++;
-			}
 
 		return new Pair<Integer, Integer>(chocolates, lemons);
 	}
 
 	@Override
 	public List<Snippet> search(String searchString, int min, int max) throws IOException {
-		// TODO Auto-generated method stub
+		// TODO Implement me!
 		return null;
 	}
 
@@ -520,7 +544,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public int getSnippetsCount() throws IOException {
-		return allSippets.size();
+		return allSnippets.size();
 	}
 
 	@Override
@@ -574,8 +598,23 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Snippet> getSnippets(Category category, int start, int count) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (category == null || start < 0 || count < 0)
+			return null;
+
+		List<Snippet> snippets = getSnippets(category);
+		if (start > snippets.size())
+			return new ArrayList<Snippet>();
+
+		/* Cut list to desired length */
+		while (start > 0) {
+			snippets.remove(0);
+			start--;
+		}
+
+		while (count > snippets.size())
+			snippets.remove(count);
+
+		return snippets;
 	}
 
 	@Override
@@ -587,13 +626,17 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Category> getAllCategories() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<Category>(categoryTree.flatten());
 	}
 
 	@Override
 	public Category getCategory(String name) throws IOException {
-		// TODO Auto-generated method stub
+		Iterator<Category> iterator = categoryTree.iterator();
+		while (iterator.hasNext()) {
+			Category category = iterator.next();
+			if (category.getName().equalsIgnoreCase(name))
+				return category;
+		}
 		return null;
 	}
 
@@ -605,68 +648,111 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void removeTag(Tag tag, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (tag == null)
+			return;
 
+		// TODO Search for tags and remove them
+
+		allTags.remove(tag);
 	}
 
 	@Override
 	public void removeLanguage(String language, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (language == null || language.isEmpty())
+			return;
+		language = language.trim();
 
+		for (String lang : allLanguages) {
+			if (lang.trim().equalsIgnoreCase(language)) {
+				allLanguages.remove(lang);
+			}
+		}
 	}
 
 	@Override
 	public Integer getVote(User user, Comment comment) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (user == null || comment == null)
+			return null;
+
+		HashMap<User, Integer> votes = votings.get(comment);
+		if (votes == null)
+			return null;
+		return votes.get(user);
 	}
 
 	@Override
 	public Snippet getSnippet(int hash) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return allSnippets.get(hash);
 	}
 
 	@Override
 	public void removeUser(User user, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (user == null)
+			return;
 
+		allUsers.remove(user.username);
+		// TODO: Cross references should also be removed some day ...
 	}
 
 	@Override
 	public void removeSnippet(Snippet snippet, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (snippet == null)
+			return;
 
+		allSnippets.remove(snippet.getHashId());
 	}
 
 	@Override
 	public void removeComment(Comment comment, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (comment == null)
+			return;
 
+		HashMap<Integer, Comment> comments = allComments.get(comment.snippet);
+		if (comment != null)
+			comments.remove(comment.getHashID());
+		commentMap.remove(comment.getHashID());
 	}
 
 	@Override
 	public void removeNotification(Notification notification, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		// TODO Not implemented because not used currently
 
 	}
 
 	@Override
 	public void removeCode(Code code, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (code == null)
+			return;
 
+		Snippet snippet = code.snippet;
+		HashMap<Integer, Code> codeHistory = allCodes.get(snippet);
+		codeHistory.remove(code.getHashID());
 	}
 
 	@Override
 	public void removeCategory(Category category, int mode) throws IOException {
-		// TODO Auto-generated method stub
-
+		if (category == null)
+			return;
+		categoryTree.deleteItem(category);
 	}
 
 	@Override
 	public List<Tag> getAllTags(int start, int count) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		if (start < 0 || count < 0)
+			return null;
+		if (start > allTags.size())
+			return new ArrayList<Tag>();
+
+		List<Tag> result = new ArrayList<Tag>(allTags);
+		while (start > 0) {
+			result.remove(0);
+			start--;
+		}
+		while (count > result.size()) {
+			result.remove(0);
+		}
+
+		return result;
 	}
 
 }

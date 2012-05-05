@@ -1,6 +1,7 @@
 package org.smartsnip.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,10 +49,9 @@ public class Tree<E> {
 
 			if (e.equals(value))
 				return true;
-			for (TreeItem<E> item : subTree) {
+			for (TreeItem<E> item : subTree)
 				if (item.contains(e))
 					return true;
-			}
 
 			return false;
 		}
@@ -62,9 +62,8 @@ public class Tree<E> {
 		 */
 		public synchronized int size() {
 			int size = (value == null ? 0 : 1);
-			for (TreeItem<E> current : subTree) {
+			for (TreeItem<E> current : subTree)
 				size += current.size();
-			}
 			return size;
 		}
 
@@ -81,14 +80,53 @@ public class Tree<E> {
 			if (item == null)
 				return null;
 			TreeItem<E> treeItem = get(item);
-			if (treeItem != null) {
+			if (treeItem != null)
 				treeItem.value = item;
-			} else {
+			else {
 				treeItem = new TreeItem<E>(item, this);
 				this.subTree.add(treeItem);
-				treehash++;
+				treeModified();
 			}
 			return treeItem;
+		}
+
+		/**
+		 * Directly puts a treeitem into this item.
+		 * 
+		 * Internal call only.
+		 * 
+		 * @param item
+		 *            to be put into the subtree
+		 */
+		protected synchronized void putTreeItem(TreeItem<E> item) {
+			if (item == null)
+				return;
+			if (subTree.contains(item))
+				return;
+
+			subTree.add(item);
+			item.parent = this;
+			treeModified();
+		}
+
+		/**
+		 * Deletes this entry out of the tree. All subitems goes to the parent
+		 */
+		@SuppressWarnings("unchecked")
+		public synchronized void delete() {
+			if (parent == null)
+				parent = (TreeItem<E>) root; // Yeah, looks ugly!
+			for (TreeItem<E> child : subTree) {
+				parent.putTreeItem(child);
+			}
+			treeModified();
+		}
+
+		/**
+		 * Deletes the whole subtree
+		 */
+		public synchronized void prune() {
+			subTree.clear();
 		}
 
 		/**
@@ -111,6 +149,13 @@ public class Tree<E> {
 					return result;
 			}
 			return null;
+		}
+
+		/**
+		 * Increases the tree hash after a modification.
+		 */
+		private void treeModified() {
+			treehash++;
 		}
 
 		/**
@@ -205,11 +250,25 @@ public class Tree<E> {
 			List<TreeItem<E>> result = new ArrayList<TreeItem<E>>();
 
 			result.add(this);
-			for (TreeItem<E> child : subTree) {
+			for (TreeItem<E> child : subTree)
 				result.addAll(child.flattenTree());
-			}
 
 			return result;
+		}
+
+		/**
+		 * @return the tree items value
+		 */
+		public E value() {
+			return value;
+		}
+
+		/**
+		 * @return the first order children of this tree item
+		 */
+		public synchronized List<TreeItem<E>> getChildren() {
+			// TODO Clone list
+			return this.subTree;
 		}
 	}
 
@@ -282,4 +341,122 @@ public class Tree<E> {
 	public synchronized int size() {
 		return root.size();
 	}
+
+	/**
+	 * Gets the tree item by a value. If the value is null or not found in the
+	 * tree, the result is null
+	 * 
+	 * @param e
+	 *            value the tree item should be searched for
+	 * @return the tree item with the given value, or null if not found
+	 */
+	public TreeItem<E> get(E e) {
+		if (e == null)
+			return null;
+		return root.get(e);
+	}
+
+	/**
+	 * Gets the direct first order children of a tree item. If the tree item
+	 * could not be found or the given root argument is null, null is returned
+	 * 
+	 * @param root
+	 *            tree item the children should be get from
+	 * @return The first order children, if the root item is found, otherwise
+	 *         null
+	 */
+	public List<E> getChildren(E root) {
+		TreeItem<E> rootTree = get(root);
+		if (rootTree == null)
+			return null;
+
+		List<TreeItem<E>> children = rootTree.getChildren();
+		List<E> result = new ArrayList<E>(children.size());
+		for (TreeItem<E> child : children)
+			result.add(child.value);
+		return result;
+	}
+
+	/**
+	 * Flattens the tree to a list
+	 * 
+	 * @return Tree item, in-order
+	 */
+	public Collection<E> flatten() {
+		List<TreeItem<E>> flattenedTree = root.flattenTree();
+		List<E> result = new ArrayList<E>(flattenedTree.size());
+		for (TreeItem<E> item : flattenedTree)
+			result.add(item.value);
+		return result;
+	}
+
+	/**
+	 * Creates an iterator for the tree. Any writing access to the tree results
+	 * in an invalidation of the iterator
+	 * 
+	 * @return the created iterator for the whole tree. Works in-order
+	 */
+	public Iterator<E> iterator() {
+		final Iterator<TreeItem<E>> iterator = root.iterator();
+		return new Iterator<E>() {
+
+			@Override
+			public synchronized boolean hasNext() {
+				return iterator.hasNext();
+			}
+
+			@Override
+			public synchronized E next() {
+				TreeItem<E> next = iterator.next();
+				if (next == null)
+					return null;
+				return next.value;
+			}
+
+			@Override
+			public synchronized void remove() {
+				iterator.remove();
+			}
+
+		};
+	}
+
+	/**
+	 * Deletes a single item from the tree. Subitems go to the parent
+	 * 
+	 * @param item
+	 *            to be removed. If null or not found, nothing is done
+	 */
+	public synchronized void deleteItem(E item) {
+		if (item == null)
+			return;
+		TreeItem<E> treeitem = root.get(item);
+		if (treeitem == null)
+			return;
+		treeitem.delete();
+	}
+
+	/**
+	 * Deletes a subtree from an existing element. The element itself will stay.
+	 * If the item is null, nothing is done
+	 * 
+	 * @param item
+	 *            to be removed. If null, nothing is done
+	 */
+	public synchronized void prune(E item) {
+		if (item == null)
+			return;
+		TreeItem<E> treeitem = root.get(item);
+		if (treeitem == null)
+			return;
+		treeitem.prune();
+	}
+
+	/**
+	 * Clears the tree
+	 */
+	public synchronized void clear() {
+		root.prune();
+	}
+
 }

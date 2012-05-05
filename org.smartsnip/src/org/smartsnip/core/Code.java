@@ -248,8 +248,17 @@ public abstract class Code {
 
 	/**
 	 * @return the identifier object of this code object
+	 * @deprecated Because of name convention. Use getHashID() instant.
 	 */
+	@Deprecated
 	public long getID() {
+		return id;
+	}
+
+	/**
+	 * @return the identifier object of this code object
+	 */
+	public long getHashID() {
 		return id;
 	}
 

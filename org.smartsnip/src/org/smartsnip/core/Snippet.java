@@ -587,8 +587,17 @@ public class Snippet {
 
 	/**
 	 * @return the id hash code of the snippet
+	 * @deprecated because of names convention. Use getHashID() instant.
 	 */
+	@Deprecated
 	public Long getHash() {
+		return id;
+	}
+
+	/**
+	 * @return the id hash code of the snippet
+	 */
+	public Long getHashId() {
 		return id;
 	}
 }
