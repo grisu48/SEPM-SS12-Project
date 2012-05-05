@@ -1,10 +1,12 @@
 package org.smartsnip.server;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Snippet;
+import org.smartsnip.core.User;
 import org.smartsnip.shared.ICategory;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XCategory;
@@ -53,21 +55,54 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 	}
 
 	@Override
-	public List<XCategory> getChildCategories() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<XCategory> getCategories(String root) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Category> childs;
+		if (root == null || root.isEmpty())
+			childs = Category.getCategories();
+		else
+			childs = Category.getCategories(root);
+
+		if (childs == null)
+			return null;
+		List<XCategory> result = new ArrayList<XCategory>(childs.size());
+		for (Category category : childs)
+			result.add(category.toXCategory());
+		return result;
 	}
 
 	@Override
-	public XCategory add(String name, String parent) throws NoAccessException {
-		// Not implemented yet
-		throw new NoAccessException();
+	public XCategory add(String name, String description, String parent) throws NoAccessException {
+		if (name == null || name.isEmpty())
+			return null;
+		if (description == null || description.isEmpty())
+			return null;
+
+		Session session = getSession();
+		User user = session.getUser();
+		// TODO Security policy
+		if (user == null)
+			throw new NoAccessException();
+
+		Category root;
+		if (parent == null)
+			root = null;
+		else {
+			root = Category.getCategory(parent);
+			return null;
+		}
+
+		try {
+			// Exists already??
+			if (Category.getCategory(name) != null)
+				return null;
+
+			root = Category.createCategory(name, description, root);
+			return root.toXCategory();
+		} catch (IOException e) {
+			System.err.println("IOException during creation of new category: " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 
 	@Override
@@ -93,6 +128,12 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 		}
 
 		return result;
+	}
+
+	@Override
+	public void createCategory(XCategory category) throws NoAccessException, IllegalArgumentException {
+		// TODO Auto-generated method stub
+
 	}
 
 }

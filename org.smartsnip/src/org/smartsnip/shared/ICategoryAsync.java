@@ -12,14 +12,12 @@ public interface ICategoryAsync {
 
 	void getSnippetCount(String name, AsyncCallback<Integer> callback);
 
-	void getChildCategories(AsyncCallback<List<XCategory>> callback);
-
-	void add(String name, String parent, AsyncCallback<XCategory> callback);
+	void add(String name, String description, String parent, AsyncCallback<XCategory> callback);
 
 	void delete(String name, AsyncCallback<Void> callback);
 
 	void getCategories(String root, AsyncCallback<List<XCategory>> callback);
 
-	void getServerStatus(AsyncCallback<XServerStatus> callback);
+	void createCategory(XCategory category, AsyncCallback<Void> callback);
 
 }

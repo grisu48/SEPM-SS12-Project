@@ -80,31 +80,7 @@ public interface ICategory extends RemoteService {
 	 */
 	public int getSnippetCount(String name);
 
-	/**
-	 * @return a list containing all direct child categories
-	 */
-	public List<XCategory> getChildCategories();
-
-	/**
-	 * Adds a category with the given name as child of parent.
-	 * 
-	 * If parent is null or empty, the category will be a new root category. If
-	 * the given parent category is not found, null will be returned, without
-	 * adding a category.
-	 * 
-	 * If creating the new category succeeds, the newly created category is
-	 * returned.
-	 * 
-	 * @param name
-	 *            Name of the category to be added
-	 * @param parent
-	 *            Parent category of the new category
-	 * @throws NoAccessException
-	 *             Thrown if the server denies the access
-	 * @return The newly created category if success, or null, if the method
-	 *         fails
-	 */
-	public XCategory add(String name, String parent) throws NoAccessException;
+	public XCategory add(String name, String description, String parent) throws NoAccessException;
 
 	/**
 	 * Deletes a category and all of it's snippets out of the system
@@ -117,7 +93,14 @@ public interface ICategory extends RemoteService {
 	public void delete(String name) throws NoAccessException;
 
 	/**
-	 * @return Gets the server status object
+	 * Creates a new category with the given catgory object.
+	 * 
+	 * @param category
+	 *            Information container of the new category to be created
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
+	 * @throws IllegalArgumentException
+	 *             Thrown if at least one argument is invalid
 	 */
-	public XServerStatus getServerStatus();
+	public void createCategory(XCategory category) throws NoAccessException, IllegalArgumentException;
 }

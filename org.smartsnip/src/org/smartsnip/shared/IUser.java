@@ -60,8 +60,4 @@ public interface IUser extends RemoteService, IsSerializable {
 
 	public List<XSnippet> getFavorites() throws NoAccessException;
 
-	/**
-	 * @return Gets the server status object
-	 */
-	public XServerStatus getServerStatus();
 }

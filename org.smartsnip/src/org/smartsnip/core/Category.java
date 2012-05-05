@@ -126,13 +126,13 @@ public class Category {
 	/**
 	 * @return a String list containing all root categories
 	 */
-	public synchronized static List<String> getCategories() {
+	public synchronized static List<Category> getCategories() {
 		try {
-			List<String> result = new ArrayList<String>();
+			List<Category> result = new ArrayList<Category>();
 			List<Category> categories = Persistence.instance.getAllCategories();
 
 			for (Category category : categories) {
-				result.add(category.getName());
+				result.add(category);
 			}
 
 			return result;
@@ -151,7 +151,7 @@ public class Category {
 	 * @return a String list containing all sub-categories of a category. Empty
 	 *         if the parent could not be found.
 	 */
-	public synchronized static List<String> getCategories(String parent) {
+	public synchronized static List<Category> getCategories(String parent) {
 		if (parent == null || parent.isEmpty())
 			return getCategories();
 
@@ -159,11 +159,11 @@ public class Category {
 		if (prnt == null)
 			return null;
 		try {
-			List<String> result = new ArrayList<String>();
+			List<Category> result = new ArrayList<Category>();
 			List<Category> categories = Persistence.instance.getSubcategories(prnt);
 
 			for (Category category : categories) {
-				result.add(category.getName());
+				result.add(category);
 			}
 
 			return result;

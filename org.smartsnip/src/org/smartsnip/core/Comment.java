@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.shared.Pair;
+import org.smartsnip.shared.XComment;
 
 public class Comment {
 	/** The owner of the message is fixed */
@@ -326,5 +327,30 @@ public class Comment {
 			return;
 
 		comment.id = Persistence.instance.writeComment(comment, IPersistence.DB_NEW_ONLY);
+	}
+
+	/**
+	 * @return created serialisable comment object
+	 */
+	public XComment toXComment() {
+		return new XComment(owner.getUsername(), snippet.getHashId(), this.message, this.chocolates, this.lemons,
+				this.time);
+	}
+
+	/**
+	 * Gets a comment object identified by the unique id
+	 * 
+	 * @param commentID
+	 *            id of the comment object to get
+	 * @return the found comment object or null, if not found
+	 */
+	public static Comment getComment(long commentID) {
+		try {
+			return Persistence.getInstance().getComment(commentID);
+		} catch (IOException e) {
+			System.err.println("IOException during getComment(" + commentID + "): " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 }
