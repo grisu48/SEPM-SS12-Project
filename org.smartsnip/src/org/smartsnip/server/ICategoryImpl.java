@@ -107,8 +107,17 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 
 	@Override
 	public void delete(String name) throws NoAccessException {
-		// Not implemented yet
-		throw new NoAccessException();
+		if (name == null)
+			return;
+		Category category = Category.getCategory(name);
+		if (category == null)
+			return;
+
+		Session session = getSession();
+		if (!session.getPolicy().canEditCategory(session, category))
+			throw new NoAccessException();
+
+		category.delete();
 	}
 
 	/**
@@ -132,8 +141,33 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 
 	@Override
 	public void createCategory(XCategory category) throws NoAccessException, IllegalArgumentException {
-		// TODO Auto-generated method stub
+		if (category == null)
+			return;
+		// Exists already??
+		if (Category.getCategory(category.name) != null)
+			return;
 
+		Category parent;
+		if (category.parent == null || category.parent.isEmpty())
+			parent = null;
+		else {
+			parent = Category.getCategory(category.parent);
+			if (parent == null)
+				throw new IllegalArgumentException("Parent category not found");
+		}
+
+		Session session = getSession();
+		// TODO Security policy and check arguments
+		if (!session.isLoggedIn())
+			throw new NoAccessException();
+
+		try {
+			Category.createCategory(category.name, category.description, parent);
+		} catch (IOException e) {
+			System.err.println("IOException during creation of new category \"" + category.name + "\" by user "
+					+ session.getUsername() + ": " + e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 
 }
