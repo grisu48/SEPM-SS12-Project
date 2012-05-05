@@ -94,9 +94,15 @@ public class MemPersistence implements IPersistence {
 		if (snippet == null)
 			return null;
 
-		allSnippets.put(snippet.id, snippet);
-		// TODO snippetTags.put(snippet, sni);
-		return new Long(snippet.id);
+		Long id = snippet.getHashId();
+		if (id == null) {
+			id = createNewSnippetId();
+			snippet.id = id;
+		}
+
+		allSnippets.put(id, snippet);
+		// TODO snippetTags.put(snippet, );
+		return id;
 	}
 
 	@Override
@@ -474,6 +480,8 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Category getParentCategory(Category category) throws IOException {
+		if (categoryTree.getParent(category) == null)
+			return null;
 		return categoryTree.getParent(category).value();
 	}
 
@@ -682,7 +690,8 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Snippet getSnippet(int hash) throws IOException {
-		return allSnippets.get(hash);
+		long id = hash;
+		return allSnippets.get(id);
 	}
 
 	@Override
@@ -755,4 +764,16 @@ public class MemPersistence implements IPersistence {
 		return result;
 	}
 
+	// YEAH!! Keyword WAR!!!!
+	protected synchronized final long createNewSnippetId() {
+		long id;
+		do {
+			id = nextInteger();
+		} while (allSnippets.containsKey(id));
+		return id;
+	}
+
+	private static long nextInteger() {
+		return (long) (Math.random() * Integer.MAX_VALUE);
+	}
 }
