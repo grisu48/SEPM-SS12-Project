@@ -26,7 +26,8 @@ public class Persistence {
 	 *             Thrown if the persistence layer has already been initialised
 	 */
 	public static void initialize() throws IllegalAccessException {
-		initialize(false);
+		// XXX MEMORY ONLY MODE CURRENTLY ENABLED!!
+		initialize(true);
 	}
 
 	/**
@@ -50,6 +51,8 @@ public class Persistence {
 
 		// TODO
 		if (memOnly) {
+			System.err.println("WARNING: Persistence is running in memory-only mode!");
+
 			PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
 			instance = PersistenceFactory.getInstance();
 		} else {
