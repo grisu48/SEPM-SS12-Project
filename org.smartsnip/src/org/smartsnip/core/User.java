@@ -36,7 +36,7 @@ public class User {
 	/** State of the user */
 	private UserState state = UserState.unvalidated;
 
-	synchronized void setState(UserState state) {
+	public synchronized void setState(UserState state) {
 		this.state = state;
 	}
 
@@ -161,7 +161,7 @@ public class User {
 	 *            to be checked
 	 * @return true if existing otherwise false
 	 */
-	synchronized static boolean exists(String username) {
+	public synchronized static boolean exists(String username) {
 		return getUser(username) != null;
 	}
 
@@ -220,7 +220,7 @@ public class User {
 	 * @param username
 	 *            name of the user to be deleted
 	 */
-	synchronized static void deleteUser(String username) {
+	public synchronized static void deleteUser(String username) {
 		deleteUser(getUser(username));
 	}
 
@@ -231,7 +231,7 @@ public class User {
 	 * @param user
 	 *            that should be deleted.
 	 */
-	synchronized static void deleteUser(User user) {
+	public synchronized static void deleteUser(User user) {
 		if (user == null)
 			return;
 
@@ -271,7 +271,7 @@ public class User {
 	 * @return true if the password check is positive, false if a password
 	 *         denial happens
 	 */
-	boolean checkPassword(String password) {
+	public boolean checkPassword(String password) {
 		password = hashAlgorithm.hash(password);
 
 		if (this.password != null)
@@ -364,7 +364,7 @@ public class User {
 	 * @param password
 	 *            the password to set
 	 */
-	void setPassword(String password) throws IllegalArgumentException {
+	public void setPassword(String password) throws IllegalArgumentException {
 		if (password.length() == 0)
 			throw new IllegalArgumentException("Empty password not allowed");
 		password = hashAlgorithm.hash(password);
@@ -443,7 +443,7 @@ public class User {
 	/**
 	 * Deletes this user from the database
 	 */
-	synchronized void delete() {
+	public synchronized void delete() {
 		deleteUser(this);
 	}
 

@@ -249,7 +249,8 @@ public class Tree<E> {
 		public synchronized List<TreeItem<E>> flattenTree() {
 			List<TreeItem<E>> result = new ArrayList<TreeItem<E>>();
 
-			result.add(this);
+			if (this.value != null)
+				result.add(this);
 			for (TreeItem<E> child : subTree)
 				result.addAll(child.flattenTree());
 

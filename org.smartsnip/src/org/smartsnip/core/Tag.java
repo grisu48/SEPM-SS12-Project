@@ -1,8 +1,6 @@
 package org.smartsnip.core;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * A tag for the snippets. This method also serves as containment for all tags
@@ -10,13 +8,15 @@ import java.util.List;
  * 
  */
 public class Tag {
+
 	/** Container for all tags. The key is the tags name in lowercase. Allways! */
 	private static final HashMap<String, Tag> allTags = new HashMap<String, Tag>();
 
 	public final String name;
 
 	private Tag(String name) {
-		if (name.length() == 0) throw new IllegalArgumentException("Tag name cannot be empty");
+		if (name.length() == 0)
+			throw new IllegalArgumentException("Tag name cannot be empty");
 		this.name = name;
 	}
 
@@ -28,8 +28,9 @@ public class Tag {
 	 *            of the tag to be searched
 	 * @return the given tag if exists, otherwise false
 	 */
-	static synchronized Tag getTag(String name) {
-		if (name == null || name.length() == 0) return null;
+	public static synchronized Tag getTag(String name) {
+		if (name == null || name.length() == 0)
+			return null;
 		return allTags.get(name.toLowerCase());
 	}
 
@@ -44,11 +45,13 @@ public class Tag {
 	 * @return Tag with the given name if existing, otherwise the newly
 	 *         generated one
 	 */
-	static synchronized Tag createTag(String name) {
-		if (name == null || name.length() == 0) return null;
+	public static synchronized Tag createTag(String name) {
+		if (name == null || name.length() == 0)
+			return null;
 		name = trimName(name);
 
-		if (exists(name)) return getTag(name);
+		if (exists(name))
+			return getTag(name);
 		Tag newTag = new Tag(name);
 		allTags.put(name.toLowerCase(), newTag);
 		addToDB(newTag);
@@ -63,8 +66,9 @@ public class Tag {
 	 *            of the tag to be checked
 	 * @return true if existsing otherwise false
 	 */
-	static synchronized boolean exists(String name) {
-		if (name.length() == 0) return false;
+	public static synchronized boolean exists(String name) {
+		if (name.length() == 0)
+			return false;
 		name = trimName(name);
 		return allTags.containsKey(name);
 	}
@@ -99,19 +103,19 @@ public class Tag {
 	static protected void refreshDB() {
 
 	}
-	
 
-	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (! (obj instanceof Tag)) return false;
-		
-		Tag tag = (Tag)obj;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Tag))
+			return false;
+
+		Tag tag = (Tag) obj;
 		return tag.equals(this.name);
-		
+
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return name.hashCode();

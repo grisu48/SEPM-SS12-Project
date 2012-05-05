@@ -116,7 +116,7 @@ public class Comment {
 	 * @param user
 	 *            that wants to vote
 	 */
-	synchronized void votePositive(User user) {
+	public synchronized void votePositive(User user) {
 		if (user == null)
 			return;
 		try {
@@ -135,7 +135,7 @@ public class Comment {
 	 * @param user
 	 *            that wants to vote
 	 */
-	synchronized void voteNegative(User user) {
+	public synchronized void voteNegative(User user) {
 		if (user == null)
 			return;
 		try {
@@ -155,7 +155,7 @@ public class Comment {
 	 * @param user
 	 *            that wants to unvote
 	 */
-	synchronized void unvote(User user) {
+	public synchronized void unvote(User user) {
 		if (user == null)
 			return;
 		try {
@@ -221,7 +221,7 @@ public class Comment {
 	/**
 	 * Deletes this comment out of the database
 	 */
-	void delete() {
+	public void delete() {
 		snippet.removeComment(this);
 
 		try {
@@ -238,7 +238,7 @@ public class Comment {
 	 * 
 	 * @param newMessage
 	 */
-	void edit(String newMessage) {
+	public void edit(String newMessage) {
 		if (newMessage == null || newMessage.isEmpty())
 			return;
 

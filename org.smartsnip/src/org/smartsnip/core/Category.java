@@ -126,7 +126,7 @@ public class Category {
 	/**
 	 * @return a String list containing all root categories
 	 */
-	synchronized static List<String> getCategories() {
+	public synchronized static List<String> getCategories() {
 		try {
 			List<String> result = new ArrayList<String>();
 			List<Category> categories = Persistence.instance.getAllCategories();
@@ -151,7 +151,7 @@ public class Category {
 	 * @return a String list containing all sub-categories of a category. Empty
 	 *         if the parent could not be found.
 	 */
-	synchronized static List<String> getCategories(String parent) {
+	public synchronized static List<String> getCategories(String parent) {
 		if (parent == null || parent.isEmpty())
 			return getCategories();
 
@@ -194,7 +194,7 @@ public class Category {
 	 * @param description
 	 *            the description to set
 	 */
-	void setDescription(String description) {
+	public void setDescription(String description) {
 		if (description == null || description.length() == 0)
 			return;
 		if (this.description.equals(description))
@@ -226,7 +226,7 @@ public class Category {
 	 * @param parent
 	 *            the parent to set
 	 */
-	void setParent(Category parent) {
+	public void setParent(Category parent) {
 		if (this.parent == parent)
 			return;
 		this.parent = parent;
@@ -240,7 +240,7 @@ public class Category {
 	 * @param category
 	 *            to be added
 	 */
-	void addSubCategory(Category category) {
+	public void addSubCategory(Category category) {
 		if (category == null)
 			return;
 
@@ -281,7 +281,7 @@ public class Category {
 	 * 
 	 * @param snippet
 	 */
-	void addSnippet(Snippet snippet) {
+	public void addSnippet(Snippet snippet) {
 		if (snippet == null)
 			return;
 
@@ -315,7 +315,7 @@ public class Category {
 	 * @param name
 	 *            the name of the category to be deleted
 	 */
-	synchronized static void deleteCategory(String name) {
+	public synchronized static void deleteCategory(String name) {
 		if (name == null || name.isEmpty())
 			return;
 
@@ -332,7 +332,7 @@ public class Category {
 	/**
 	 * Deletes this category instance
 	 */
-	synchronized void delete() {
+	public synchronized void delete() {
 		try {
 			Persistence.instance.removeCategory(this, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
@@ -348,7 +348,7 @@ public class Category {
 	 *            of the category to be checked
 	 * @return true if existing, otherwise false
 	 */
-	synchronized static boolean exists(String name) {
+	public synchronized static boolean exists(String name) {
 		if (name == null || name.isEmpty())
 			return false;
 

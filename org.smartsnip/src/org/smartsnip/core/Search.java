@@ -3,19 +3,18 @@ package org.smartsnip.core;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Search {
 	/** Defined search string */
 	private final String searchString;
 	/** Tag filter list */
-	private List<Tag> tags = new ArrayList<Tag>();
+	private final List<Tag> tags = new ArrayList<Tag>();
 	/** Category filter */
-	private List<Category> categories = new ArrayList<Category>();
+	private final List<Category> categories = new ArrayList<Category>();
 	/**
 	 * Total results according to the search string. This list is cached, and
 	 * then the filtering tags and categories are applied to it
 	 */
-	private List<Snippet> totalResults;
+	private final List<Snippet> totalResults;
 
 	/**
 	 * Filtered results. If null, they need to be re-filtered. This occurs if a
@@ -24,7 +23,8 @@ public class Search {
 	private List<Snippet> filterResults;
 
 	Search(String searchString) {
-		if (searchString == null) throw new NullPointerException();
+		if (searchString == null)
+			throw new NullPointerException();
 		this.searchString = searchString;
 		this.totalResults = populateTotalResults(searchString);
 	}
@@ -36,8 +36,9 @@ public class Search {
 	 * @param searchString
 	 * @return
 	 */
-	static Search createSearch(String searchString) {
-		if (searchString == null || searchString.length() == 0) return null;
+	public static Search createSearch(String searchString) {
+		if (searchString == null || searchString.length() == 0)
+			return null;
 
 		// TODO: Build a search string cache.
 		Search result = new Search(searchString);
@@ -48,7 +49,8 @@ public class Search {
 	 * @return the filtered search results
 	 */
 	public synchronized List<Snippet> getResults() {
-		if (filterResults == null) applyFilter();
+		if (filterResults == null)
+			applyFilter();
 		return filterResults;
 	}
 
@@ -59,7 +61,8 @@ public class Search {
 		// TODO: Write me
 		filterResults = new ArrayList<Snippet>();
 		for (Snippet snippet : totalResults) {
-			if (checkSnippet(snippet)) filterResults.add(snippet);
+			if (checkSnippet(snippet))
+				filterResults.add(snippet);
 		}
 	}
 
@@ -71,8 +74,10 @@ public class Search {
 	 *            to be added
 	 */
 	public synchronized void addTag(Tag tag) {
-		if (tag == null) return;
-		if (tags.contains(tag)) return;
+		if (tag == null)
+			return;
+		if (tags.contains(tag))
+			return;
 		tags.add(tag);
 		filterResults = null; // new criterium added. Need for new filtering
 	}
@@ -85,8 +90,10 @@ public class Search {
 	 *            to be remove
 	 */
 	public synchronized void removeTag(Tag tag) {
-		if (tag == null) return;
-		if (!tags.contains(tag)) return;
+		if (tag == null)
+			return;
+		if (!tags.contains(tag))
+			return;
 		tags.remove(tag);
 		filterResults = null; // new criterium added. Need for new filtering
 	}
@@ -99,8 +106,10 @@ public class Search {
 	 *            to be added
 	 */
 	public synchronized void addCategory(Category category) {
-		if (category == null) return;
-		if (categories.contains(category)) return;
+		if (category == null)
+			return;
+		if (categories.contains(category))
+			return;
 		categories.add(category);
 		filterResults = null; // new criterium added. Need for new filtering
 	}
@@ -113,8 +122,10 @@ public class Search {
 	 *            to be remove
 	 */
 	public synchronized void removeCategory(Category category) {
-		if (category == null) return;
-		if (!categories.contains(category)) return;
+		if (category == null)
+			return;
+		if (!categories.contains(category))
+			return;
 		categories.remove(category);
 		filterResults = null; // new criterium added. Need for new filtering
 	}
@@ -129,12 +140,15 @@ public class Search {
 	 *         tags
 	 */
 	private boolean checkSnippet(Snippet snippet) {
-		if (snippet == null) return false;
+		if (snippet == null)
+			return false;
 
-		if (!categories.contains(snippet.getCategory())) return false;
+		if (!categories.contains(snippet.getCategory()))
+			return false;
 
 		for (Tag tag : tags)
-			if (!snippet.hasTag(tag)) return false;
+			if (!snippet.hasTag(tag))
+				return false;
 
 		return true;
 	}

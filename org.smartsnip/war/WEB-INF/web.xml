@@ -11,7 +11,7 @@
 
      <servlet>
     <servlet-name>Session</servlet-name>
-    <servlet-class>org.smartsnip.core.ISessionImpl</servlet-class>
+    <servlet-class>org.smartsnip.server.ISessionImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
