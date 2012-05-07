@@ -19,8 +19,8 @@ public class CodeJava extends Code {
 	 *            of the code object. If null, it has not been assigned form the
 	 *            persistence yet
 	 */
-	CodeJava(String code, Snippet snippet, Long id) {
-		super(code, language, snippet, id);
+	CodeJava(String code, Snippet snippet, Long id, int version) {
+		super(code, language, snippet, id, version);
 	}
 
 	@Override

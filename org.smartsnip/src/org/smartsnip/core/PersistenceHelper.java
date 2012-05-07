@@ -24,9 +24,18 @@ public class PersistenceHelper {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistenceFactory#createSnippet(org.smartsnip.core.User,
-	 *      java.lang.String, org.smartsnip.core.Category, java.util.List,
-	 *      java.util.List, org.smartsnip.core.Code, java.lang.String, int)
+	 * Factory method for the persistence layer
+	 * @param id
+	 * @param owner
+	 * @param name
+	 * @param description
+	 * @param category
+	 * @param tags
+	 * @param comments
+	 * @param code
+	 * @param license
+	 * @param viewcount
+	 * @return an initialized Snippet object
 	 */
 	protected Snippet createSnippet(Long id, User owner, String name, String description, Category category, List<Tag> tags,
 			List<Comment> comments, Code code, String license, int viewcount) {
@@ -34,48 +43,79 @@ public class PersistenceHelper {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistenceFactory#createTag(java.lang.String)
+	 * Factory method for the persistence layer
+	 * @param tag
+	 * @return an initialized Tag object
 	 */
 	protected Tag createTag(String tag) {
 		return new Tag(tag);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistenceFactory#createNotification(java.lang.String,
-	 *      java.lang.Boolean, java.lang.String, java.lang.String)
+	 * Factory method for the persistence layer
+	 * @param id
+	 * @param owner
+	 * @param message
+	 * @param read
+	 * @param time
+	 * @param source
+	 * @param target
+	 * @return an initialized Notification object
 	 */
-	protected Notification createNotification(String message, Boolean read, String time, String source) {
-		// TODO getters missing in Notification class
-		return null;
+	protected Notification createNotification(Long id, User owner, String message, Boolean read, String time, String source, Snippet target) {
+		return new Notification(id, owner, message, read, time, source, target);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistenceFactory#createComment(org.smartsnip.core.User,
-	 *      org.smartsnip.core.Snippet, java.lang.String, long, java.util.Date,
-	 *      int, int)
+	 * Factory method for the persistence layer
+	 * @param owner
+	 * @param snippet
+	 * @param message
+	 * @param id
+	 * @param time
+	 * @param posVotes
+	 * @param negVotes
+	 * @return an initialized Comment object
 	 */
 	protected Comment createComment(User owner, Snippet snippet, String message, long id, Date time, int posVotes,
 			int negVotes) {
-		Comment result = new Comment(owner, snippet, message, id, time, posVotes, negVotes);
-		return result;
+		return new Comment(owner, snippet, message, id, time, posVotes, negVotes);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistenceFactory#createCode(java.lang.String,
-	 *      java.lang.String, org.smartsnip.core.Snippet, int)
+	 * Factory method for the persistence layer
+	 * @param id
+	 * @param code
+	 * @param language
+	 * @param snippet
+	 * @param version
+	 * @return an initialized Code object
 	 */
 	protected Code createCode(Long id, String code, String language, Snippet snippet, int version) {
-		Code result = Code.createCodeDB(code, language, snippet, id);
-		// TODO add unimplemented method version
-		return result;
+		return Code.createCodeDB(code, language, snippet, id, version);
 	}
 
+	/**
+	 * Factory method for the persistence layer
+	 * @param username
+	 * @param realName
+	 * @param email
+	 * @param state
+	 * @param favourites
+	 * @return an initialized User object
+	 */
 	protected User createUser(String username, String realName, String email, User.UserState state,
 			List<Snippet> favourites) {
-		User result = new User(username, realName, email, state, favourites);
-		return result;
+		return new User(username, realName, email, state, favourites);
 	}
 
+	/**
+	 * Factory method for the persistence layer
+	 * @param name
+	 * @param description
+	 * @param parent
+	 * @return an initialized Category object
+	 */
 	protected Category createCategory(String name, String description, Category parent) {
 		return new Category(name, description, parent);
 	}

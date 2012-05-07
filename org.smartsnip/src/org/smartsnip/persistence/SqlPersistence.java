@@ -19,8 +19,6 @@ public class SqlPersistence extends SqlPersistenceImpl {
 	 */
 	public SqlPersistence() throws IllegalAccessException {
 		super();
-//		// XXX not implemented yet, delete next line if done
-//		throw new IllegalAccessException("not implementet yet");
 	}
 
 }

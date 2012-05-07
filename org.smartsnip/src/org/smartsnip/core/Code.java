@@ -55,8 +55,9 @@ public abstract class Code {
 	 * @param id
 	 *            of the object. If null, the id has not been assigned from the
 	 *            persistence yet
+	 * @param version
 	 */
-	Code(String code, String language, Snippet snippet, Long id) {
+	Code(String code, String language, Snippet snippet, Long id, int version) {
 		if (code.length() == 0)
 			throw new IllegalArgumentException("Cannot create snippet with no code");
 		if (language.length() == 0)
@@ -66,6 +67,7 @@ public abstract class Code {
 		this.code = formatCode(code);
 		this.language = language;
 		this.snippet = snippet;
+		this.version = version;
 
 		// If the id is null, it has not been assigned from the peristence yet
 		if (id != null) {
@@ -163,6 +165,7 @@ public abstract class Code {
 	 * @throws IllegalArgumentException
 	 *             Thrown if the code or if the language is empty
 	 */
+	// TODO add Version
 	public static Code createCode(String code, String language, Snippet owner) throws UnsupportedLanguageException,
 			IOException {
 		if (code == null || language == null)
@@ -179,7 +182,7 @@ public abstract class Code {
 		/* Here the language inspection takes place */
 		Code result = null;
 		if (language.equals("java")) { // Java object
-			result = new CodeJava(code, owner, null);
+			result = new CodeJava(code, owner, null, 0);
 		}
 
 		if (result == null)
@@ -207,6 +210,7 @@ public abstract class Code {
 	 *            a new {@link UnsupportedLanguageException} is thrown.
 	 * @param owner
 	 *            The owner snippet of the code
+	 * @param id the identifier
 	 * @return The newly generated code object
 	 * @throws UnsupportedLanguageException
 	 *             Thrown if the given language is not supported
@@ -217,7 +221,7 @@ public abstract class Code {
 	 * @throws IllegalArgumentException
 	 *             Thrown if the code or if the language is empty
 	 */
-	public static Code createCodeDB(String code, String language, Snippet owner, long id)
+	public static Code createCodeDB(String code, String language, Snippet owner, long id, int version)
 			throws UnsupportedLanguageException {
 		if (code == null || language == null)
 			throw new NullPointerException();
@@ -233,7 +237,7 @@ public abstract class Code {
 		/* Here the language inspection takes place */
 		Code result = null;
 		if (language.equals("java")) { // Java object
-			result = new CodeJava(code, owner, id);
+			result = new CodeJava(code, owner, id, version);
 		}
 
 		if (result == null)

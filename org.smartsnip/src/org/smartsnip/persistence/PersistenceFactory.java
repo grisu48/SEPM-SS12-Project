@@ -31,7 +31,7 @@ public class PersistenceFactory {
 	 * Constant to use with the {@code getInstance(int)} method. Defines which
 	 * Persistence class used:
 	 * <nl>
-	 * <li>BlackholePersistence
+	 * <li>BlackholePersistenceImpl
 	 * </nl>
 	 * <p>
 	 * This class provides getters for predefined outputs and setters which
@@ -110,7 +110,7 @@ public class PersistenceFactory {
 		if (instance == null) {
 			switch (type) {
 			case PERSIST_BLACKHOLE:
-				result = new BlackholePersistence();
+				result = new BlackholePersistenceImpl();
 				persistenceType = PERSIST_BLACKHOLE;
 				break;
 			case PERSIST_MEMORY_VOLATILE:
