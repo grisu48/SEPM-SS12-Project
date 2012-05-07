@@ -41,7 +41,7 @@ public class Control implements EntryPoint {
 		myGUI.getReady();
 
 		// No contents yet added here
-		myGUI.showTestPopup("Currently no contents here ... ");
+		//myGUI.showTestPopup("Currently no contents here ... ");
 	}
 
 	/**
@@ -64,6 +64,25 @@ public class Control implements EntryPoint {
 	 */
 	private static String createNewSession() {
 		return "session.getCookie()";
+	}
+
+	
+	
+	
+	public void changeSite(char c) {
+		switch (c) {
+		case 'i':
+			myGUI.showImpressum();
+			break;
+		case 'l':
+			myGUI.showLoginPopup();
+			break;
+		case 'r':
+			myGUI.showRegisterPopup();
+			break;	
+		default:	
+		}
+		
 	}
 
 }

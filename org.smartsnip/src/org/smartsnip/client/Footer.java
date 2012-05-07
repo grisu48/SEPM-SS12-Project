@@ -2,6 +2,9 @@ package org.smartsnip.client;
 
 
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
@@ -24,7 +27,7 @@ public class Footer extends Composite {
 	private Label links;
 	private Label link1;
 	private Label about;
-	private Label impressum;
+	private Anchor impressum;
 	
 	
 	public Footer() {
@@ -42,7 +45,19 @@ public class Footer extends Composite {
 		link1 = new Label("Example link");
 		about = new Label("About this Website");
 		about.addStyleName("h3");
-		impressum = new Label("Impressum");
+		impressum = new Anchor("Impressum");
+		impressum.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+		          Control control = Control.getInstance();
+		          control.changeSite('i');
+		        }
+
+		      });
+		
+		
+		
+		
 		vertPanel1.add(copyright);
 		vertPanel1.add(name1);
 		vertPanel1.add(name2);
