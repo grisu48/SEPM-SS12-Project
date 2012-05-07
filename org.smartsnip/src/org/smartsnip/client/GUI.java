@@ -2,6 +2,11 @@ package org.smartsnip.client;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.smartsnip.shared.XSnippet;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Window;
@@ -25,9 +30,9 @@ public class GUI {
 		
 		//Create the Page
 		createBasicPage();
-		showSearchPage();
+		//showSearchPage();
 		//showImpressum();
-		//showSnipPage();
+		showSnipPage();
 		//showPersonalPage();
 		//showLoginPopup();
 		//showRegisterPopup();
@@ -97,7 +102,8 @@ public class GUI {
 	
 	
 	public void showSnipPage() {
-		SnipArea mySnipArea = new SnipArea();
+		SnipArea mySnipArea = new SnipArea(new XSnippet("owner", 123, "description", new ArrayList<String>(), new ArrayList<Integer>(), "code",
+				"codeHTML", "language", "license", 3));
 		CommentArea myCommentArea = new CommentArea();
 		dataPanel.add(mySnipArea);
 		dataPanel.add(myCommentArea);
