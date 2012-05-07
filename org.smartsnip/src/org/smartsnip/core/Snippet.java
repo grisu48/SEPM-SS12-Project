@@ -214,23 +214,16 @@ public class Snippet {
 	}
 
 	/**
-	 * @return the next available hash code
-	 */
-	private synchronized static int getNextHashCode() {
-		while (exists(++hashCounter)) {
-			;
-		}
-		return hashCounter;
-	}
-
-	/**
 	 * Checks if the given hash code exists
 	 * 
 	 * @param hash
 	 *            to be checks
 	 * @return true if already registered hash, otherwise false
 	 */
-	synchronized static boolean exists(int hash) {
+	synchronized static boolean exists(Long hash) {
+		if (hash == null)
+			return false;
+
 		try {
 			Snippet snippet = Persistence.instance.getSnippet(hash);
 			return snippet != null;
@@ -249,12 +242,14 @@ public class Snippet {
 	 *            hash code of the snippet
 	 * @return the found snippet or null if not existsing
 	 */
-	public synchronized static Snippet getSnippet(long hash) {
+	public synchronized static Snippet getSnippet(Long hash) {
+		if (hash == null)
+			return null;
+
 		try {
 			// TODO Fix IPersistence:
 			// getSnippet(long)
-			int hashid = (int) hash;
-			Snippet snippet = Persistence.instance.getSnippet(hashid);
+			Snippet snippet = Persistence.instance.getSnippet(hash);
 			return snippet;
 		} catch (IOException e) {
 			System.err.println("IOException while getSnippet(" + hash + ") " + e.getMessage());

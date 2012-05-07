@@ -15,8 +15,6 @@ public class Category {
 	private String description;
 	/** Parent category, if present, or null if a root category */
 	private Category parent = null;
-	/** List with the hash codes of the snippets of the category */
-	private final List<Snippet> snippets;
 
 	/**
 	 * Constructor for a new category. If one of the fields (except parent) if
@@ -31,39 +29,10 @@ public class Category {
 	 *            of the category. Must not be null or empty
 	 * @param parent
 	 *            of the category. If null, the category is a rot category
-	 * @param snippets
-	 *            Snippets of the category. Must not be null
+	 * @throws NullPointerException
+	 *             Thrown if one of the arguments is null
 	 */
-	Category(String name, String description, Category parent, List<Snippet> snippets) {
-		super();
-		if (name == null || description == null)
-			throw new NullPointerException();
-		if (name.length() == 0)
-			throw new IllegalArgumentException("Empty category name not allowed");
-		if (description.length() == 0)
-			throw new IllegalArgumentException("Empty category description not allowed");
-		if (snippets == null)
-			throw new IllegalArgumentException("Empty snippet list in db-constructor not allowed");
-
-		this.name = name;
-		this.description = description;
-		this.parent = parent;
-		this.snippets = snippets;
-	}
-
-	/**
-	 * Constructor for a new category. If one of the fields (except parent) if
-	 * null, a {@link NullPointerException} will be thrown If the name or the
-	 * description is empty, a {@link IllegalArgumentException} is thrown
-	 * 
-	 * @param name
-	 *            of the category. Must not be null or empty
-	 * @param description
-	 *            of the category. Must not be null or empty
-	 * @param parent
-	 *            of the category. If null, the category is a rot category
-	 */
-	private Category(String name, String description, Category parent) {
+	Category(String name, String description, Category parent) {
 		super();
 		if (name == null || description == null)
 			throw new NullPointerException();
@@ -75,7 +44,6 @@ public class Category {
 		this.name = name;
 		this.description = description;
 		this.parent = parent;
-		this.snippets = new ArrayList<Snippet>();
 	}
 
 	/**

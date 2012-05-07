@@ -81,8 +81,6 @@ public class PersistenceHelper {
 	}
 
 	protected Category createCategory(String name, String description, Category parent) {
-		// TODO Implement snippets
-		List<Snippet> snippets = null;
-		return new Category(name, description, parent, snippets);
+		return new Category(name, description, parent);
 	}
 }
