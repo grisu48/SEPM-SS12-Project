@@ -26,8 +26,10 @@ import org.smartsnip.shared.Pair;
  * <pre>
  * MyPersistence() throws IllegalAccessException {
  * 	super();
- * 	if (Reflection.getCallerClass(2) == null || Reflection.getCallerClass(2) != PersistenceFactory.class) {
- * 		throw new IllegalAccessException(&quot;Singleton pattern: caller must be PersistenceFactory class.&quot;);
+ * 	if (Reflection.getCallerClass(2) == null
+ * 			|| Reflection.getCallerClass(2) != PersistenceFactory.class) {
+ * 		throw new IllegalAccessException(
+ * 				&quot;Singleton pattern: caller must be PersistenceFactory class.&quot;);
  * 	}
  * }
  * </pre>
@@ -39,7 +41,7 @@ public interface IPersistence {
 
 	/**
 	 * <p>
-	 * constant for the argument 'mode' of the writeXxx() methods: use the
+	 * constant for the argument 'flags' of the writeXxx() methods: use the
 	 * default conditions. In common the default behavior is:
 	 * </p>
 	 * <blockquote>
@@ -57,28 +59,28 @@ public interface IPersistence {
 	public static int DB_DEFAULT = 0;
 
 	/**
-	 * constant for the argument 'mode' of the writeXxx() methods: reject to
+	 * constant for the argument 'flags' of the writeXxx() methods: reject to
 	 * write if the element already exists in the database. This constant
 	 * overrides {@link IPersistence#DB_UPDATE_ONLY}.
 	 */
 	public static int DB_NEW_ONLY = 1;
 
 	/**
-	 * constant for the argument 'mode' of the writeXxx() methods: reject the
+	 * constant for the argument 'flags' of the writeXxx() methods: reject the
 	 * request if the element to update doesn't exist. This constant has no
 	 * effect if {@link IPersistence#DB_NEW_ONLY} is set.
 	 */
 	public static int DB_UPDATE_ONLY = 2;
 
 	/**
-	 * constant for the argument 'mode' of the writeXxx() methods: don't delete
+	 * constant for the argument 'flags' of the writeXxx() methods: don't delete
 	 * contents of the database. This constant overrides
 	 * {@link IPersistence#DB_FORCE_DELETE}.
 	 */
 	public static int DB_NO_DELETE = 4;
 
 	/**
-	 * constant for the argument 'mode' of the writeXxx() methods: don't delete
+	 * constant for the argument 'flags' of the writeXxx() methods: don't delete
 	 * contents of the database. This constant has no effect if
 	 * {@link IPersistence#DB_NEW_ONLY} is set.
 	 */
@@ -89,26 +91,26 @@ public interface IPersistence {
 	 * 
 	 * @param user
 	 *            the user to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeUser(User user, int mode) throws IOException;
+	public void writeUser(User user, int flags) throws IOException;
 
 	/**
 	 * Persist multiple User-datasets.
 	 * 
 	 * @param users
 	 *            the list of users to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeUser(List<User> users, int mode) throws IOException;
+	public void writeUser(List<User> users, int flags) throws IOException;
 
 	/**
 	 * Persist a new password into the database
@@ -117,192 +119,198 @@ public interface IPersistence {
 	 *            the owner of the password
 	 * @param password
 	 *            to set for the user
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writePassword(User user, String password, int mode) throws IOException;
+	public void writePassword(User user, String password, int flags)
+			throws IOException;
 
 	/**
 	 * Persist a single Snippet-dataset.
 	 * 
 	 * @param snippet
 	 *            the snippet to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public Long writeSnippet(Snippet snippet, int mode) throws IOException;
+	public Long writeSnippet(Snippet snippet, int flags) throws IOException;
 
 	/**
 	 * Persist multiple Snippet-datasets.
 	 * 
 	 * @param snippets
 	 *            the list of snippets to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeSnippet(List<Snippet> snippets, int mode) throws IOException;
+	public void writeSnippet(List<Snippet> snippets, int flags)
+			throws IOException;
 
 	/**
 	 * Persist a single Comment-dataset.
 	 * 
 	 * @param comment
 	 *            the comment to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public Long writeComment(Comment comment, int mode) throws IOException;
+	public Long writeComment(Comment comment, int flags) throws IOException;
 
 	/**
 	 * Persist multiple Comment-datasets.
 	 * 
 	 * @param comments
 	 *            the list of comments to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeComment(List<Comment> comments, int mode) throws IOException;
+	public void writeComment(List<Comment> comments, int flags)
+			throws IOException;
 
 	/**
 	 * Persist a single Tag-dataset.
 	 * 
 	 * @param tag
 	 *            the tag to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeTag(Tag tag, int mode) throws IOException;
+	public void writeTag(Tag tag, int flags) throws IOException;
 
 	/**
 	 * Persist multiple Tag-datasets.
 	 * 
 	 * @param tags
 	 *            the list of tags to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeTag(List<Tag> tags, int mode) throws IOException;
+	public void writeTag(List<Tag> tags, int flags) throws IOException;
 
 	/**
 	 * Persist a single Notification-dataset.
 	 * 
 	 * @param notification
 	 *            the notification to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public Long writeNotification(Notification notification, int mode) throws IOException;
+	public Long writeNotification(Notification notification, int flags)
+			throws IOException;
 
 	/**
 	 * Persist multiple Notification-datasets.
 	 * 
 	 * @param notifications
 	 *            the list of notifications to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeNotification(List<Notification> notifications, int mode) throws IOException;
+	public void writeNotification(List<Notification> notifications, int flags)
+			throws IOException;
 
 	/**
 	 * Persist a single Code-dataset.
 	 * 
 	 * @param code
 	 *            the code to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public Long writeCode(Code code, int mode) throws IOException;
+	public Long writeCode(Code code, int flags) throws IOException;
 
 	/**
 	 * Persist multiple Code-datasets.
 	 * 
 	 * @param codes
 	 *            the list of code fragments to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeCode(List<Code> codes, int mode) throws IOException;
+	public void writeCode(List<Code> codes, int flags) throws IOException;
 
 	/**
 	 * Persist a single Category-dataset.
 	 * 
 	 * @param category
 	 *            the category to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public Long writeCategory(Category category, int mode) throws IOException;
+	public Long writeCategory(Category category, int flags) throws IOException;
 
 	/**
 	 * Persist multiple Category-datasets.
 	 * 
 	 * @param categories
 	 *            the list of categories to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeCategory(List<Category> categories, int mode) throws IOException;
+	public void writeCategory(List<Category> categories, int flags)
+			throws IOException;
 
 	/**
 	 * Persist a language.
 	 * 
 	 * @param language
 	 *            the language to write
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeLanguage(String language, int mode) throws IOException;
+	public void writeLanguage(String language, int flags) throws IOException;
 
 	/**
 	 * Persist a rating. This operation updates an existing rating if the user
 	 * has rated already for the given snippet. This operation will be rejected
-	 * in {@link IPersistence#DB_NEW_ONLY} mode if an update on an existing
+	 * in {@link IPersistence#DB_NEW_ONLY} flag if an update on an existing
 	 * rating should be performed.
 	 * 
 	 * @param rating
@@ -312,36 +320,38 @@ public interface IPersistence {
 	 *            the snippet the rating belongs to
 	 * @param user
 	 *            the user who rated
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeRating(Integer rating, Snippet snippet, User user, int mode) throws IOException;
+	public void writeRating(Integer rating, Snippet snippet, User user,
+			int flags) throws IOException;
 
 	/**
 	 * Remove a rating. This operation updates an existing rating to '0' in
-	 * {@link IPersistence#DB_NO_DELETE} mode which is currently the default
-	 * behavior. In {@link IPersistence#DB_FORCE_DELETE} mode the given database
+	 * {@link IPersistence#DB_NO_DELETE} flag which is currently the default
+	 * behavior. In {@link IPersistence#DB_FORCE_DELETE} flag the given database
 	 * entry is deleted.
 	 * 
 	 * @param user
 	 *            the user who rated
 	 * @param snippet
 	 *            the snippet to rate for
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void unRate(User user, Snippet snippet, int mode) throws IOException;
+	public void unRate(User user, Snippet snippet, int flags)
+			throws IOException;
 
 	/**
 	 * Persist a vote. This operation updates an existing vote if the user has
 	 * voted already for the given comment. This operation will be rejected in
-	 * {@link IPersistence#DB_NEW_ONLY} mode if an update on an existing vote
+	 * {@link IPersistence#DB_NEW_ONLY} flag if an update on an existing vote
 	 * should be performed.
 	 * 
 	 * @param vote
@@ -351,70 +361,74 @@ public interface IPersistence {
 	 *            the comment to vote for
 	 * @param user
 	 *            the user who voted
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeVote(Integer vote, Comment comment, User user, int mode) throws IOException;
+	public void writeVote(Integer vote, Comment comment, User user, int flags)
+			throws IOException;
 
 	/**
 	 * Persist a positive vote. This operation updates an existing vote if the
 	 * user has voted already for the given comment. This operation will be
-	 * rejected in {@link IPersistence#DB_NEW_ONLY} mode if an update on an
+	 * rejected in {@link IPersistence#DB_NEW_ONLY} flag if an update on an
 	 * existing vote should be performed.
 	 * 
 	 * @param user
 	 *            the user who voted
 	 * @param comment
 	 *            the comment to vote for
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the actual value of {@code Comment.vote_sum}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void votePositive(User user, Comment comment, int mode) throws IOException;
+	public void votePositive(User user, Comment comment, int flags)
+			throws IOException;
 
 	/**
 	 * Persist a negative vote. This operation updates an existing vote if the
 	 * user has voted already for the given comment. This operation will be
-	 * rejected in {@link IPersistence#DB_NEW_ONLY} mode if an update on an
+	 * rejected in {@link IPersistence#DB_NEW_ONLY} flag if an update on an
 	 * existing vote should be performed.
 	 * 
 	 * @param user
 	 *            the user who voted
 	 * @param comment
 	 *            the comment to vote for
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void voteNegative(User user, Comment comment, int mode) throws IOException;
+	public void voteNegative(User user, Comment comment, int flags)
+			throws IOException;
 
 	/**
 	 * Remove a vote. This operation updates an existing vote to 'none' in
-	 * {@link IPersistence#DB_NO_DELETE} mode which is currently the default
-	 * behavior. In {@link IPersistence#DB_FORCE_DELETE} mode the given database
+	 * {@link IPersistence#DB_NO_DELETE} flag which is currently the default
+	 * behavior. In {@link IPersistence#DB_FORCE_DELETE} flag the given database
 	 * entry is deleted.
 	 * 
 	 * @param user
 	 *            the user who voted
 	 * @param comment
 	 *            the comment to vote for
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void unVote(User user, Comment comment, int mode) throws IOException;
+	public void unVote(User user, Comment comment, int flags)
+			throws IOException;
 
 	/**
 	 * Sets the favourite-state of the snippet.
@@ -423,14 +437,15 @@ public interface IPersistence {
 	 *            the snippet to change state
 	 * @param user
 	 *            the owner of the favorite list
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return true if the state has changed
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void addFavourite(Snippet snippet, User user, int mode) throws IOException;
+	public void addFavourite(Snippet snippet, User user, int flags)
+			throws IOException;
 
 	/**
 	 * Clears the favourite-state of the snippet.
@@ -439,14 +454,15 @@ public interface IPersistence {
 	 *            the snippet to change state
 	 * @param user
 	 *            the owner of the favorite list
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
 	 * @return true if the state has changed
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeFavourite(Snippet snippet, User user, int mode) throws IOException;
+	public void removeFavourite(Snippet snippet, User user, int flags)
+			throws IOException;
 
 	/**
 	 * remove the User from the database
@@ -454,15 +470,15 @@ public interface IPersistence {
 	 * Due to database constraints, the Password-, Favourite- and
 	 * Notification-entries are removed also.
 	 * 
-	 * @param nickname
-	 *            the user's nickname as key of the object to remove
-	 * @param mode
+	 * @param user
+	 *            the user to remove
+	 * @param flags
 	 *            the constraints for the write access. The default is
 	 *            {@link IPersistence#DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeUser(User user, int mode) throws IOException;
+	public void removeUser(User user, int flags) throws IOException;
 
 	/**
 	 * remove the Snippet from the database
@@ -470,69 +486,70 @@ public interface IPersistence {
 	 * Due to database constraints, all Comment-, Code-, Rating- and
 	 * Vote-entries are removed also.
 	 * 
-	 * @param snippetId
-	 *            the id of the object to remove
-	 * @param mode
+	 * @param snippet
+	 *            the object to remove
+	 * @param flags
 	 *            the constraints for the write access. The default is
 	 *            {@link IPersistence#DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeSnippet(Snippet snippet, int mode) throws IOException;
+	public void removeSnippet(Snippet snippet, int flags) throws IOException;
 
 	/**
 	 * remove the Comment from the database
 	 * <p>
 	 * Due to database constraints, all Vote-entrys are removed also.
 	 * 
-	 * @param commentId
-	 *            the id of the object to remove
-	 * @param mode
+	 * @param comment
+	 *            the object to remove
+	 * @param flags
 	 *            the constraints for the write access. The default is
 	 *            {@link IPersistence#DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeComment(Comment comment, int mode) throws IOException;
+	public void removeComment(Comment comment, int flags) throws IOException;
 
 	/**
 	 * remove the Tag from the database
 	 * 
 	 * @param tag
 	 *            the tag to remove
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. The default is
 	 *            {@link IPersistence#DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeTag(Tag tag, int mode) throws IOException;
+	public void removeTag(Tag tag, int flags) throws IOException;
 
 	/**
 	 * remove the Notification from the database
 	 * 
-	 * @param notificationId
-	 *            the id of the object to remove
-	 * @param mode
+	 * @param notification
+	 *            the object to remove
+	 * @param flags
 	 *            the constraints for the write access. The default is
 	 *            {@link IPersistence#DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeNotification(Notification notification, int mode) throws IOException;
+	public void removeNotification(Notification notification, int flags)
+			throws IOException;
 
 	/**
 	 * remove the Code from the database
 	 * 
-	 * @param codeId
-	 *            the id of the object to remove
-	 * @param mode
+	 * @param code
+	 *            the object to remove
+	 * @param flags
 	 *            the constraints for the write access. The default is
 	 *            {@link IPersistence#DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeCode(Code code, int mode) throws IOException;
+	public void removeCode(Code code, int flags) throws IOException;
 
 	/**
 	 * remove the Category from the database
@@ -542,15 +559,15 @@ public interface IPersistence {
 	 * An attempt to delete a {@code Category} entry used by a {@link Snippet}
 	 * is restricted by the database constraints.
 	 * 
-	 * @param categoryId
-	 *            the id of the object to remove
-	 * @param mode
+	 * @param category
+	 *            the object to remove
+	 * @param flags
 	 *            the constraints for the write access. The default is
 	 *            {@link IPersistence#DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeCategory(Category category, int mode) throws IOException;
+	public void removeCategory(Category category, int flags) throws IOException;
 
 	/**
 	 * remove the Language from the database
@@ -560,13 +577,13 @@ public interface IPersistence {
 	 * 
 	 * @param language
 	 *            the language to remove
-	 * @param mode
+	 * @param flags
 	 *            the constraints for the write access. The default is
 	 *            {@link IPersistence#DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void removeLanguage(String language, int mode) throws IOException;
+	public void removeLanguage(String language, int flags) throws IOException;
 
 	/**
 	 * get a user by his nickname
@@ -603,7 +620,8 @@ public interface IPersistence {
 	 *             If this happens, use {@link #verifyPassword(User, String)}
 	 *             instant, that has to be implemented
 	 */
-	public String getPassword(User user) throws IOException, UnsupportedOperationException;
+	public String getPassword(User user) throws IOException,
+			UnsupportedOperationException;
 
 	/**
 	 * verifies the password of the given user
@@ -614,7 +632,8 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public boolean verifyPassword(User user, String password) throws IOException;
+	public boolean verifyPassword(User user, String password)
+			throws IOException;
 
 	/**
 	 * find all users with matching names
@@ -700,7 +719,8 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public List<Snippet> getSnippets(Category category, int start, int count) throws IOException;
+	public List<Snippet> getSnippets(Category category, Integer start,
+			Integer count) throws IOException;
 
 	/**
 	 * get the comment by it's identifier
@@ -737,11 +757,17 @@ public interface IPersistence {
 	/**
 	 * get all tags
 	 * 
+	 * @param start
+	 *            the starting index of the results set, null or 0 for start at
+	 *            the first index
+	 * @param count
+	 *            the number of entries, null if no upper limit is wanted
 	 * @return a list of all tags
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public List<Tag> getAllTags(int start, int count) throws IOException;
+	public List<Tag> getAllTags(Integer start, Integer count)
+			throws IOException;
 
 	/**
 	 * get all notifications belonging to the given user
@@ -755,7 +781,8 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public List<Notification> getNotifications(User user, boolean unreadOnly) throws IOException;
+	public List<Notification> getNotifications(User user, boolean unreadOnly)
+			throws IOException;
 
 	/**
 	 * get all code fragments of a given snippet
@@ -823,7 +850,8 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public List<Category> getSubcategories(Category category) throws IOException;
+	public List<Category> getSubcategories(Category category)
+			throws IOException;
 
 	/**
 	 * get all available programming-languages
@@ -842,7 +870,8 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public List<Pair<User, Integer>> getRatings(Snippet snippet) throws IOException;
+	public List<Pair<User, Integer>> getRatings(Snippet snippet)
+			throws IOException;
 
 	/**
 	 * get the average rating belonging to the given snippet
@@ -892,7 +921,8 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public List<Snippet> search(String searchString, int start, int count) throws IOException;
+	public List<Snippet> search(String searchString, Integer start,
+			Integer count) throws IOException;
 
 	/**
 	 * get the number of users which are currently in the database
