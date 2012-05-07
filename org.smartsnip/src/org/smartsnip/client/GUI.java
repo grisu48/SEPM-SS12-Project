@@ -5,6 +5,7 @@ package org.smartsnip.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -102,9 +103,9 @@ public class GUI {
 	
 	
 	public void showSnipPage() {
-		SnipArea mySnipArea = new SnipArea(new XSnippet("owner", 123, "description", new ArrayList<String>(), new ArrayList<Integer>(), "code",
-				"codeHTML", "language", "license", 3));
-		CommentArea myCommentArea = new CommentArea();
+		SnipArea mySnipArea = new SnipArea(new XSnippet("owner", 123, "description", new ArrayList<String>(), new ArrayList<XComment>(),"code", "codeHTML", "language", "license", 4));
+		
+		CommentArea myCommentArea = new CommentArea(new XSnippet("owner", 123, "description", new ArrayList<String>(), new ArrayList<XComment>(),"code", "codeHTML", "language", "license", 4));
 		dataPanel.add(mySnipArea);
 		dataPanel.add(myCommentArea);
 		

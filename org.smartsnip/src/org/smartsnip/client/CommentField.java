@@ -1,6 +1,7 @@
 package org.smartsnip.client;
 
 import org.smartsnip.shared.IComment;
+import org.smartsnip.shared.XComment;
 
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -11,10 +12,10 @@ public class CommentField extends Composite {
 	private HorizontalPanel horPanel;
 	private HTMLPanel commentText;
 	
-	public CommentField(String comment) {
+	public CommentField(XComment myComment) {
 		
 		horPanel = new HorizontalPanel();
-		commentText = new HTMLPanel(comment);
+		commentText = new HTMLPanel(myComment.message);
 		horPanel.add(commentText);
 		
 		

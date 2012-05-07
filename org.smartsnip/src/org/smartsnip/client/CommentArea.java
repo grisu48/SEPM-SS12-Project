@@ -1,8 +1,11 @@
 package org.smartsnip.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.smartsnip.shared.IComment;
+import org.smartsnip.shared.XComment;
+import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -18,12 +21,15 @@ public class CommentArea extends Composite {
 	private Button send;
 	
 	
-	public CommentArea() {
+	public CommentArea(XSnippet mySnippet) {
 		
 		vertPanel = new VerticalPanel();
 		horPanel = new HorizontalPanel();
-		vertPanel.add(new CommentField("Test1"));
-		vertPanel.add(new CommentField("Test2"));
+		
+		for (XComment i: mySnippet.comments) {
+			vertPanel.add(new CommentField(i));
+		}
+		
 		myComment = new TextArea();
 		send = new Button("Send");
 		horPanel.add(myComment);
