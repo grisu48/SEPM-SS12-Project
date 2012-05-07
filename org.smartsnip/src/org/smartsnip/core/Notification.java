@@ -24,6 +24,23 @@ public class Notification {
 	private String source;
 
 	/**
+	 * @param owner
+	 * @param message
+	 * @param read
+	 * @param time
+	 * @param source
+	 */
+	Notification(User owner, String message, boolean read, String time,
+			String source) {
+		super();
+		this.owner = owner;
+		this.message = message;
+		this.read = read;
+		this.time = time;
+		this.source = source;
+	}
+
+	/**
 	 * @return the owner of the notification
 	 */
 	public User getOwner() {

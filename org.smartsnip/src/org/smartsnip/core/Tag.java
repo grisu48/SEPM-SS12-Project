@@ -14,7 +14,7 @@ public class Tag {
 
 	public final String name;
 
-	private Tag(String name) {
+	Tag(String name) {
 		if (name.length() == 0)
 			throw new IllegalArgumentException("Tag name cannot be empty");
 		this.name = name;

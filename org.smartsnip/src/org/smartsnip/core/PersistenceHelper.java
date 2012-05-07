@@ -28,18 +28,16 @@ public class PersistenceHelper {
 	 *      java.lang.String, org.smartsnip.core.Category, java.util.List,
 	 *      java.util.List, org.smartsnip.core.Code, java.lang.String, int)
 	 */
-	protected Snippet createSnippet(User owner, String name, String description, Category category, List<Tag> tags,
+	protected Snippet createSnippet(Long id, User owner, String name, String description, Category category, List<Tag> tags,
 			List<Comment> comments, Code code, String license, int viewcount) {
-		// TODO hash has to set here
-		long hash = 0;
-		return new Snippet(owner, name, description, hash, code, category, license, tags, comments, viewcount);
+		return new Snippet(owner, name, description, id, code, category, license, tags, comments, viewcount);
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistenceFactory#createTag(java.lang.String)
 	 */
 	protected Tag createTag(String tag) {
-		return Tag.createTag(tag);
+		return new Tag(tag);
 	}
 
 	/**
@@ -66,9 +64,7 @@ public class PersistenceHelper {
 	 * @see org.smartsnip.persistence.IPersistenceFactory#createCode(java.lang.String,
 	 *      java.lang.String, org.smartsnip.core.Snippet, int)
 	 */
-	protected Code createCode(String code, String language, Snippet snippet, int version) {
-		// TODO Implement id
-		long id = 0;
+	protected Code createCode(Long id, String code, String language, Snippet snippet, int version) {
 		Code result = Code.createCodeDB(code, language, snippet, id);
 		// TODO add unimplemented method version
 		return result;
