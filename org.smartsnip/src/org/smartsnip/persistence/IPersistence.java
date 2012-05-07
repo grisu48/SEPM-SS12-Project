@@ -876,7 +876,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public Long getVote(User user, Comment comment) throws IOException;
+	public Integer getVote(User user, Comment comment) throws IOException;
 
 	/**
 	 * search for the arguments of the given search-string.
