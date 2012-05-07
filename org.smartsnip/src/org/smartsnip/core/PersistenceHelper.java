@@ -44,9 +44,8 @@ public class PersistenceHelper {
 	 * @see org.smartsnip.persistence.IPersistenceFactory#createNotification(java.lang.String,
 	 *      java.lang.Boolean, java.lang.String, java.lang.String)
 	 */
-	protected Notification createNotification(String message, Boolean read, String time, String source) {
-		// TODO getters missing in Notification class
-		return null;
+	protected Notification createNotification(Long id, User owner, String message, Boolean read, String time, String source, Snippet target) {
+		return new Notification(id, owner, message, read, time, source, target);
 	}
 
 	/**
@@ -56,8 +55,7 @@ public class PersistenceHelper {
 	 */
 	protected Comment createComment(User owner, Snippet snippet, String message, long id, Date time, int posVotes,
 			int negVotes) {
-		Comment result = new Comment(owner, snippet, message, id, time, posVotes, negVotes);
-		return result;
+		return new Comment(owner, snippet, message, id, time, posVotes, negVotes);
 	}
 
 	/**
@@ -65,17 +63,30 @@ public class PersistenceHelper {
 	 *      java.lang.String, org.smartsnip.core.Snippet, int)
 	 */
 	protected Code createCode(Long id, String code, String language, Snippet snippet, int version) {
-		Code result = Code.createCodeDB(code, language, snippet, id);
-		// TODO add unimplemented method version
-		return result;
+		return Code.createCodeDB(code, language, snippet, id, version);
 	}
 
+	/**
+	 * 
+	 * @param username
+	 * @param realName
+	 * @param email
+	 * @param state
+	 * @param favourites
+	 * @return
+	 */
 	protected User createUser(String username, String realName, String email, User.UserState state,
 			List<Snippet> favourites) {
-		User result = new User(username, realName, email, state, favourites);
-		return result;
+		return new User(username, realName, email, state, favourites);
 	}
 
+	/**
+	 * Factory method for the persistence layer
+	 * @param name
+	 * @param description
+	 * @param parent
+	 * @return
+	 */
 	protected Category createCategory(String name, String description, Category parent) {
 		return new Category(name, description, parent);
 	}
