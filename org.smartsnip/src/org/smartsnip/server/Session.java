@@ -654,9 +654,7 @@ public class Session {
 			return false;
 		Session session = (Session) obj;
 
-		if (!session.cookie.equals(this.cookie))
-			return false;
-		return true;
+		return session.cookie.equals(this.cookie);
 	}
 
 	@Override
