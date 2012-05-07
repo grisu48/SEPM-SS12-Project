@@ -110,7 +110,7 @@ public class PersistenceFactory {
 		if (instance == null) {
 			switch (type) {
 			case PERSIST_BLACKHOLE:
-				result = new BlackholePersistenceImpl();
+				result = new BlackholePersistence();
 				persistenceType = PERSIST_BLACKHOLE;
 				break;
 			case PERSIST_MEMORY_VOLATILE:

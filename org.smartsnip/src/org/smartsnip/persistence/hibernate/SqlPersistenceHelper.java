@@ -1,8 +1,8 @@
 /**
- * File: BHPersistenceHelper.java
+ * File: SqlPersistenceHelper.java
  * Date: 07.05.2012
  */
-package org.smartsnip.persistence.blackhole;
+package org.smartsnip.persistence.hibernate;
 
 import java.util.Date;
 import java.util.List;
@@ -21,13 +21,12 @@ import org.smartsnip.core.User.UserState;
  * @author littlelion
  *
  */
-public class BHPersistenceHelper extends PersistenceHelper {
+public class SqlPersistenceHelper extends PersistenceHelper {
 
 	/**
-	 * Creates a helper object
 	 * @see PersistenceHelper
 	 */
-	BHPersistenceHelper() {
+	public SqlPersistenceHelper() {
 		super();
 		// Auto-generated constructor stub
 	}
@@ -104,4 +103,6 @@ public class BHPersistenceHelper extends PersistenceHelper {
 		// Auto-generated method stub
 		return super.createCategory(name, description, parent);
 	}
+
+	
 }
