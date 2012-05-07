@@ -535,7 +535,7 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Snippet> search(String searchString, int min, int max) throws IOException {
+	public List<Snippet> search(String searchString, Integer min, Integer max) throws IOException {
 		// TODO Implement me!
 		return null;
 	}
@@ -605,7 +605,7 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Snippet> getSnippets(Category category, int start, int count) throws IOException {
+	public List<Snippet> getSnippets(Category category, Integer start, Integer count) throws IOException {
 		if (category == null || start < 0 || count < 0)
 			return null;
 
@@ -747,7 +747,7 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Tag> getAllTags(int start, int count) throws IOException {
+	public List<Tag> getAllTags(Integer start, Integer count) throws IOException {
 		if (start < 0 || count < 0)
 			return null;
 		if (start > allTags.size())

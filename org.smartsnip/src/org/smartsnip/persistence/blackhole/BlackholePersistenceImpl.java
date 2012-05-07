@@ -54,7 +54,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeUser(User user, int mode) throws IOException {
+	public void writeUser(User user, int flags) throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -63,7 +63,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeUser(List<User> users, int mode) throws IOException {
+	public void writeUser(List<User> users, int flags) throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -72,7 +72,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      java.lang.String, int)
 	 */
 	@Override
-	public void writePassword(User user, String password, int mode)
+	public void writePassword(User user, String password, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -82,7 +82,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public Long writeSnippet(Snippet snippet, int mode) throws IOException {
+	public Long writeSnippet(Snippet snippet, int flags) throws IOException {
 		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
@@ -92,7 +92,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeSnippet(List<Snippet> snippets, int mode)
+	public void writeSnippet(List<Snippet> snippets, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -103,7 +103,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public Long writeComment(Comment comment, int mode) throws IOException {
+	public Long writeComment(Comment comment, int flags) throws IOException {
 		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
@@ -113,7 +113,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeComment(List<Comment> comments, int mode)
+	public void writeComment(List<Comment> comments, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -123,7 +123,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeTag(Tag tag, int mode) throws IOException {
+	public void writeTag(Tag tag, int flags) throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -131,7 +131,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 * @see org.smartsnip.persistence.IPersistence#writeTag(java.util.List, int)
 	 */
 	@Override
-	public void writeTag(List<Tag> tags, int mode) throws IOException {
+	public void writeTag(List<Tag> tags, int flags) throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -141,7 +141,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public Long writeNotification(Notification notification, int mode)
+	public Long writeNotification(Notification notification, int flags)
 			throws IOException {
 		return 1L;
 		// do nothing -> data vanish in the black hole!
@@ -152,7 +152,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeNotification(List<Notification> notifications, int mode)
+	public void writeNotification(List<Notification> notifications, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -163,7 +163,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public Long writeCode(Code code, int mode) throws IOException {
+	public Long writeCode(Code code, int flags) throws IOException {
 		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
@@ -173,7 +173,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeCode(List<Code> codes, int mode) throws IOException {
+	public void writeCode(List<Code> codes, int flags) throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -183,7 +183,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public Long writeCategory(Category category, int mode) throws IOException {
+	public Long writeCategory(Category category, int flags) throws IOException {
 		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
@@ -193,7 +193,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeCategory(List<Category> categories, int mode)
+	public void writeCategory(List<Category> categories, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -203,7 +203,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeLanguage(String language, int mode) throws IOException {
+	public void writeLanguage(String language, int flags) throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -212,7 +212,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Snippet, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
+	public void writeRating(Integer rating, Snippet snippet, User user, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -222,7 +222,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeVote(Integer vote, Comment comment, User user, int mode)
+	public void writeVote(Integer vote, Comment comment, User user, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -232,7 +232,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void votePositive(User user, Comment comment, int mode)
+	public void votePositive(User user, Comment comment, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -242,7 +242,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void voteNegative(User user, Comment comment, int mode)
+	public void voteNegative(User user, Comment comment, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -252,7 +252,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void unVote(User user, Comment comment, int mode) throws IOException {
+	public void unVote(User user, Comment comment, int flags) throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -261,7 +261,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void addFavourite(Snippet snippet, User user, int mode)
+	public void addFavourite(Snippet snippet, User user, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -271,7 +271,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void removeFavourite(Snippet snippet, User user, int mode)
+	public void removeFavourite(Snippet snippet, User user, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
@@ -593,42 +593,42 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 * @see org.smartsnip.persistence.IPersistence#unRate(org.smartsnip.core.User, org.smartsnip.core.Snippet, int)
 	 */
 	@Override
-	public void unRate(User user, Snippet snippet, int mode) throws IOException {
+	public void unRate(User user, Snippet snippet, int flags) throws IOException {
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#removeUser(org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void removeUser(User user, int mode) throws IOException {
+	public void removeUser(User user, int flags) throws IOException {
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#removeSnippet(org.smartsnip.core.Snippet, int)
 	 */
 	@Override
-	public void removeSnippet(Snippet snippet, int mode) throws IOException {
+	public void removeSnippet(Snippet snippet, int flags) throws IOException {
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#removeComment(org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void removeComment(Comment comment, int mode) throws IOException {
+	public void removeComment(Comment comment, int flags) throws IOException {
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#removeTag(org.smartsnip.core.Tag, int)
 	 */
 	@Override
-	public void removeTag(Tag tag, int mode) throws IOException {
+	public void removeTag(Tag tag, int flags) throws IOException {
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#removeNotification(org.smartsnip.core.Notification, int)
 	 */
 	@Override
-	public void removeNotification(Notification notification, int mode)
+	public void removeNotification(Notification notification, int flags)
 			throws IOException {
 	}
 
@@ -636,21 +636,21 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 * @see org.smartsnip.persistence.IPersistence#removeCode(org.smartsnip.core.Code, int)
 	 */
 	@Override
-	public void removeCode(Code code, int mode) throws IOException {
+	public void removeCode(Code code, int flags) throws IOException {
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#removeCategory(org.smartsnip.core.Category, int)
 	 */
 	@Override
-	public void removeCategory(Category category, int mode) throws IOException {
+	public void removeCategory(Category category, int flags) throws IOException {
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#removeLanguage(java.lang.String, int)
 	 */
 	@Override
-	public void removeLanguage(String language, int mode) throws IOException {
+	public void removeLanguage(String language, int flags) throws IOException {
 	}
 
 	/**
