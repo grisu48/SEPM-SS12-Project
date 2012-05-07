@@ -51,7 +51,7 @@ public class Persistence {
 
 		// TODO
 		if (memOnly) {
-			System.err.println("WARNING: Persistence is running in memory-only mode!");
+			System.out.println("WARNING: Persistence is running in memory-only mode!");
 
 			PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
 			instance = PersistenceFactory.getInstance();
