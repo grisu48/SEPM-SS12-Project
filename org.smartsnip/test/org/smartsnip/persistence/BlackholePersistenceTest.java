@@ -57,7 +57,7 @@ public class BlackholePersistenceTest {
 
 		// try to get an instance by direct call of the constructor - must fail
 		try {
-			secondInstance = new BlackholePersistenceImpl();
+			secondInstance = new BlackholePersistence();
 			fail("IllegalAccessException expected.");
 		} catch (IllegalAccessException iae) {
 			assertEquals(
@@ -70,11 +70,11 @@ public class BlackholePersistenceTest {
 		// try to get an instance by using the reflections mechanism - must fail
 		try {
 			@SuppressWarnings("rawtypes")
-			Constructor[] c = BlackholePersistenceImpl.class
+			Constructor[] c = BlackholePersistence.class
 					.getDeclaredConstructors();
 			c[0].setAccessible(true);
 
-			secondInstance = (BlackholePersistenceImpl) c[0].newInstance();
+			secondInstance = (BlackholePersistence) c[0].newInstance();
 			fail("Exception expected");
 		} catch (InvocationTargetException e) {
 			assertTrue(e.getCause() instanceof IllegalAccessException);
