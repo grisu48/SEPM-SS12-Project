@@ -158,7 +158,8 @@ public class Session {
 	 * session associated with the cookies, the method will create a new session
 	 * and return it.
 	 * 
-	 * If the cookie is null or empty, null will be returned.
+	 * If the cookie is null or empty, the default static guest session for a
+	 * cookie-blocking account is activated
 	 * 
 	 * @param cookie
 	 *            Used for session identification
@@ -166,7 +167,7 @@ public class Session {
 	 */
 	public static Session getSession(String cookie) {
 		if (cookie == null || cookie.length() == 0)
-			return null;
+			return getStaticGuestSession();
 
 		synchronized (storedSessions) {
 			Session result = storedSessions.get(cookie);
