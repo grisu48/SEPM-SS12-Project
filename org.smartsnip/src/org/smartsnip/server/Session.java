@@ -91,10 +91,13 @@ public class Session {
 	 * Session initialisation
 	 */
 	static {
-		try {
-			Persistence.initialize();
+		if (!Persistence.isInitialized()) {
+			try {
 
-		} catch (IllegalAccessException e) {
+				Persistence.initialize();
+
+			} catch (IllegalAccessException e) {
+			}
 		}
 	}
 
@@ -155,7 +158,8 @@ public class Session {
 	 * session associated with the cookies, the method will create a new session
 	 * and return it.
 	 * 
-	 * If the cookie is null or empty, null will be returned.
+	 * If the cookie is null or empty, the default static guest session for a
+	 * cookie-blocking account is activated
 	 * 
 	 * @param cookie
 	 *            Used for session identification
@@ -163,7 +167,7 @@ public class Session {
 	 */
 	public static Session getSession(String cookie) {
 		if (cookie == null || cookie.length() == 0)
-			return null;
+			return getStaticGuestSession();
 
 		synchronized (storedSessions) {
 			Session result = storedSessions.get(cookie);
@@ -476,8 +480,6 @@ public class Session {
 			session = createNewSession(sid);
 			// XXX: Maybe a new created session can have a reduced lifetime ...
 			storedSessions.put(sid, session);
-			System.out.println("New session with SID=\"" + sid + "\" created. (total=" + activeCount()
-					+ " active session");
 		}
 
 		return session;
@@ -644,19 +646,18 @@ public class Session {
 
 		// TODO Implement me
 	}
-	
 
-	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (! (obj instanceof Session)) return false;
-		Session session = (Session)obj;
-		
-		if (!session.cookie.equals(this.cookie)) return false;
-		return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Session))
+			return false;
+		Session session = (Session) obj;
+
+		return session.cookie.equals(this.cookie);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return cookie.hashCode();

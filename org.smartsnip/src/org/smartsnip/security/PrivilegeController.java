@@ -1,7 +1,10 @@
 package org.smartsnip.security;
 
-import org.smartsnip.core.*;
-import org.smartsnip.server.Session;
+import org.smartsnip.core.Category;
+import org.smartsnip.core.Comment;
+import org.smartsnip.core.Snippet;
+import org.smartsnip.core.User;
+import org.smartsnip.server.*;
 
 public class PrivilegeController {
 
