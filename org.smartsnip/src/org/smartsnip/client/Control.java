@@ -1,8 +1,12 @@
 package org.smartsnip.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.ISessionAsync;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Cookies;
@@ -94,7 +98,8 @@ public class Control implements EntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							myGUI.showTestPopup("No AccessFailure");
+							myGUI.showTestPopup("No AccessFailure"+ caught.getMessage());
+							
 						}
 
 						@Override
@@ -115,8 +120,26 @@ public class Control implements EntryPoint {
 	
 	public void register(String user, String mail, String pw){
 		
-		//Todo....
+		//Todo.... Welche Methode darf ich da aufrufen?
 }
+
+	public void search(String searchString) {
+		session.doSearch(searchString, new AsyncCallback<List<XSnippet>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				myGUI.showTestPopup("No AccessFailure"+ caught.getMessage());
+				
+			}
+
+			@Override
+			public void onSuccess(List<XSnippet> result) {
+				ArrayList<XSnippet> snipList = (ArrayList<XSnippet>) result;
+				
+			}
+		});
+		
+	}
 	
 	
 	

@@ -55,10 +55,13 @@ public class ISessionImpl extends SessionServlet implements ISession {
 
 	@Override
 	public boolean login(String username, String password) throws NoAccessException {
+		
+		
 		Session session = getSession();
 
 		if (session.isLoggedIn())
 			return false;
+		
 		session.login(username, password);
 		return true;
 	}
@@ -76,13 +79,13 @@ public class ISessionImpl extends SessionServlet implements ISession {
 	}
 
 	@Override
-	public List<XSnippet> doSearch(String searchString, List<String> tags, List<String> category) {
+	public List<XSnippet> doSearch(String searchString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<XSnippet> doSearch(String searchString, List<String> tags, List<String> category, int start, int count) {
+	public List<XSnippet> doSearch(String searchString, int start, int count) {
 		// TODO Auto-generated method stub
 		return null;
 	}

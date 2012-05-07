@@ -23,10 +23,10 @@ public interface ISessionAsync {
 
 	public void isLoggedIn(AsyncCallback<Boolean> callback);
 
-	void doSearch(String searchString, List<String> tags, List<String> category, int start, int count,
+	void doSearch(String searchString, int start, int count,
 			AsyncCallback<List<XSnippet>> callback);
 
-	void doSearch(String searchString, List<String> tags, List<String> category, AsyncCallback<List<XSnippet>> callback);
+	void doSearch(String searchString, AsyncCallback<List<XSnippet>> callback);
 
 	void getServerStatus(AsyncCallback<XServerStatus> callback);
 }

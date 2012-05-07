@@ -106,7 +106,7 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @return a List with max 100 snippets that match the search string, or
 	 *         null, if something went wrong
 	 */
-	public List<XSnippet> doSearch(String searchString, List<String> tags, List<String> category);
+	public List<XSnippet> doSearch(String searchString);
 
 	/**
 	 * Gets a subset of the total search results of doing a snippet search on
@@ -127,7 +127,7 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @return a List with max count snippets that match the search string, or
 	 *         null, if something went wrong
 	 */
-	public List<XSnippet> doSearch(String searchString, List<String> tags, List<String> category, int start, int count);
+	public List<XSnippet> doSearch(String searchString, int start, int count);
 
 	/**
 	 * @return Gets the server status object

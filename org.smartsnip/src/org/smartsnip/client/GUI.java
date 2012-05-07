@@ -18,7 +18,7 @@ public class GUI {
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
 	// Create searchPanel
-	HorizontalPanel searchPanel = new HorizontalPanel();
+	SimplePanel searchPanel = new SimplePanel();
 	// Create dataPanel
 	HorizontalPanel dataPanel = new HorizontalPanel();
 	// Create footerPanel
@@ -31,9 +31,9 @@ public class GUI {
 		
 		//Create the Page
 		createBasicPage();
-		//showSearchPage();
+		showSearchPage();
 		//showImpressum();
-		showSnipPage();
+		//showSnipPage();
 		//showPersonalPage();
 		//showLoginPopup();
 		//showRegisterPopup();
@@ -54,11 +54,8 @@ public class GUI {
 		
 		
 		// Fill searchPanel
-		SuggestBox searchSnippet = new SuggestBox();
-		Button searchButton = new Button("Search Snippet");
-		searchButton.addStyleName("searchButton");
-		searchPanel.add(searchSnippet);
-		searchPanel.add(searchButton);
+		SearchArea search = new SearchArea();
+		searchPanel.add(search);
 		
 		//Fill footerPanel
 		Footer footer = new Footer();
@@ -120,7 +117,6 @@ public class GUI {
 	}
 	
 	public void showLoginPopup() {
-		
 		
 		PopupPanel loginPanel = new PopupPanel(false);
 		loginPanel.setStyleName("Login");
