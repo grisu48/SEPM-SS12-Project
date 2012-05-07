@@ -689,9 +689,10 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public Snippet getSnippet(int hash) throws IOException {
-		long id = hash;
-		return allSnippets.get(id);
+	public Snippet getSnippet(Long hashid) throws IOException {
+		if (hashid == null)
+			return null;
+		return allSnippets.get(hashid);
 	}
 
 	@Override
