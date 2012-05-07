@@ -25,13 +25,13 @@ import sun.reflect.Reflection;
  */
 public class BlackholePersistenceImpl implements IPersistence {
 
-	private PersistenceHelper helper = new PersistenceHelper();
+	private BHPersistenceHelper helper = new BHPersistenceHelper();
 
 	private User staticUser1 = this.helper.createUser("nobody", "blabla",
 			"nobody@anonymus.org", User.UserState.validated, null);
 	private User staticUser2 = this.helper.createUser("bin_da", "asdfgh",
 			"bd@finger.net", User.UserState.validated, null);
-	private Code staticCode = this.helper.createCode(
+	private Code staticCode = this.helper.createCode(1L,
 			"/* There's nothing interesting to know.*/", "java", null, 0);
 
 	/**
@@ -98,7 +98,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @return 
+	 * @return
 	 * @see org.smartsnip.persistence.IPersistence#writeComment(org.smartsnip.core.Comment,
 	 *      int)
 	 */
@@ -136,14 +136,14 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @return 
+	 * @return
 	 * @see org.smartsnip.persistence.IPersistence#writeNotification(org.smartsnip.core.Notification,
 	 *      int)
 	 */
 	@Override
 	public Long writeNotification(Notification notification, int mode)
 			throws IOException {
-				return 1L;
+		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -158,7 +158,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @return 
+	 * @return
 	 * @see org.smartsnip.persistence.IPersistence#writeCode(org.smartsnip.core.Code,
 	 *      int)
 	 */
@@ -178,7 +178,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @return 
+	 * @return
 	 * @see org.smartsnip.persistence.IPersistence#writeCategory(org.smartsnip.core.Category,
 	 *      int)
 	 */
@@ -291,7 +291,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public User getUserByEmail(String email) throws IOException {
-		User result = this.helper.createUser("nobody", "some anonymous writer", email, User.UserState.validated, null);
+		User result = this.helper.createUser("nobody", "some anonymous writer",
+				email, User.UserState.validated, null);
 		return result;
 	}
 
@@ -334,13 +335,12 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public List<Snippet> getUserSnippets(User owner) throws IOException {
 		List<Snippet> snips = new ArrayList<Snippet>();
-		Snippet snip = this.helper
-				.createSnippet(owner, "The Header", "Some Content", this.helper
-						.createCategory("undefined", "Undefined Content", null),
-						new ArrayList<Tag>(), new ArrayList<Comment>(),
-						this.helper.createCode("/* There's nothing interesting to know.*/",
-								"java", null, 0),
-						"license free", 0);
+		Snippet snip = this.helper.createSnippet(1L, owner, "The Header",
+				"Some Content", this.helper.createCategory("undefined",
+						"Undefined Content", null), new ArrayList<Tag>(),
+				new ArrayList<Comment>(), this.helper.createCode(1L,
+						"/* There's nothing interesting to know.*/", "java",
+						null, 0), "license free", 0);
 		snips.add(snip);
 		return null;
 	}
@@ -374,8 +374,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int, int)
 	 */
 	@Override
-	public List<Snippet> getSnippets(Category category, int start, int count)
-			throws IOException {
+	public List<Snippet> getSnippets(Category category, Integer start,
+			Integer count) throws IOException {
 		return getSnippets(category);
 	}
 
@@ -386,9 +386,11 @@ public class BlackholePersistenceImpl implements IPersistence {
 	public List<Comment> getComments(Snippet snippet) throws IOException {
 		List<Comment> list = new ArrayList<Comment>();
 		Comment comm1 = this.helper.createComment(staticUser1, snippet,
-				"commented by nobody", 1L, new Date(System.currentTimeMillis() - 86400000), 5, 3);
+				"commented by nobody", 1L, new Date(
+						System.currentTimeMillis() - 86400000), 5, 3);
 		Comment comm2 = this.helper.createComment(staticUser2, snippet,
-				"commented by bin_da", 2L, new Date(System.currentTimeMillis() - 3600000), 1, 0);
+				"commented by bin_da", 2L, new Date(
+						System.currentTimeMillis() - 3600000), 1, 0);
 		list.add(comm1);
 		list.add(comm2);
 		return list;
@@ -419,7 +421,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 * @see org.smartsnip.persistence.IPersistence#getAllTags()
 	 */
 	@Override
-	public List<Tag> getAllTags() throws IOException {
+	public List<Tag> getAllTags(Integer start, Integer count)
+			throws IOException {
 		List<Tag> list = getTags(null);
 		list.add(this.helper.createTag("merge"));
 		return list;
@@ -433,7 +436,9 @@ public class BlackholePersistenceImpl implements IPersistence {
 	public List<Notification> getNotifications(User user, boolean unreadOnly)
 			throws IOException {
 		List<Notification> list = new ArrayList<Notification>();
-		Notification not1 = this.helper.createNotification("Some obscure things happened.", false, "12. 3. 2012, 13.00", "unknown");
+		Notification not1 = this.helper.createNotification(1L, user,
+				"Some obscure things happened.", false, "12. 3. 2012, 13.00",
+				"unknown", null);
 		list.add(not1);
 		return list;
 	}
@@ -452,11 +457,11 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 * @see org.smartsnip.persistence.IPersistence#getAllCategories()
 	 */
 	@Override
-	public List<String> getAllCategories() throws IOException {
-		List<String> result = new ArrayList<String>();
-		result.add(getCategory("0").getName());
+	public List<Category> getAllCategories() throws IOException {
+		List<Category> result = new ArrayList<Category>();
+		result.add(getCategory("0"));
 		for (Category cat : getSubcategories(getCategory("0"))) {
-			result.add(cat.getName());
+			result.add(cat);
 		}
 		return result;
 	}
@@ -466,20 +471,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Category getCategory(String name) throws IOException {
-		return this.helper.createCategory("search", "Searching algorithms", null);
-	}
-
-	/**
-	 * @see org.smartsnip.persistence.IPersistence#getSubcategoryNames(org.smartsnip.core.Category)
-	 */
-	@Override
-	public List<String> getSubcategoryNames(Category category)
-			throws IOException {
-		List<String> result = new ArrayList<String>();
-		for (Category cat : getSubcategories(category)) {
-			result.add(cat.getName());
-		}
-		return result;
+		return this.helper.createCategory("search", "Searching algorithms",
+				null);
 	}
 
 	/**
@@ -495,7 +488,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Category getParentCategory(Category category) throws IOException {
-		return this.helper.createCategory("search", "Searching algorithms", null);
+		return this.helper.createCategory("search", "Searching algorithms",
+				null);
 	}
 
 	/**
@@ -558,8 +552,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public List<Snippet> search(String searchString, int min, int max)
-			throws IOException {
+	public List<Snippet> search(String searchString, Integer start,
+			Integer count) throws IOException {
 		return getUserSnippets(staticUser1);
 	}
 
@@ -595,82 +589,88 @@ public class BlackholePersistenceImpl implements IPersistence {
 		return 3;
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#unRate(org.smartsnip.core.User, org.smartsnip.core.Snippet, int)
+	 */
 	@Override
 	public void unRate(User user, Snippet snippet, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeUser(org.smartsnip.core.User, int)
+	 */
 	@Override
-	public void removeUser(String nickname, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void removeUser(User user, int mode) throws IOException {
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeSnippet(org.smartsnip.core.Snippet, int)
+	 */
 	@Override
-	public void removeSnippet(Long snippetId, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void removeSnippet(Snippet snippet, int mode) throws IOException {
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeComment(org.smartsnip.core.Comment, int)
+	 */
 	@Override
-	public void removeComment(Long commentId, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void removeComment(Comment comment, int mode) throws IOException {
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeTag(org.smartsnip.core.Tag, int)
+	 */
 	@Override
 	public void removeTag(Tag tag, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeNotification(org.smartsnip.core.Notification, int)
+	 */
 	@Override
-	public void removeNotification(Long notificationId, int mode)
+	public void removeNotification(Notification notification, int mode)
 			throws IOException {
-		// TODO Auto-generated method stub
-		
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeCode(org.smartsnip.core.Code, int)
+	 */
 	@Override
-	public void removeReadNotifications(User user, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void removeCode(Code code, int mode) throws IOException {
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeCategory(org.smartsnip.core.Category, int)
+	 */
 	@Override
-	public void removeCode(Long codeId, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
+	public void removeCategory(Category category, int mode) throws IOException {
 	}
 
-	@Override
-	public void removeCategory(Long categoryId, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeLanguage(java.lang.String, int)
+	 */
 	@Override
 	public void removeLanguage(String language, int mode) throws IOException {
-		// TODO Auto-generated method stub
-		
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getVote(org.smartsnip.core.User, org.smartsnip.core.Comment)
+	 */
 	@Override
 	public Integer getVote(User user, Comment comment) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return null; // no vote exists
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getSnippet(java.lang.Long)
+	 */
 	@Override
-	public int getTagFrequency(Tag tag) throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Snippet getSnippet(int hash) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public Snippet getSnippet(Long id) throws IOException {
+		return this.helper.createSnippet(id, this.staticUser1, "The Header",
+				"Some Content", this.helper.createCategory("undefined",
+						"Undefined Content", null), new ArrayList<Tag>(),
+				new ArrayList<Comment>(), this.helper.createCode(1L,
+						"/* There's nothing interesting to know.*/", "java",
+						null, 0), "license free", 0);
 	}
 }
