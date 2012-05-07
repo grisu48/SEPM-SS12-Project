@@ -125,23 +125,14 @@ public class GUI {
 		PopupPanel loginPanel = new PopupPanel(false);
 		loginPanel.setStyleName("Login");
 	    loginPanel.setTitle("Login");
-	    VerticalPanel vertPanel = new VerticalPanel();
-	    Label lname = new Label("Username");
-	    TextBox name = new TextBox();
-	    Label lpw= new Label("Password");
-	    PasswordTextBox pw = new PasswordTextBox();
-	    Button login = new Button("Login");
-	    vertPanel.add(lname);
-	    vertPanel.add(name);
-	    vertPanel.add(lpw);
-	    vertPanel.add(pw);
-	    vertPanel.add(login);
-	    loginPanel.setWidget(vertPanel);
+	    Login login = new Login();
+	    loginPanel.setWidget(login);
 	    loginPanel.setGlassEnabled(true);
 	    loginPanel.setPopupPosition(110,100);
 	    loginPanel.setWidth("340px");
 	    loginPanel.show();
 	}
+	
 	
 public void showTestPopup(String test) {
 		
@@ -159,31 +150,12 @@ public void showTestPopup(String test) {
 	
 	
 	public void showRegisterPopup() {
+		
 		PopupPanel registerPanel = new PopupPanel(false);
 		registerPanel.setStyleName("Register");
 		registerPanel.setTitle("Register");
-	    VerticalPanel vertPanel = new VerticalPanel();
-	    Label lname = new Label("Username");
-	    TextBox name = new TextBox();
-	    name.setText("myusername");
-	    TextBox mail = new TextBox();
-	    Label lmail= new Label("E-Mail");
-	    mail.setText("user@provider.com");
-	    Label lpw1= new Label("Create Password");
-	    PasswordTextBox pw1 = new PasswordTextBox();
-	    Label lpw2= new Label("Confirm Password");
-	    PasswordTextBox pw2 = new PasswordTextBox();
-	    Button login = new Button("Register");
-	    vertPanel.add(lname);
-	    vertPanel.add(name);
-	    vertPanel.add(lmail);
-	    vertPanel.add(mail);
-	    vertPanel.add(lpw1);
-	    vertPanel.add(pw1);
-	    vertPanel.add(lpw2);
-	    vertPanel.add(pw2);
-	    vertPanel.add(login);
-	    registerPanel.setWidget(vertPanel);
+		Register register = new Register();
+	    registerPanel.setWidget(register);
 	    registerPanel.setGlassEnabled(true);
 	    registerPanel.setPopupPosition(110,100);
 	    registerPanel.setWidth("340px");

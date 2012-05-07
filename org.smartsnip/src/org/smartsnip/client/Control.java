@@ -6,6 +6,9 @@ import org.smartsnip.shared.NoAccessException;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * The controller according to a MVC pattern.
@@ -82,7 +85,42 @@ public class Control implements EntryPoint {
 			break;	
 		default:	
 		}
-		
 	}
+
+	public void login(String user, String pw){
+	
+			try {
+				session.login(user, pw, new AsyncCallback<Boolean>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							myGUI.showTestPopup("No AccessFailure");
+						}
+
+						@Override
+						public void onSuccess(Boolean result) {
+							if (result) {
+								myGUI.showTestPopup("Login yes");
+							} else
+							{
+								myGUI.showTestPopup("No AccessBooleanNO");
+							}
+						}
+					});
+			} catch (NoAccessException e) {
+				myGUI.showTestPopup("No AccessException");
+				e.printStackTrace();
+			}
+	}
+	
+	public void register(String user, String mail, String pw){
+		
+		//Todo....
+}
+	
+	
+	
+	
+	
 
 }
