@@ -91,10 +91,13 @@ public class Session {
 	 * Session initialisation
 	 */
 	static {
-		try {
-			Persistence.initialize();
+		if (!Persistence.isInitialized()) {
+			try {
 
-		} catch (IllegalAccessException e) {
+				Persistence.initialize();
+
+			} catch (IllegalAccessException e) {
+			}
 		}
 	}
 
@@ -476,8 +479,6 @@ public class Session {
 			session = createNewSession(sid);
 			// XXX: Maybe a new created session can have a reduced lifetime ...
 			storedSessions.put(sid, session);
-			System.out.println("New session with SID=\"" + sid + "\" created. (total=" + activeCount()
-					+ " active session");
 		}
 
 		return session;
@@ -644,19 +645,20 @@ public class Session {
 
 		// TODO Implement me
 	}
-	
 
-	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) return false;
-		if (! (obj instanceof Session)) return false;
-		Session session = (Session)obj;
-		
-		if (!session.cookie.equals(this.cookie)) return false;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Session))
+			return false;
+		Session session = (Session) obj;
+
+		if (!session.cookie.equals(this.cookie))
+			return false;
 		return true;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return cookie.hashCode();
