@@ -18,7 +18,7 @@ public class BlackholePersistenceTest {
 
 	/**
 	 * Test method for
-	 * {@link org.smartsnip.persistence.BlackholePersistence#BlackholePersistence()}
+	 * {@link org.smartsnip.persistence.BlackholePersistenceImpl#BlackholePersistence()}
 	 * .
 	 * <p>
 	 * This is an example test to the safety of the used singleton pattern. Due
@@ -57,7 +57,7 @@ public class BlackholePersistenceTest {
 
 		// try to get an instance by direct call of the constructor - must fail
 		try {
-			secondInstance = new BlackholePersistence();
+			secondInstance = new BlackholePersistenceImpl();
 			fail("IllegalAccessException expected.");
 		} catch (IllegalAccessException iae) {
 			assertEquals(
@@ -70,11 +70,11 @@ public class BlackholePersistenceTest {
 		// try to get an instance by using the reflections mechanism - must fail
 		try {
 			@SuppressWarnings("rawtypes")
-			Constructor[] c = BlackholePersistence.class
+			Constructor[] c = BlackholePersistenceImpl.class
 					.getDeclaredConstructors();
 			c[0].setAccessible(true);
 
-			secondInstance = (BlackholePersistence) c[0].newInstance();
+			secondInstance = (BlackholePersistenceImpl) c[0].newInstance();
 			fail("Exception expected");
 		} catch (InvocationTargetException e) {
 			assertTrue(e.getCause() instanceof IllegalAccessException);
