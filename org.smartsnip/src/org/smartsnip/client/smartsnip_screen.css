@@ -208,11 +208,7 @@ header .gwt-Label {
 
 
 
-.tabArea {
-	width: 800px;
-	margin: 10px;
-	padding: 0px;
-}
+
 
 .snipArea {
 	width: 800px;
@@ -224,6 +220,16 @@ header .gwt-Label {
 	padding: 20px;
 	margin: 20px;
 	width: 300px;
+	background-color:#e6e6e6;
+	border-style:solid;
+	border-color:#a9c34a;
+	border-width:1px;
+}
+
+.leftPanel {
+	padding: 20px;
+	margin: 20px;
+	width: 600px;
 	background-color:#e6e6e6;
 	border-style:solid;
 	border-color:#a9c34a;

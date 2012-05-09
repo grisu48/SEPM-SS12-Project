@@ -1,7 +1,10 @@
 package org.smartsnip.client;
 
 
+import java.util.List;
+
 import org.smartsnip.shared.ISnippet;
+import org.smartsnip.shared.XSnippet;
 
 
 import com.google.gwt.user.client.ui.Button;
@@ -15,13 +18,14 @@ public class CatArea extends Composite {
 	private FlowPanel myPanel;
 	private Label title;
 	
-	public CatArea() {
+	public CatArea(List<XSnippet> mySnipList) {
 		myPanel = new FlowPanel();
 		title = new Label("Categories");
 		myPanel.add(title);
-		myPanel.add(new Button("Test1"));
-		myPanel.add(new Button("Test2"));
-		myPanel.add(new Button("Test3"));
+		
+		for (XSnippet i : mySnipList) {
+				myPanel.add(new Button(i.category.toString()));
+		}
 	
 		initWidget(myPanel);
 	    // Give the overall composite a style name.

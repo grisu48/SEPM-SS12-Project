@@ -3,8 +3,10 @@ package org.smartsnip.client;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.smartsnip.shared.XCategory;
 import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
@@ -13,7 +15,15 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.*;
 
+
+
+
 public class GUI {
+	
+	static final List<String> TESTTAGS = Arrays.asList("Tag1", "Tag2", "Tag3", "Tag4");
+	static final XCategory CAT = new XCategory("catname", "description", "parent", new ArrayList<String>());
+	static final XSnippet SNIPPET = new XSnippet("owner", 123,"title", "description", CAT, TESTTAGS, new ArrayList<XComment>(),"code", "codeHTML", "language", "license", 4);
+	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET);
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -80,15 +90,16 @@ public class GUI {
 	
 	public void showSearchPage() {
 		
-		ResultArea myTabArea = new ResultArea();
+		ResultArea myResultArea = new ResultArea();
+		myResultArea.setStyleName("leftPanel");
 		VerticalPanel rightPanel = new VerticalPanel();
 		rightPanel.setStyleName("rightPanel");
-		CatArea myCatArea = new CatArea();
-		TagArea myTagArea = new TagArea();
+		CatArea myCatArea = new CatArea(TESTLIST);
+		TagArea myTagArea = new TagArea(TESTLIST);
 		SortArea mySortArea = new SortArea();
 	
 		
-		dataPanel.add(myTabArea);
+		dataPanel.add(myResultArea);
 		dataPanel.add(rightPanel);
 		rightPanel.add(mySortArea);
 		rightPanel.add(myCatArea);
@@ -100,9 +111,9 @@ public class GUI {
 	
 	
 	public void showSnipPage() {
-		SnipArea mySnipArea = new SnipArea(new XSnippet("owner", 123, "description", new ArrayList<String>(), new ArrayList<XComment>(),"code", "codeHTML", "language", "license", 4));
+		SnipArea mySnipArea = new SnipArea(SNIPPET);
 		
-		CommentArea myCommentArea = new CommentArea(new XSnippet("owner", 123, "description", new ArrayList<String>(), new ArrayList<XComment>(),"code", "codeHTML", "language", "license", 4));
+		CommentArea myCommentArea = new CommentArea(SNIPPET);
 		dataPanel.add(mySnipArea);
 		dataPanel.add(myCommentArea);
 		

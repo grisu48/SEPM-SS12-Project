@@ -9,7 +9,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class XSnippet implements IsSerializable {
 	public final String owner;
 	public final long hash;
+	public final String title;
 	public final String description;
+	public final XCategory category;
 	public final List<String> tags;
 	public final List<XComment> comments;
 	public final String code;
@@ -18,11 +20,13 @@ public class XSnippet implements IsSerializable {
 	public final String license;
 	public final int viewcount;
 
-	public XSnippet(String owner, long hash, String description, List<String> tags, List<XComment> comments, String code,
+	public XSnippet(String owner, long hash, String title, String description, XCategory category, List<String> tags, List<XComment> comments, String code,
 			String codeHTML, String language, String license, int viewcount) {
 		this.owner = owner;
 		this.hash = hash;
+		this.title = title;
 		this.description = description;
+		this.category = category;
 		this.tags = tags;
 		this.comments = comments;
 		this.code = code;
