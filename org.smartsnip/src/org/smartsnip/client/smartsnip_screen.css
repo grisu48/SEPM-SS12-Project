@@ -171,30 +171,6 @@ header .gwt-Label {
 	margin:10px;
 }
 
-.gwt-TabPanel {
-	padding:5px;
-	margin:5px;
-	background-color:#4a3320;
-	color:white;
-}
-.gwt-TabPanelBottom {
-	background-color:#4a3320;
-	color:white;
-}
-
-.gwt-DecoratedTabBar {
-  background-color:#4a3320;
-  padding-top: 30px;
-}
-
-.gwt-TabBar {
-}
-
-.gwt-TabBar .gwt-TabBarItem {
-  border-collapse: collapse;
-  padding: 10px 15px 10px 15px;
-  background-color:#4a3320;
-}
 
  .popupContent {
 	border: 1px solid #4a3320;

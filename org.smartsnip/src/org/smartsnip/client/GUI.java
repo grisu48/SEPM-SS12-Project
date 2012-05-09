@@ -80,17 +80,17 @@ public class GUI {
 	
 	public void showSearchPage() {
 		
-		TabArea myTabArea = new TabArea();
+		ResultArea myTabArea = new ResultArea();
 		VerticalPanel rightPanel = new VerticalPanel();
 		rightPanel.setStyleName("rightPanel");
 		CatArea myCatArea = new CatArea();
 		TagArea myTagArea = new TagArea();
+		SortArea mySortArea = new SortArea();
 	
-		Button test1 = new Button("test");
-		Button test2 = new Button("test");
 		
 		dataPanel.add(myTabArea);
 		dataPanel.add(rightPanel);
+		rightPanel.add(mySortArea);
 		rightPanel.add(myCatArea);
 		rightPanel.add(myTagArea);
 	

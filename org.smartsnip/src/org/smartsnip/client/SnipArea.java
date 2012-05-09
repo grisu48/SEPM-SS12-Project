@@ -1,11 +1,10 @@
 package org.smartsnip.client;
 
-import org.smartsnip.shared.ISnippet;
+
 import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
