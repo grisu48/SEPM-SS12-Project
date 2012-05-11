@@ -12,39 +12,10 @@ public abstract class Code {
 	/** Owner snippet of the code object */
 	public final Snippet snippet;
 	/** Version of this code object, auto incrementing */
-	private int version;
+	private final int version;
 
 	/** Identifier of this code segment */
 	private long id = 0L;
-
-	/**
-	 * Exception that is used to express, that a given coding language is not
-	 * supported by the system.
-	 * 
-	 */
-	static class UnsupportedLanguageException extends IllegalArgumentException {
-
-		/**
-		 * Generated serialisation ID
-		 */
-		private static final long serialVersionUID = 3384542306263829999L;
-
-		UnsupportedLanguageException(String message) {
-			super(message);
-		}
-
-		UnsupportedLanguageException(Throwable cause) {
-			super(cause);
-		}
-
-		UnsupportedLanguageException(String message, Throwable cause) {
-			super(message, cause);
-		}
-
-		UnsupportedLanguageException() {
-			super();
-		}
-	}
 
 	/**
 	 * Constructor of a new code object
@@ -166,8 +137,7 @@ public abstract class Code {
 	 *             Thrown if the code or if the language is empty
 	 */
 	// TODO add Version
-	public static Code createCode(String code, String language, Snippet owner) throws UnsupportedLanguageException,
-			IOException {
+	public static Code createCode(String code, String language, Snippet owner) {
 		if (code == null || language == null)
 			throw new NullPointerException();
 		if (code.isEmpty())
@@ -185,8 +155,9 @@ public abstract class Code {
 			result = new CodeJava(code, owner, null, 0);
 		}
 
+		// Failback: CodeText
 		if (result == null)
-			throw new UnsupportedLanguageException("Language \"" + language + "\" is not supported");
+			result = new CodeText(code, language, owner, null, 0);
 
 		addToDB(result);
 		return result;
@@ -210,7 +181,8 @@ public abstract class Code {
 	 *            a new {@link UnsupportedLanguageException} is thrown.
 	 * @param owner
 	 *            The owner snippet of the code
-	 * @param id the identifier
+	 * @param id
+	 *            the identifier
 	 * @return The newly generated code object
 	 * @throws UnsupportedLanguageException
 	 *             Thrown if the given language is not supported
@@ -221,8 +193,7 @@ public abstract class Code {
 	 * @throws IllegalArgumentException
 	 *             Thrown if the code or if the language is empty
 	 */
-	public static Code createCodeDB(String code, String language, Snippet owner, long id, int version)
-			throws UnsupportedLanguageException {
+	public static Code createCodeDB(String code, String language, Snippet owner, long id, int version) {
 		if (code == null || language == null)
 			throw new NullPointerException();
 		if (code.isEmpty())
@@ -240,8 +211,9 @@ public abstract class Code {
 			result = new CodeJava(code, owner, id, version);
 		}
 
+		// Failback mode: Use CodeText
 		if (result == null)
-			throw new UnsupportedLanguageException("Language \"" + language + "\" is not supported");
+			result = new CodeText(code, language, owner, id, version);
 
 		/*
 		 * THIS METHOD IS CALLED FROM THE DB, DO NOT WRITE INTO THE DB!!
@@ -269,10 +241,16 @@ public abstract class Code {
 	/**
 	 * Adds
 	 */
-	protected static synchronized void addToDB(Code code) throws IOException {
+	protected static synchronized void addToDB(Code code) {
 		if (code == null)
 			return;
 
-		Persistence.instance.writeCode(code, IPersistence.DB_NEW_ONLY);
+		try {
+			Persistence.instance.writeCode(code, IPersistence.DB_NEW_ONLY);
+		} catch (IOException e) {
+			System.err.println("IOException writing out code object with id=" + code.getHashID() + ": "
+					+ e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 }
