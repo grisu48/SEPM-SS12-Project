@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.smartsnip.core.Code.UnsupportedLanguageException;
 import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
 /**
@@ -127,13 +127,9 @@ public class Snippet {
 	 *            of the new snippet. Must not be null
 	 * @throws IllegalArgumentException
 	 *             Thrown, if at least one of the arguments is null or empty
-	 * @throws IOException
-	 *             If occuring during creation of the code object
-	 * @throws UnsupportedLanguageException
-	 *             If the given lanugage is not supported
 	 */
 	private Snippet(User owner, String name, String description, Category category, String code, String language,
-			String license, List<Tag> tags) throws IOException {
+			String license, List<Tag> tags) {
 
 		if (owner == null)
 			throw new IllegalArgumentException("Owner of snippet cannot be null or empty");
@@ -594,11 +590,27 @@ public class Snippet {
 	 * @return
 	 */
 	synchronized public XSnippet toXSnippet() {
-		List<Integer> commentList = new ArrayList<Integer>();
-		// TODO Comment list with hash codes
+		List<XComment> commentList = getXComments();
 
-		return new XSnippet(owner.getUsername(), id, description, getStringTags(), commentList, code.getCode(),
-				code.getFormattedHTML(), code.getLanguage(), license, viewcount);
+		// TODO Comment list with hash codes
+		return new XSnippet(owner.getUsername(), id, this.getName(), description, this.getCategory().toXCategory(),
+				getStringTags(), commentList, code.getCode(), code.getFormattedHTML(), code.getLanguage(), license,
+				viewcount);
+	}
+
+	/**
+	 * Creates a list with the shared {@link XComment} objects
+	 * 
+	 * @return
+	 */
+	List<XComment> getXComments() {
+		List<Comment> comments = getComments();
+		List<XComment> result = new ArrayList<XComment>(comments.size());
+
+		for (Comment comment : comments)
+			result.add(comment.toXComment());
+
+		return result;
 	}
 
 	/**
