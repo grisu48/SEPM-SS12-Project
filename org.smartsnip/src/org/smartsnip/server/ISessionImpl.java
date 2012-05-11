@@ -55,13 +55,12 @@ public class ISessionImpl extends SessionServlet implements ISession {
 
 	@Override
 	public boolean login(String username, String password) throws NoAccessException {
-		
-		
+
 		Session session = getSession();
 
 		if (session.isLoggedIn())
 			return false;
-		
+
 		session.login(username, password);
 		return true;
 	}
@@ -90,4 +89,33 @@ public class ISessionImpl extends SessionServlet implements ISession {
 		return null;
 	}
 
+	@Override
+	public boolean registerNewUser(String username, String password, String email) throws NoAccessException {
+		if (username == null)
+			return false;
+		if (password == null || password.isEmpty())
+			return false;
+		if (email == null || email.isEmpty())
+			return false;
+
+		username = User.trimUsername(username);
+		if (username.isEmpty())
+			return false;
+
+		Session session = getSession();
+		if (!session.getPolicy().canRegister(session))
+			throw new NoAccessException();
+
+		if (User.exists(username))
+			return false;
+		try {
+			if (User.createNewUser(username, password, email) == null)
+				return false;
+
+			// Success
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
 }
