@@ -195,6 +195,8 @@ public class User {
 			throws IllegalArgumentException {
 		if (username.length() == 0)
 			throw new IllegalArgumentException("Username cannot be empty");
+		if (password.isEmpty())
+			throw new IllegalArgumentException("Password cannot be empty");
 		if (email.length() == 0)
 			throw new IllegalArgumentException("e-mail address cannot be empty");
 		if (!isValidEmailAddress(email))
