@@ -187,12 +187,12 @@ public class User {
 	 *             email-address is invalid
 	 */
 	public static synchronized User createNewUser(String username, String password, String email)
-			throws IllegalArgumentException, IOException {
+			throws IllegalArgumentException {
 		return createNewUser(username, password, email, username);
 	}
 
 	public static synchronized User createNewUser(String username, String password, String email, String realname)
-			throws IllegalArgumentException, IOException {
+			throws IllegalArgumentException {
 		if (username.length() == 0)
 			throw new IllegalArgumentException("Username cannot be empty");
 		if (email.length() == 0)
@@ -523,13 +523,30 @@ public class User {
 	 * 
 	 * @param user
 	 *            to be written out
-	 * @throws IOException
-	 *             thrown if occuring during perisistence access
 	 */
-	protected static synchronized void addToDB(User user) throws IOException {
+	protected static synchronized void addToDB(User user) {
 		if (user == null)
 			return;
 
-		Persistence.instance.writeUser(user, IPersistence.DB_NEW_ONLY);
+		try {
+			Persistence.instance.writeUser(user, IPersistence.DB_NEW_ONLY);
+		} catch (IOException e) {
+			System.err
+					.println("IOException during adding user \"" + user.getUsername() + "\" to db: " + e.getMessage());
+			e.printStackTrace(System.err);
+		}
+	}
+
+	/**
+	 * Trims the username and lowercases him
+	 * 
+	 * @param username
+	 *            to be trimmed and lowercased
+	 * @return the trimmed and lowercased username
+	 */
+	public static String trimUsername(String username) {
+		if (username == null)
+			return null;
+		return username.trim().toLowerCase();
 	}
 }
