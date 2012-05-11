@@ -17,7 +17,7 @@ public class SqlPersistence extends SqlPersistenceImpl {
 	 * @throws IllegalAccessException 
 	 * 
 	 */
-	public SqlPersistence() throws IllegalAccessException {
+	protected SqlPersistence() throws IllegalAccessException {
 		super();
 	}
 
