@@ -133,4 +133,22 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @return Gets the server status object
 	 */
 	public XServerStatus getServerStatus();
+
+	/**
+	 * Registers a new user with the given arguments. If one of the arguments is
+	 * null or empty, the method fails. If the given username is already in the
+	 * database the methods fails.
+	 * 
+	 * Returns true if the user has been successfully registered, or false if
+	 * the method fails (user already registered or invalid argument(
+	 * 
+	 * @param username
+	 *            Username of the new user. Must not be null or empty
+	 * @param password
+	 *            Password of the new user. Must not be null or empty
+	 * @return true if success, false if something went wrong
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
+	 */
+	public boolean registerNewUser(String username, String password, String email) throws NoAccessException;
 }
