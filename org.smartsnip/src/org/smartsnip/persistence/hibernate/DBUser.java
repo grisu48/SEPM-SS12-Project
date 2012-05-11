@@ -16,6 +16,7 @@ import org.smartsnip.core.User;
 
 /**
  * Database OR mapping class for table User
+ * 
  * @author littlelion
  * 
  */
@@ -23,22 +24,23 @@ import org.smartsnip.core.User;
 @Table(name = "User")
 class DBUser {
 	@Id
-	@Column(name = "user_name", length=20)
+	@Column(name = "user_name", length = 20)
 	private String userName;
 
-	@Column(name = "full_name", length=200)
+	@Column(name = "full_name", length = 255)
 	private String fullName;
-	
-	@Column(name= "email", length=200)
+
+	@Column(name = "email", length = 255)
 	private String email;
-	
+
 	@NotNull
-	@Column(name="user_state")
+	@Column(name = "user_state")
 	@Enumerated(EnumType.STRING)
 	private User.UserState userState;
-	
+
+	// TODO move this item to table password ?
 	@NotNull
-	@Column(name="grant_login")
+	@Column(name = "grant_login")
 	private Boolean grantLogin;
 
 	/**
@@ -48,7 +50,6 @@ class DBUser {
 		super();
 	}
 
-	
 	/**
 	 * @param userName
 	 * @param fullName
@@ -74,7 +75,8 @@ class DBUser {
 	}
 
 	/**
-	 * @param userName the userName to set
+	 * @param userName
+	 *            the userName to set
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
@@ -88,7 +90,8 @@ class DBUser {
 	}
 
 	/**
-	 * @param fullName the fullName to set
+	 * @param fullName
+	 *            the fullName to set
 	 */
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
@@ -102,7 +105,8 @@ class DBUser {
 	}
 
 	/**
-	 * @param email the email to set
+	 * @param email
+	 *            the email to set
 	 */
 	public void setEmail(String email) {
 		this.email = email;
@@ -116,7 +120,8 @@ class DBUser {
 	}
 
 	/**
-	 * @param userState the userState to set
+	 * @param userState
+	 *            the userState to set
 	 */
 	public void setUserState(User.UserState userState) {
 		this.userState = userState;
@@ -130,7 +135,8 @@ class DBUser {
 	}
 
 	/**
-	 * @param grantLogin the grantLogin to set
+	 * @param grantLogin
+	 *            the grantLogin to set
 	 */
 	public void setGrantLogin(Boolean grantLogin) {
 		this.grantLogin = grantLogin;

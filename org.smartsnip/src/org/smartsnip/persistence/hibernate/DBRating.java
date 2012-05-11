@@ -19,19 +19,19 @@ import org.hibernate.annotations.ForeignKey;
 
 /**
  * @author littlelion
- *
+ * 
  */
 @Entity
-@Table(name="Rating")
+@Table(name = "Rating")
 public class DBRating {
 
 	@EmbeddedId
 	private RatingId ratingId;
-	
+
 	@NotNull
-	@Column(name="value")
+	@Column(name = "rating_value")
 	private int value;
-	
+
 	/**
 	 * 
 	 */
@@ -49,7 +49,7 @@ public class DBRating {
 		this.ratingId = new RatingId(snippetId, userName);
 		this.value = value;
 	}
-	
+
 	/**
 	 * @return the ratingId
 	 */
@@ -58,7 +58,8 @@ public class DBRating {
 	}
 
 	/**
-	 * @param ratingId the ratingId to set
+	 * @param ratingId
+	 *            the ratingId to set
 	 */
 	public void setRatingId(RatingId ratingId) {
 		this.ratingId = ratingId;
@@ -72,16 +73,17 @@ public class DBRating {
 	}
 
 	/**
-	 * @param value the value to set
+	 * @param value
+	 *            the value to set
 	 */
 	public void setValue(int value) {
 		this.value = value;
 	}
-	
+
 	/**
 	 * 
 	 * @author littlelion
-	 *
+	 * 
 	 */
 	@Embeddable
 	class RatingId implements Serializable {
@@ -94,9 +96,9 @@ public class DBRating {
 		@NotNull
 		@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
 		@ForeignKey(name = "DBSnippet.snippetId")
-		@Column(name="snippet_id")
+		@Column(name = "snippet_id")
 		private long snippetId;
-		
+
 		@NotNull
 		@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
 		@ForeignKey(name = "DBUser.userName")
@@ -109,7 +111,7 @@ public class DBRating {
 		public RatingId() {
 			super();
 		}
-		
+
 		/**
 		 * @param snippetId
 		 * @param userName
@@ -128,7 +130,8 @@ public class DBRating {
 		}
 
 		/**
-		 * @param snippetId the snippetId to set
+		 * @param snippetId
+		 *            the snippetId to set
 		 */
 		public void setSnippetId(long snippetId) {
 			this.snippetId = snippetId;
@@ -142,11 +145,55 @@ public class DBRating {
 		}
 
 		/**
-		 * @param userName the userName to set
+		 * @param userName
+		 *            the userName to set
 		 */
 		public void setUserName(String userName) {
 			this.userName = userName;
 		}
-		
+
+		/**
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result
+					+ (int) (this.snippetId ^ (this.snippetId >>> 32));
+			result = prime * result
+					+ ((this.userName == null) ? 0 : this.userName.hashCode());
+			return result;
+		}
+
+		/**
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			RatingId other = (RatingId) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (this.snippetId != other.snippetId)
+				return false;
+			if (this.userName == null) {
+				if (other.userName != null)
+					return false;
+			} else if (!this.userName.equals(other.userName))
+				return false;
+			return true;
+		}
+
+		private DBRating getOuterType() {
+			return DBRating.this;
+		}
+
 	}
 }

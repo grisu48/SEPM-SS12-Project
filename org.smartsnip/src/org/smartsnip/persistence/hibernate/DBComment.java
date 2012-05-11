@@ -23,58 +23,58 @@ import org.smartsnip.core.Snippet;
 
 /**
  * @author littlelion
- *
+ * 
  */
 @Entity
-@Table(name="Comment")
+@Table(name = "Comment")
 public class DBComment {
 
 	@Id
 	@GeneratedValue
-	@Column(name="comment_id", insertable=false, updatable=false)
+	@Column(name = "comment_id", insertable = false, updatable = false)
 	private long commentId;
-	
+
 	@NotNull
-	@ManyToOne(targetEntity=Snippet.class, fetch=FetchType.EAGER)
-	@ForeignKey(name="Snippet.snippetId")
-	@OnDelete(action=OnDeleteAction.CASCADE)
-	@Column(name="snippet_id")
+	@ManyToOne(targetEntity = Snippet.class, fetch = FetchType.EAGER)
+	@ForeignKey(name = "Snippet.snippetId")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Column(name = "snippet_id")
 	private long snippetId;
-	
-	@Column(name="refers_to", length = 200)
+
+	@Column(name = "refers_to", length = 255)
 	private String refersTo;
-	
+
 	@Lob
-	@Column(name="message", length = 200)
+	@Column(name = "message", length = 255)
 	private String message;
-	
+
 	@NotNull
 	@GeneratedValue
-	@Column(name="created_at", insertable=false, updatable=false)
+	@Column(name = "created_at", insertable = false, updatable = false)
 	private Date createdAt;
-	
-	@ManyToOne(targetEntity=DBUser.class, fetch=FetchType.EAGER)
-	@ForeignKey(name="User.userName")
-	@Column(name="user_name", length = 20)
+
+	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+	@ForeignKey(name = "User.userName")
+	@Column(name = "user_name", length = 20)
 	private String userName;
-	
+
 	@NotNull
 	@GeneratedValue
-	@Column(name="pos_votes", insertable=false, updatable=false)
+	@Column(name = "pos_votes", insertable = false, updatable = false)
 	private int posVotes;
-	
+
 	@NotNull
 	@GeneratedValue
-	@Column(name="neg_votes", insertable=false, updatable=false)
+	@Column(name = "neg_votes", insertable = false, updatable = false)
 	private int negVotes;
-	
+
 	/**
 	 * 
 	 */
 	DBComment() {
 		super();
 	}
-	
+
 	/**
 	 * @param commentId
 	 * @param snippetId
@@ -106,7 +106,8 @@ public class DBComment {
 	}
 
 	/**
-	 * @param commentId the commentId to set
+	 * @param commentId
+	 *            the commentId to set
 	 */
 	public void setCommentId(long commentId) {
 		this.commentId = commentId;
@@ -120,7 +121,8 @@ public class DBComment {
 	}
 
 	/**
-	 * @param snippetId the snippetId to set
+	 * @param snippetId
+	 *            the snippetId to set
 	 */
 	public void setSnippetId(long snippetId) {
 		this.snippetId = snippetId;
@@ -134,7 +136,8 @@ public class DBComment {
 	}
 
 	/**
-	 * @param refersTo the refersTo to set
+	 * @param refersTo
+	 *            the refersTo to set
 	 */
 	public void setRefersTo(String refersTo) {
 		this.refersTo = refersTo;
@@ -148,7 +151,8 @@ public class DBComment {
 	}
 
 	/**
-	 * @param message the message to set
+	 * @param message
+	 *            the message to set
 	 */
 	public void setMessage(String message) {
 		this.message = message;
@@ -162,7 +166,8 @@ public class DBComment {
 	}
 
 	/**
-	 * @param createdAt the createdAt to set
+	 * @param createdAt
+	 *            the createdAt to set
 	 */
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
@@ -176,7 +181,8 @@ public class DBComment {
 	}
 
 	/**
-	 * @param userName the userName to set
+	 * @param userName
+	 *            the userName to set
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
@@ -190,7 +196,8 @@ public class DBComment {
 	}
 
 	/**
-	 * @param posVotes the posVotes to set
+	 * @param posVotes
+	 *            the posVotes to set
 	 */
 	public void setPosVotes(int posVotes) {
 		this.posVotes = posVotes;
@@ -204,7 +211,8 @@ public class DBComment {
 	}
 
 	/**
-	 * @param negVotes the negVotes to set
+	 * @param negVotes
+	 *            the negVotes to set
 	 */
 	public void setNegVotes(int negVotes) {
 		this.negVotes = negVotes;

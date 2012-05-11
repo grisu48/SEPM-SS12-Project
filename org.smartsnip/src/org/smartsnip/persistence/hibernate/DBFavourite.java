@@ -82,7 +82,7 @@ public class DBFavourite {
 	/**
 	 * 
 	 * @author littlelion
-	 *
+	 * 
 	 */
 	@Embeddable
 	class FavouriteId implements Serializable {
@@ -109,7 +109,7 @@ public class DBFavourite {
 		public FavouriteId() {
 			super();
 		}
-		
+
 		/**
 		 * @param userName
 		 * @param snippetId
@@ -199,8 +199,6 @@ public class DBFavourite {
 		private DBFavourite getOuterType() {
 			return DBFavourite.this;
 		}
-
-		
 
 	}
 }

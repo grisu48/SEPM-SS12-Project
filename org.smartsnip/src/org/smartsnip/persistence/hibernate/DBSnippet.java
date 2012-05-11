@@ -5,6 +5,8 @@
 package org.smartsnip.persistence.hibernate;
 
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,51 +21,57 @@ import org.hibernate.annotations.ForeignKey;
 
 /**
  * Database OR mapping class for table Snippet
+ * 
  * @author littlelion
- *
+ * 
  */
 @Entity
-@Table(name="Snippet")
+@Table(name = "Snippet")
 public class DBSnippet {
 
 	@Id
 	@GeneratedValue
-	@Column(name="snippet_id", insertable=false, updatable=false)
+	@Column(name = "snippet_id", insertable = false, updatable = false)
 	private long snippetId;
-	
-	@Column(name="headline", length = 200)
+
+	@Column(name = "headline", length = 255)
 	private String headline;
-	
+
 	@Lob
-	@Column(name="description")
+	@Column(name = "description")
 	private String description;
-	
+
 	@GeneratedValue
-	@Column(name="viewcount", insertable=false, updatable=false)
+	@Column(name = "viewcount", insertable = false, updatable = false)
 	private int viewcount;
-	
+
 	@GeneratedValue
-	@Column(name="rating_average", insertable=false, updatable=false)
+	@Column(name = "rating_average", insertable = false, updatable = false)
 	private float ratingAverage;
-	
+
 	@GeneratedValue
-	@Column(name="last_edited", insertable=false, updatable=false)
+	@Column(name = "last_edited", insertable = false, updatable = false)
 	private Date lastEdited;
-	
-	@Column(name="user_name", length = 20)
-	@ManyToOne(targetEntity=DBUser.class, fetch=FetchType.EAGER)
-	@ForeignKey(name="DBUser.userName")
+
+	@Column(name = "user_name", length = 20)
+	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+	@ForeignKey(name = "DBUser.userName")
 	private String owner;
-	
-	@Column(name="category_id")
-	@ManyToMany(targetEntity=DBCategory.class, mappedBy="RelTagSnippet", fetch=FetchType.EAGER)
-	@ForeignKey(name="DBCategory.categoryId")
+
+	@Column(name = "category_id")
+	@ManyToOne(targetEntity = DBCategory.class, fetch = FetchType.EAGER)
+	@ForeignKey(name = "DBCategory.categoryId")
 	private long categoryId;
-	
-	@Column(name="license_id")
-	@ManyToOne(targetEntity=DBLicense.class, fetch=FetchType.EAGER)
-	@ForeignKey(name="DBLicense.licenseId")
+
+	@Column(name = "license_id")
+	@ManyToOne(targetEntity = DBLicense.class, fetch = FetchType.EAGER)
+	@ForeignKey(name = "DBLicense.licenseId")
 	private long licenseId;
+
+	@Column(name = "tag_name", length = 50)
+	@ManyToMany(targetEntity = DBTag.class, mappedBy = "RelTagSnippet", fetch = FetchType.EAGER)
+	@ForeignKey(name = "DBTag.tagName")
+	private List<String> tags;
 
 	/**
 	 * 
@@ -106,7 +114,8 @@ public class DBSnippet {
 	}
 
 	/**
-	 * @param snippetId the snippetId to set
+	 * @param snippetId
+	 *            the snippetId to set
 	 */
 	public void setSnippetId(long snippetId) {
 		this.snippetId = snippetId;
@@ -120,7 +129,8 @@ public class DBSnippet {
 	}
 
 	/**
-	 * @param headline the headline to set
+	 * @param headline
+	 *            the headline to set
 	 */
 	public void setHeadline(String headline) {
 		this.headline = headline;
@@ -134,7 +144,8 @@ public class DBSnippet {
 	}
 
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -148,7 +159,8 @@ public class DBSnippet {
 	}
 
 	/**
-	 * @param viewcount the viewcount to set
+	 * @param viewcount
+	 *            the viewcount to set
 	 */
 	public void setViewcount(int viewcount) {
 		this.viewcount = viewcount;
@@ -162,7 +174,8 @@ public class DBSnippet {
 	}
 
 	/**
-	 * @param ratingAverage the ratingAverage to set
+	 * @param ratingAverage
+	 *            the ratingAverage to set
 	 */
 	public void setRatingAverage(float ratingAverage) {
 		this.ratingAverage = ratingAverage;
@@ -176,7 +189,8 @@ public class DBSnippet {
 	}
 
 	/**
-	 * @param lastEdited the lastEdited to set
+	 * @param lastEdited
+	 *            the lastEdited to set
 	 */
 	public void setLastEdited(Date lastEdited) {
 		this.lastEdited = lastEdited;
@@ -190,7 +204,8 @@ public class DBSnippet {
 	}
 
 	/**
-	 * @param owner the owner to set
+	 * @param owner
+	 *            the owner to set
 	 */
 	public void setOwner(String owner) {
 		this.owner = owner;
@@ -204,7 +219,8 @@ public class DBSnippet {
 	}
 
 	/**
-	 * @param categoryId the categoryId to set
+	 * @param categoryId
+	 *            the categoryId to set
 	 */
 	public void setCategoryId(long categoryId) {
 		this.categoryId = categoryId;
@@ -218,9 +234,25 @@ public class DBSnippet {
 	}
 
 	/**
-	 * @param licenseId the licenseId to set
+	 * @param licenseId
+	 *            the licenseId to set
 	 */
 	public void setLicenseId(long licenseId) {
 		this.licenseId = licenseId;
+	}
+
+	/**
+	 * @return the tags
+	 */
+	public List<String> getTags() {
+		return tags;
+	}
+
+	/**
+	 * @param tags
+	 *            the tags to set
+	 */
+	public void setTags(List<String> tags) {
+		this.tags = tags;
 	}
 }

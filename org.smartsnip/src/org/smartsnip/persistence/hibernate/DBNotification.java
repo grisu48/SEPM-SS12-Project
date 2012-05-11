@@ -21,43 +21,43 @@ import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * @author littlelion
- *
+ * 
  */
 @Entity
-@Table(name="Notification")
+@Table(name = "Notification")
 public class DBNotification {
 
 	@Id
 	@GeneratedValue
-	@Column(name="notification_id",insertable=false, updatable=false)
+	@Column(name = "notification_id", insertable = false, updatable = false)
 	private long notificationId;
-	
+
 	@NotNull
-	@ManyToOne(targetEntity=DBUser.class, fetch=FetchType.EAGER)
-	@ForeignKey(name="DBUser.userName")
-	@OnDelete(action=OnDeleteAction.CASCADE)
-	@Column(name="user_name", length = 20)
+	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+	@ForeignKey(name = "DBUser.userName")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Column(name = "user_name", length = 20)
 	private String userName;
 
-	@ManyToOne(targetEntity=DBSnippet.class, fetch=FetchType.EAGER)
-	@ForeignKey(name="DBSnippet.snippetId")
-	@Column(name="snippet_id")
+	@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
+	@ForeignKey(name = "DBSnippet.snippetId")
+	@Column(name = "snippet_id")
 	private long snippetId;
-	
+
 	@NotNull
-	@Column(name="viewed")
+	@Column(name = "viewed")
 	private boolean viewed;
-	
+
 	@Lob
-	@Column(name="message")
+	@Column(name = "message")
 	private String message;
-	
-	@Column(name="origin", length = 200)
+
+	@Column(name = "origin", length = 255)
 	private String origin;
-	
+
 	@NotNull
 	@GeneratedValue
-	@Column(name="created_at", insertable=false, updatable=false)
+	@Column(name = "created_at", insertable = false, updatable = false)
 	private Date createdAt;
 
 	/**
@@ -66,7 +66,7 @@ public class DBNotification {
 	public DBNotification() {
 		super();
 	}
-	
+
 	/**
 	 * @param notificationId
 	 * @param userName
@@ -96,7 +96,8 @@ public class DBNotification {
 	}
 
 	/**
-	 * @param notificationId the notificationId to set
+	 * @param notificationId
+	 *            the notificationId to set
 	 */
 	public void setNotificationId(long notificationId) {
 		this.notificationId = notificationId;
@@ -110,7 +111,8 @@ public class DBNotification {
 	}
 
 	/**
-	 * @param userName the userName to set
+	 * @param userName
+	 *            the userName to set
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
@@ -124,7 +126,8 @@ public class DBNotification {
 	}
 
 	/**
-	 * @param snippetId the snippetId to set
+	 * @param snippetId
+	 *            the snippetId to set
 	 */
 	public void setSnippetId(long snippetId) {
 		this.snippetId = snippetId;
@@ -138,7 +141,8 @@ public class DBNotification {
 	}
 
 	/**
-	 * @param viewed the viewed to set
+	 * @param viewed
+	 *            the viewed to set
 	 */
 	public void setViewed(boolean viewed) {
 		this.viewed = viewed;
@@ -152,7 +156,8 @@ public class DBNotification {
 	}
 
 	/**
-	 * @param message the message to set
+	 * @param message
+	 *            the message to set
 	 */
 	public void setMessage(String message) {
 		this.message = message;
@@ -166,7 +171,8 @@ public class DBNotification {
 	}
 
 	/**
-	 * @param origin the origin to set
+	 * @param origin
+	 *            the origin to set
 	 */
 	public void setOrigin(String origin) {
 		this.origin = origin;
@@ -180,7 +186,8 @@ public class DBNotification {
 	}
 
 	/**
-	 * @param createdAt the createdAt to set
+	 * @param createdAt
+	 *            the createdAt to set
 	 */
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;

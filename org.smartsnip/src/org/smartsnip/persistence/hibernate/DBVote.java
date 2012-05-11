@@ -59,7 +59,8 @@ public class DBVote {
 	}
 
 	/**
-	 * @param voteId the voteId to set
+	 * @param voteId
+	 *            the voteId to set
 	 */
 	public void setVoteId(VoteId voteId) {
 		this.voteId = voteId;
@@ -73,7 +74,8 @@ public class DBVote {
 	}
 
 	/**
-	 * @param vote the vote to set
+	 * @param vote
+	 *            the vote to set
 	 */
 	public void setVote(Vote vote) {
 		this.vote = vote;
@@ -138,7 +140,8 @@ public class DBVote {
 		}
 
 		/**
-		 * @param commentId the commentId to set
+		 * @param commentId
+		 *            the commentId to set
 		 */
 		public void setCommentId(long commentId) {
 			this.commentId = commentId;
@@ -152,10 +155,54 @@ public class DBVote {
 		}
 
 		/**
-		 * @param userName the userName to set
+		 * @param userName
+		 *            the userName to set
 		 */
 		public void setUserName(String userName) {
 			this.userName = userName;
+		}
+
+		/**
+		 * @see java.lang.Object#hashCode()
+		 */
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result
+					+ (int) (this.commentId ^ (this.commentId >>> 32));
+			result = prime * result
+					+ ((this.userName == null) ? 0 : this.userName.hashCode());
+			return result;
+		}
+
+		/**
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			VoteId other = (VoteId) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (this.commentId != other.commentId)
+				return false;
+			if (this.userName == null) {
+				if (other.userName != null)
+					return false;
+			} else if (!this.userName.equals(other.userName))
+				return false;
+			return true;
+		}
+
+		private DBVote getOuterType() {
+			return DBVote.this;
 		}
 	}
 }

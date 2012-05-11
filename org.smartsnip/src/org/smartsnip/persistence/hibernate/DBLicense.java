@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 /**
  * Database OR mapping class for table Tag
+ * 
  * @author littlelion
  * 
  */
@@ -16,14 +17,14 @@ import javax.persistence.*;
 class DBLicense {
 	@Id
 	@GeneratedValue
-	@Column(name = "license_id", insertable=false, updatable=false)
+	@Column(name = "license_id", insertable = false, updatable = false)
 	private long licenseId;
 
-	@Column(name = "short_descr", length=200)
+	@Column(name = "short_descr", length = 255)
 	private String shortDescr;
-	
+
 	@Lob
-	@Column(name="license_text")
+	@Column(name = "license_text")
 	private String LicenseText;
 
 	/**
@@ -52,7 +53,8 @@ class DBLicense {
 	}
 
 	/**
-	 * @param licenseId the licenseId to set
+	 * @param licenseId
+	 *            the licenseId to set
 	 */
 	public void setLicenseId(long licenseId) {
 		this.licenseId = licenseId;
@@ -66,7 +68,8 @@ class DBLicense {
 	}
 
 	/**
-	 * @param shortDescr the shortDescr to set
+	 * @param shortDescr
+	 *            the shortDescr to set
 	 */
 	public void setShortDescr(String shortDescr) {
 		this.shortDescr = shortDescr;
@@ -80,11 +83,11 @@ class DBLicense {
 	}
 
 	/**
-	 * @param licenseText the licenseText to set
+	 * @param licenseText
+	 *            the licenseText to set
 	 */
 	public void setLicenseText(String licenseText) {
 		this.LicenseText = licenseText;
 	}
-
 
 }

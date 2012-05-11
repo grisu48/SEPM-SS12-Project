@@ -13,22 +13,23 @@ import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Database OR mapping class for table Password
+ * 
  * @author littlelion
  * 
  */
 @Entity
 @Table(name = "Password")
 class DBPassword {
-	
+
 	@Id
-	@OneToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-	@ForeignKey(name="DBUser.userName")
-	@OnDelete(action=OnDeleteAction.CASCADE)
-	@Column(name="user_name")
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@ForeignKey(name = "DBUser.userName")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Column(name = "user_name", length = 20)
 	String user;
-	
+
 	@NotNull
-	@Column(name="pwd_string")
+	@Column(name = "pwd_string", length = 255)
 	String password;
 
 	/**
@@ -56,12 +57,14 @@ class DBPassword {
 	}
 
 	/**
-	 * @param user the user to set
+	 * @param user
+	 *            the user to set
 	 */
 	public void setUser(String user) {
 		this.user = user;
 	}
 
+	// XXX remove this item if unused or on security reasons
 	/**
 	 * @return the password
 	 */
@@ -70,7 +73,8 @@ class DBPassword {
 	}
 
 	/**
-	 * @param password the password to set
+	 * @param password
+	 *            the password to set
 	 */
 	public void setPassword(String password) {
 		this.password = password;

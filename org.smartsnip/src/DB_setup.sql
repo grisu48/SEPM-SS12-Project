@@ -213,9 +213,9 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
  */
 CREATE TABLE `Rating` (
   `snippet_id` INTEGER UNSIGNED NOT NULL,
-  `user_name` VARCHAR(20)  DEFAULT NULL,
+  `user_name` VARCHAR(20)  NOT NULL,
   `rating_value` INTEGER  NOT NULL DEFAULT 0,
-  PRIMARY KEY (`snippet_id`),
+  PRIMARY KEY (`snippet_id`, `user_name`),
   CONSTRAINT `fk_rating_snip` FOREIGN KEY `fk_rating_snip` (`snippet_id`)
     REFERENCES `Snippet` (`snippet_id`)
     ON DELETE CASCADE

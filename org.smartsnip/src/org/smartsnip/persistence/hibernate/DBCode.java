@@ -20,34 +20,34 @@ import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * @author littlelion
- *
+ * 
  */
 @Entity
-@Table(name="Code")
+@Table(name = "Code")
 public class DBCode {
 
 	@Id
 	@GeneratedValue
-	@Column(name="code_id")
+	@Column(name = "code_id")
 	private long codeId;
-	
+
 	@NotNull
-	@ManyToOne(targetEntity=DBSnippet.class, fetch=FetchType.EAGER)
-	@ForeignKey(name="DBSnippet.snippetId")
-	@OnDelete(action=OnDeleteAction.CASCADE)
-	@Column(name="snippet_id")
+	@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
+	@ForeignKey(name = "DBSnippet.snippetId")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Column(name = "snippet_id")
 	private long snippetId;
-	
+
 	@NotNull
-	@Column(name="language", length = 50)
+	@Column(name = "language", length = 50)
 	private String language;
-	
+
 	@Lob
-	@Column(name="file")
+	@Column(name = "file")
 	private String file;
-	
+
 	@NotNull
-	@Column(name="version")
+	@Column(name = "version")
 	private int version;
 
 	/**
@@ -79,7 +79,8 @@ public class DBCode {
 	}
 
 	/**
-	 * @param codeId the codeId to set
+	 * @param codeId
+	 *            the codeId to set
 	 */
 	public void setCodeId(long codeId) {
 		this.codeId = codeId;
@@ -93,7 +94,8 @@ public class DBCode {
 	}
 
 	/**
-	 * @param snippetId the snippetId to set
+	 * @param snippetId
+	 *            the snippetId to set
 	 */
 	public void setSnippetId(long snippetId) {
 		this.snippetId = snippetId;
@@ -107,7 +109,8 @@ public class DBCode {
 	}
 
 	/**
-	 * @param language the language to set
+	 * @param language
+	 *            the language to set
 	 */
 	public void setLanguage(String language) {
 		this.language = language;
@@ -121,7 +124,8 @@ public class DBCode {
 	}
 
 	/**
-	 * @param file the file to set
+	 * @param file
+	 *            the file to set
 	 */
 	public void setFile(String file) {
 		this.file = file;

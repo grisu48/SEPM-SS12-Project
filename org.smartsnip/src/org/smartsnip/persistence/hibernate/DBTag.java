@@ -4,6 +4,8 @@
  */
 package org.smartsnip.persistence.hibernate;
 
+import java.util.List;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -23,7 +25,6 @@ class DBTag {
 	@Id
 	@Column(name = "name", length = 50)
 	@ManyToMany(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
-	@ForeignKey(name = "DBTag.name", inverseName = "DBSnippet.tag_name")
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private String name;
 
@@ -31,6 +32,11 @@ class DBTag {
 	@GeneratedValue
 	@Column(name = "usage_freq", insertable = false, updatable = false)
 	private int usageFrequence;
+
+	@Column(name = "snippet_id")
+	@ManyToMany(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
+	@ForeignKey(inverseName = "DBSnippet.snippetId", name = "DBTag.snippetId")
+	private List<Long> snippets;
 
 	DBTag() {
 	}
@@ -67,6 +73,21 @@ class DBTag {
 	 */
 	public void setUsageFrequence(int usageFrequence) {
 		this.usageFrequence = usageFrequence;
+	}
+
+	/**
+	 * @return the snippets
+	 */
+	public List<Long> getSnippets() {
+		return snippets;
+	}
+
+	/**
+	 * @param snippets
+	 *            the snippets to set
+	 */
+	public void setSnippets(List<Long> snippets) {
+		this.snippets = snippets;
 	}
 
 }
