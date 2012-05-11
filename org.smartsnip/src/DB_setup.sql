@@ -11,8 +11,8 @@
 
 CREATE TABLE `User` (
   `user_name` VARCHAR(20)  NOT NULL,
-  `full_name` VARCHAR(200)  DEFAULT NULL,
-  `email` VARCHAR(200)  DEFAULT NULL,
+  `full_name` VARCHAR(255)  DEFAULT NULL,
+  `email` VARCHAR(255)  DEFAULT NULL,
   `user_state` ENUM("unvalidated", "validated")  NOT NULL DEFAULT "unvalidated",
   `grant_login` BOOLEAN  NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`user_name`)
@@ -28,7 +28,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
  */
 CREATE TABLE `Password` (
   `user_name` varchar(20)  NOT NULL,
-  `pwd_string` varchar(200)  NOT NULL,
+  `pwd_string` varchar(255)  NOT NULL,
   PRIMARY KEY (`user_name`),
   CONSTRAINT `fk_usr_pwd` FOREIGN KEY `fk_usr_pwd` (`user_name`)
     REFERENCES `User` (`user_name`)
@@ -57,7 +57,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE `License` (
   `license_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  `short_descr` VARCHAR(200)  DEFAULT NULL,
+  `short_descr` VARCHAR(255)  DEFAULT NULL,
   `license_text` TEXT  DEFAULT NULL,
   PRIMARY KEY (`license_id`)
 )
@@ -67,7 +67,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
 CREATE TABLE `Category` (
   `category_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   `parent_id` INTEGER UNSIGNED DEFAULT NULL,
-  `name` VARCHAR(200)  DEFAULT NULL,
+  `name` VARCHAR(255)  DEFAULT NULL,
   `description` TEXT  DEFAULT NULL,
   PRIMARY KEY (`category_id`),
   CONSTRAINT `fk_parent_id` FOREIGN KEY `fk_parent_id` (`parent_id`)
@@ -86,7 +86,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
  */
 CREATE TABLE `Snippet` (
   `snippet_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  `headline` VARCHAR(200)  DEFAULT NULL,
+  `headline` VARCHAR(255)  DEFAULT NULL,
   `description` TEXT DEFAULT NULL,
   `viewcount` INTEGER UNSIGNED DEFAULT NULL,
   `rating_average` FLOAT NOT NULL DEFAULT 0,
@@ -167,7 +167,7 @@ CREATE TABLE `Notification` (
   `snippet_id` INTEGER UNSIGNED DEFAULT NULL,
   `viewed` BOOLEAN NOT NULL DEFAULT FALSE,
   `message` TEXT DEFAULT NULL,
-  `origin` VARCHAR(200) DEFAULT NULL,
+  `origin` VARCHAR(255) DEFAULT NULL,
   `created_at` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`notification_id`),
   CONSTRAINT `fk_notif_user` FOREIGN KEY `fk_notif_user` (`user_name`)
@@ -214,7 +214,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
 CREATE TABLE `Rating` (
   `snippet_id` INTEGER UNSIGNED NOT NULL,
   `user_name` VARCHAR(20)  DEFAULT NULL,
-  `value` INTEGER  NOT NULL DEFAULT 0,
+  `rating_value` INTEGER  NOT NULL DEFAULT 0,
   PRIMARY KEY (`snippet_id`),
   CONSTRAINT `fk_rating_snip` FOREIGN KEY `fk_rating_snip` (`snippet_id`)
     REFERENCES `Snippet` (`snippet_id`)
@@ -236,7 +236,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
 CREATE TABLE `Comment` (
   `comment_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   `snippet_id` INTEGER UNSIGNED NOT NULL,
-  `refers_to` VARCHAR(200)  DEFAULT NULL,
+  `refers_to` VARCHAR(255)  DEFAULT NULL,
   `message` TEXT  DEFAULT NULL,
   `created_at` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user_name` VARCHAR(20)  DEFAULT NULL,
