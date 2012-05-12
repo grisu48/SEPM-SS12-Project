@@ -421,8 +421,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getSnippets(Category category) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.getSnippets(category, null, null);
 	}
 	
 	/**
@@ -431,8 +430,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	@Override
 	public List<Snippet> getSnippets(Category category, Integer start, Integer count)
 			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.getSnippets(category, start, count);
 	}
 
 	/**
@@ -476,8 +474,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Tag> getAllTags(Integer start, Integer count) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return TagFactory.getAllTags(start, count);
 	}
 
 	/**

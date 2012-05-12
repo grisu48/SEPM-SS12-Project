@@ -41,9 +41,9 @@ CHARACTER SET utf8 COLLATE utf8_general_ci
 COMMENT = 'Encrypted Table';
 
 CREATE TABLE `Tag` (
-  `name` VARCHAR(50) NOT NULL,
+  `tag_name` VARCHAR(50) NOT NULL,
   `usage_freq` INTEGER UNSIGNED NOT NULL DEFAULT 0,
-  PRIMARY KEY (`name`)
+  PRIMARY KEY (`tag_name`)
 )
 ENGINE = InnoDB
 CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -126,7 +126,7 @@ CREATE TABLE `RelTagSnippet` (
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_rel_ts_tag` FOREIGN KEY `fk_rel_ts_tag` (`tag_name`)
-    REFERENCES `Tag` (`name`)
+    REFERENCES `Tag` (`tag_name`)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 )
@@ -148,7 +148,7 @@ CREATE TABLE `Favourite` (
     REFERENCES `User` (`user_name`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
-  CONSTRAINT `fk_fav_snippeet` FOREIGN KEY `fk_fav_snippeet` (`snippet_id`)
+  CONSTRAINT `fk_fav_snippet` FOREIGN KEY `fk_fav_snippet` (`snippet_id`)
     REFERENCES `Snippet` (`snippet_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE
@@ -222,7 +222,7 @@ CREATE TABLE `Rating` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_rating_user` FOREIGN KEY `fk_rating_user` (`user_name`)
     REFERENCES `User` (`user_name`)
-    ON DELETE SET NULL
+    ON DELETE CASCADE
     ON UPDATE CASCADE
 )
 ENGINE = InnoDB
@@ -262,7 +262,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
  */
 CREATE TABLE `Vote` (
   `comment_id` INTEGER UNSIGNED NOT NULL,
-  `user_name` VARCHAR(20)  DEFAULT NULL,
+  `user_name` VARCHAR(20) NOT NULL,
   `vote` ENUM("none","negative","positive")  NOT NULL DEFAULT "none",
   PRIMARY KEY (`comment_id`, `user_name`),
   CONSTRAINT `fk_vote_comm` FOREIGN KEY `fk_vote_comm` (`comment_id`)
@@ -271,7 +271,7 @@ CREATE TABLE `Vote` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_vote_user` FOREIGN KEY `fk_vote_user` (`user_name`)
     REFERENCES `User` (`user_name`)
-    ON DELETE SET NULL
+    ON DELETE CASCADE
     ON UPDATE CASCADE
 )
 ENGINE = InnoDB

@@ -4,7 +4,8 @@
  */
 package org.smartsnip.persistence.hibernate;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -23,9 +24,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "Tag")
 class DBTag {
 	@Id
-	@Column(name = "name", length = 50)
-	@ManyToMany(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Column(name = "tag_name", length = 50)
 	private String name;
 
 	@NotNull
@@ -33,10 +32,11 @@ class DBTag {
 	@Column(name = "usage_freq", insertable = false, updatable = false)
 	private int usageFrequence;
 
-	@Column(name = "snippet_id")
-	@ManyToMany(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
-	@ForeignKey(inverseName = "DBSnippet.snippetId", name = "DBTag.snippetId")
-	private List<Long> snippets;
+//	@Column(name = "snippet_id")
+//	@ManyToMany(targetEntity = DBSnippet.class, mappedBy="tags",fetch = FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.PERSIST})
+//	@ForeignKey(name= "DBTag.name", inverseName = "DBSnippet.snippetId")
+//	@OnDelete(action = OnDeleteAction.CASCADE)
+//	private Set<Long> snippets = new HashSet<Long>();
 
 	DBTag() {
 	}
@@ -75,19 +75,19 @@ class DBTag {
 		this.usageFrequence = usageFrequence;
 	}
 
-	/**
-	 * @return the snippets
-	 */
-	public List<Long> getSnippets() {
-		return snippets;
-	}
-
-	/**
-	 * @param snippets
-	 *            the snippets to set
-	 */
-	public void setSnippets(List<Long> snippets) {
-		this.snippets = snippets;
-	}
+//	/**
+//	 * @return the snippets
+//	 */
+//	public Set<Long> getSnippets() {
+//		return snippets;
+//	}
+//
+//	/**
+//	 * @param snippets
+//	 *            the snippets to set
+//	 */
+//	public void setSnippets(Set<Long> snippets) {
+//		this.snippets = snippets;
+//	}
 
 }

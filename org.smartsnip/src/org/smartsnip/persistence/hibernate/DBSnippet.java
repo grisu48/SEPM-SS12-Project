@@ -7,15 +7,20 @@ package org.smartsnip.persistence.hibernate;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.ForeignKey;
 
@@ -50,6 +55,7 @@ public class DBSnippet {
 	private float ratingAverage;
 
 	@GeneratedValue
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "last_edited", insertable = false, updatable = false)
 	private Date lastEdited;
 
@@ -69,7 +75,8 @@ public class DBSnippet {
 	private long licenseId;
 
 	@Column(name = "tag_name", length = 50)
-	@ManyToMany(targetEntity = DBTag.class, mappedBy = "RelTagSnippet", fetch = FetchType.EAGER)
+	@ManyToMany(targetEntity = DBTag.class, fetch = FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.PERSIST})
+	@JoinTable(name="RelTagSnippet", joinColumns=@JoinColumn(name="snippet_id"),inverseJoinColumns=@JoinColumn(name="tag_name"))
 	@ForeignKey(name = "DBTag.tagName")
 	private List<String> tags;
 

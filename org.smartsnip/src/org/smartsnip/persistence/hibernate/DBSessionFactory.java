@@ -28,8 +28,10 @@ public class DBSessionFactory {
 			try {
 				Configuration configuration = new Configuration();
 				configuration.configure().setProperty("hibernate.show_sql",
-						"true"); // XXX false
+						"true"); // XXX set "hibernate.show_sql" to false
 				configuration.configure().addAnnotatedClass(DBTag.class);
+				configuration.configure().addAnnotatedClass(DBSnippet.class);
+				configuration.configure().addAnnotatedClass(DBUser.class);
 
 				serviceRegistry = new ServiceRegistryBuilder().applySettings(
 						configuration.getProperties()).buildServiceRegistry();

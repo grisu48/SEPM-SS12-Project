@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.ForeignKey;
@@ -50,6 +52,7 @@ public class DBComment {
 
 	@NotNull
 	@GeneratedValue
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private Date createdAt;
 
