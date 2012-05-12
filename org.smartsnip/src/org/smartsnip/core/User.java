@@ -87,8 +87,6 @@ public class User {
 		}
 		if (email == null || email.isEmpty())
 			throw new IllegalArgumentException("Cannot create user with empty email");
-		if (password != null)
-			throw new IllegalArgumentException("Database must not be source of the Password");
 		if (favorites == null) {
 			favorites = new ArrayList<Snippet>();
 		}
