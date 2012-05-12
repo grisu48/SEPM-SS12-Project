@@ -87,8 +87,8 @@ public class User {
 		}
 		if (email == null || email.isEmpty())
 			throw new IllegalArgumentException("Cannot create user with empty email");
-		if (password == null || password.isEmpty())
-			throw new IllegalArgumentException("Cannot create user with empty password");
+		if (password != null)
+			throw new IllegalArgumentException("Database must not be source of the Password");
 		if (favorites == null) {
 			favorites = new ArrayList<Snippet>();
 		}
@@ -101,11 +101,12 @@ public class User {
 		this.favorites = favorites;
 
 		/* MUST be the last thing to check */
-		try {
-			this.password = Persistence.instance.getPassword(this);
-		} catch (IOException e) {
-			this.password = null;
-		}
+		// XXX no password check at this place!
+//		try {
+//			this.password = Persistence.instance.getPassword(this);
+//		} catch (IOException e) {
+//			this.password = null;
+//		}
 	}
 
 	/**
