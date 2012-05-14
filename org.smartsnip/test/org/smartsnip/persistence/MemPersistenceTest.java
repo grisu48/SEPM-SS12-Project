@@ -111,7 +111,8 @@ public class MemPersistenceTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Persistence.initialize(true);
+		// Do not create test objects
+		Persistence.initialize(true, false);
 
 		isInitialized = Persistence.isMemoryOnly();
 		if (!isInitialized) {
