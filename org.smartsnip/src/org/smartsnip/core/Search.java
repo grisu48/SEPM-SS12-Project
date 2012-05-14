@@ -1,5 +1,6 @@
 package org.smartsnip.core;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,12 @@ public class Search {
 	 */
 	private final List<Snippet> totalResults;
 
+	/** Start index for the calls to the DB */
+	private int start;
+
+	/** Number of items to get from the DB per call */
+	private final int requestItemCount = 25;
+
 	/**
 	 * Filtered results. If null, they need to be re-filtered. This occurs if a
 	 * filter criterium changes
@@ -26,7 +33,7 @@ public class Search {
 		if (searchString == null)
 			throw new NullPointerException();
 		this.searchString = searchString;
-		this.totalResults = populateTotalResults(searchString);
+		this.totalResults = searchDB(searchString, 0, requestItemCount);
 	}
 
 	/**
@@ -48,10 +55,46 @@ public class Search {
 	/**
 	 * @return the filtered search results
 	 */
-	public synchronized List<Snippet> getResults() {
+	public synchronized List<Snippet> getResults(int start, int count) {
 		if (filterResults == null)
 			applyFilter();
+
+		// Increase search window till no more items are found,
+		// or the desired size is reached
+		int desiredSize = start + count;
+		while (filterResults.size() < desiredSize) {
+			if (!increaseSearchWindow())
+				break;
+		}
+		List<Snippet> result = new ArrayList<Snippet>(count);
+		int maxSize = filterResults.size() - 1;
+		for (int i = 0; i < count; i++) {
+			int index = i + start;
+			if (index > maxSize)
+				break;
+
+			result.add(filterResults.get(index));
+		}
+
 		return filterResults;
+	}
+
+	/**
+	 * Increases the total results that are comming from the DB by
+	 * requestItemCount
+	 * 
+	 * @return true if the windows was increased, false if no more items are
+	 *         added
+	 */
+	private synchronized boolean increaseSearchWindow() {
+		// Increase search window
+		start += requestItemCount;
+		List<Snippet> newItems = searchDB(searchString, start, requestItemCount);
+		if (newItems == null || newItems.size() == 0)
+			return false;
+
+		totalResults.addAll(newItems);
+		return true;
 	}
 
 	/**
@@ -157,10 +200,22 @@ public class Search {
 	 * This call is used to redirect the search for the search string to the
 	 * persistence layer.
 	 * 
+	 * @param searchString
+	 *            String to be searched for
+	 * @param start
+	 *            Starting index of the total search results
+	 * @param count
+	 *            Maximum count of returning items
+	 * 
 	 * @return list of found snippets that match to the searchString
 	 */
-	private List<Snippet> populateTotalResults(String searchString) {
-		// TODO Implement me
-		return new ArrayList<Snippet>();
+	private List<Snippet> searchDB(String searchString, int start, int count) {
+		try {
+			return Persistence.instance.search(searchString, start, count);
+		} catch (IOException e) {
+			System.err.println("IOException during search: " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 }
