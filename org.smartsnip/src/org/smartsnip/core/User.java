@@ -27,18 +27,11 @@ public class User {
 	/** Real name of the user */
 	private String realName = "";
 
-	/** Encrypted password of the user */
-	private String password = "";
-
 	/** Users email address */
 	private String email = "";
 
 	/** State of the user */
 	private UserState state = UserState.unvalidated;
-
-	public synchronized void setState(UserState state) {
-		this.state = state;
-	}
 
 	/**
 	 * List of favourite snippets of the user
@@ -71,8 +64,6 @@ public class User {
 	 *            the real name of the user. Can be null or empty.
 	 * @param email
 	 *            of the new user
-	 * @param password
-	 *            encrypted password for the user.
 	 * @param favorites
 	 *            Favorited snippets of the user. If null, a new list is created
 	 * 
@@ -97,14 +88,6 @@ public class User {
 		this.state = state;
 
 		this.favorites = favorites;
-
-		/* MUST be the last thing to check */
-		// XXX no password check at this place!
-//		try {
-//			this.password = Persistence.instance.getPassword(this);
-//		} catch (IOException e) {
-//			this.password = null;
-//		}
 	}
 
 	/**
@@ -116,15 +99,12 @@ public class User {
 	 *            of the new user
 	 * @param email
 	 *            of the new user
-	 * @param password
-	 *            cleartext password for the user. Password will be encrypted
 	 * @param realName
 	 *            Real name of the user
 	 */
-	private User(String username, String email, String password, String realName) {
+	private User(String username, String email, String realName) {
 		this.username = username.toLowerCase();
 		this.email = email;
-		this.password = hashAlgorithm.hash(password);
 		this.realName = realName;
 		this.favorites = new ArrayList<Snippet>();
 	}
@@ -209,8 +189,15 @@ public class User {
 		}
 
 		// All test passed. Create new user
-		User newUser = new User(username, email, password, realname);
+		User newUser = new User(username, email, realname);
 		addToDB(newUser);
+		try {
+			Persistence.instance.writePassword(newUser, password, IPersistence.DB_DEFAULT);
+		} catch (IOException e) {
+			System.err.println("IOException writing passsword for new user \"" + username + "\": " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 		return newUser;
 	}
 
@@ -223,6 +210,12 @@ public class User {
 	 */
 	public synchronized static void deleteUser(String username) {
 		deleteUser(getUser(username));
+	}
+
+	/** Sets the state of the user */
+	public synchronized void setState(UserState state) {
+		this.state = state;
+		refreshDB();
 	}
 
 	/**
@@ -274,9 +267,6 @@ public class User {
 	 */
 	public boolean checkPassword(String password) {
 		password = hashAlgorithm.hash(password);
-
-		if (this.password != null)
-			return this.password.equals(password);
 
 		try {
 			return Persistence.instance.verifyPassword(this, password);
@@ -365,15 +355,18 @@ public class User {
 	 * @param password
 	 *            the password to set
 	 */
-	public void setPassword(String password) throws IllegalArgumentException {
+	public synchronized void setPassword(String password) throws IllegalArgumentException {
 		if (password.length() == 0)
 			throw new IllegalArgumentException("Empty password not allowed");
 		password = hashAlgorithm.hash(password);
-		if (this.password.equals(password))
-			return;
 
-		this.password = password;
-		refreshDB();
+		try {
+			Persistence.instance.writePassword(this, password, IPersistence.DB_DEFAULT);
+		} catch (IOException e) {
+			System.err.println("IOException during writing password for user \"" + this.getUsername() + "\": "
+					+ e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 
 	/**
