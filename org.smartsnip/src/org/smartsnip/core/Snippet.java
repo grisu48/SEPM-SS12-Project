@@ -68,27 +68,33 @@ public class Snippet {
 	 * @throws IllegalArgumentException
 	 *             Thrown, if at least one of the arguments is null or empty
 	 */
-	Snippet(User owner, String name, String description, long id, Code code, Category category, String license,
-			List<Tag> tags, List<Comment> comments, int viewcount) {
+	Snippet(User owner, String name, String description, long id, Code code,
+			Category category, String license, List<Tag> tags,
+			List<Comment> comments, int viewcount) {
 
 		if (owner == null)
-			throw new IllegalArgumentException("Owner of snippet cannot be null");
+			throw new IllegalArgumentException(
+					"Owner of snippet cannot be null");
 		if (name == null || name.isEmpty())
 			throw new IllegalArgumentException("Name of snippet cannot be null");
 		if (description == null || description.isEmpty())
-			throw new IllegalArgumentException("Description of snippet cannot be null");
+			throw new IllegalArgumentException(
+					"Description of snippet cannot be null");
 		if (code == null)
 			throw new IllegalArgumentException("Code of snippet cannot be null");
 		if (category == null)
-			throw new IllegalArgumentException("Category of snippet cannot be null");
+			throw new IllegalArgumentException(
+					"Category of snippet cannot be null");
 		if (name == null || name.isEmpty())
 			throw new IllegalArgumentException("Name of snippet cannot be null");
 		if (license == null || license.isEmpty())
-			throw new IllegalArgumentException("Licence of snippet cannot be null");
+			throw new IllegalArgumentException(
+					"Licence of snippet cannot be null");
 		if (tags == null)
 			throw new IllegalArgumentException("Tags of snippet cannot be null");
 		if (comments == null)
-			throw new IllegalArgumentException("Comments of snippet cannot be null");
+			throw new IllegalArgumentException(
+					"Comments of snippet cannot be null");
 		if (viewcount < 0) {
 			viewcount = 0;
 		}
@@ -128,27 +134,36 @@ public class Snippet {
 	 * @throws IllegalArgumentException
 	 *             Thrown, if at least one of the arguments is null or empty
 	 */
-	private Snippet(User owner, String name, String description, Category category, String code, String language,
-			String license, List<Tag> tags) {
+	private Snippet(User owner, String name, String description,
+			Category category, String code, String language, String license,
+			List<Tag> tags) {
 
 		if (owner == null)
-			throw new IllegalArgumentException("Owner of snippet cannot be null or empty");
+			throw new IllegalArgumentException(
+					"Owner of snippet cannot be null or empty");
 		if (name == null || name.isEmpty())
-			throw new IllegalArgumentException("Name of snippet cannot be null or empty");
+			throw new IllegalArgumentException(
+					"Name of snippet cannot be null or empty");
 		if (description == null || description.isEmpty())
-			throw new IllegalArgumentException("Description of snippet cannot be null or empty");
+			throw new IllegalArgumentException(
+					"Description of snippet cannot be null or empty");
 		if (code == null || code.isEmpty())
-			throw new IllegalArgumentException("Code of snippet cannot be null or empty");
+			throw new IllegalArgumentException(
+					"Code of snippet cannot be null or empty");
 		if (language == null || language.isEmpty())
-			throw new IllegalArgumentException("Code language of snippet cannot be null or empty");
+			throw new IllegalArgumentException(
+					"Code language of snippet cannot be null or empty");
 		if (category == null)
-			throw new IllegalArgumentException("Category of snippet cannot be null");
+			throw new IllegalArgumentException(
+					"Category of snippet cannot be null");
 		if (name == null || name.isEmpty())
-			throw new IllegalArgumentException("Name of snippet cannot be null or empty");
+			throw new IllegalArgumentException(
+					"Name of snippet cannot be null or empty");
 		if (license == null || license.isEmpty())
-			throw new IllegalArgumentException("Licence of snippet cannot be null or empty");
+			throw new IllegalArgumentException(
+					"Licence of snippet cannot be null or empty");
 		if (tags == null)
-			throw new IllegalArgumentException("Tags of snippet cannot be null");
+			tags = new ArrayList<Tag>();
 
 		this.owner = owner;
 		this.name = name;
@@ -200,10 +215,12 @@ public class Snippet {
 	 *             Thrown if an argument is null or empty
 	 * @return the newly created snippet
 	 */
-	public static Snippet createSnippet(User owner, String name, String description, Category category, String code,
+	public static Snippet createSnippet(User owner, String name,
+			String description, Category category, String code,
 			String language, String license, List<Tag> tags) throws IOException {
 
-		Snippet snippet = new Snippet(owner, name, description, category, code, language, license, tags);
+		Snippet snippet = new Snippet(owner, name, description, category, code,
+				language, license, tags);
 		addToDB(snippet);
 
 		return snippet;
@@ -224,7 +241,8 @@ public class Snippet {
 			Snippet snippet = Persistence.instance.getSnippet(hash);
 			return snippet != null;
 		} catch (IOException e) {
-			System.err.println("IOException while exists(" + hash + ") " + e.getMessage());
+			System.err.println("IOException while exists(" + hash + ") "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 			return false;
 		}
@@ -248,7 +266,8 @@ public class Snippet {
 			Snippet snippet = Persistence.instance.getSnippet(hash);
 			return snippet;
 		} catch (IOException e) {
-			System.err.println("IOException while getSnippet(" + hash + ") " + e.getMessage());
+			System.err.println("IOException while getSnippet(" + hash + ") "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -457,12 +476,14 @@ public class Snippet {
 			if (comment == null)
 				return;
 			if (!comment.snippet.equals(this))
-				throw new IOException("Comment owner not equals snippet to be added");
+				throw new IOException(
+						"Comment owner not equals snippet to be added");
 
 			Persistence.instance.writeComment(comment, IPersistence.DB_DEFAULT);
 
 		} catch (IOException e) {
-			Logging.printError("IOException during addComment(Comment object) " + e.getMessage(), e);
+			Logging.printError("IOException during addComment(Comment object) "
+					+ e.getMessage(), e);
 			e.printStackTrace(Logging.err);
 		}
 	}
@@ -511,7 +532,8 @@ public class Snippet {
 		try {
 			return Persistence.instance.getSnippetsCount();
 		} catch (IOException e) {
-			System.err.println("IOException while totalCount() " + e.getMessage());
+			System.err.println("IOException while totalCount() "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 			return 0;
 		}
@@ -524,7 +546,8 @@ public class Snippet {
 		try {
 			Persistence.instance.writeSnippet(this, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("Error writing snippet " + name + " (" + id + "): " + e.getMessage());
+			System.err.println("Error writing snippet " + name + " (" + id
+					+ "): " + e.getMessage());
 			e.printStackTrace(System.err);
 			return;
 		}
@@ -540,7 +563,8 @@ public class Snippet {
 		if (snippet == null)
 			return;
 
-		snippet.id = Persistence.instance.writeSnippet(snippet, IPersistence.DB_NEW_ONLY);
+		snippet.id = Persistence.instance.writeSnippet(snippet,
+				IPersistence.DB_NEW_ONLY);
 	}
 
 	/**
@@ -548,12 +572,14 @@ public class Snippet {
 	 */
 	protected final synchronized void refreshComments() {
 		try {
-			List<Comment> comments = Persistence.getInstance().getComments(this);
+			List<Comment> comments = Persistence.getInstance()
+					.getComments(this);
 			if (comments != null)
 				this.comments = comments;
 		} catch (IOException e) {
-			System.err.println("IOException refreshing the comments of snippet \"" + name + "\" (id=" + id + ": "
-					+ e.getMessage());
+			System.err
+					.println("IOException refreshing the comments of snippet \""
+							+ name + "\" (id=" + id + ": " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -563,10 +589,12 @@ public class Snippet {
 	 */
 	public void delete() {
 		try {
-			Persistence.getInstance().removeSnippet(this, IPersistence.DB_DEFAULT);
+			Persistence.getInstance().removeSnippet(this,
+					IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("IOException during delete of snippet \"" + this.getName() + "\" (id=" + getHashId()
-					+ "): " + e.getMessage());
+			System.err.println("IOException during delete of snippet \""
+					+ this.getName() + "\" (id=" + getHashId() + "): "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -593,9 +621,10 @@ public class Snippet {
 		List<XComment> commentList = getXComments();
 
 		// TODO Comment list with hash codes
-		return new XSnippet(owner.getUsername(), id, this.getName(), description, this.getCategory().toXCategory(),
-				getStringTags(), commentList, code.getCode(), code.getFormattedHTML(), code.getLanguage(), license,
-				viewcount);
+		return new XSnippet(owner.getUsername(), id, this.getName(),
+				description, this.getCategory().toXCategory(), getStringTags(),
+				commentList, code.getCode(), code.getFormattedHTML(),
+				code.getLanguage(), license, viewcount);
 	}
 
 	/**
@@ -625,7 +654,8 @@ public class Snippet {
 	 * @throws IOException
 	 *             Thrown, if occuring during creation of the comment
 	 */
-	public synchronized Comment addComment(String message, User owner) throws IOException {
+	public synchronized Comment addComment(String message, User owner)
+			throws IOException {
 		if (message == null || message.isEmpty() || owner == null)
 			return null;
 		Comment result = Comment.createComment(owner, this, message);

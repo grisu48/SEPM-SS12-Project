@@ -30,7 +30,8 @@ public class Persistence {
 		initialize(true);
 	}
 
-	public synchronized static void initialize(boolean memOnly) throws IllegalAccessException {
+	public synchronized static void initialize(boolean memOnly)
+			throws IllegalAccessException {
 		initialize(memOnly, true);
 	}
 
@@ -53,24 +54,29 @@ public class Persistence {
 	 * @deprecated Becase the silly test objects should be removed
 	 */
 	@Deprecated
-	public synchronized static void initialize(boolean memOnly, boolean createTestObjects)
-			throws IllegalAccessException {
+	public synchronized static void initialize(boolean memOnly,
+			boolean createTestObjects) throws IllegalAccessException {
 		if (instance != null)
-			throw new IllegalStateException("Persistence layer already initialised.");
+			throw new IllegalStateException(
+					"Persistence layer already initialised.");
 
 		// TODO
 		if (memOnly) {
-			System.out.println("WARNING: Persistence is running in memory-only mode!");
+			System.out
+					.println("WARNING: Persistence is running in memory-only mode!");
 
-			PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
+			PersistenceFactory
+					.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
 			instance = PersistenceFactory.getInstance();
 		} else {
-			PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_SQL_DB);
+			PersistenceFactory
+					.setDefaultType(PersistenceFactory.PERSIST_SQL_DB);
 			try {
 				instance = PersistenceFactory.getInstance();
 			} catch (IllegalAccessException e) {
 				// Fail-safe method. Use memory persistance layer
-				PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
+				PersistenceFactory
+						.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
 				instance = PersistenceFactory.getInstance();
 				throw e;
 			}
@@ -118,18 +124,22 @@ public class Persistence {
 	}
 
 	/** Adds some silly objects for testing */
-	private static void addSomeSillyObjects() {
+	static void addSomeSillyObjects() {
 		final String[] users = new String[] { "javajoe", "rubyrupert" };
 		final String[] userPasswords = new String[] { "password1", "password2" };
-		final String[] emails = new String[] { "joe@java.com", "rupert123@internet.com" };
+		final String[] emails = new String[] { "joe@java.com",
+				"rupert123@internet.com" };
 
 		final String[] categories = new String[] { "Java code", "Sorting" };
 
-		final String[] snippets = new String[] { "// No code here", "/* Java comment is here! */" };
-		final String[] snippetOwner = new String[] { "// No code here", "/* Java comment is here! */" };
-		final String[] snippetDesc = new String[] { "Simple single line comment",
+		final String[] snippets = new String[] { "// No code here",
+				"/* Java comment is here! */" };
+		final String[] snippetOwner = new String[] { users[0], users[1] };
+		final String[] snippetDesc = new String[] {
+				"Simple single line comment",
 				"Second variant of single line comment" };
-		final String[] snippetCategories = new String[] { categories[0], categories[1] };
+		final String[] snippetCategories = new String[] { categories[0],
+				categories[1] };
 
 		try {
 
@@ -146,15 +156,18 @@ public class Persistence {
 				Category category = Category.getCategory(snippetCategories[i]);
 
 				if (owner == null || category == null)
-					throw new IOException("Snippet owner or snippet category not found");
+					throw new IOException(
+							"Snippet owner or snippet category not found");
 
-				Snippet.createSnippet(owner, "Snippet " + i, snippetDesc[i], category, snippets[i], "Java", "GPLv3",
-						null);
+				Snippet.createSnippet(owner, "Snippet " + i, snippetDesc[i],
+						category, snippets[i], "Java", "GPLv3", null);
 			}
 
 		} catch (IOException e) {
-			System.err.println("IOException during creation of some silly objects!!");
-			throw new RuntimeException("IOException during creation of some silly objects", e);
+			System.err
+					.println("IOException during creation of some silly objects!!");
+			throw new RuntimeException(
+					"IOException during creation of some silly objects", e);
 		}
 
 		// Objects created

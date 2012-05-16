@@ -70,14 +70,17 @@ public class User {
 	 * @throws IllegalArgumentException
 	 *             Thrown if one of the arguments is null or empty
 	 */
-	User(String username, String realName, String email, UserState state, List<Snippet> favorites) {
+	User(String username, String realName, String email, UserState state,
+			List<Snippet> favorites) {
 		if (username == null || username.isEmpty())
-			throw new IllegalArgumentException("Cannot create user with empty username");
+			throw new IllegalArgumentException(
+					"Cannot create user with empty username");
 		if (realName == null) {
 			realName = "";
 		}
 		if (email == null || email.isEmpty())
-			throw new IllegalArgumentException("Cannot create user with empty email");
+			throw new IllegalArgumentException(
+					"Cannot create user with empty email");
 		if (favorites == null) {
 			favorites = new ArrayList<Snippet>();
 		}
@@ -126,7 +129,8 @@ public class User {
 		try {
 			return Persistence.instance.getUser(username);
 		} catch (IOException e) {
-			System.err.println("IOException during getting User \"" + username + "\":" + e.getMessage());
+			System.err.println("IOException during getting User \"" + username
+					+ "\":" + e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -165,12 +169,13 @@ public class User {
 	 *             the strings is empty, the username is already taken or if the
 	 *             email-address is invalid
 	 */
-	public static synchronized User createNewUser(String username, String password, String email)
-			throws IllegalArgumentException {
+	public static synchronized User createNewUser(String username,
+			String password, String email) throws IllegalArgumentException {
 		return createNewUser(username, password, email, username);
 	}
 
-	public static synchronized User createNewUser(String username, String password, String email, String realname)
+	public static synchronized User createNewUser(String username,
+			String password, String email, String realname)
 			throws IllegalArgumentException {
 		if (username.length() == 0)
 			throw new IllegalArgumentException("Username cannot be empty");
@@ -191,13 +196,7 @@ public class User {
 		// All test passed. Create new user
 		User newUser = new User(username, email, realname);
 		addToDB(newUser);
-		try {
-			Persistence.instance.writePassword(newUser, password, IPersistence.DB_DEFAULT);
-		} catch (IOException e) {
-			System.err.println("IOException writing passsword for new user \"" + username + "\": " + e.getMessage());
-			e.printStackTrace(System.err);
-			return null;
-		}
+		newUser.setPassword(password);
 		return newUser;
 	}
 
@@ -232,7 +231,8 @@ public class User {
 		try {
 			Persistence.instance.removeUser(user, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("IOException during deleteUser(" + user.username + "): " + e.getMessage());
+			System.err.println("IOException during deleteUser(" + user.username
+					+ "): " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -271,7 +271,9 @@ public class User {
 		try {
 			return Persistence.instance.verifyPassword(this, password);
 		} catch (IOException e) {
-			System.err.println("IOException during checking password for user \"" + username + "\": " + e.getMessage());
+			System.err
+					.println("IOException during checking password for user \""
+							+ username + "\": " + e.getMessage());
 			e.printStackTrace(System.err);
 			return false;
 		}
@@ -301,7 +303,8 @@ public class User {
 	 */
 	public void setEmail(String email) throws IllegalArgumentException {
 		if (email.length() == 0)
-			throw new IllegalArgumentException("Empty email address not allowed");
+			throw new IllegalArgumentException(
+					"Empty email address not allowed");
 		if (!isValidEmailAddress(email))
 			throw new IllegalArgumentException("Illegal email-address");
 
@@ -342,7 +345,8 @@ public class User {
 		try {
 			return Persistence.instance.getUserCount();
 		} catch (IOException e) {
-			System.err.println("IOException during getUserCount(): " + e.getMessage());
+			System.err.println("IOException during getUserCount(): "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 			return -1;
 		}
@@ -355,16 +359,19 @@ public class User {
 	 * @param password
 	 *            the password to set
 	 */
-	public synchronized void setPassword(String password) throws IllegalArgumentException {
+	public synchronized void setPassword(String password)
+			throws IllegalArgumentException {
 		if (password.length() == 0)
 			throw new IllegalArgumentException("Empty password not allowed");
 		password = hashAlgorithm.hash(password);
 
 		try {
-			Persistence.instance.writePassword(this, password, IPersistence.DB_DEFAULT);
+			Persistence.instance.writePassword(this, password,
+					IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("IOException during writing password for user \"" + this.getUsername() + "\": "
-					+ e.getMessage());
+			System.err
+					.println("IOException during writing password for user \""
+							+ this.getUsername() + "\": " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -448,7 +455,8 @@ public class User {
 		try {
 			Persistence.instance.writeUser(this, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("IOException writing out user \"" + username + "\": " + e.getMessage());
+			System.err.println("IOException writing out user \"" + username
+					+ "\": " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -525,8 +533,8 @@ public class User {
 		try {
 			Persistence.instance.writeUser(user, IPersistence.DB_NEW_ONLY);
 		} catch (IOException e) {
-			System.err
-					.println("IOException during adding user \"" + user.getUsername() + "\" to db: " + e.getMessage());
+			System.err.println("IOException during adding user \""
+					+ user.getUsername() + "\" to db: " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
