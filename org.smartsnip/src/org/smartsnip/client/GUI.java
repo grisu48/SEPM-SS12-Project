@@ -1,7 +1,5 @@
 package org.smartsnip.client;
 
-
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,20 +8,28 @@ import org.smartsnip.shared.XCategory;
 import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
-import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.*;
-
-
-
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class GUI {
-	
-	static final List<String> TESTTAGS = Arrays.asList("Tag1", "Tag2", "Tag3", "Tag4");
-	static final XCategory CAT = new XCategory("catname", "description", "parent", new ArrayList<String>());
-	static final XSnippet SNIPPET = new XSnippet("owner", 123,"title", "description", CAT, TESTTAGS, new ArrayList<XComment>(),"code", "codeHTML", "language", "license", 4);
-	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET);
+
+	static final List<String> TESTTAGS = Arrays.asList("Tag1", "Tag2", "Tag3",
+			"Tag4");
+	static final XCategory CAT = new XCategory("catname", "description",
+			"parent", new ArrayList<String>());
+	static final XSnippet SNIPPET = new XSnippet("owner", 123, "title",
+			"description", CAT, TESTTAGS, new ArrayList<XComment>(), "code",
+			"codeHTML", "language", "license", 4);
+	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET,
+			SNIPPET, SNIPPET, SNIPPET, SNIPPET);
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -33,63 +39,52 @@ public class GUI {
 	HorizontalPanel dataPanel = new HorizontalPanel();
 	// Create footerPanel
 	SimplePanel footerPanel = new SimplePanel();
-	
-	
+
+	/** Meta */
+	private final Meta meta = new Meta();
+
 	public void getReady() {
 		// Adds a personalized CSS-File
-		Resources.INSTANCE.css().ensureInjected(); 
-		
-		//Create the Page
+		Resources.INSTANCE.css().ensureInjected();
+
+		// Create the Page
 		createBasicPage();
 		showSearchPage();
-		//showImpressum();
-		//showSnipPage();
-		//showPersonalPage();
-		//showLoginPopup();
-		//showRegisterPopup();
-		//showTestPopup();
+		// showImpressum();
+		// showSnipPage();
+		// showPersonalPage();
+		// showLoginPopup();
+		// showRegisterPopup();
+		// showTestPopup();
 	}
 
-	
-	
-	
-	
-	
-	
 	public void createBasicPage() {
-		
+
 		// Fill userPanel
-		Meta meta = new Meta();
 		userPanel.add(meta);
-		
-		
+
 		// Fill searchPanel
 		SearchArea search = new SearchArea();
 		searchPanel.add(search);
-		
-		//Fill footerPanel
+
+		// Fill footerPanel
 		Footer footer = new Footer();
 		footerPanel.setWidth("100%");
 		footerPanel.add(footer);
 
-		
-		
 		// Fix Panels to divs
 		RootPanel.get("user").add(userPanel);
 		RootPanel.get("search").add(searchPanel);
 		RootPanel.get("data").add(dataPanel);
 		RootPanel.get("footer").add(footerPanel);
-		
+
 		// Sets Cursor
 		// z.B. ewSymbolTextBox.setFocus(true);
-		
-		
-		
+
 	}
-	
-	
+
 	public void showSearchPage() {
-		
+
 		ResultArea myResultArea = new ResultArea();
 		myResultArea.setStyleName("leftPanel");
 		VerticalPanel rightPanel = new VerticalPanel();
@@ -97,84 +92,95 @@ public class GUI {
 		CatArea myCatArea = new CatArea(TESTLIST);
 		TagArea myTagArea = new TagArea(TESTLIST);
 		SortArea mySortArea = new SortArea();
-	
-		
+
 		dataPanel.add(myResultArea);
 		dataPanel.add(rightPanel);
 		rightPanel.add(mySortArea);
 		rightPanel.add(myCatArea);
 		rightPanel.add(myTagArea);
-	
+
 	}
-	
-	
-	
-	
+
 	public void showSnipPage() {
 		SnipArea mySnipArea = new SnipArea(SNIPPET);
-		
+
 		CommentArea myCommentArea = new CommentArea(SNIPPET);
 		dataPanel.add(mySnipArea);
 		dataPanel.add(myCommentArea);
-		
+
 	}
-	
+
 	public void showPersonalPage() {
 		PersonalArea myPersonalArea = new PersonalArea();
 		VerticalPanel vertPanel = new VerticalPanel();
 		dataPanel.add(myPersonalArea);
 		dataPanel.add(vertPanel);
-		
+
 	}
-	
+
 	public void showLoginPopup() {
-		
+
 		PopupPanel loginPanel = new PopupPanel(false);
 		loginPanel.setStyleName("Login");
-	    loginPanel.setTitle("Login");
-	    Login login = new Login();
-	    loginPanel.setWidget(login);
-	    loginPanel.setGlassEnabled(true);
-	    loginPanel.setPopupPosition(110,100);
-	    loginPanel.setWidth("340px");
-	    loginPanel.show();
+		loginPanel.setTitle("Login");
+		Login login = new Login(loginPanel);
+		loginPanel.setWidget(login);
+		loginPanel.setGlassEnabled(true);
+		loginPanel.setPopupPosition(110, 100);
+		loginPanel.setWidth("340px");
+		loginPanel.show();
 	}
-	
-	
-public void showTestPopup(String test) {
-		
-		PopupPanel loginPanel = new PopupPanel(true);
-	    loginPanel.setTitle(test);
-	    VerticalPanel vertPanel = new VerticalPanel();
-	    Label lname = new Label(test);
-	    vertPanel.add(lname);
-	    loginPanel.setWidget(vertPanel);
-	    loginPanel.setGlassEnabled(true);
-	    loginPanel.setPopupPosition(110,100);
-	    loginPanel.setWidth("340px");
-	    loginPanel.show();
+
+	public void showTestPopup(String test) {
+
+		final PopupPanel loginPanel = new PopupPanel(true, true);
+		Button close = new Button("<b>Close</b>");
+
+		loginPanel.setTitle(test);
+		VerticalPanel vertPanel = new VerticalPanel();
+		Label lname = new Label(test);
+		vertPanel.add(lname);
+		vertPanel.add(close);
+		loginPanel.setWidget(vertPanel);
+		loginPanel.setGlassEnabled(true);
+		loginPanel.setPopupPosition(110, 100);
+		loginPanel.setWidth("340px");
+		loginPanel.show();
+		close.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				loginPanel.hide();
+			}
+		});
 	}
-	
-	
+
 	public void showRegisterPopup() {
-		
-		PopupPanel registerPanel = new PopupPanel(false);
+
+		PopupPanel registerPanel = new PopupPanel(true);
+
 		registerPanel.setStyleName("Register");
 		registerPanel.setTitle("Register");
-		Register register = new Register();
-	    registerPanel.setWidget(register);
-	    registerPanel.setGlassEnabled(true);
-	    registerPanel.setPopupPosition(110,100);
-	    registerPanel.setWidth("340px");
-	    registerPanel.show();
+		Register register = new Register(registerPanel);
+		registerPanel.setWidget(register);
+		registerPanel.setGlassEnabled(true);
+		registerPanel.setPopupPosition(110, 100);
+		registerPanel.setWidth("340px");
+		registerPanel.show();
 	}
-	
+
 	public void showImpressum() {
 		dataPanel.clear();
-		HTML impressum = new HTML("<p><br /><strong>Verantwortlich für die Inhalte<br /></strong>Paul Opitz <br />"+
-	"Roveretoplatz 2 <br />6330 Kufstein <br />Österreich</p><p><br /><strong>Haftung für die Inhalte</strong><br />"+
-	"Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann ich jedoch keine Gewähr übernehmen.</p><p><br /><strong>Haftung für Links</strong><br />Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Deshalb kann ich für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Links umgehend entfernen.</p><br /><strong>Rechte</strong><br />Die Inhalte stehen unter einer <a href='http://creativecommons.org/licenses/by-nc-sa/3.0/at/' rel='license'>Creative Commons Namensnennung-Nicht-kommerziell-Weitergabe unter gleichen Bedingungen 3.0 Österreich Lizenz</a>.<p><br /><strong>Datenschutz</strong><br />Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf meinen Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder E-Mail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.Ich weise darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Der Betreiber der Seiten behaltet sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.</p>");
+		HTML impressum = new HTML(
+				"<p><br /><strong>Verantwortlich für die Inhalte<br /></strong>Paul Opitz <br />"
+						+ "Roveretoplatz 2 <br />6330 Kufstein <br />Österreich</p><p><br /><strong>Haftung für die Inhalte</strong><br />"
+						+ "Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann ich jedoch keine Gewähr übernehmen.</p><p><br /><strong>Haftung für Links</strong><br />Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Deshalb kann ich für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Links umgehend entfernen.</p><br /><strong>Rechte</strong><br />Die Inhalte stehen unter einer <a href='http://creativecommons.org/licenses/by-nc-sa/3.0/at/' rel='license'>Creative Commons Namensnennung-Nicht-kommerziell-Weitergabe unter gleichen Bedingungen 3.0 Österreich Lizenz</a>.<p><br /><strong>Datenschutz</strong><br />Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf meinen Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder E-Mail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.Ich weise darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Der Betreiber der Seiten behaltet sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.</p>");
 		dataPanel.add(impressum);
+	}
+
+	/** Refreshes the GUI */
+	public void refresh() {
+		meta.refresh();
 	}
 
 }
