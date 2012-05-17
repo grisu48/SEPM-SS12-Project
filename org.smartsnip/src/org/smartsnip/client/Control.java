@@ -27,6 +27,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class Control implements EntryPoint {
 
+	private String username = "Guest";
+	private boolean loggedIn = false;
+	
 	private static Control instance = null;
 	private final static String COOKIE_SESSION = ISession.cookie_Session_ID;
 	private final static ISessionAsync session = ISession.Util.getInstance();
@@ -91,36 +94,40 @@ public class Control implements EntryPoint {
 		}
 	}
 
-	public void login(String user, String pw){
+	public void login(final String user, final String pw, final Login login){
 	
 			try {
 				session.login(user, pw, new AsyncCallback<Boolean>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							myGUI.showTestPopup("No AccessFailure"+ caught.getMessage());
+							if (caught instanceof NoAccessException) {
+								login.loginFailure("Wrong username/password");
+								return;
+							}
+							
+							handleException("Error doing the login", caught);
 							
 						}
 
 						@Override
 						public void onSuccess(Boolean result) {
 							if (result) {
-								myGUI.showTestPopup("Login yes");
+								login.loginSuccess();
 							} else
 							{
-								myGUI.showTestPopup("No AccessBooleanNO");
+								login.loginFailure("Access denial");
 							}
 						}
 					});
 			} catch (NoAccessException e) {
-				myGUI.showTestPopup("No AccessException");
-				e.printStackTrace();
+				login.loginFailure("Access denial");
 			}
 	}
 	
 	public void register(String user, String mail, String pw){
 		
-		//Todo.... Welche Methode darf ich da aufrufen?
+		// TODO Write me
 }
 
 	public void search(String searchString) {
@@ -140,10 +147,49 @@ public class Control implements EntryPoint {
 		});
 		
 	}
+
+	public String getUsername() {
+		refresh();
+		return username;
+	}
 	
+	public boolean isLoggedIn() {
+		refresh();
+		return loggedIn;
+	}
 	
+	private void refresh() {
+		session.getUsername(new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handleException("Error while refreshing the username", caught);
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				if (result == null) result = "";
+				if (result.isEmpty()) result = "Guest";
+				username = result;
+			}
+		});
+		session.isLoggedIn(new AsyncCallback<Boolean>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handleException("Error getting session login status", caught);
+			}
+
+			@Override
+			public void onSuccess(Boolean result) {
+				loggedIn = result;
+			}
+		});
+	}
 	
-	
+	private void handleException(String message, Throwable cause) {
+		// TODO Write me!
+	}
 	
 
 }
