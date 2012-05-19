@@ -113,6 +113,7 @@ public class Control implements EntryPoint {
 		}
 	}
 
+	
 	public void login(final String user, final String pw, final Login login){
 	
 			try {
@@ -133,6 +134,7 @@ public class Control implements EntryPoint {
 						public void onSuccess(Boolean result) {
 							if (result) {
 								login.loginSuccess();
+								refresh();
 							} else
 							{
 								login.loginFailure("Access denial");
@@ -183,12 +185,12 @@ public class Control implements EntryPoint {
 	}
 
 	public String getUsername() {
-		refresh();
+		//refresh();
 		return username;
 	}
 	
 	public boolean isLoggedIn() {
-		refresh();
+		//refresh();
 		return loggedIn;
 	}
 	
@@ -205,6 +207,7 @@ public class Control implements EntryPoint {
 				if (result == null) result = "";
 				if (result.isEmpty()) result = "Guest";
 				username = result;
+				myGUI.metaRefresh();
 			}
 		});
 		session.isLoggedIn(new AsyncCallback<Boolean>() {
@@ -223,6 +226,24 @@ public class Control implements EntryPoint {
 	
 	private void handleException(String message, Throwable cause) {
 		// TODO Write me!
+	}
+
+	
+	
+	public void logout() {
+		session.logout(new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handleException("Logout went wrong", caught);				
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				refresh();
+			}
+		});
+		
 	}
 	
 

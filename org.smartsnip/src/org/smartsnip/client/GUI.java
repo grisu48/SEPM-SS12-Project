@@ -179,7 +179,7 @@ public class GUI {
 	}
 
 	/** Refreshes the GUI */
-	public void refresh() {
+	public void metaRefresh() {
 		meta.refresh();
 	}
 
