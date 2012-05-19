@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Label;
 public class Meta extends Composite {
 
 	private HorizontalPanel metaPanel;
-	private Label user;
+	private Anchor user;
 	private Anchor login;
 	private Anchor register;
 	private Anchor logout;
@@ -18,7 +18,17 @@ public class Meta extends Composite {
 	public Meta() {
 
 		metaPanel = new HorizontalPanel();
-		user = new Label(Control.getInstance().getUsername());
+		user = new Anchor(Control.getInstance().getUsername());
+		user.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Control control = Control.getInstance();
+				control.changeSite('p');
+			}
+
+		});
+		
+		
 		login = new Anchor("Login");
 		login.addClickHandler(new ClickHandler() {
 			@Override

@@ -117,6 +117,7 @@ public class GUI {
 	}
 
 	public void showPersonalPage() {
+		dataPanel.clear();
 		PersonalArea myPersonalArea = new PersonalArea();
 		VerticalPanel vertPanel = new VerticalPanel();
 		dataPanel.add(myPersonalArea);

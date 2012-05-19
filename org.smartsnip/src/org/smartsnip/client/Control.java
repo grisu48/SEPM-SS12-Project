@@ -103,6 +103,9 @@ public class Control implements EntryPoint {
 		case 'r':
 			myGUI.showRegisterPopup();
 			break;
+		case 'p':
+			myGUI.showPersonalPage();
+			break;
 		default:
 		}
 	}
