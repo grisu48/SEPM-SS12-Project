@@ -57,10 +57,11 @@ public class Search {
 	/**
 	 * @return the filtered search results
 	 */
-	public synchronized List<Snippet> getResults(XSearch.SearchSorting sorting, int start, int count) {
+	public synchronized List<Snippet> getResults(XSearch.SearchSorting sorting,
+			int start, int count) {
 		if (filterResults == null)
 			applyFilter();
-		
+
 		switch (sorting) {
 		case time:
 			sortByTime();
@@ -101,23 +102,23 @@ public class Search {
 	 * Sorts filterResults by time
 	 */
 	private void sortByTime() {
-		
+		// TODO Implement me!
 	}
-	
+
 	/**
 	 * Sorts filterResults by highest ratings
 	 */
 	private void sortByHightestRating() {
-		
+
 	}
-	
+
 	/**
 	 * Sorts filterResults by highest view counts
 	 */
 	private void sortByViewCount() {
-		
+
 	}
-	
+
 	/**
 	 * Adds a tag to the search filter. If the tag is null or already added,
 	 * nothing happens

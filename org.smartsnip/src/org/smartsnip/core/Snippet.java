@@ -39,6 +39,9 @@ public class Snippet {
 	/** View counter */
 	private int viewcount = 0;
 
+	/** Averaged rating as cached value. */
+	private transient Float averageRating = null;
+
 	/**
 	 * DB constructor must initialise all fields.
 	 * 
@@ -323,13 +326,15 @@ public class Snippet {
 	 * @return the code of the snippet
 	 */
 	public Code getCode() {
-		if (code == null) CodeNull.getInstance();
+		if (code == null)
+			CodeNull.getInstance();
 		return code;
 	}
 
 	/**
-	 * Sets the code of the snippet. If null, nothing is done.
-	 * The object to be set cannot be a instance of CodeNull. In this case, the method returns without effect.
+	 * Sets the code of the snippet. If null, nothing is done. The object to be
+	 * set cannot be a instance of CodeNull. In this case, the method returns
+	 * without effect.
 	 * 
 	 * @param code
 	 *            the code to set
@@ -354,6 +359,25 @@ public class Snippet {
 	 */
 	public Category getCategory() {
 		return category;
+	}
+
+	/**
+	 * @return the average rating of the snippet
+	 */
+	public float getAverageRating() {
+		if (averageRating == null) {
+			try {
+				averageRating = Persistence.instance.getAverageRating(this);
+			} catch (IOException e) {
+				System.err
+						.println("IOException during getting average ratining of snippet \""
+								+ getName() + "\": " + e.getMessage());
+				e.printStackTrace(System.err);
+				if (averageRating == null)
+					return 0;
+			}
+		}
+		return averageRating;
 	}
 
 	/**
