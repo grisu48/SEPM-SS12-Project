@@ -66,9 +66,11 @@ public class Meta extends Composite {
 		if (user.getText().equalsIgnoreCase("Guest")) {
 			login.setVisible(true);
 			register.setVisible(true);
+			user.setVisible(false);
 			logout.setVisible(false);
 		}
 		else {
+			user.setVisible(true);
 			login.setVisible(false);
 			register.setVisible(false);
 			logout.setVisible(true);
