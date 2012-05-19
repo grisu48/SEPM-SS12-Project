@@ -20,7 +20,8 @@ public class MemPersistenceTest {
 
 	/** Testuser information container */
 	private static class TestUser {
-		protected TestUser(String name, String email, String password, String realname) {
+		protected TestUser(String name, String email, String password,
+				String realname) {
 			this.name = name;
 			this.email = email;
 			this.password = password;
@@ -57,7 +58,8 @@ public class MemPersistenceTest {
 	}
 
 	private static class TestSnippet {
-		protected TestSnippet(String owner, String name, long id, String description, String code, String language,
+		protected TestSnippet(String owner, String name, long id,
+				String description, String code, String language,
 				String category) {
 			this.owner = owner;
 			this.name = name;
@@ -95,17 +97,20 @@ public class MemPersistenceTest {
 	/** If the memory-only persistence layer has been initialised successfully */
 	private static boolean isInitialized = false;
 
-	private static final String[] testCategories = new String[] { "Network", "Sorting", "Social" };
+	private static final String[] testCategories = new String[] { "Network",
+			"Sorting", "Social" };
 
 	private static final TestUser[] testUsers = new TestUser[] {
 			new TestUser("Joe", "joe@mail.com", "pass1", "Java Joe"),
 			new TestUser("Rupert", "rupert@yjiik.net", "pass2", "Ruby Rupert") };
 
-	private static final String[] testLanguages = new String[] { "Java", "Ruby", "C" };
+	private static final String[] testLanguages = new String[] { "Java",
+			"Ruby", "C" };
 
-	private static final TestSnippet[] testSnippets = new TestSnippet[] { new TestSnippet(testUsers[0].name,
-			"BubbleSort", 0, "Bubble sort is a n² sorting algorithm", "// NO CODE CURRENTLY HERE", testLanguages[0],
-			testCategories[1]) };
+	private static final TestSnippet[] testSnippets = new TestSnippet[] { new TestSnippet(
+			testUsers[0].name, "BubbleSort", 0,
+			"Bubble sort is a n² sorting algorithm",
+			"// NO CODE CURRENTLY HERE", testLanguages[0], testCategories[1]) };
 
 	private static final String testComment = "Test comment";
 
@@ -153,7 +158,8 @@ public class MemPersistenceTest {
 			if (!obj.getName().equals(category))
 				fail("Name of created category is invalid");
 		}
-		int delta = Persistence.getInstance().getCategoryCount() - testCategories.length;
+		int delta = Persistence.getInstance().getCategoryCount()
+				- testCategories.length;
 		if (delta != 0) {
 			fail("Category creation failure. Delta = " + delta + " != 0");
 		}
@@ -165,12 +171,14 @@ public class MemPersistenceTest {
 		checkInitialisation();
 
 		for (TestUser testuser : testUsers) {
-			User.createNewUser(testuser.name, testuser.password, testuser.email, testuser.realname);
+			User.createNewUser(testuser.name, testuser.password,
+					testuser.email, testuser.realname);
 			if (!User.auth(testuser.name, testuser.password)) {
 				fail("User login failed for \"" + testuser.name + "\"!");
 			}
 			if (User.auth(testuser.name, testuser.password + "_FAIL")) {
-				fail("User \"" + testuser.name + "\" was able to login with wrong password!");
+				fail("User \"" + testuser.name
+						+ "\" was able to login with wrong password!");
 			}
 			if (!testuser.equals(User.getUser(testuser.name)))
 				fail("Error getting created user \"" + testuser.name + "\"!");
@@ -190,25 +198,32 @@ public class MemPersistenceTest {
 		for (TestSnippet testSnippet : testSnippets) {
 			User owner = Persistence.getInstance().getUser(testSnippet.owner);
 			if (owner == null)
-				fail("Failure getting owner \"" + testSnippet.owner + "\" for snippet!");
-			Category category = Persistence.getInstance().getCategory(testSnippet.category);
+				fail("Failure getting owner \"" + testSnippet.owner
+						+ "\" for snippet!");
+			Category category = Persistence.getInstance().getCategory(
+					testSnippet.category);
 			if (category == null)
-				fail("Failure getting category \"" + testSnippet.category + "\" for snippet!");
+				fail("Failure getting category \"" + testSnippet.category
+						+ "\" for snippet!");
 
-			Snippet snippet = Snippet.createSnippet(owner, testSnippet.name, testSnippet.description, category,
-					testSnippet.code, testSnippet.language, "GPLv3", testSnippet.tags);
+			Snippet snippet = Snippet.createSnippet(owner, testSnippet.name,
+					testSnippet.description, category, testSnippet.code,
+					testSnippet.language, "GPLv3", testSnippet.tags);
 
 			testSnippet.id = snippet.getHashId();
 
 			/* Re-read snippet */
 			snippet = Snippet.getSnippet(testSnippet.id);
 			if (snippet == null)
-				fail("Failure getting created snippet with id = " + testSnippet.id);
+				fail("Failure getting created snippet with id = "
+						+ testSnippet.id);
 			if (!testSnippet.equals(snippet))
-				fail("Failure matching created snippet with id = " + testSnippet.id + " against creation template");
+				fail("Failure matching created snippet with id = "
+						+ testSnippet.id + " against creation template");
 		}
 
-		int delta = Persistence.getInstance().getSnippetsCount() - testSnippets.length;
+		int delta = Persistence.getInstance().getSnippetsCount()
+				- testSnippets.length;
 		if (delta != 0) {
 			fail("Snippet creation failure: Delta = " + delta + " != 0");
 		}
@@ -257,5 +272,21 @@ public class MemPersistenceTest {
 		int delta = 1 - snippet.getCommentCount();
 		if (delta != 0)
 			fail("Comment count of test snippet not valid. Delta = " + delta);
+	}
+
+	@Test
+	public void testSearch() throws IOException {
+		checkInitialisation();
+
+		List<Snippet> results = Persistence.getInstance().search(
+				testSnippets[0].name, 0, 2);
+		if (results.size() <= 0)
+			fail("Search for snippet #1 did not return any contents");
+
+		results = Persistence.getInstance().search(
+				"THIS_SNIPPET_NAME_MUST_NOT_EXIST", 0, 2);
+
+		if (results.size() > 0)
+			fail("Search for snippet that not exists returned contents");
 	}
 }
