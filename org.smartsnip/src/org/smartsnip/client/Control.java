@@ -6,6 +6,7 @@ import java.util.List;
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.ISessionAsync;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -166,8 +167,8 @@ public class Control implements EntryPoint {
 		});
 	}
 
-	public void search(String searchString) {
-		session.doSearch(searchString, new AsyncCallback<List<XSnippet>>() {
+	public void search(String searchString, List<String> tags, List<String> tagsAppearingInSearchString, List<String> categories, XSearch.SearchSorting sorting, int start, int count) {
+		session.doSearch(searchString, tags, tagsAppearingInSearchString, categories, sorting, start, count, new AsyncCallback<XSearch>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -176,8 +177,9 @@ public class Control implements EntryPoint {
 			}
 
 			@Override
-			public void onSuccess(List<XSnippet> result) {
-				ArrayList<XSnippet> snipList = (ArrayList<XSnippet>) result;
+			public void onSuccess(XSearch result) {
+				XSearch searchResult = result;
+				myGUI.showTestPopup("Got the XSearch" + searchResult.totalresults);
 				
 			}
 		});

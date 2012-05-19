@@ -1,5 +1,7 @@
 package org.smartsnip.server;
 
+import java.util.List;
+
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
@@ -122,8 +124,8 @@ public class ISessionImpl extends SessionServlet implements ISession {
 	}
 
 	@Override
-	public XSearch doSearch(String searchString, String[] tags,
-			String[] categories, SearchSorting sorting, int start, int count) {
+	public XSearch doSearch(String searchString, List<String> tags, List<String> tagsAppearingInSearchSort,
+			List<String> categories, SearchSorting sorting, int start, int count) {
 		// TODO Auto-generated method stub
 		return null;
 	}

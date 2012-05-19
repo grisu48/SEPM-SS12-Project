@@ -2,6 +2,8 @@ package org.smartsnip.client;
 
 
 
+import org.smartsnip.shared.XSearch;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -28,9 +30,8 @@ public class SearchArea extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 		          Control control = Control.getInstance();
-		          control.search(searchSnippet.getText());
+		          control.search(searchSnippet.getText(), null, null, null, XSearch.SearchSorting.highestRated, 0, 10);
 		        }
-
 		      });
 		horPanel.add(searchSnippet);
 		horPanel.add(searchButton);

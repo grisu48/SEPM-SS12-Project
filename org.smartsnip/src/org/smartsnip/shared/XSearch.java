@@ -2,7 +2,9 @@ package org.smartsnip.shared;
 
 import java.util.List;
 
-public class XSearch {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class XSearch implements IsSerializable {
 
 	public enum SearchSorting {
 		mostViewed, highestRated, time;

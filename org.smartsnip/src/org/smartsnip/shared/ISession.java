@@ -1,5 +1,7 @@
 package org.smartsnip.shared;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -108,7 +110,7 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @return a List with max count snippets that match the search string, or
 	 *         null, if something went wrong
 	 */
-	public XSearch doSearch(String searchString, String[] tags, String[] categories, XSearch.SearchSorting sorting, int start, int count);
+	public XSearch doSearch(String searchString, List<String> tags, List<String> tagsAppearingInSortString, List<String> categories, XSearch.SearchSorting sorting, int start, int count);
 
 	/**
 	 * @return Gets the server status object
