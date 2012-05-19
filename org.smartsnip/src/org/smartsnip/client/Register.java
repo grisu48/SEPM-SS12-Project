@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sun.corba.se.impl.encoding.CodeSetConversion.BTCConverter;
 
 public class Register extends Composite {
 
@@ -52,10 +51,20 @@ public class Register extends Composite {
 		register.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				String password = pw1.getText();
+				if (password.isEmpty()) {
+					lStatus.setText("You must specify a password");
+					return;
+				}
+				if (!pw2.getText().equals(password)) {
+					lStatus.setText("Passwords did not match (case-sensitive)");
+					return;
+				}
+				
 				Control control = Control.getInstance();
 				register.setEnabled(false);
 				lStatus.setText("Registration in progress ... ");
-				control.register(name.getText(), mail.getText(), lpw2.getText(), Register.this);
+				control.register(name.getText(), mail.getText(), password, Register.this);
 			}
 		});
 		close.addClickHandler(new ClickHandler() {
