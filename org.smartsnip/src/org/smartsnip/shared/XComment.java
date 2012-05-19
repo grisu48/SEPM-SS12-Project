@@ -5,12 +5,12 @@ import java.util.Date;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class XComment implements IsSerializable {
-	public final String owner;
-	public final long snippet;
-	public final String message;
-	public final int positiveVotes;
-	public final int negativeVotes;
-	public final Date time;
+	public String owner;
+	public long snippet;
+	public String message;
+	public int positiveVotes;
+	public int negativeVotes;
+	public Date time;
 
 	public XComment(String owner, long snippet, String message, int positiveVotes, int negativeVotes, Date time) {
 		this.owner = owner;

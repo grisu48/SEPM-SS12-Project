@@ -20,7 +20,7 @@ public class XSnippet implements IsSerializable {
 
 	/** Used by GWT */
 	private XSnippet() {
-		this("", 0, "", "", null, null, null, "", "", "", "", 0);
+		//this("", 0, "", "", null, null, null, "", "", "", "", 0);
 	}
 
 	public XSnippet(String owner, long hash, String title, String description,
@@ -31,9 +31,9 @@ public class XSnippet implements IsSerializable {
 		this.hash = hash;
 		this.title = title;
 		this.description = description;
-		this.category = category;
-		this.tags = tags;
-		this.comments = comments;
+		//this.category = category;
+		//this.tags = tags;
+		//this.comments = comments;
 		this.code = code;
 		this.codeHTML = codeHTML;
 		this.language = language;
