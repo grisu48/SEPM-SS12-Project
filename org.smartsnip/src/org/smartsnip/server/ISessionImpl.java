@@ -118,4 +118,10 @@ public class ISessionImpl extends SessionServlet implements ISession {
 			return false;
 		}
 	}
+
+	@Override
+	public String getSessionCookie() {
+		Session session = getSession();
+		return session.getCookie();
+	}
 }

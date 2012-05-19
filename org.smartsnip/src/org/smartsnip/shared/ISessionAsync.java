@@ -30,4 +30,6 @@ public interface ISessionAsync {
 	void getServerStatus(AsyncCallback<XServerStatus> callback);
 
 	void registerNewUser(String username, String password, String email, AsyncCallback<Boolean> callback);
+
+	void getSessionCookie(AsyncCallback<String> callback);
 }

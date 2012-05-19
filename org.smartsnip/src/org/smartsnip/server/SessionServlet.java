@@ -1,9 +1,13 @@
 package org.smartsnip.server;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.http.params.HttpAbstractParamBean;
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.XServerStatus;
 
@@ -27,7 +31,7 @@ public class SessionServlet extends RemoteServiceServlet {
 	 */
 	public SessionServlet() {
 	}
-
+	
 	/**
 	 * Adds a cookie to the http servlet session.
 	 * 

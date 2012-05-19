@@ -48,7 +48,26 @@ public class Control implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
+		session.getSessionCookie(new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				myGUI.showTestPopup("Error getting session cookie: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(String cookie) {
+				if (cookie == null) {
+					// Static Guest session if browser does not
+					// supports cookies
+					myGUI.showTestPopup("Null-Cookie returned");
+					return;
+				}
+				Cookies.setCookie(COOKIE_SESSION, cookie);
+			}
+		});
 		myGUI.getReady();
+		
 
 		// No contents yet added here
 		//myGUI.showTestPopup("Currently no contents here ... ");
