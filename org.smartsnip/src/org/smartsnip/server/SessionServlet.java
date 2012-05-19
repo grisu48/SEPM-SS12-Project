@@ -1,13 +1,10 @@
 package org.smartsnip.server;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.params.HttpAbstractParamBean;
+import org.smartsnip.core.Logging;
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.XServerStatus;
 
@@ -171,5 +168,30 @@ public class SessionServlet extends RemoteServiceServlet {
 		result.maxMemory = runtime.maxMemory();
 
 		return result;
+	}
+	
+	/**
+	 * Prints a session specific log message. Additional information will be attached to the message
+	 * @param message to be printed
+	 */
+	protected void logInfo(String message) {
+		if (message == null || message.isEmpty()) return;
+		
+		String cookie = getSession().getCookie();
+		if (cookie == null) {
+			HttpServletRequest request = getThreadLocalRequest();
+			if (request == null) 
+				cookie = "???";
+			else
+				cookie = request.getRemoteHost();
+			
+			Logging.printInfo("(" + cookie +"): " + message);
+		} else  {
+			String user = session.getUsername();
+			if (user.equalsIgnoreCase("guest"))
+				Logging.printInfo("(SID=" + cookie + "): " + message);
+			else
+				Logging.printInfo("(SID=" + cookie + ", USER=" + user + "): " + message);
+		}
 	}
 }

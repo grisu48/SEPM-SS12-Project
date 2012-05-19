@@ -61,12 +61,20 @@ public class ISessionImpl extends SessionServlet implements ISession {
 		if (session.isLoggedIn())
 			return false;
 
-		session.login(username, password);
-		return true;
+		try {
+			session.login(username, password);
+			logInfo("Login success: USERNAME=" + username);
+			return true;
+		} catch (NoAccessException e) {
+			logInfo("Login failure: USERNAME=" + username);
+			throw e;
+		}
 	}
 
 	@Override
 	public void logout() {
+		logInfo("Logout");
+		
 		Session session = getSession();
 		session.logout();
 	}
@@ -109,6 +117,7 @@ public class ISessionImpl extends SessionServlet implements ISession {
 		if (User.exists(username))
 			return false;
 		try {
+			logInfo("Requesting create new user (USER=" + username +"; MAIL="+email+")");
 			if (User.createNewUser(username, password, email) == null)
 				return false;
 
