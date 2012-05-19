@@ -26,7 +26,7 @@ public class Tag {
 	 * 
 	 * @param name
 	 *            of the tag to be searched
-	 * @return the given tag if exists, otherwise false
+	 * @return the given tag if exists, otherwise null
 	 */
 	public static synchronized Tag getTag(String name) {
 		if (name == null || name.length() == 0)

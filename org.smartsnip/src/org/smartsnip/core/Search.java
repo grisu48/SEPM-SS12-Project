@@ -99,6 +99,16 @@ public class Search {
 	}
 
 	/**
+	 * 
+	 * @return the total number of results for this search
+	 */
+	public int getTotalResults() {
+		if (filterResults == null)
+			applyFilter();
+		return filterResults.size();
+	}
+
+	/**
 	 * Sorts filterResults by time
 	 */
 	private void sortByTime() {
@@ -196,12 +206,14 @@ public class Search {
 		if (snippet == null)
 			return false;
 
-		if (!categories.contains(snippet.getCategory()))
-			return false;
-
-		for (Tag tag : tags)
-			if (!snippet.hasTag(tag))
+		if (categories != null && categories.size() > 0)
+			if (!categories.contains(snippet.getCategory()))
 				return false;
+
+		if (tags != null && tags.size() > 0)
+			for (Tag tag : tags)
+				if (!snippet.hasTag(tag))
+					return false;
 
 		return true;
 	}
@@ -224,5 +236,51 @@ public class Search {
 			e.printStackTrace(System.err);
 			return null;
 		}
+	}
+
+	/**
+	 * Searches for the given tag and adds it, if found. If the tags was not
+	 * found or null or empty, nothing happens
+	 * 
+	 * @param tag
+	 *            to be added
+	 */
+	public void addTag(String tag) {
+		if (!Tag.exists(tag))
+			return;
+		addTag(Tag.getTag(tag));
+	}
+
+	/**
+	 * Searches for the given category name and adds it, if found. Otherwise
+	 * nothing is done
+	 * 
+	 * @param category
+	 *            to be searched for
+	 */
+	public void addCategory(String category) {
+		Category cat = Category.getCategory(category);
+		if (cat == null)
+			return;
+
+		addCategory(cat);
+	}
+
+	/**
+	 * @return a list of all tags that match the given search criteria
+	 */
+	public List<Tag> getAllTagsMatchingSearchCriteria() {
+		if (filterResults == null)
+			applyFilter();
+
+		List<Tag> result = new ArrayList<Tag>();
+		for (Snippet snippet : filterResults) {
+			List<Tag> tags = snippet.getTags();
+			for (Tag tag : tags)
+				if (!result.contains(tag))
+					result.add(tag);
+		}
+
+		return result;
 	}
 }

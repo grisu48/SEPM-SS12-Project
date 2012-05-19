@@ -642,13 +642,14 @@ public class Snippet {
 	 * @return
 	 */
 	synchronized public XSnippet toXSnippet() {
-		List<XComment> commentList = getXComments();
+		ArrayList<XComment> commentList = getXComments();
 
 		// TODO Comment list with hash codes
 		return new XSnippet(owner.getUsername(), id, this.getName(),
-				description, this.getCategory().toXCategory(), getStringTags(),
-				commentList, code.getCode(), code.getFormattedHTML(),
-				code.getLanguage(), license, viewcount);
+				description, this.getCategory().toXCategory(),
+				new ArrayList<String>(getStringTags()), commentList,
+				code.getCode(), code.getFormattedHTML(), code.getLanguage(),
+				license, viewcount);
 	}
 
 	/**
@@ -656,9 +657,9 @@ public class Snippet {
 	 * 
 	 * @return
 	 */
-	List<XComment> getXComments() {
+	ArrayList<XComment> getXComments() {
 		List<Comment> comments = getComments();
-		List<XComment> result = new ArrayList<XComment>(comments.size());
+		ArrayList<XComment> result = new ArrayList<XComment>(comments.size());
 
 		for (Comment comment : comments)
 			result.add(comment.toXComment());

@@ -26,10 +26,13 @@ public class GUI {
 	static final XCategory CAT = new XCategory("catname", "description",
 			"parent", new ArrayList<String>());
 	static final XSnippet SNIPPET = new XSnippet("owner", 123, "title",
-			"description", CAT, TESTTAGS, new ArrayList<XComment>(), "code",
-			"codeHTML", "language", "license", 4);
+			"description", CAT, new ArrayList<String>(TESTTAGS),
+			new ArrayList<XComment>(), "code", "codeHTML", "language",
+			"license", 4);
 	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET,
 			SNIPPET, SNIPPET, SNIPPET, SNIPPET);
+
+	private ResultArea myResultArea = null;
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -85,7 +88,7 @@ public class GUI {
 
 	public void showSearchPage() {
 
-		ResultArea myResultArea = new ResultArea();
+		this.myResultArea = new ResultArea();
 		myResultArea.setStyleName("leftPanel");
 		VerticalPanel rightPanel = new VerticalPanel();
 		rightPanel.setStyleName("rightPanel");
@@ -183,4 +186,7 @@ public class GUI {
 		meta.refresh();
 	}
 
+	public ResultArea getResultArea() {
+		return this.myResultArea;
+	}
 }
