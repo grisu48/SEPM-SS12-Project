@@ -164,10 +164,57 @@ footer .gwt-Label, .gwt-Anchor {
 
 .gwt-SuggestBox {
 	width:350px;
-	height:20px;
+	height:30px;
 	padding:10px;
 	margin: 20px 0px 0px 350px;
+	font-size:180%;
 }
+
+.gwt-SuggestBoxPopup { 
+	width:370px;
+    padding: 0;
+    margin: 0;
+    background-color:white;
+}
+
+.gwt-SuggestBoxPopup .suggestPopupTopLeft {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupTopLeftInner {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupTopCenter {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupTopCenterInner {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupTopRight {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupTopRightInner {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupMiddleLeft {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupMiddleLeftInner {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupMiddleCenter {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupMiddleCenterInner {padding:0px;margin:0px;}
+.gwt-SuggestBoxPopup .suggestPopupMiddleRight {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupMiddleRightInner {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupBottomLeft {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupBottomLeftInner {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupBottomCenter {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupBottomCenterInner {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupBottomRight {padding:0px;margin:0px;width:0px;height:0px;}
+.gwt-SuggestBoxPopup .suggestPopupBottomRightInner {padding:0px;margin:0px;width:0px;height:0px;}
+
+.gwt-SuggestBoxPopup .item { 
+	width:370px;
+    font-size:150%;
+    color:gray;
+    padding: 5px 5px 5px 10px;
+    margin: 0px;
+	}
+.gwt-SuggestBoxPopup .item-selected { 
+	background-color:#eeeeee;
+	}
+
+
+
+
+
+
+
+
+
 
 .searchButton {;
 	margin: 20px 0px 0px 20px;

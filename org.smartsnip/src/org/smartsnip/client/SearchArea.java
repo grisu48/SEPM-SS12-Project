@@ -8,7 +8,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class SearchArea extends Composite {
 
@@ -23,7 +25,13 @@ public class SearchArea extends Composite {
 	public SearchArea() {
 
 		horPanel = new HorizontalPanel();
-		searchSnippet = new SuggestBox();
+		
+		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();  
+		   oracle.add("Cat");
+		   oracle.add("Dog");
+		   oracle.add("Horse");
+		   oracle.add("Canary");
+		searchSnippet = new SuggestBox(oracle);
 		searchButton = new Button("Search Snippet");
 		searchButton.addStyleName("searchButton");
 		searchButton.addClickHandler(new ClickHandler() {
