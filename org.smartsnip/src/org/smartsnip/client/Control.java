@@ -175,7 +175,7 @@ public class Control implements EntryPoint {
 					@Override
 					public void onSuccess(XSearch result) {
 						searchArea.searchDone(result);
-						myGUI.getResultArea().searchDone(result);
+						myGUI.updateSearchPage(result);
 					}
 				});
 	}

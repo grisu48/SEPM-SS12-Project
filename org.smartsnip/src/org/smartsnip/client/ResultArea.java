@@ -34,13 +34,8 @@ public class ResultArea extends Composite {
 		ScrollPanel myPanel = new ScrollPanel();
 
 		ShortSnipCell myShortSnipCell = new ShortSnipCell();
-
 		myCellList = new CellList<XSnippet>(myShortSnipCell);
-		myCellList.setRowData(0, TESTLIST);
-		// Some special Features
-
-		myCellList.setRowCount(TESTLIST.size(), true);
-
+		//myCellList.setRowData(0, TESTLIST);
 		myPanel.setHeight("600px");
 		myPanel.add(myCellList);
 		initWidget(myPanel);
@@ -48,14 +43,10 @@ public class ResultArea extends Composite {
 		setStyleName("resultArea");
 	}
 
-	/**
-	 * Internal callback, when a search returned (new) data values
-	 * 
-	 * @param result
-	 */
-	void searchDone(XSearch result) {
-		// TODO Auto-generated method stub
-
+	
+	void update(List<XSnippet> snippets) {
+		myCellList.setRowData(0, snippets);
+		myCellList.setRowCount(snippets.size(), true);
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.smartsnip.shared.XCategory;
 import org.smartsnip.shared.XComment;
+import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -33,6 +34,8 @@ public class GUI {
 			SNIPPET, SNIPPET, SNIPPET, SNIPPET);
 
 	private ResultArea myResultArea = null;
+	private CatArea myCatArea = null;
+	private TagArea myTagArea = null;
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -88,12 +91,12 @@ public class GUI {
 
 	public void showSearchPage() {
 
-		this.myResultArea = new ResultArea();
+		myResultArea = new ResultArea();
 		myResultArea.setStyleName("leftPanel");
 		VerticalPanel rightPanel = new VerticalPanel();
 		rightPanel.setStyleName("rightPanel");
-		CatArea myCatArea = new CatArea(TESTLIST);
-		TagArea myTagArea = new TagArea(TESTLIST);
+		myCatArea = new CatArea();
+		myTagArea = new TagArea();
 		SortArea mySortArea = new SortArea();
 
 		dataPanel.add(myResultArea);
@@ -188,5 +191,11 @@ public class GUI {
 
 	public ResultArea getResultArea() {
 		return this.myResultArea;
+	}
+
+	public void updateSearchPage(XSearch result) {
+		myResultArea.update(result.snippets);
+		myCatArea.update(result.categories);
+		myTagArea.update(result.tagsAppearingInSearchString);
 	}
 }
