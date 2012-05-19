@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sun.corba.se.impl.encoding.CodeSetConversion.BTCConverter;
 
 public class Register extends Composite {
 
@@ -27,6 +28,7 @@ public class Register extends Composite {
 	private PasswordTextBox pw2;
 	private Button register;
 	private Button close;
+	private Label lStatus;
 
 	public Register(final PopupPanel parent) {
 		super();
@@ -46,11 +48,14 @@ public class Register extends Composite {
 		pw2 = new PasswordTextBox();
 		register = new Button("Register");
 		close = new Button("Close");
+		lStatus = new Label("");
 		register.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				Control control = Control.getInstance();
-				control.register(name.getText(), mail.getText(), lpw2.getText());
+				register.setEnabled(false);
+				lStatus.setText("Registration in progress ... ");
+				control.register(name.getText(), mail.getText(), lpw2.getText(), Register.this);
 			}
 		});
 		close.addClickHandler(new ClickHandler() {
@@ -74,9 +79,27 @@ public class Register extends Composite {
 		hortPanel.add(close);
 
 		vertPanel.add(hortPanel);
+		vertPanel.add(lStatus);
 
 		initWidget(vertPanel);
 		// Give the overall composite a style name.
 		setStyleName("login");
+	}
+
+	/**
+	 * Callback if register process failed
+	 * @param message Failure message
+	 */
+	void registerFailure(String message) {
+		lStatus.setText("Registration failed: " + message);
+		register.setEnabled(true);
+	}
+
+	/**
+	 * Callback is the register process succeeds
+	 */
+	void registerSuccess() {
+		lStatus.setText("Registration complete!");
+		parent.hide();
 	}
 }

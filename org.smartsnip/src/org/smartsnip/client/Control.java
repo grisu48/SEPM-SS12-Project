@@ -144,10 +144,25 @@ public class Control implements EntryPoint {
 			}
 	}
 	
-	public void register(String user, String mail, String pw){
+	public void register(final String user, final String mail, final String pw, final Register register) {
+		if (user.isEmpty() || mail.isEmpty() || pw.isEmpty()) return;
 		
-		// TODO Write me
-}
+		session.registerNewUser(user, pw, mail, new AsyncCallback<Boolean>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				if (caught instanceof NoAccessException) {
+					register.registerFailure("Access denied");
+				} else
+					register.registerFailure("Unknown error: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Boolean result) {
+				register.registerSuccess();
+			}
+		});
+	}
 
 	public void search(String searchString) {
 		session.doSearch(searchString, new AsyncCallback<List<XSnippet>>() {
