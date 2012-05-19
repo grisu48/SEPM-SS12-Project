@@ -1,6 +1,6 @@
 package org.smartsnip.shared;
 
-import java.util.List;
+import org.smartsnip.shared.XSearch.SearchSorting;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -23,9 +23,9 @@ public interface ISessionAsync {
 
 	public void isLoggedIn(AsyncCallback<Boolean> callback);
 
-	void doSearch(String searchString, int start, int count, AsyncCallback<List<XSnippet>> callback);
-
-	void doSearch(String searchString, AsyncCallback<List<XSnippet>> callback);
+	void doSearch(String searchString, String[] tags, String[] categories,
+			SearchSorting sorting, int start, int count,
+			AsyncCallback<XSearch> callback);
 
 	void getServerStatus(AsyncCallback<XServerStatus> callback);
 

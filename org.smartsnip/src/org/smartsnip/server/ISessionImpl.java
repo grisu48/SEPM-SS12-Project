@@ -1,13 +1,12 @@
 package org.smartsnip.server;
 
-import java.util.List;
-
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.NoAccessException;
-import org.smartsnip.shared.XSnippet;
+import org.smartsnip.shared.XSearch;
+import org.smartsnip.shared.XSearch.SearchSorting;
 
 /**
  * This class acts as the servlet that coordiantes the transactions between the
@@ -86,18 +85,6 @@ public class ISessionImpl extends SessionServlet implements ISession {
 	}
 
 	@Override
-	public List<XSnippet> doSearch(String searchString) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<XSnippet> doSearch(String searchString, int start, int count) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public boolean registerNewUser(String username, String password, String email) throws NoAccessException {
 		if (username == null)
 			return false;
@@ -132,5 +119,12 @@ public class ISessionImpl extends SessionServlet implements ISession {
 	public String getSessionCookie() {
 		Session session = getSession();
 		return session.getCookie();
+	}
+
+	@Override
+	public XSearch doSearch(String searchString, String[] tags,
+			String[] categories, SearchSorting sorting, int start, int count) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

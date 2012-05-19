@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.smartsnip.shared.XSearch;
+
 public class Search {
 	/** Defined search string */
 	private final String searchString;
@@ -29,11 +31,11 @@ public class Search {
 	 */
 	private List<Snippet> filterResults;
 
-	Search(String searchString) {
+	private Search(String searchString) {
 		if (searchString == null)
 			throw new NullPointerException();
 		this.searchString = searchString;
-		this.totalResults = searchDB(searchString, 0, requestItemCount);
+		this.totalResults = searchDB(searchString);
 	}
 
 	/**
@@ -55,17 +57,22 @@ public class Search {
 	/**
 	 * @return the filtered search results
 	 */
-	public synchronized List<Snippet> getResults(int start, int count) {
+	public synchronized List<Snippet> getResults(XSearch.SearchSorting sorting, int start, int count) {
 		if (filterResults == null)
 			applyFilter();
-
-		// Increase search window till no more items are found,
-		// or the desired size is reached
-		int desiredSize = start + count;
-		while (filterResults.size() < desiredSize) {
-			if (!increaseSearchWindow())
-				break;
+		
+		switch (sorting) {
+		case time:
+			sortByTime();
+			break;
+		case highestRated:
+			sortByHightestRating();
+			break;
+		case mostViewed:
+			sortByViewCount();
+			break;
 		}
+
 		List<Snippet> result = new ArrayList<Snippet>(count);
 		int maxSize = filterResults.size() - 1;
 		for (int i = 0; i < count; i++) {
@@ -80,28 +87,9 @@ public class Search {
 	}
 
 	/**
-	 * Increases the total results that are comming from the DB by
-	 * requestItemCount
-	 * 
-	 * @return true if the windows was increased, false if no more items are
-	 *         added
-	 */
-	private synchronized boolean increaseSearchWindow() {
-		// Increase search window
-		start += requestItemCount;
-		List<Snippet> newItems = searchDB(searchString, start, requestItemCount);
-		if (newItems == null || newItems.size() == 0)
-			return false;
-
-		totalResults.addAll(newItems);
-		return true;
-	}
-
-	/**
 	 * Applies all filter and resets filterResults
 	 */
 	synchronized void applyFilter() {
-		// TODO: Write me
 		filterResults = new ArrayList<Snippet>();
 		for (Snippet snippet : totalResults) {
 			if (checkSnippet(snippet))
@@ -109,6 +97,27 @@ public class Search {
 		}
 	}
 
+	/**
+	 * Sorts filterResults by time
+	 */
+	private void sortByTime() {
+		
+	}
+	
+	/**
+	 * Sorts filterResults by highest ratings
+	 */
+	private void sortByHightestRating() {
+		
+	}
+	
+	/**
+	 * Sorts filterResults by highest view counts
+	 */
+	private void sortByViewCount() {
+		
+	}
+	
 	/**
 	 * Adds a tag to the search filter. If the tag is null or already added,
 	 * nothing happens
@@ -202,16 +211,13 @@ public class Search {
 	 * 
 	 * @param searchString
 	 *            String to be searched for
-	 * @param start
-	 *            Starting index of the total search results
-	 * @param count
-	 *            Maximum count of returning items
 	 * 
 	 * @return list of found snippets that match to the searchString
 	 */
-	private List<Snippet> searchDB(String searchString, int start, int count) {
+	private List<Snippet> searchDB(String searchString) {
 		try {
-			return Persistence.instance.search(searchString, start, count);
+			// TODO Get all items from database
+			return Persistence.instance.search(searchString, 0, -1);
 		} catch (IOException e) {
 			System.err.println("IOException during search: " + e.getMessage());
 			e.printStackTrace(System.err);

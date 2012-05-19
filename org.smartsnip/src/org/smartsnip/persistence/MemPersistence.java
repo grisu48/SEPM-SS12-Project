@@ -536,8 +536,27 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Snippet> search(String searchString, Integer min, Integer max) throws IOException {
-		// TODO Implement me!
-		return null;
+		// TODO Eliminate min and max, that are ignored
+		
+		/*
+		 * NOTE: Search string is NOT case senstitive
+		 */
+		
+		if (searchString == null) return null;
+		searchString = searchString.trim().toLowerCase();
+		if (searchString.isEmpty()) return null;
+		
+		List<Snippet> results = new ArrayList<Snippet>();
+		List<Snippet> snippets = new ArrayList<Snippet>(allSnippets.values());
+		
+		for (Snippet snippet : snippets) {
+			String name = snippet.getName().trim().toLowerCase();
+			
+			if (searchString.contains(name) || name.contains(searchString))
+				results.add(snippet);
+		}
+		
+		return results;
 	}
 
 	@Override
