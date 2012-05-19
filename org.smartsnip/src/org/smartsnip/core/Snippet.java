@@ -54,7 +54,7 @@ public class Snippet {
 	 * @param id
 	 *            of the new snippet. Must not be null
 	 * @param code
-	 *            of the new snippet. Must not be null
+	 *            of the new snippet. Can be null
 	 * @param category
 	 *            of the new snippet. Must not be null
 	 * @param license
@@ -80,8 +80,6 @@ public class Snippet {
 		if (description == null || description.isEmpty())
 			throw new IllegalArgumentException(
 					"Description of snippet cannot be null");
-		if (code == null)
-			throw new IllegalArgumentException("Code of snippet cannot be null");
 		if (category == null)
 			throw new IllegalArgumentException(
 					"Category of snippet cannot be null");
@@ -325,17 +323,19 @@ public class Snippet {
 	 * @return the code of the snippet
 	 */
 	public Code getCode() {
+		if (code == null) CodeNull.getInstance();
 		return code;
 	}
 
 	/**
 	 * Sets the code of the snippet. If null, nothing is done.
+	 * The object to be set cannot be a instance of CodeNull. In this case, the method returns without effect.
 	 * 
 	 * @param code
 	 *            the code to set
 	 */
 	public void setCode(Code code) {
-		if (code == null)
+		if (code == null || code instanceof CodeNull)
 			return;
 		if (this.code.equals(code))
 			return;
