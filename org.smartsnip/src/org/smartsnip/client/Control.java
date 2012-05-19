@@ -1,19 +1,15 @@
 package org.smartsnip.client;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.ISessionAsync;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XSearch;
-import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * The controller according to a MVC pattern.
@@ -30,7 +26,7 @@ public class Control implements EntryPoint {
 
 	private String username = "Guest";
 	private boolean loggedIn = false;
-	
+
 	private static Control instance = null;
 	private final static String COOKIE_SESSION = ISession.cookie_Session_ID;
 	private final static ISessionAsync session = ISession.Util.getInstance();
@@ -53,7 +49,8 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				myGUI.showTestPopup("Error getting session cookie: " + caught.getMessage());
+				myGUI.showTestPopup("Error getting session cookie: "
+						+ caught.getMessage());
 			}
 
 			@Override
@@ -68,10 +65,9 @@ public class Control implements EntryPoint {
 			}
 		});
 		myGUI.getReady();
-		
 
 		// No contents yet added here
-		//myGUI.showTestPopup("Currently no contents here ... ");
+		// myGUI.showTestPopup("Currently no contents here ... ");
 	}
 
 	/**
@@ -96,9 +92,6 @@ public class Control implements EntryPoint {
 		return "session.getCookie()";
 	}
 
-	
-	
-	
 	public void changeSite(char c) {
 		switch (c) {
 		case 'i':
@@ -109,47 +102,47 @@ public class Control implements EntryPoint {
 			break;
 		case 'r':
 			myGUI.showRegisterPopup();
-			break;	
-		default:	
+			break;
+		default:
 		}
 	}
 
-	
-	public void login(final String user, final String pw, final Login login){
-	
-			try {
-				session.login(user, pw, new AsyncCallback<Boolean>() {
+	public void login(final String user, final String pw, final Login login) {
 
-						@Override
-						public void onFailure(Throwable caught) {
-							if (caught instanceof NoAccessException) {
-								login.loginFailure("Wrong username/password");
-								return;
-							}
-							
-							handleException("Error doing the login", caught);
-							
-						}
+		try {
+			session.login(user, pw, new AsyncCallback<Boolean>() {
 
-						@Override
-						public void onSuccess(Boolean result) {
-							if (result) {
-								login.loginSuccess();
-								refresh();
-							} else
-							{
-								login.loginFailure("Access denial");
-							}
-						}
-					});
-			} catch (NoAccessException e) {
-				login.loginFailure("Access denial");
-			}
+				@Override
+				public void onFailure(Throwable caught) {
+					if (caught instanceof NoAccessException) {
+						login.loginFailure("Wrong username/password");
+						return;
+					}
+
+					handleException("Error doing the login", caught);
+
+				}
+
+				@Override
+				public void onSuccess(Boolean result) {
+					if (result) {
+						login.loginSuccess();
+						refresh();
+					} else {
+						login.loginFailure("Access denial");
+					}
+				}
+			});
+		} catch (NoAccessException e) {
+			login.loginFailure("Access denial");
+		}
 	}
-	
-	public void register(final String user, final String mail, final String pw, final Register register) {
-		if (user.isEmpty() || mail.isEmpty() || pw.isEmpty()) return;
-		
+
+	public void register(final String user, final String mail, final String pw,
+			final Register register) {
+		if (user.isEmpty() || mail.isEmpty() || pw.isEmpty())
+			return;
+
 		session.registerNewUser(user, pw, mail, new AsyncCallback<Boolean>() {
 
 			@Override
@@ -157,7 +150,8 @@ public class Control implements EntryPoint {
 				if (caught instanceof NoAccessException) {
 					register.registerFailure("Access denied");
 				} else
-					register.registerFailure("Unknown error: " + caught.getMessage());
+					register.registerFailure("Unknown error: "
+							+ caught.getMessage());
 			}
 
 			@Override
@@ -167,35 +161,35 @@ public class Control implements EntryPoint {
 		});
 	}
 
-	public void search(String searchString, List<String> tags, List<String> tagsAppearingInSearchString, List<String> categories, XSearch.SearchSorting sorting, int start, int count) {
-		session.doSearch(searchString, tags, tagsAppearingInSearchString, categories, sorting, start, count, new AsyncCallback<XSearch>() {
+	public void search(String searchString, List<String> tags,
+			List<String> categories, XSearch.SearchSorting sorting, int start,
+			int count, final SearchArea searchArea) {
+		session.doSearch(searchString, tags, categories, sorting, start, count,
+				new AsyncCallback<XSearch>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				myGUI.showTestPopup("No AccessFailure"+ caught.getMessage());
-				
-			}
+					@Override
+					public void onFailure(Throwable caught) {
+						searchArea.seachFailed(caught);
+					}
 
-			@Override
-			public void onSuccess(XSearch result) {
-				XSearch searchResult = result;
-				myGUI.showTestPopup("Got the XSearch" + searchResult.totalresults);
-				
-			}
-		});
-		
+					@Override
+					public void onSuccess(XSearch result) {
+						searchArea.searchDone(result);
+						myGUI.getResultArea().searchDone(result);
+					}
+				});
 	}
 
 	public String getUsername() {
-		//refresh();
+		// refresh();
 		return username;
 	}
-	
+
 	public boolean isLoggedIn() {
-		//refresh();
+		// refresh();
 		return loggedIn;
 	}
-	
+
 	private void refresh() {
 		session.getUsername(new AsyncCallback<String>() {
 
@@ -206,8 +200,10 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onSuccess(String result) {
-				if (result == null) result = "";
-				if (result.isEmpty()) result = "Guest";
+				if (result == null)
+					result = "";
+				if (result.isEmpty())
+					result = "Guest";
 				username = result;
 				myGUI.metaRefresh();
 			}
@@ -225,19 +221,17 @@ public class Control implements EntryPoint {
 			}
 		});
 	}
-	
+
 	private void handleException(String message, Throwable cause) {
 		// TODO Write me!
 	}
 
-	
-	
 	public void logout() {
 		session.logout(new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				handleException("Logout went wrong", caught);				
+				handleException("Logout went wrong", caught);
 			}
 
 			@Override
@@ -245,8 +239,7 @@ public class Control implements EntryPoint {
 				refresh();
 			}
 		});
-		
+
 	}
-	
 
 }

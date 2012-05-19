@@ -1,14 +1,18 @@
 package org.smartsnip.server;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.core.Category;
+import org.smartsnip.core.Search;
 import org.smartsnip.core.Snippet;
+import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSearch.SearchSorting;
+import org.smartsnip.shared.XSnippet;
 
 /**
  * This class acts as the servlet that coordiantes the transactions between the
@@ -19,6 +23,9 @@ public class ISessionImpl extends SessionServlet implements ISession {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = 51299L;
+
+	/** Max. number of search items, hard-coded */
+	private static int maxSearchItems = 100;
 
 	@Override
 	public String getUsername() {
@@ -55,7 +62,8 @@ public class ISessionImpl extends SessionServlet implements ISession {
 	}
 
 	@Override
-	public boolean login(String username, String password) throws NoAccessException {
+	public boolean login(String username, String password)
+			throws NoAccessException {
 
 		Session session = getSession();
 
@@ -75,7 +83,7 @@ public class ISessionImpl extends SessionServlet implements ISession {
 	@Override
 	public void logout() {
 		logInfo("Logout");
-		
+
 		Session session = getSession();
 		session.logout();
 	}
@@ -87,7 +95,8 @@ public class ISessionImpl extends SessionServlet implements ISession {
 	}
 
 	@Override
-	public boolean registerNewUser(String username, String password, String email) throws NoAccessException {
+	public boolean registerNewUser(String username, String password,
+			String email) throws NoAccessException {
 		if (username == null)
 			return false;
 		if (password == null || password.isEmpty())
@@ -106,7 +115,8 @@ public class ISessionImpl extends SessionServlet implements ISession {
 		if (User.exists(username))
 			return false;
 		try {
-			logInfo("Requesting create new user (USER=" + username +"; MAIL="+email+")");
+			logInfo("Requesting create new user (USER=" + username + "; MAIL="
+					+ email + ")");
 			if (User.createNewUser(username, password, email) == null)
 				return false;
 
@@ -124,9 +134,48 @@ public class ISessionImpl extends SessionServlet implements ISession {
 	}
 
 	@Override
-	public XSearch doSearch(String searchString, List<String> tags, List<String> tagsAppearingInSearchSort,
+	public XSearch doSearch(String searchString, List<String> tags,
 			List<String> categories, SearchSorting sorting, int start, int count) {
-		// TODO Auto-generated method stub
-		return null;
+
+		XSearch result = new XSearch();
+		result.snippets = new ArrayList<XSnippet>();
+		result.searchString = searchString;
+
+		if (start < 0)
+			start = 0;
+		if (count <= 0)
+			count = 1;
+		if (count >= maxSearchItems)
+			count = maxSearchItems;
+
+		result.start = start;
+		result.count = count;
+
+		Search search = Search.createSearch(searchString);
+		if (tags != null) {
+			for (String tag : tags) {
+				search.addTag(tag);
+				result.tags.add(tag);
+			}
+		}
+		if (categories != null)
+			for (String category : categories) {
+				search.addCategory(category);
+				result.categories.add(category);
+			}
+
+		List<Snippet> snippets = search.getResults(sorting, start, count);
+		for (Snippet snippet : snippets)
+			result.snippets.add(snippet.toXSnippet());
+
+		List<Tag> allTagsMatchingSearchCriteria = search
+				.getAllTagsMatchingSearchCriteria();
+		for (Tag tag : allTagsMatchingSearchCriteria) {
+			result.tagsAppearingInSearchString.add(tag.name);
+		}
+
+		result.totalresults = search.getTotalResults();
+
+		return result;
 	}
 }

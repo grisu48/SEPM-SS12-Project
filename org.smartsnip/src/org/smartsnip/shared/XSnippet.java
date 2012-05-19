@@ -1,27 +1,32 @@
 package org.smartsnip.shared;
 
-import java.util.List;
-
-import org.smartsnip.shared.XComment;
+import java.util.ArrayList;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class XSnippet implements IsSerializable {
-	public final String owner;
-	public final long hash;
-	public final String title;
-	public final String description;
-	public final XCategory category;
-	public final List<String> tags;
-	public final List<XComment> comments;
-	public final String code;
-	public final String codeHTML;
-	public final String language;
-	public final String license;
-	public final int viewcount;
+	public String owner;
+	public long hash;
+	public String title;
+	public String description;
+	public XCategory category;
+	public ArrayList<String> tags;
+	public ArrayList<XComment> comments;
+	public String code;
+	public String codeHTML;
+	public String language;
+	public String license;
+	public int viewcount;
 
-	public XSnippet(String owner, long hash, String title, String description, XCategory category, List<String> tags, List<XComment> comments, String code,
-			String codeHTML, String language, String license, int viewcount) {
+	/** Used by GWT */
+	private XSnippet() {
+		this("", 0, "", "", null, null, null, "", "", "", "", 0);
+	}
+
+	public XSnippet(String owner, long hash, String title, String description,
+			XCategory category, ArrayList<String> tags,
+			ArrayList<XComment> comments, String code, String codeHTML,
+			String language, String license, int viewcount) {
 		this.owner = owner;
 		this.hash = hash;
 		this.title = title;
