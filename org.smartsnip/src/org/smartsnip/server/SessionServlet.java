@@ -141,6 +141,7 @@ public class SessionServlet extends RemoteServiceServlet {
 				session = Session.createNewSession();
 				cookie = new Cookie(ISession.cookie_Session_ID, session.getCookie());
 				addCookie(cookie);
+				Logging.printInfo("New Session (SID=" + cookie + ") attached. Host: " + getRemoteHost());
 			} else {
 				/** TODO: Check handling if cookies are disabled in browser */
 				String sid = cookie.getValue();
@@ -179,13 +180,7 @@ public class SessionServlet extends RemoteServiceServlet {
 		
 		String cookie = getSession().getCookie();
 		if (cookie == null) {
-			HttpServletRequest request = getThreadLocalRequest();
-			if (request == null) 
-				cookie = "???";
-			else
-				cookie = request.getRemoteHost();
-			
-			Logging.printInfo("(" + cookie +"): " + message);
+			Logging.printInfo("(" + getRemoteHost() +"): " + message);
 		} else  {
 			String user = session.getUsername();
 			if (user.equalsIgnoreCase("guest"))
@@ -193,5 +188,11 @@ public class SessionServlet extends RemoteServiceServlet {
 			else
 				Logging.printInfo("(SID=" + cookie + ", USER=" + user + "): " + message);
 		}
+	}
+	
+	protected String getRemoteHost() {
+		HttpServletRequest request = getThreadLocalRequest();
+		if (request == null) return "0.0.0.0";
+		return request.getRemoteHost();
 	}
 }

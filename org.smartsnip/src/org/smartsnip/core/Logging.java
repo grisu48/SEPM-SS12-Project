@@ -72,7 +72,7 @@ public class Logging {
 	public static void printInfo(String info) {
 		if (info == null || info.isEmpty()) return;
 		
-		out.println("[INFO] " + info);
+		out.println(getTimeHeader() + "[INFO] " + info);
 	}
 
 	
@@ -81,7 +81,7 @@ public class Logging {
 	 */
 	private static String getTimeHeader() {
 		SimpleDateFormat simpleDateFormat =
-			        new SimpleDateFormat("yyyy.MM.dd");
+			        new SimpleDateFormat("yyyy.MM.dd-hh:mm:ss");
 		return "[" + simpleDateFormat.format(new Date()) + "] ";
 	}
 }
