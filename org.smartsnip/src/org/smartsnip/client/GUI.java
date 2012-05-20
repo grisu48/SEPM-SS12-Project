@@ -214,4 +214,16 @@ public class GUI {
 			mySortArea.update(status);
 		}
 	}
+
+	public void showContactForm() {
+		PopupPanel ppnlContact = new PopupPanel(false);
+		ppnlContact.setStyleName("contactForm");
+		ppnlContact.setTitle("Contact");
+		Contact contact = new Contact(ppnlContact);
+		ppnlContact.setWidget(contact);
+		ppnlContact.setGlassEnabled(true);
+		ppnlContact.setPopupPosition(110, 100);
+		ppnlContact.setWidth("340px");
+		ppnlContact.show();
+	}
 }

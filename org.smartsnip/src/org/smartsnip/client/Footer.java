@@ -29,6 +29,7 @@ public class Footer extends Composite {
 	private Label about;
 	private Anchor impressum;
 	private Anchor register;
+	private Anchor aContact;
 	
 	
 	public Footer() {
@@ -64,6 +65,17 @@ public class Footer extends Composite {
 		        }
 
 		      });
+		aContact = new Anchor("Contact");
+		aContact.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+		          Control control = Control.getInstance();
+		          control.changeSite('c');
+		        }
+
+		      });
+		
+		
 		
 		
 		vertPanel1.add(copyright);
@@ -73,6 +85,7 @@ public class Footer extends Composite {
 		vertPanel2.add(about);
 		vertPanel2.add(impressum);
 		vertPanel2.add(register);
+		vertPanel2.add(aContact);
 		vertPanel3.add(links);
 		vertPanel3.add(link1);
 		footerGrid.setWidget(0,0,vertPanel1);
