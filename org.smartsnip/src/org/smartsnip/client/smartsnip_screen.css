@@ -265,30 +265,44 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 
-
-
-
-
 .snipArea {
 	width: 800px;
 	margin: 10px;
 	padding: 0px;
 }
 
-.rightPanel {
-	padding: 20px;
-	margin: 20px;
-	width: 300px;
-	background-color:#e6e6e6;
-	border-style:solid;
-	border-color:#a9c34a;
-	border-width:1px;
-}
+
 
 .leftPanel {
+	width: 600px;
+}
+
+.rightPanel {
+	margin-left:20px;
+	width: 300px;
+}
+
+
+.sortArea {
+	margin:20px;
+	width: 600px;
+	border-style:solid;
+	border-color:#a9c34a;
+	border-width:1px;
+}
+
+.sortArea .gwt-Label {
+	
+}
+
+.sortArea .gwt-ListBox {
+	
+}
+
+
+.resultArea {
 	padding: 20px;
 	margin: 20px;
-	width: 600px;
 	background-color:#e6e6e6;
 	border-style:solid;
 	border-color:#a9c34a;
@@ -297,7 +311,16 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 
-.catArea {	
+.catArea {
+	margin-top: 20px;
+	margin-bottom:20px;
+	padding: 20px;
+	width: 300px;
+	min-height:200px;
+	background-color:#e6e6e6;
+	border-style:solid;
+	border-color:#a9c34a;
+	border-width:1px;
 }
 
 .catArea .gwt-Button {
@@ -317,7 +340,14 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 
-.tagArea {	
+.tagArea {
+	padding: 20px;
+	width: 300px;
+	min-height:200px;
+	background-color:#e6e6e6;
+	border-style:solid;
+	border-color:#a9c34a;
+	border-width:1px;
 }
 
 .tagArea .gwt-Button {

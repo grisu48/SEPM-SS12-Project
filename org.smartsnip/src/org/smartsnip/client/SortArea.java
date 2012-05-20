@@ -2,41 +2,50 @@ package org.smartsnip.client;
 
 
 
-import com.google.gwt.user.client.ui.Button;
+
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
+
 
 
 public class SortArea extends Composite {
 	
-	private FlowPanel myPanel;
-	private Label title;
+	private HorizontalPanel pnlBasis;
+	private Label lblStatus;
+	private Label lblSort;
+	private ListBox lbSelectSort;
+	
+	
 	
 	public SortArea() {
-		myPanel = new FlowPanel();
-		title = new Label("Sorting");
-		myPanel.add(title);
-		myPanel.add(new Button("Highest Rated"));
-		myPanel.add(new Button("Mostly Viewed"));
+		pnlBasis = new HorizontalPanel();
+		lblStatus = new Label("Dummy-Text");
+		lblSort	= new Label("Sorting:");
+		
+		lbSelectSort = new ListBox();
+		lbSelectSort.addItem("Latest Snippets");
+		lbSelectSort.addItem("Mostly Viewed");
+		lbSelectSort.addItem("Best Rated");
+		
+	    
+		pnlBasis.add(lblStatus);
+		pnlBasis.add(lblSort);
+		pnlBasis.add(lbSelectSort);
+		
 
 	
-		initWidget(myPanel);
+		initWidget(pnlBasis);
 	    // Give the overall composite a style name.
 	    setStyleName("sortArea");
 	}
+
+
+	public void update(String status) {
+		lblStatus.setText(status);
+		
+	}
 	
-	/*
-	public TagArea(ISnippet mySnip) {
-		vertPanel = new VerticalPanel();
-		title = new Label("Tags");
-		vertPanel.add(title);
-		for (String i : mySnip.getTags()) {
-			vertPanel.add(new Button(i));
-		}
-		initWidget(vertPanel);
-	    // Give the overall composite a style name.
-	    setStyleName("tagArea");
-	}*/
 
 }

@@ -55,7 +55,7 @@ public class Footer extends Composite {
 		        }
 
 		      });
-		register = new Anchor("Registrate");
+		register = new Anchor("Registration");
 		register.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

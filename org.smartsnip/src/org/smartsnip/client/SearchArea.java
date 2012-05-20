@@ -7,17 +7,17 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
+
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.TextBox;
+
 
 public class SearchArea extends Composite {
 
 	private final HorizontalPanel horPanel;
 	private final SuggestBox searchSnippet;
 	private final Button searchButton;
-	private final Label lblStatus;
+	private String status;
 
 	/** Search duration timer */
 	private long searchDuration = 0L;
@@ -27,10 +27,10 @@ public class SearchArea extends Composite {
 		horPanel = new HorizontalPanel();
 		
 		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();  
-		   oracle.add("Cat");
-		   oracle.add("Dog");
-		   oracle.add("Horse");
-		   oracle.add("Canary");
+		   oracle.add("Java");
+		   oracle.add("Snippet");
+		   oracle.add("Quicksort");
+		   oracle.add("Smartsnip");
 		searchSnippet = new SuggestBox(oracle);
 		searchButton = new Button("Search Snippet");
 		searchButton.addStyleName("searchButton");
@@ -44,10 +44,8 @@ public class SearchArea extends Composite {
 						SearchArea.this);
 			}
 		});
-		lblStatus = new Label("");
 		horPanel.add(searchSnippet);
 		horPanel.add(searchButton);
-		horPanel.add(lblStatus);
 
 		initWidget(horPanel);
 		// Give the overall composite a style name.
@@ -60,8 +58,9 @@ public class SearchArea extends Composite {
 	 * @param caught
 	 *            Cause why the search failed
 	 */
-	void seachFailed(Throwable caught) {
-		lblStatus.setText("Search failed: " + caught.getMessage());
+	String searchFailed(Throwable caught) {
+		status = "Search failed: " + caught.getMessage();
+		return status;
 	}
 
 	/**
@@ -70,12 +69,12 @@ public class SearchArea extends Composite {
 	 * @param result
 	 *            Of the search
 	 */
-	void searchDone(XSearch result) {
+	String searchDone(XSearch result) {
 		searchDuration = System.currentTimeMillis() - searchDuration;
 		searchDuration = searchDuration / 10;
 		double time = searchDuration / 100.0D;
-		lblStatus.setText(result.totalresults + " results in " + time + " ms");
-
+		status = result.totalresults + " results in " + time + " ms";
+		return status;
 	}
 
 }

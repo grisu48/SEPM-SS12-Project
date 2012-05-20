@@ -172,13 +172,14 @@ public class Control implements EntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						searchArea.seachFailed(caught);
+						String status =  searchArea.searchFailed(caught);
+						myGUI.updateSearchPage(null, status);
 					}
 
 					@Override
 					public void onSuccess(XSearch result) {
-						searchArea.searchDone(result);
-						myGUI.updateSearchPage(result);
+						String status = searchArea.searchDone(result);
+						myGUI.updateSearchPage(result, status);
 					}
 				});
 	}

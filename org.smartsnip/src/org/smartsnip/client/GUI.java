@@ -34,6 +34,7 @@ public class GUI {
 			SNIPPET, SNIPPET, SNIPPET, SNIPPET);
 
 	private ResultArea myResultArea = null;
+	private SortArea mySortArea = null;
 	private CatArea myCatArea = null;
 	private TagArea myTagArea = null;
 
@@ -92,18 +93,25 @@ public class GUI {
 	public void showSearchPage() {
 
 		myResultArea = new ResultArea();
-		myResultArea.setStyleName("leftPanel");
-		VerticalPanel rightPanel = new VerticalPanel();
-		rightPanel.setStyleName("rightPanel");
+		mySortArea = new SortArea();
 		myCatArea = new CatArea();
 		myTagArea = new TagArea();
-		SortArea mySortArea = new SortArea();
-
-		dataPanel.add(myResultArea);
-		dataPanel.add(rightPanel);
-		rightPanel.add(mySortArea);
+		
+		VerticalPanel leftPanel = new VerticalPanel();
+		leftPanel.setStyleName("leftPanel");
+		
+		VerticalPanel rightPanel = new VerticalPanel();
+		rightPanel.setStyleName("rightPanel");
+		
+		leftPanel.add(mySortArea);
+		leftPanel.add(myResultArea);
 		rightPanel.add(myCatArea);
 		rightPanel.add(myTagArea);
+		
+		dataPanel.add(leftPanel);
+		dataPanel.add(rightPanel);
+	
+	
 
 	}
 
@@ -194,9 +202,16 @@ public class GUI {
 		return this.myResultArea;
 	}
 
-	public void updateSearchPage(XSearch result) {
-		myResultArea.update(result.snippets);
-		myCatArea.update(result.categories);
-		myTagArea.update(result.tagsAppearingInSearchString);
+	public void updateSearchPage(XSearch result, String status) {
+		
+		if (result != null) {
+			mySortArea.update(status);
+			myResultArea.update(result.snippets);
+			myCatArea.update(result.categories);
+			myTagArea.update(result.tagsAppearingInSearchString);
+		}
+		else {
+			mySortArea.update(status);
+		}
 	}
 }
