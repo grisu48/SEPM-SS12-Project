@@ -353,4 +353,11 @@ public class Comment {
 			return null;
 		}
 	}
+
+	/**
+	 * @return the owner of the comment (User).
+	 */
+	public User getOwner() {
+		return this.owner;
+	}
 }
