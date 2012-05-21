@@ -81,9 +81,19 @@ public class DBFavourite {
 	}
 
 	/**
+	 * @param userName
+	 *            the userName to set
+	 * @param snippetId
+	 *            the snippetId to set
+	 */
+	public void setFavouriteId(String userName, Long snippetId) {
+		this.favouriteId = new FavouriteId(userName, snippetId);
+	}
+
+	/**
 	 * This method is called by the remove methods of IPersistence in
-	 * {@code DB_NO_DELETE} mode. If this method is present the
-	 * remove method defaults to {@link IPersistence#DB_NO_DELETE}.
+	 * {@code DB_NO_DELETE} mode. If this method is present the remove method
+	 * defaults to {@link IPersistence#DB_NO_DELETE}.
 	 */
 	void disable() {
 		this.setFavourite(false);

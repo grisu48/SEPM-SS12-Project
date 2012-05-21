@@ -67,7 +67,6 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testWriteUserListOfUserInt() throws Throwable {
-		User user;
 		List<User> users = new ArrayList<User>();
 		users.add(helper.createUser("sick", "sick guy", "sick@guy.org", null, null));
 		users.add(helper.createUser("sie", "she bang", "she@bang", null, null));
@@ -86,7 +85,7 @@ public class SqlPersistenceImplTest {
 	 */
 	@Ignore
 	public void testWritePassword() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		// deprecated
 	}
 
 	/**
@@ -96,9 +95,10 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testWriteLogin() throws Throwable {
-		User user = helper.createUser("si", "she ra", "sie@bla", null, null);
+		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd", User.UserState.validated, null);
+		instance.writeUser(user, IPersistence.DB_DEFAULT);	
 		instance.writeLogin(user, "blabla", true, IPersistence.DB_DEFAULT);
 	}
 

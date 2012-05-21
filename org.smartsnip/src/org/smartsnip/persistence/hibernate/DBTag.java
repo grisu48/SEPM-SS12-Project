@@ -27,7 +27,6 @@ class DBTag {
 	@Column(name = "tag_name", length = 50)
 	private String name;
 
-	@NotNull
 	@GeneratedValue
 	@Column(name = "usage_freq", insertable = false, updatable = false)
 	private Integer usageFrequence;

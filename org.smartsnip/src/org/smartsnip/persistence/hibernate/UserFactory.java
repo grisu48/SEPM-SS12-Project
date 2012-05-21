@@ -84,9 +84,10 @@ public class UserFactory {
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
+			DBQuery query;
 
 			for (User user : users) {
+				query = new DBQuery(session);
 				entity = new DBUser();
 				if (user == null || user.getUsername() == null
 						|| user.getUsername().isEmpty()) {
@@ -210,9 +211,10 @@ public class UserFactory {
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
+			DBQuery query;
 
 			for (Notification notification : notifications) {
+				query = new DBQuery(session);
 				entity = new DBNotification();
 				entity.setNotificationId(notification.getId());
 				entity.setUserName(notification.getOwner().getUsername());
@@ -449,6 +451,7 @@ public class UserFactory {
 	 */
 	static List<User> findUser(String realName) throws IOException {
 		// TODO Auto-generated method stub
+		// favourites = null
 		return null;
 	}
 
@@ -492,11 +495,19 @@ public class UserFactory {
 				if (n.getSnippetId() != null) {
 					snip = new DBSnippet();
 					snip.setSnippetId(n.getSnippetId());
-					snip = new DBQuery(session).fromSingle(snip, DBQuery.QUERY_NOT_NULL);
-					snippet = helper.createSnippet(snip.getSnippetId(), user,
-							snip.getHeadline(), snip.getDescription(), null,
-							null, null, null, null, snip.getViewcount());
-					// FIXME WTF ???, where should i get the whole shit?
+					snip = new DBQuery(session).fromSingle(snip,
+							DBQuery.QUERY_NOT_NULL);
+
+					snippet = helper.createSnippet(entity.getSnippetId(), null,
+							snip.getHeadline(), snip.getDescription(),
+							CategoryFactory
+									.fetchCategory(helper, session, snip),
+							SnippetFactory.buildTagList(helper, snip), null,
+							null,
+							SnippetFactory.fetchLicense(helper, session, snip)
+									.getShortDescr(), snip.getViewcount());
+					snippet.setCode(SnippetFactory.fetchNewestCode(helper,
+							session, snippet));
 				} else {
 					snippet = null;
 				}

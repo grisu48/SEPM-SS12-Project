@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
@@ -20,7 +17,6 @@ import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
 import org.smartsnip.persistence.IPersistence;
-import org.smartsnip.persistence.hibernate.DBRating.RatingId;
 import org.smartsnip.shared.Pair;
 
 /**
@@ -28,8 +24,6 @@ import org.smartsnip.shared.Pair;
  * 
  */
 public class SnippetFactory {
-
-	private static SqlPersistenceHelper helper = new SqlPersistenceHelper();
 
 	private SnippetFactory() {
 		// no instances
@@ -101,12 +95,13 @@ public class SnippetFactory {
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
+			DBQuery query;
 			DBQuery licQuery;
 			DBLicense dblicense;
 			DBSnippet entity;
 
 			for (Snippet snippet : snippets) {
+				query = new DBQuery(session);
 				entity = new DBSnippet();
 				// snippetId is read-only
 				entity.setHeadline(snippet.getName());
@@ -119,7 +114,8 @@ public class SnippetFactory {
 				dblicense = new DBLicense();
 				licQuery = new DBQuery(session);
 				dblicense.setShortDescr(snippet.getLicense());
-				dblicense = licQuery.fromSingle(dblicense, DBQuery.QUERY_NULLABLE);
+				dblicense = licQuery.fromSingle(dblicense,
+						DBQuery.QUERY_NULLABLE);
 				entity.setLicenseId(dblicense.getLicenseId());
 
 				entity.setTags(snippet.getStringTags());
@@ -189,11 +185,12 @@ public class SnippetFactory {
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
+			DBQuery query;
 
 			DBCode entity;
 
 			for (Code code : codes) {
+				query = new DBQuery(session);
 				entity = new DBCode();
 				// codeId is read-only
 				entity.setSnippetId(code.getHashID());
@@ -268,7 +265,7 @@ public class SnippetFactory {
 			DBRating entity = new DBRating();
 			entity.setRatingId(snippet.getHashId(), user.getUsername());
 			entity.setValue(rating);
-			
+
 			query.write(entity, flags);
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -292,8 +289,25 @@ public class SnippetFactory {
 	 */
 	static void unRate(User user, Snippet snippet, int flags)
 			throws IOException {
-		// TODO Auto-generated method stub
+		Session session = DBSessionFactory.open();
 
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBRating entity = new DBRating();
+			entity.setRatingId(snippet.getHashId(), user.getUsername());
+
+			query.remove(entity, flags);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -308,8 +322,26 @@ public class SnippetFactory {
 	 */
 	static void addFavourite(Snippet snippet, User user, int flags)
 			throws IOException {
-		// TODO Auto-generated method stub
+		Session session = DBSessionFactory.open();
 
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBFavourite entity = new DBFavourite();
+			entity.setFavouriteId(user.getUsername(), snippet.getHashId());
+			entity.setFavourite(true);
+
+			query.write(entity, flags);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -325,8 +357,25 @@ public class SnippetFactory {
 	 */
 	static void removeFavourite(Snippet snippet, User user, int flags)
 			throws IOException {
-		// TODO Auto-generated method stub
+		Session session = DBSessionFactory.open();
 
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBFavourite entity = new DBFavourite();
+			entity.setFavouriteId(user.getUsername(), snippet.getHashId());
+
+			query.remove(entity, flags);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -339,8 +388,25 @@ public class SnippetFactory {
 	 *      int)
 	 */
 	static void removeSnippet(Snippet snippet, int flags) throws IOException {
-		// TODO Auto-generated method stub
+		Session session = DBSessionFactory.open();
 
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBSnippet entity = new DBSnippet();
+			entity.setSnippetId(snippet.getHashId());
+
+			query.remove(entity, flags);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -353,7 +419,25 @@ public class SnippetFactory {
 	 *      int)
 	 */
 	static void removeCode(Code code, int flags) throws IOException {
-		// TODO Auto-generated method stub
+		Session session = DBSessionFactory.open();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBCode entity = new DBCode();
+			entity.setCodeId(code.getHashID());
+
+			query.remove(entity, flags);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -366,8 +450,25 @@ public class SnippetFactory {
 	 *      int)
 	 */
 	static void removeLanguage(String language, int flags) throws IOException {
-		// TODO Auto-generated method stub
+		Session session = DBSessionFactory.open();
 
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBLanguage entity = new DBLanguage();
+			entity.setLanguage(language);
+
+			query.remove(entity, flags);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -379,8 +480,41 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getUserSnippets(org.smartsnip.core.User)
 	 */
 	static List<Snippet> getUserSnippets(User owner) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		List<Snippet> result = new ArrayList<Snippet>();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBSnippet entity = new DBSnippet();
+			Snippet snippet;
+			entity.setOwner(owner.getUsername());
+
+			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
+					.hasNext();) {
+				entity = iterator.next();
+
+				snippet = helper.createSnippet(entity.getSnippetId(), owner,
+						entity.getHeadline(), entity.getDescription(),
+						CategoryFactory.fetchCategory(helper, session, entity),
+						buildTagList(helper, entity), null, null,
+						fetchLicense(helper, session, entity).getShortDescr(),
+						entity.getViewcount());
+				snippet.setCode(fetchNewestCode(helper, session, snippet));
+				result.add(snippet);
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -392,8 +526,48 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getFavorited(org.smartsnip.core.User)
 	 */
 	static List<Snippet> getFavorited(User user) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		List<Snippet> result = new ArrayList<Snippet>();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBFavourite entity = new DBFavourite();
+			entity.setFavouriteId(user.getUsername(), null);
+			entity.setFavourite(true);
+
+			DBSnippet snip;
+			DBQuery snipQuery;
+			for (Iterator<DBFavourite> iterator = query.iterate(entity); iterator
+					.hasNext();) {
+				entity = iterator.next();
+				snip = new DBSnippet();
+				Snippet snippet;
+				snip.setSnippetId(entity.getFavouriteId().getSnippetId());
+				snipQuery = new DBQuery(session);
+				snip = snipQuery.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
+
+				snippet = helper.createSnippet(snip.getSnippetId(), null,
+						snip.getHeadline(), snip.getDescription(),
+						CategoryFactory.fetchCategory(helper, session, snip),
+						buildTagList(helper, snip), null, null,
+						fetchLicense(helper, session, snip).getShortDescr(),
+						snip.getViewcount());
+				snippet.setCode(fetchNewestCode(helper, session, snippet));
+				result.add(snippet);
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -423,46 +597,48 @@ public class SnippetFactory {
 	 */
 	static List<Snippet> getSnippets(Category category, Integer start,
 			Integer count) throws IOException {
-		SessionFactory factory = DBSessionFactory.getInstance();
-		Session session = factory.openSession();
-		Transaction tx = null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		int initialSize = 10;
 		if (count != null && count > 0) {
 			initialSize = count;
 		}
 		List<Snippet> result = new ArrayList<Snippet>(initialSize);
 
+		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			Query query = session.createQuery("FROM DBSnippet");
-			// TODO implement where clause "category"
-			if (start != null) {
-				query.setFirstResult(start);
-			}
-			if (count != null && count > 0) {
-				query.setFetchSize(count);
-			}
-			@SuppressWarnings("unchecked")
-			List<DBSnippet> snips = query.list();
-			for (Iterator<DBSnippet> iterator = snips.iterator(); iterator
+
+			DBQuery query = new DBQuery(session);
+			DBCategory cat = new DBCategory();
+			cat.setName(category.getName());
+			cat = query.fromSingle(cat, DBQuery.QUERY_NOT_NULL);
+
+			query = new DBQuery(session);
+			DBSnippet entity = new DBSnippet();
+			Snippet snippet;
+			entity.setCategoryId(cat.getCategoryId());
+
+			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
 					.hasNext();) {
-				DBSnippet snippet = iterator.next();
-				// TODO implement attributes for createSnippet
-				result.add(helper.createSnippet(snippet.getSnippetId(), null,
-						snippet.getHeadline(), snippet.getDescription(), null,
-						null, null, null, null, snippet.getViewcount()));
+				entity = iterator.next();
+				snippet = helper.createSnippet(entity.getSnippetId(), null,
+						entity.getHeadline(), entity.getDescription(),
+						CategoryFactory.fetchCategory(helper, session, entity),
+						buildTagList(helper, entity), null, null,
+						fetchLicense(helper, session, entity).getShortDescr(),
+						entity.getViewcount());
+				snippet.setCode(fetchNewestCode(helper, session, snippet));
+				result.add(snippet);
 			}
+
 			tx.commit();
-		} catch (HibernateException e) {
+		} catch (RuntimeException e) {
 			if (tx != null)
 				tx.rollback();
 			throw new IOException(e);
 		} finally {
-			try {
-				session.close();
-			} catch (HibernateException e) {
-				throw new IOException(e);
-			}
+			DBSessionFactory.close(session);
 		}
 		return result;
 	}
@@ -476,8 +652,35 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getSnippet(java.lang.Long)
 	 */
 	static Snippet getSnippet(Long id) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		Snippet result;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBSnippet entity = new DBSnippet();
+			entity.setSnippetId(id);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+
+			result = helper.createSnippet(entity.getSnippetId(), null,
+					entity.getHeadline(), entity.getDescription(),
+					CategoryFactory.fetchCategory(helper, session, entity),
+					buildTagList(helper, entity), null, null,
+					fetchLicense(helper, session, entity).getShortDescr(),
+					entity.getViewcount());
+			result.setCode(fetchNewestCode(helper, session, result));
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -489,8 +692,39 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getCodes(org.smartsnip.core.Snippet)
 	 */
 	static List<Code> getCodes(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		List<Code> result = new ArrayList<Code>();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBCode entity = new DBCode();
+
+			DBSnippet snip = new DBSnippet();
+			snip.setSnippetId(snippet.getHashId());
+			snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
+
+			entity.setSnippetId(snip.getSnippetId());
+
+			for (Iterator<DBCode> iterator = query.iterate(entity); iterator
+					.hasNext();) {
+				entity = iterator.next();
+				result.add(helper.createCode(entity.getCodeId(),
+						entity.getFile(), entity.getLanguage(), snippet,
+						entity.getVersion()));
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -501,8 +735,30 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllLanguages()
 	 */
 	static List<String> getAllLanguages() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		List<String> result = new ArrayList<String>();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBLanguage entity = new DBLanguage();
+
+			for (Iterator<DBLanguage> iterator = query.iterate(entity); iterator
+					.hasNext();) {
+				entity = iterator.next();
+				result.add(entity.getLanguage());
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -515,8 +771,41 @@ public class SnippetFactory {
 	 */
 	static List<Pair<User, Integer>> getRatings(Snippet snippet)
 			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		List<Pair<User, Integer>> result = new ArrayList<Pair<User, Integer>>();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBRating entity = new DBRating();
+			entity.setRatingId(snippet.getHashId(), null);
+
+			DBUser dbUser;
+			for (Iterator<DBRating> iterator = query.iterate(entity); iterator
+					.hasNext();) {
+				entity = iterator.next();
+
+				dbUser = new DBUser();
+				dbUser.setUserName(entity.getRatingId().getUserName());
+				dbUser = query.fromSingle(dbUser, DBQuery.QUERY_NOT_NULL);
+
+				result.add(new Pair<User, Integer>(helper.createUser(
+						dbUser.getUserName(), dbUser.getFullName(),
+						dbUser.getEmail(), dbUser.getUserState(), null), entity
+						.getValue()));
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -528,8 +817,26 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAverageRating(org.smartsnip.core.Snippet)
 	 */
 	static Float getAverageRating(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		DBSnippet entity;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			entity = new DBSnippet();
+			entity.setSnippetId(snippet.getHashId());
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return entity.getRatingAverage();
 	}
 
 	/**
@@ -546,6 +853,7 @@ public class SnippetFactory {
 	static List<Snippet> search(String searchString, Integer start,
 			Integer count) throws IOException {
 		// TODO Auto-generated method stub
+		// null: Snippet.category.parent, Snippet.comments, Snippet.owner
 		return null;
 	}
 
@@ -580,4 +888,88 @@ public class SnippetFactory {
 		return result;
 	}
 
+	/**
+	 * build a list of tags from a given list of strings
+	 * 
+	 * @param helper
+	 *            the PersisteceHelper object to create the tags
+	 * @param snippet
+	 *            the snippet which contains the list of tag-strings
+	 * @return the list of tags
+	 */
+	static List<Tag> buildTagList(SqlPersistenceHelper helper, DBSnippet snippet) {
+		List<Tag> tags = new ArrayList<Tag>();
+		for (String t : snippet.getTags()) {
+			tags.add(helper.createTag(t));
+		}
+		return tags;
+	}
+
+	/**
+	 * Helper method to fetch all code fragments from a snippet.
+	 * 
+	 * @param helper
+	 *            the PersisteceHelper object to create the tags
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippet
+	 *            the snippet as source of the code
+	 * @return a list of code fragments
+	 */
+	static List<Code> fetchCode(SqlPersistenceHelper helper, Session session,
+			Snippet snippet) {
+		DBQuery query = new DBQuery(session);
+		DBCode entity = new DBCode();
+		List<Code> result = new ArrayList<Code>();
+		entity.setSnippetId(snippet.getHashId());
+		for (Iterator<DBCode> itr = query.iterate(entity); itr.hasNext();) {
+			entity = itr.next();
+			result.add(helper.createCode(entity.getCodeId(), entity.getFile(),
+					entity.getLanguage(), snippet, entity.getVersion()));
+		}
+		return result;
+	}
+
+	/**
+	 * Helper method to fetch the latest code from a snippet.
+	 * 
+	 * @param helper
+	 *            the PersisteceHelper object to create the tags
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippet
+	 *            the snippet as source of the code
+	 * @return the code fragment with highest version number
+	 */
+	static Code fetchNewestCode(SqlPersistenceHelper helper, Session session,
+			Snippet snippet) {
+		List<Code> codes = fetchCode(helper, session, snippet);
+		Code result = null;
+		for (Code code : codes) {
+			if (result == null || result.getVersion() < code.getVersion()) {
+				result = code;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Helper method to fetch a license from a snippet.
+	 * 
+	 * @param helper
+	 *            the PersisteceHelper object to create the tags
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippet
+	 *            the snippet as source of the license
+	 * @return the DBLicense
+	 */
+	static DBLicense fetchLicense(SqlPersistenceHelper helper, Session session,
+			DBSnippet snippet) {
+		DBQuery query = new DBQuery(session);
+		DBLicense entity = new DBLicense();
+		entity.setLicenseId(snippet.getLicenseId());
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		return entity;
+	}
 }

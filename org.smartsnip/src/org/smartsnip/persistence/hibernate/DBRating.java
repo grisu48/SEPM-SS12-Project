@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.ForeignKey;
+import org.smartsnip.persistence.IPersistence;
 
 /**
  * @author littlelion
@@ -28,7 +29,6 @@ public class DBRating {
 	@EmbeddedId
 	private RatingId ratingId;
 
-	@NotNull
 	@Column(name = "rating_value")
 	private Integer value;
 
@@ -68,7 +68,9 @@ public class DBRating {
 
 	/**
 	 * @param snippetId
+	 *            the snippetId to set
 	 * @param userName
+	 *            the userName to set
 	 */
 	public void setRatingId(Long snippetId, String userName) {
 		this.ratingId = new RatingId(snippetId, userName);
@@ -89,6 +91,15 @@ public class DBRating {
 		this.value = value;
 	}
 
+	/**
+	 * This method is called by the remove methods of IPersistence in
+	 * {@code DB_NO_DELETE} mode. If this method is present the remove method
+	 * defaults to {@link IPersistence#DB_NO_DELETE}.
+	 */
+	void disable() {
+		this.value = 0;
+	}
+	
 	/**
 	 * 
 	 * @author littlelion

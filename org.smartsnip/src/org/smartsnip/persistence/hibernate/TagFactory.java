@@ -9,10 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
@@ -29,8 +26,6 @@ import org.smartsnip.persistence.IPersistence;
  */
 public class TagFactory {
 
-	private static SqlPersistenceHelper helper = new SqlPersistenceHelper();
-
 	private TagFactory() {
 		// no instances
 	}
@@ -45,8 +40,26 @@ public class TagFactory {
 	 *      int)
 	 */
 	static void writeTag(Tag tag, int flags) throws IOException {
-		// TODO Auto-generated method stub
+		Session session = DBSessionFactory.open();
 
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBTag entity = new DBTag();
+
+			entity.setName(tag.toString());
+
+			query.write(entity, flags);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -58,8 +71,30 @@ public class TagFactory {
 	 * @see org.smartsnip.persistence.IPersistence#writeTag(java.util.List, int)
 	 */
 	static void writeTag(List<Tag> tags, int flags) throws IOException {
-		// TODO Auto-generated method stub
+		Session session = DBSessionFactory.open();
 
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query;
+			DBTag entity;
+
+			for (Tag tag : tags) {
+				query = new DBQuery(session);
+				entity = new DBTag();
+
+				entity.setName(tag.toString());
+
+				query.write(entity, flags);
+			}
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -72,8 +107,25 @@ public class TagFactory {
 	 *      int)
 	 */
 	static void removeTag(Tag tag, int flags) throws IOException {
-		// TODO Auto-generated method stub
+		Session session = DBSessionFactory.open();
 
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBTag entity = new DBTag();
+			entity.setName(tag.toString());
+
+			query.remove(entity, flags);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -85,8 +137,31 @@ public class TagFactory {
 	 * @see org.smartsnip.persistence.IPersistence#getTags(org.smartsnip.core.Snippet)
 	 */
 	static List<Tag> getTags(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		List<Tag> result = new ArrayList<Tag>();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBSnippet entity = new DBSnippet();
+
+			entity.setSnippetId(snippet.getHashId());
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			for (String tag : entity.getTags()) {
+				result.add(helper.createTag(tag));
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -101,41 +176,33 @@ public class TagFactory {
 	 */
 	static List<Tag> getAllTags(Integer start, Integer count)
 			throws IOException {
-		SessionFactory factory = DBSessionFactory.getInstance();
-		Session session = factory.openSession();
-		Transaction tx = null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		int initialSize = 10;
 		if (count != null && count > 0) {
 			initialSize = count;
 		}
 		List<Tag> result = new ArrayList<Tag>(initialSize);
 
+		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			Query query = session.createQuery("FROM DBTag");
-			if (start != null) {
-				query.setFirstResult(start);
+			DBQuery query = new DBQuery(session);
+			DBTag entity = new DBTag();
+
+			for (Iterator<DBTag> iterator = query.iterate(entity, start, count); iterator
+					.hasNext();) {
+				entity = iterator.next();
+				result.add(helper.createTag(entity.getName()));
 			}
-			if (count != null && count > 0) {
-				query.setFetchSize(count);
-			}
-			@SuppressWarnings("unchecked")
-			List<DBTag> tags = query.list();
-			for (Iterator<DBTag> iterator = tags.iterator(); iterator.hasNext();) {
-				DBTag tag = iterator.next();
-				result.add(helper.createTag(tag.getName()));
-			}
+
 			tx.commit();
-		} catch (HibernateException e) {
+		} catch (RuntimeException e) {
 			if (tx != null)
 				tx.rollback();
 			throw new IOException(e);
 		} finally {
-			try {
-				session.close();
-			} catch (HibernateException e) {
-				throw new IOException(e);
-			}
+			DBSessionFactory.close(session);
 		}
 		return result;
 	}

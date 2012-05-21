@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.ForeignKey;
+import org.smartsnip.persistence.IPersistence;
 
 /**
  * @author littlelion
@@ -30,7 +31,6 @@ public class DBVote {
 	@EmbeddedId
 	private VoteId voteId;
 
-	@NotNull
 	@Enumerated(value = EnumType.STRING)
 	@Column(name = "vote")
 	private Vote vote;
@@ -43,14 +43,14 @@ public class DBVote {
 	}
 
 	// XXX remove constructor
-//	/**
-//	 * @param vote
-//	 */
-//	DBVote(Long commentId, String userName, Vote vote) {
-//		super();
-//		this.voteId = new VoteId(commentId, userName);
-//		this.vote = vote;
-//	}
+	// /**
+	// * @param vote
+	// */
+	// DBVote(Long commentId, String userName, Vote vote) {
+	// super();
+	// this.voteId = new VoteId(commentId, userName);
+	// this.vote = vote;
+	// }
 
 	/**
 	 * @return the voteId
@@ -65,6 +65,16 @@ public class DBVote {
 	 */
 	public void setVoteId(VoteId voteId) {
 		this.voteId = voteId;
+	}
+
+	/**
+	 * @param commentId
+	 *            the commentId to set
+	 * @param userName
+	 *            the userName to set
+	 */
+	public void setVoteId(Long commentId, String userName) {
+		this.voteId = new VoteId(commentId, userName);
 	}
 
 	/**
@@ -92,6 +102,15 @@ public class DBVote {
 	}
 
 	/**
+	 * This method is called by the remove methods of IPersistence in
+	 * {@code DB_NO_DELETE} mode. If this method is present the remove method
+	 * defaults to {@link IPersistence#DB_NO_DELETE}.
+	 */
+	void disable() {
+		this.vote = Vote.none;
+	}
+
+	/**
 	 * 
 	 * @author littlelion
 	 * 
@@ -105,14 +124,14 @@ public class DBVote {
 		private static final long serialVersionUID = 776274109892022330L;
 
 		@NotNull
-//		@ManyToOne(targetEntity = DBComment.class, fetch = FetchType.EAGER)
-//		@ForeignKey(name = "DBComment.commentId")
+		// @ManyToOne(targetEntity = DBComment.class, fetch = FetchType.EAGER)
+		// @ForeignKey(name = "DBComment.commentId")
 		@Column(name = "comment_id")
 		private Long commentId;
 
 		@NotNull
-//		@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-//		@ForeignKey(name = "DBUser.userName")
+		// @ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+		// @ForeignKey(name = "DBUser.userName")
 		@Column(name = "user_name", length = 20)
 		private String userName;
 

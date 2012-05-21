@@ -5,6 +5,8 @@
 package org.smartsnip.persistence.hibernate;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -12,6 +14,7 @@ import org.hibernate.Transaction;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.shared.Pair;
 
 /**
  * @author littlelion
@@ -84,12 +87,13 @@ public class CategoryFactory {
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
+			DBQuery query;
 			DBQuery parentQuery;
 			DBCategory parent;
 			DBCategory entity;
-			
+
 			for (Category category : categories) {
+				query = new DBQuery(session);
 				entity = new DBCategory();
 				// categoryId is read-only
 
@@ -124,8 +128,25 @@ public class CategoryFactory {
 	 *      int)
 	 */
 	static void removeCategory(Category category, int flags) throws IOException {
-		// TODO Auto-generated method stub
+		Session session = DBSessionFactory.open();
 
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBCategory entity = new DBCategory();
+			entity.setName(category.getName());
+
+			query.remove(entity, flags);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -136,8 +157,57 @@ public class CategoryFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllCategories()
 	 */
 	static List<Category> getAllCategories() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		Transaction tx = null;
+		List<Category> result = new ArrayList<Category>();
+
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBCategory entity = new DBCategory();
+
+			// TODO simple alternative
+			// for (Iterator<DBCategory> iterator = query.iterate(entity);
+			// iterator
+			// .hasNext();) {
+			// entity = iterator.next();
+			// result.add(helper.createCategory(entity.getName(),
+			// entity.getDescription(), null));
+			// }
+
+			// XXX needed? begin set parent
+			List<Pair<Pair<Long, Long>, Category>> cat = new ArrayList<Pair<Pair<Long, Long>, Category>>();
+			for (Iterator<DBCategory> iterator = query.iterate(entity); iterator
+					.hasNext();) {
+				entity = iterator.next();
+				cat.add(new Pair<Pair<Long, Long>, Category>(
+						new Pair<Long, Long>(entity.getCategoryId(), entity
+								.getParentId()),
+						helper.createCategory(entity.getName(),
+								entity.getDescription(), null)));
+			}
+			for (Pair<Pair<Long, Long>, Category> c : cat) {
+				if (c.first.second != null) { // parentId != null
+					for (Pair<Pair<Long, Long>, Category> p : cat) {
+						if (p.first.first == c.first.second) {
+							c.second.setParent(p.second);
+						}
+					}
+				}
+				result.add(c.second);
+			}
+			// XXX end set parent
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -149,8 +219,34 @@ public class CategoryFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getCategory(org.smartsnip.core.Snippet)
 	 */
 	static Category getCategory(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		DBCategory entity;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBSnippet snip = new DBSnippet();
+			snip.setSnippetId(snippet.getHashId());
+			snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
+
+			query = new DBQuery(session);
+			entity = new DBCategory();
+			entity.setCategoryId(snip.getCategoryId());
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return helper.createCategory(entity.getName(), entity.getDescription(),
+				null);
 	}
 
 	/**
@@ -162,8 +258,29 @@ public class CategoryFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getCategory(java.lang.String)
 	 */
 	static Category getCategory(String name) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		DBCategory entity;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			entity = new DBCategory();
+			entity.setName(name);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return helper.createCategory(entity.getName(), entity.getDescription(),
+				null);
 	}
 
 	/**
@@ -175,8 +292,35 @@ public class CategoryFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getParentCategory(org.smartsnip.core.Category)
 	 */
 	static Category getParentCategory(Category category) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		DBCategory entity;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			entity = new DBCategory();
+			entity.setName(category.getName());
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			Long id = entity.getParentId();
+
+			query = new DBQuery(session);
+			entity = new DBCategory();
+			entity.setCategoryId(id);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return helper.createCategory(entity.getName(), entity.getDescription(),
+				null);
 	}
 
 	/**
@@ -189,8 +333,39 @@ public class CategoryFactory {
 	 */
 	static List<Category> getSubcategories(Category category)
 			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		DBCategory entity;
+		List<Category> result = new ArrayList<Category>();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			entity = new DBCategory();
+			entity.setName(category.getName());
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			Long id = entity.getCategoryId();
+
+			entity = new DBCategory();
+			entity.setParentId(id);
+			for (Iterator<DBCategory> iterator = query.iterate(entity); iterator
+					.hasNext();) {
+				entity = iterator.next();
+				result.add(helper.createCategory(entity.getName(),
+						entity.getDescription(), category));
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -222,5 +397,26 @@ public class CategoryFactory {
 			DBSessionFactory.close(session);
 		}
 		return result;
+	}
+
+	/**
+	 * Helper method to fetch a category from a snippet.
+	 * 
+	 * @param helper
+	 *            the PersisteceHelper object to create the tags
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippet
+	 *            the snippet as source of the category
+	 * @return the category
+	 */
+	static Category fetchCategory(SqlPersistenceHelper helper, Session session,
+			DBSnippet snippet) {
+		DBQuery query = new DBQuery(session);
+		DBCategory entity = new DBCategory();
+		entity.setCategoryId(snippet.getCategoryId());
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		return helper.createCategory(entity.getName(), entity.getDescription(),
+				null);
 	}
 }

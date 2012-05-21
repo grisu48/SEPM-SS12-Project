@@ -15,7 +15,7 @@ CREATE TABLE `User` (
   `email` VARCHAR(255)  NOT NULL,
   `user_state` ENUM("unvalidated", "validated")  NOT NULL DEFAULT "unvalidated",
   PRIMARY KEY (`user_name`),
-  UNIQUE (`email`)
+  CONSTRAINT `u_usr_eml` UNIQUE `u_usr_eml` (`email`)
 )
 ENGINE = InnoDB
 CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -68,9 +68,10 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
 CREATE TABLE `Category` (
   `category_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   `parent_id` INTEGER UNSIGNED DEFAULT NULL,
-  `name` VARCHAR(255)  DEFAULT NULL,
+  `name` VARCHAR(255)  NOT NULL,
   `description` TEXT  DEFAULT NULL,
   PRIMARY KEY (`category_id`),
+  CONSTRAINT `u_cat_name` UNIQUE `u_cat_name` (`name`),
   CONSTRAINT `fk_parent_id` FOREIGN KEY `fk_parent_id` (`parent_id`)
     REFERENCES `Category` (`category_id`)
     ON DELETE SET NULL
