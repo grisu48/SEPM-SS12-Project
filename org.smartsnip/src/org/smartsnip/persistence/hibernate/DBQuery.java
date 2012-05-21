@@ -91,6 +91,12 @@ class DBQuery {
 	private final Session session;
 
 	/**
+	 * initialized state: calling twice {@link #getParameters(Object, boolean)}
+	 * will fail.
+	 */
+	private boolean initialized = false;
+
+	/**
 	 * Contains all parameters as {@code Pair} of {@code String} parameter and
 	 * {@code Object} value.
 	 */
@@ -136,7 +142,7 @@ class DBQuery {
 	 * @param parameter
 	 * @param value
 	 */
-	private void addParameter(String parameter, Object value) {
+	void addParameter(String parameter, Object value) {
 		this.parameters.add(new Pair<String, Object>(parameter, value));
 	}
 
@@ -200,11 +206,11 @@ class DBQuery {
 	 * concatenate the where parameters to a HQL where clause
 	 * 
 	 * @param notEmpty
-	 *            If set to true an empty where clause is rejected. Use the
-	 *            constants {@link #QUERY_NOT_EMPTY} or
+	 *            If set to {@code true} an empty where clause is rejected. Use
+	 *            the constants {@link #QUERY_NOT_EMPTY} or
 	 *            {@link #QUERY_EMPTY_VALID}.
 	 * @return the where clause or an empty string if no where parameter is set
-	 *         and the notEmpty flag is set to false
+	 *         and the notEmpty flag is set to {@code false}
 	 */
 	private String buildWhereClause(boolean notEmpty) {
 		boolean valid = false;
@@ -233,11 +239,11 @@ class DBQuery {
 	 * HQL where clause
 	 * 
 	 * @param notEmpty
-	 *            If set to true an empty where clause is rejected. Use the
-	 *            constants {@link #QUERY_NOT_EMPTY} or
+	 *            If set to {@code true} an empty where clause is rejected. Use
+	 *            the constants {@link #QUERY_NOT_EMPTY} or
 	 *            {@link #QUERY_EMPTY_VALID}.
 	 * @return the where clause or an empty string if no where parameter is set
-	 *         and the notEmpty flag is set to false
+	 *         and the notEmpty flag is set to {@code false}
 	 */
 	private String buildWhereFromAllParameters(boolean notEmpty) {
 		boolean valid = false;
@@ -289,9 +295,9 @@ class DBQuery {
 	 * 
 	 * @param targetEntity
 	 * @param allParameters
-	 *            If set to true all parameters including them which aren't
-	 *            declared as where parameter are considered. Use constant
-	 *            {@link #QUERY_ALL_PARAMETERS} or
+	 *            If set to {@code true} all parameters including them which
+	 *            aren't declared as where parameter are considered. Use
+	 *            constant {@link #QUERY_ALL_PARAMETERS} or
 	 *            {@link #QUERY_WHERE_PARAMETERS_ONLY}.
 	 * @return the update query defined by parameters and where clauses
 	 */
@@ -334,8 +340,8 @@ class DBQuery {
 	 * 
 	 * @param targetEntity
 	 * @param forceNull
-	 *            If true null values are written into the parameters list. Use
-	 *            constants {@link #QUERY_FORCE_NULL} or
+	 *            If {@code true} null values are written into the parameters
+	 *            list. Use constants {@link #QUERY_FORCE_NULL} or
 	 *            {@link #QUERY_SKIP_NULL}.
 	 * @return the primary key (Id). If the Id is no instance of
 	 *         {@code Serializable} or the Id coldn't be fetched {@code null} is
@@ -346,6 +352,10 @@ class DBQuery {
 			throw new HibernateException("Class "
 					+ targetEntity.getClass().getSimpleName()
 					+ " is no @Entity.");
+		}
+		if (this.initialized) {
+			throw new IllegalStateException(
+					"Malformed query caused by multible initialization.");
 		}
 		Method[] methods = targetEntity.getClass().getDeclaredMethods();
 		String parameter;
@@ -469,10 +479,10 @@ class DBQuery {
 	 * @param targetEntity
 	 *            the entity to update
 	 * @param forceNull
-	 *            set true if null values are to write into the database. Any
-	 *            attempt to write null into a column declared as not null will
-	 *            be rejected. Use constants {@link #QUERY_FORCE_NULL} or
-	 *            {@link #QUERY_SKIP_NULL}.
+	 *            set {@code true} if null values are to write into the
+	 *            database. Any attempt to write null into a column declared as
+	 *            not null will be rejected. Use constants
+	 *            {@link #QUERY_FORCE_NULL} or {@link #QUERY_SKIP_NULL}.
 	 * @return the primary key (Id) of the entity
 	 */
 	Serializable update(Object targetEntity, boolean forceNull) {
@@ -505,15 +515,15 @@ class DBQuery {
 	 * @param targetEntity
 	 *            the entity to update
 	 * @param forceNull
-	 *            set true if null values are to write into the database. Any
-	 *            attempt to write null into a column declared as not null will
-	 *            be rejected. Use constants {@link #QUERY_FORCE_NULL} or
-	 *            {@link #QUERY_SKIP_NULL}.
+	 *            set {@code true} if null values are to write into the
+	 *            database. Any attempt to write null into a column declared as
+	 *            not null will be rejected. Use constants
+	 *            {@link #QUERY_FORCE_NULL} or {@link #QUERY_SKIP_NULL}.
 	 * @return the primary key (Id) of the entity
 	 */
 	Serializable insertOrUpdate(Object targetEntity, boolean forceNull) {
 		Serializable key = getParameters(targetEntity, forceNull);
-		if (key == null) { // XXX needed?
+		if (key == null) { // XXX is this Exn. needed?
 			throw new HibernateException(
 					"insertOrUpdate query needs a serializable Id");
 		}
@@ -733,6 +743,9 @@ class DBQuery {
 	 * @param targetEntity
 	 *            The entity to fetch as prototype. Set all fields to null which
 	 *            aren't to use as query parameter.
+	 * @param notNull
+	 *            If set to {@code true} the query fails on a null result. Use
+	 *            constants {@link #QUERY_NOT_NULL} or {@link #QUERY_NULLABLE}.
 	 * @return a single entity of type {@code <T>}
 	 */
 	<T> T fromSingle(T targetEntity, boolean notNull) {
@@ -872,5 +885,81 @@ class DBQuery {
 
 	Long count(Object targetEntity) {
 		return (Long) select(targetEntity, "select count(*) ").get(0);
+	}
+
+	/**
+	 * Perform a query with a custom HQL query string. The parameters must be
+	 * set with {@link #addParameter(String, Object) before calling this method}
+	 * .
+	 * 
+	 * @param queryString
+	 *            must be a valid HQL query. The parameters in the
+	 *            parameters-list must be equal to the parameters in the query
+	 *            string.
+	 * 
+	 * @param start
+	 *            first index to fetch
+	 * @param count
+	 *            max. number of results to fetch
+	 * @return a list of entities
+	 */
+	List<Object> customQuery(String queryString, Integer start, Integer count) {
+		Query query = this.session.createQuery(queryString);
+		if (start != null) {
+			query.setFirstResult(start);
+		}
+		if (count != null && count > 0) {
+			query.setFetchSize(count);
+		}
+		for (Pair<String, Object> p : this.parameters) {
+			query.setParameter(p.first, p.second);
+		}
+		@SuppressWarnings("unchecked")
+		// query.list() returns a list according to the given query string
+		List<Object> result = query.list();
+		return result;
+	}
+
+	/**
+	 * Perform a query with a custom HQL query string. The parameters must be
+	 * set with {@link #addParameter(String, Object) before calling this method}
+	 * .
+	 * 
+	 * @param queryString
+	 *            must be a valid HQL query. The parameters in the
+	 *            parameters-list must be equal to the parameters in the query
+	 *            string.
+	 * 
+	 * @param start
+	 *            first index to fetch
+	 * @param count
+	 *            max. number of results to fetch
+	 * @return a list of entities of type {@code <T>}
+	 */
+	Iterator<Object> customIterator(String queryString, Integer start, Integer count) {
+		Query query = this.session.createQuery(queryString);
+		if (start != null) {
+			query.setFirstResult(start);
+		}
+		if (count != null && count > 0) {
+			query.setFetchSize(count);
+		}
+		for (Pair<String, Object> p : this.parameters) {
+			query.setParameter(p.first, p.second);
+		}
+		@SuppressWarnings("unchecked")
+		// query.iterator() returns an iterator according to the given query string
+		Iterator<Object> result = query.iterate();
+		return result;
+	}
+	/**
+	 * reset this query. All parameters are cleared and the initialized state is
+	 * set to {@code false}.
+	 */
+	void reset() {
+		this.parameters = new ArrayList<Pair<String, Object>>();
+		this.whereParameters = new ArrayList<Pair<Vector<String>, Object>>();
+		this.selectParameters = new ArrayList<Pair<String, Object>>();
+		this.initialized = false;
 	}
 }
