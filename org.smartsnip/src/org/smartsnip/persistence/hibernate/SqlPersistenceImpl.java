@@ -11,7 +11,6 @@ import org.smartsnip.core.*;
 import org.smartsnip.persistence.*;
 import org.smartsnip.shared.Pair;
 
-
 import sun.reflect.Reflection;
 
 /**
@@ -21,8 +20,11 @@ import sun.reflect.Reflection;
 public class SqlPersistenceImpl implements IPersistence {
 
 	/**
-	 * This constructor is protected against multiple instantiation to accomplish a singleton pattern.
-	 * It rejects any attempt to build an instance except it is called by the {@link PersistenceFactory#getInstance(int)} method.
+	 * This constructor is protected against multiple instantiation to
+	 * accomplish a singleton pattern. It rejects any attempt to build an
+	 * instance except it is called by the
+	 * {@link PersistenceFactory#getInstance(int)} method.
+	 * @throws IllegalAccessException 
 	 */
 	protected SqlPersistenceImpl() throws IllegalAccessException {
 		super();
@@ -39,8 +41,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeUser(User user, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+		UserFactory.writeUser(user, flags);
 	}
 
 	/**
@@ -49,18 +50,28 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeUser(List<User> users, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+		UserFactory.writeUser(users, flags);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writePassword(org.smartsnip.core.Pair,
-	 *      int)
+	 * @see org.smartsnip.persistence.IPersistence#writePassword(org.smartsnip.core.User, String, int)
 	 */
 	@Override
-	public void writePassword(User user, String password, int flags) throws IOException {
-		// TODO Auto-generated method stub
+	@Deprecated
+	public void writePassword(User user, String password, int flags)
+			throws IOException {
+		writeLogin(user, password, false, flags);
+		// XXX deprecated
+	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#writeLogin(org.smartsnip.core.User,
+	 *      java.lang.String, java.lang.Boolean, int)
+	 */
+	@Override
+	public void writeLogin(User user, String password, Boolean grantLogin,
+			int flags) throws IOException {
+		UserFactory.writeLogin(user, password, grantLogin, flags);
 	}
 
 	/**
@@ -69,8 +80,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Long writeSnippet(Snippet snippet, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.writeSnippet(snippet, flags);
 	}
 
 	/**
@@ -78,9 +88,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeSnippet(List<Snippet> snippets, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void writeSnippet(List<Snippet> snippets, int flags)
+			throws IOException {
+		SnippetFactory.writeSnippet(snippets, flags);
 	}
 
 	/**
@@ -89,8 +99,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Long writeComment(Comment comment, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return CommentFactory.writeComment(comment, flags);
 	}
 
 	/**
@@ -98,9 +107,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeComment(List<Comment> comments, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void writeComment(List<Comment> comments, int flags)
+			throws IOException {
+		CommentFactory.writeComment(comments, flags);
 	}
 
 	/**
@@ -109,8 +118,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeTag(Tag tag, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+		TagFactory.writeTag(tag, flags);
 	}
 
 	/**
@@ -118,8 +126,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeTag(List<Tag> tags, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+		TagFactory.writeTag(tags, flags);
 	}
 
 	/**
@@ -127,9 +134,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public Long writeNotification(Notification notification, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public Long writeNotification(Notification notification, int flags)
+			throws IOException {
+		return UserFactory.writeNotification(notification, flags);
 	}
 
 	/**
@@ -137,9 +144,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeNotification(List<Notification> notifications, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void writeNotification(List<Notification> notifications, int flags)
+			throws IOException {
+		UserFactory.writeNotification(notifications, flags);
 	}
 
 	/**
@@ -148,8 +155,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Long writeCode(Code code, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.writeCode(code, flags);
 	}
 
 	/**
@@ -158,8 +164,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeCode(List<Code> codes, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+		SnippetFactory.writeCode(codes, flags);
 	}
 
 	/**
@@ -168,8 +173,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Long writeCategory(Category category, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return CategoryFactory.writeCategory(category, flags);
 	}
 
 	/**
@@ -177,9 +181,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      int)
 	 */
 	@Override
-	public void writeCategory(List<Category> categories, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void writeCategory(List<Category> categories, int flags)
+			throws IOException {
+		CategoryFactory.writeCategory(categories, flags);
 	}
 
 	/**
@@ -188,8 +192,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeLanguage(String language, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+		SnippetFactory.writeLanguage(language, flags);
 	}
 
 	/**
@@ -197,27 +200,29 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Snippet, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeRating(Integer rating, Snippet snippet, User user, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void writeRating(Integer rating, Snippet snippet, User user,
+			int flags) throws IOException {
+		SnippetFactory.writeRating(rating, snippet, user, flags);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#unRate(org.smartsnip.core.User, org.smartsnip.core.Snippet, int)
+	 * @see org.smartsnip.persistence.IPersistence#unRate(org.smartsnip.core.User,
+	 *      org.smartsnip.core.Snippet, int)
 	 */
 	@Override
-	public void unRate(User user, Snippet snippet, int flags) throws IOException {
-		// TODO Auto-generated method stub
+	public void unRate(User user, Snippet snippet, int flags)
+			throws IOException {
+		SnippetFactory.unRate(user, snippet, flags);
 	}
-	
+
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#writeVote(java.lang.Integer,
 	 *      org.smartsnip.core.Comment, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeVote(Integer vote, Comment comment, User user, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void writeVote(Integer vote, Comment comment, User user, int flags)
+			throws IOException {
+		CommentFactory.writeVote(vote, comment, user, flags);
 	}
 
 	/**
@@ -225,9 +230,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void votePositive(User user, Comment comment, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void votePositive(User user, Comment comment, int flags)
+			throws IOException {
+		CommentFactory.votePositive(user, comment, flags);
 	}
 
 	/**
@@ -235,9 +240,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void voteNegative(User user, Comment comment, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void voteNegative(User user, Comment comment, int flags)
+			throws IOException {
+		CommentFactory.voteNegative(user, comment, flags);
 	}
 
 	/**
@@ -245,9 +250,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void unVote(User user, Comment comment, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void unVote(User user, Comment comment, int flags)
+			throws IOException {
+		CommentFactory.unVote(user, comment, flags);
 	}
 
 	/**
@@ -255,9 +260,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void addFavourite(Snippet snippet, User user, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void addFavourite(Snippet snippet, User user, int flags)
+			throws IOException {
+		SnippetFactory.addFavourite(snippet, user, flags);
 	}
 
 	/**
@@ -265,82 +270,91 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void removeFavourite(Snippet snippet, User user, int flags) throws IOException {
-		// TODO Auto-generated method stub
-
+	public void removeFavourite(Snippet snippet, User user, int flags)
+			throws IOException {
+		SnippetFactory.removeFavourite(snippet, user, flags);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeUser(java.lang.String, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeUser(org.smartsnip.core.User,
+	 *      int)
 	 */
 	@Override
 	public void removeUser(User user, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		
+		UserFactory.removeUser(user, flags);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeSnippet(java.lang.Long, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeLogin(org.smartsnip.core.User,
+	 *      int)
+	 */
+	@Override
+	public void removeLogin(User user, int flags) throws IOException {
+		UserFactory.removeLogin(user, flags);
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeSnippet(org.smartsnip.core.Snippet,
+	 *      int)
 	 */
 	@Override
 	public void removeSnippet(Snippet snippet, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		
+		SnippetFactory.removeSnippet(snippet, flags);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeComment(java.lang.Long, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeComment(org.smartsnip.core.Comment,
+	 *      int)
 	 */
 	@Override
 	public void removeComment(Comment comment, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		
+		CommentFactory.removeComment(comment, flags);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeTag(org.smartsnip.core.Tag, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeTag(org.smartsnip.core.Tag,
+	 *      int)
 	 */
 	@Override
 	public void removeTag(Tag tag, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		
+		TagFactory.removeTag(tag, flags);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeNotification(java.lang.Long, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeNotification(org.smartsnip.core.Notification,
+	 *      int)
 	 */
 	@Override
 	public void removeNotification(Notification notification, int flags)
 			throws IOException {
-		// TODO Auto-generated method stub
-		
+		UserFactory.removeNotification(notification, flags);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeCode(java.lang.Long, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeCode(org.smartsnip.core.Code,
+	 *      int)
 	 */
 	@Override
 	public void removeCode(Code code, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		
+		SnippetFactory.removeCode(code, flags);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeCategory(java.lang.Long, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeCategory(org.smartsnip.core.Category,
+	 *      int)
 	 */
 	@Override
 	public void removeCategory(Category category, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		
+		CategoryFactory.removeCategory(category, flags);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeLanguage(java.lang.String, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeLanguage(java.lang.String,
+	 *      int)
 	 */
 	@Override
 	public void removeLanguage(String language, int flags) throws IOException {
-		// TODO Auto-generated method stub
-		
+		SnippetFactory.removeLanguage(language, flags);
 	}
 
 	/**
@@ -348,8 +362,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public User getUser(String nick) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return UserFactory.getUser(nick);
 	}
 
 	/**
@@ -357,17 +370,18 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public User getUserByEmail(String email) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return UserFactory.getUserByEmail(email);
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#getPassword(org.smartsnip.core.User)
 	 */
 	@Override
-	public String getPassword(User user) throws IOException, UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return null;
+	@Deprecated
+	public String getPassword(User user) throws IOException,
+			UnsupportedOperationException {
+		throw new UnsupportedOperationException(
+				"This operation is deprecated, use verifyPassword instead.");
 	}
 
 	/**
@@ -375,9 +389,17 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      java.lang.String)
 	 */
 	@Override
-	public boolean verifyPassword(User user, String password) throws IOException, UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean verifyPassword(User user, String password)
+			throws IOException {
+		return UserFactory.verifyPassword(user, password);
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#isLoginGranted(org.smartsnip.core.User)
+	 */
+	// @Override
+	public boolean isLoginGranted(User user) throws IOException {
+		return UserFactory.isLoginGranted(user);
 	}
 
 	/**
@@ -385,8 +407,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<User> findUser(String realName) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return UserFactory.findUser(realName);
 	}
 
 	/**
@@ -394,8 +415,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getUserSnippets(User owner) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.getUserSnippets(owner);
 	}
 
 	/**
@@ -403,8 +423,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getFavorited(User user) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.getFavorited(user);
 	}
 
 	/**
@@ -412,8 +431,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.getSnippets(matchingTags);
 	}
 
 	/**
@@ -423,32 +441,31 @@ public class SqlPersistenceImpl implements IPersistence {
 	public List<Snippet> getSnippets(Category category) throws IOException {
 		return SnippetFactory.getSnippets(category, null, null);
 	}
-	
+
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getSnippets(org.smartsnip.core.Category, int, int)
+	 * @see org.smartsnip.persistence.IPersistence#getSnippets(org.smartsnip.core.Category,
+	 *      java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
-	public List<Snippet> getSnippets(Category category, Integer start, Integer count)
-			throws IOException {
+	public List<Snippet> getSnippets(Category category, Integer start,
+			Integer count) throws IOException {
 		return SnippetFactory.getSnippets(category, start, count);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getSnippet(int)
+	 * @see org.smartsnip.persistence.IPersistence#getSnippet(java.lang.Long)
 	 */
 	@Override
 	public Snippet getSnippet(Long id) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.getSnippet(id);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getComment(long)
+	 * @see org.smartsnip.persistence.IPersistence#getComment(java.lang.Long)
 	 */
 	@Override
 	public Comment getComment(Long id) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return CommentFactory.getComment(id);
 	}
 
 	/**
@@ -456,8 +473,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Comment> getComments(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return CommentFactory.getComments(snippet);
 	}
 
 	/**
@@ -465,15 +481,15 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Tag> getTags(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return TagFactory.getTags(snippet);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getAllTags()
+	 * @see org.smartsnip.persistence.IPersistence#getAllTags(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
-	public List<Tag> getAllTags(Integer start, Integer count) throws IOException {
+	public List<Tag> getAllTags(Integer start, Integer count)
+			throws IOException {
 		return TagFactory.getAllTags(start, count);
 	}
 
@@ -482,9 +498,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      boolean)
 	 */
 	@Override
-	public List<Notification> getNotifications(User user, boolean unreadOnly) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Notification> getNotifications(User user, boolean unreadOnly)
+			throws IOException {
+		return UserFactory.getNotifications(user, unreadOnly);
 	}
 
 	/**
@@ -492,8 +508,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Code> getCodes(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.getCodes(snippet);
 	}
 
 	/**
@@ -501,8 +516,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Category> getAllCategories() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return CategoryFactory.getAllCategories();
 	}
 
 	/**
@@ -510,8 +524,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Category getCategory(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return CategoryFactory.getCategory(snippet);
 	}
 
 	/**
@@ -519,8 +532,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Category getCategory(String name) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return CategoryFactory.getCategory(name);
 	}
 
 	/**
@@ -528,17 +540,16 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Category getParentCategory(Category category) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return CategoryFactory.getParentCategory(category);
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#getSubcategories(org.smartsnip.core.Category)
 	 */
 	@Override
-	public List<Category> getSubcategories(Category category) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Category> getSubcategories(Category category)
+			throws IOException {
+		return CategoryFactory.getSubcategories(category);
 	}
 
 	/**
@@ -546,17 +557,16 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<String> getAllLanguages() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.getAllLanguages();
 	}
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#getRatings(org.smartsnip.core.Snippet)
 	 */
 	@Override
-	public List<Pair<User, Integer>> getRatings(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Pair<User, Integer>> getRatings(Snippet snippet)
+			throws IOException {
+		return SnippetFactory.getRatings(snippet);
 	}
 
 	/**
@@ -564,8 +574,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Float getAverageRating(Snippet snippet) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return SnippetFactory.getAverageRating(snippet);
 	}
 
 	/**
@@ -573,27 +582,26 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Pair<Integer, Integer> getVotes(Comment comment) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return CommentFactory.getVotes(comment);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getVote(org.smartsnip.core.User, org.smartsnip.core.Comment)
+	 * @see org.smartsnip.persistence.IPersistence#getVote(org.smartsnip.core.User,
+	 *      org.smartsnip.core.Comment)
 	 */
 	@Override
 	public Integer getVote(User user, Comment comment) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return CommentFactory.getVote(user, comment);
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String, int,
-	 *      int)
+	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String, java.lang.Integer,
+	 *      java.lang.Integer)
 	 */
 	@Override
-	public List<Snippet> search(String searchString, Integer start, Integer count) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Snippet> search(String searchString, Integer start,
+			Integer count) throws IOException {
+		return SnippetFactory.search(searchString, start, count);
 	}
 
 	/**
@@ -601,8 +609,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public int getUserCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return UserFactory.getUserCount();
 	}
 
 	/**
@@ -610,8 +617,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public int getCategoryCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return CategoryFactory.getCategoryCount();
 	}
 
 	/**
@@ -619,8 +625,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public int getSnippetsCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return SnippetFactory.getSnippetsCount();
 	}
 
 	/**
@@ -628,7 +633,6 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public int getTagsCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		return TagFactory.getTagsCount();
 	}
 }

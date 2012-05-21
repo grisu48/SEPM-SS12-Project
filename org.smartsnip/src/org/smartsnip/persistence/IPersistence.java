@@ -16,6 +16,8 @@ import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.Pair;
 
+import sun.reflect.Reflection;
+
 /**
  * Interface which contains all methods to persist or load data from the
  * underlying database.
@@ -26,13 +28,17 @@ import org.smartsnip.shared.Pair;
  * <pre>
  * MyPersistence() throws IllegalAccessException {
  * 	super();
- * 	if (Reflection.getCallerClass(2) == null
- * 			|| Reflection.getCallerClass(2) != PersistenceFactory.class) {
+ * 	if (Reflection.getCallerClass(&lt;packageDepth&gt;) == null
+ * 			|| Reflection.getCallerClass(&lt;packageDepth&gt;) != PersistenceFactory.class) {
  * 		throw new IllegalAccessException(
  * 				&quot;Singleton pattern: caller must be PersistenceFactory class.&quot;);
  * 	}
  * }
  * </pre>
+ * 
+ * The {@code int} value {@code <packageDepth>} is to set to
+ * {@code (2 + [depth of subpackage-tree])} for more details see
+ * {@link Reflection#getCallerClass(int)}
  * 
  * @author littlelion
  * 
@@ -41,50 +47,71 @@ public interface IPersistence {
 
 	/**
 	 * <p>
-	 * constant for the argument 'flags' of the writeXxx() methods: use the
-	 * default conditions. In common the default behavior is:
+	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
+	 * methods: use the default conditions. This constant is overridden by all
+	 * other flags, so it isn't necessary to set this flag combined with any
+	 * additional flag. If no deviating behavior is described at the
+	 * corresponding method the default is:
 	 * </p>
 	 * <blockquote>
 	 * <nl>
 	 * <li>to create a new entry if not already present</li>
 	 * <li>to update an existing entry</li>
 	 * <li>to keep database entries (don't use DELETE statements)</li>
+	 * <li>to ignore null entries on updates (don't overwrite existing entries
+	 * of columns with "null")
 	 * </nl>
 	 * </blockquote>
 	 * <p>
-	 * See the description of the corresponding methods for possible deviating
-	 * behavior.
-	 * </p>
+	 * The values of the flags may change in future revisions, so to insert a
+	 * hardcoded integer value instead of using this constant is discouraged.
+	 * 
+	 * @see #DB_NEW_ONLY
+	 * @see #DB_UPDATE_ONLY
+	 * @see #DB_FORCE_NULL_VALUES
+	 * @see #DB_NO_DELETE
+	 * @see #DB_FORCE_DELETE
 	 */
 	public static int DB_DEFAULT = 0;
 
 	/**
-	 * constant for the argument 'flags' of the writeXxx() methods: reject to
-	 * write if the element already exists in the database. This constant
-	 * overrides {@link IPersistence#DB_UPDATE_ONLY}.
+	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
+	 * methods: reject to write if the element already exists in the database.
+	 * This constant overrides {@link #DB_UPDATE_ONLY}.
 	 */
 	public static int DB_NEW_ONLY = 1;
 
 	/**
-	 * constant for the argument 'flags' of the writeXxx() methods: reject the
-	 * request if the element to update doesn't exist. This constant has no
-	 * effect if {@link IPersistence#DB_NEW_ONLY} is set.
+	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
+	 * methods: reject the request if the element to update doesn't exist. This
+	 * constant has no effect if {@link #DB_NEW_ONLY} is set.
 	 */
 	public static int DB_UPDATE_ONLY = 2;
 
 	/**
-	 * constant for the argument 'flags' of the writeXxx() methods: don't delete
-	 * contents of the database. This constant overrides
-	 * {@link IPersistence#DB_FORCE_DELETE}.
+	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
+	 * methods: overwrite existing values in the addressed columns with null
+	 * values if they are null in the corresponding DB-object. This flag only
+	 * has effect to object(s) which are currently present in the database. The
+	 * database will reject all attempts to insert a null value into a
+	 * not-nullable column, so be careful if using this option.
 	 */
-	public static int DB_NO_DELETE = 4;
+	public static int DB_FORCE_NULL_VALUES = 4;
 
 	/**
-	 * constant for the argument 'flags' of the writeXxx() methods: don't delete
-	 * contents of the database. This constant has no effect if
-	 * {@link IPersistence#DB_NEW_ONLY} is set.
+	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
+	 * methods: don't delete contents of the database. This constant has
+	 * exclusively effect on queries which remove contents from the database. It
+	 * overrides {@link #DB_FORCE_DELETE}.
 	 */
-	public static int DB_FORCE_DELETE = 8;
+	public static int DB_NO_DELETE = 8;
+
+	/**
+	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
+	 * methods: don't delete contents of the database. This constant has
+	 * exclusively effect on queries which remove contents from the database.
+	 */
+	public static int DB_FORCE_DELETE = 16;
 
 	/**
 	 * Persist a single User-dataset.
@@ -113,7 +140,9 @@ public interface IPersistence {
 	public void writeUser(List<User> users, int flags) throws IOException;
 
 	/**
-	 * Persist a new password into the database
+	 * Persist a new password into the database Using this method is deprecated
+	 * because the grant_login flag isn't considered. Use
+	 * {@link #writeLogin(User, String, Boolean, int)} instead.
 	 * 
 	 * @param user
 	 *            the owner of the password
@@ -125,8 +154,28 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
+	@Deprecated
 	public void writePassword(User user, String password, int flags)
 			throws IOException;
+
+	/**
+	 * Persist a new password into the database. This method is deprecated
+	 * because the grant_login flag isn't considered.
+	 * 
+	 * @param user
+	 *            the owner of the login
+	 * @param password
+	 *            to set for the user
+	 * @param grantLogin
+	 *            set this flag to true if the user should be able to login
+	 * @param flags
+	 *            the constraints for the write access. more than one constraint
+	 *            can be added by a logical or connection.
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
+	public void writeLogin(User user, String password, Boolean grantLogin,
+			int flags) throws IOException;
 
 	/**
 	 * Persist a single Snippet-dataset.
@@ -310,7 +359,7 @@ public interface IPersistence {
 	/**
 	 * Persist a rating. This operation updates an existing rating if the user
 	 * has rated already for the given snippet. This operation will be rejected
-	 * in {@link IPersistence#DB_NEW_ONLY} flag if an update on an existing
+	 * in {@link #DB_NEW_ONLY} flag if an update on an existing
 	 * rating should be performed.
 	 * 
 	 * @param rating
@@ -331,8 +380,8 @@ public interface IPersistence {
 
 	/**
 	 * Remove a rating. This operation updates an existing rating to '0' in
-	 * {@link IPersistence#DB_NO_DELETE} flag which is currently the default
-	 * behavior. In {@link IPersistence#DB_FORCE_DELETE} flag the given database
+	 * {@link #DB_NO_DELETE} flag which is currently the default
+	 * behavior. In {@link #DB_FORCE_DELETE} flag the given database
 	 * entry is deleted.
 	 * 
 	 * @param user
@@ -351,7 +400,7 @@ public interface IPersistence {
 	/**
 	 * Persist a vote. This operation updates an existing vote if the user has
 	 * voted already for the given comment. This operation will be rejected in
-	 * {@link IPersistence#DB_NEW_ONLY} flag if an update on an existing vote
+	 * {@link #DB_NEW_ONLY} flag if an update on an existing vote
 	 * should be performed.
 	 * 
 	 * @param vote
@@ -374,7 +423,7 @@ public interface IPersistence {
 	/**
 	 * Persist a positive vote. This operation updates an existing vote if the
 	 * user has voted already for the given comment. This operation will be
-	 * rejected in {@link IPersistence#DB_NEW_ONLY} flag if an update on an
+	 * rejected in {@link #DB_NEW_ONLY} flag if an update on an
 	 * existing vote should be performed.
 	 * 
 	 * @param user
@@ -394,7 +443,7 @@ public interface IPersistence {
 	/**
 	 * Persist a negative vote. This operation updates an existing vote if the
 	 * user has voted already for the given comment. This operation will be
-	 * rejected in {@link IPersistence#DB_NEW_ONLY} flag if an update on an
+	 * rejected in {@link #DB_NEW_ONLY} flag if an update on an
 	 * existing vote should be performed.
 	 * 
 	 * @param user
@@ -413,8 +462,8 @@ public interface IPersistence {
 
 	/**
 	 * Remove a vote. This operation updates an existing vote to 'none' in
-	 * {@link IPersistence#DB_NO_DELETE} flag which is currently the default
-	 * behavior. In {@link IPersistence#DB_FORCE_DELETE} flag the given database
+	 * {@link #DB_NO_DELETE} flag which is currently the default
+	 * behavior. In {@link #DB_FORCE_DELETE} flag the given database
 	 * entry is deleted.
 	 * 
 	 * @param user
@@ -440,7 +489,6 @@ public interface IPersistence {
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a logical or connection.
-	 * @return true if the state has changed
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -456,8 +504,8 @@ public interface IPersistence {
 	 *            the owner of the favorite list
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
-	 * @return true if the state has changed
+	 *            can be added by a logical or connection. Set
+	 *            {@link #DB_FORCE_DELETE} to delete the entry from database.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -474,11 +522,29 @@ public interface IPersistence {
 	 *            the user to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
 	public void removeUser(User user, int flags) throws IOException;
+
+	/**
+	 * remove the Password from the database
+	 * <p>
+	 * This method removes the ability to login with the given user account. The
+	 * default behavior of this method is to disable the grant_login flag but to
+	 * keep the password entry. If the deletion of the password entry is needed
+	 * set the {@link #DB_FORCE_DELETE} flag.
+	 * 
+	 * @param user
+	 *            the user account to lock
+	 * @param flags
+	 *            the constraints for the write access. The default is
+	 *            {@link #DB_NO_DELETE}
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
+	public void removeLogin(User user, int flags) throws IOException;
 
 	/**
 	 * remove the Snippet from the database
@@ -490,7 +556,7 @@ public interface IPersistence {
 	 *            the object to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -505,7 +571,7 @@ public interface IPersistence {
 	 *            the object to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -518,7 +584,7 @@ public interface IPersistence {
 	 *            the tag to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -531,7 +597,7 @@ public interface IPersistence {
 	 *            the object to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -545,7 +611,7 @@ public interface IPersistence {
 	 *            the object to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -563,7 +629,7 @@ public interface IPersistence {
 	 *            the object to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -579,7 +645,7 @@ public interface IPersistence {
 	 *            the language to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link IPersistence#DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -608,7 +674,9 @@ public interface IPersistence {
 	public User getUserByEmail(String email) throws IOException;
 
 	/**
-	 * get the password string related to the user
+	 * get the password string related to the user. This method is deprecated
+	 * because of security reasons. It violates the one-way stream of password
+	 * strings to the database.
 	 * 
 	 * @param user
 	 *            the user
@@ -620,20 +688,34 @@ public interface IPersistence {
 	 *             If this happens, use {@link #verifyPassword(User, String)}
 	 *             instant, that has to be implemented
 	 */
+	@Deprecated
 	public String getPassword(User user) throws IOException,
 			UnsupportedOperationException;
 
 	/**
-	 * verifies the password of the given user
+	 * verifies the password and the permission to login of the given user. This
+	 * method returns true if the grant_login flag is set and the given password
+	 * matches to the stored password. Due to security reasons the password
+	 * can't be read out of the database.
 	 * 
 	 * @param user
 	 * @param password
-	 * @return true if the password is correct
+	 * @return true if the user is granted to login
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
 	public boolean verifyPassword(User user, String password)
 			throws IOException;
+
+	/**
+	 * get the state of the grant_login flag. Only if this flag is true the user
+	 * is permitted to login.
+	 * 
+	 * @param user
+	 * @return true if the user's grantLogin flag is set
+	 * @throws IOException
+	 */
+	public boolean isLoginGranted(User user) throws IOException;
 
 	/**
 	 * find all users with matching names
@@ -960,6 +1042,7 @@ public interface IPersistence {
 	 */
 	public int getTagsCount() throws IOException;
 
+	// XXX needed? getTagFrequency(Tag tag)
 	// /**
 	// * get the number of entries where the tag is used
 	// *

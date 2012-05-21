@@ -12,10 +12,10 @@
 CREATE TABLE `User` (
   `user_name` VARCHAR(20)  NOT NULL,
   `full_name` VARCHAR(255)  DEFAULT NULL,
-  `email` VARCHAR(255)  DEFAULT NULL,
+  `email` VARCHAR(255)  NOT NULL,
   `user_state` ENUM("unvalidated", "validated")  NOT NULL DEFAULT "unvalidated",
-  `grant_login` BOOLEAN  NOT NULL DEFAULT FALSE,
-  PRIMARY KEY (`user_name`)
+  PRIMARY KEY (`user_name`),
+  UNIQUE (`email`)
 )
 ENGINE = InnoDB
 CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -26,9 +26,10 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
  * 
  * TODO change table password
  */
-CREATE TABLE `Password` (
+CREATE TABLE `Login` (
   `user_name` varchar(20)  NOT NULL,
-  `pwd_string` varchar(255)  NOT NULL,
+  `password` varchar(255)  NOT NULL,
+  `grant_login` BOOLEAN  NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`user_name`),
   CONSTRAINT `fk_usr_pwd` FOREIGN KEY `fk_usr_pwd` (`user_name`)
     REFERENCES `User` (`user_name`)

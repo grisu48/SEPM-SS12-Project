@@ -7,19 +7,12 @@ package org.smartsnip.persistence.hibernate;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * @author littlelion
@@ -32,23 +25,21 @@ public class DBNotification {
 	@Id
 	@GeneratedValue
 	@Column(name = "notification_id", insertable = false, updatable = false)
-	private long notificationId;
+	private Long notificationId;
 
-	@NotNull
-	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-	@ForeignKey(name = "DBUser.userName")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+//	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+//	@ForeignKey(name = "DBUser.userName")
+//	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Column(name = "user_name", length = 20)
 	private String userName;
 
-	@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
-	@ForeignKey(name = "DBSnippet.snippetId")
+//	@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
+//	@ForeignKey(name = "DBSnippet.snippetId")
 	@Column(name = "snippet_id")
-	private long snippetId;
+	private Long snippetId;
 
-	@NotNull
 	@Column(name = "viewed")
-	private boolean viewed;
+	private Boolean viewed;
 
 	@Lob
 	@Column(name = "message")
@@ -57,7 +48,6 @@ public class DBNotification {
 	@Column(name = "origin", length = 255)
 	private String origin;
 
-	@NotNull
 	@GeneratedValue
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", insertable = false, updatable = false)
@@ -70,31 +60,32 @@ public class DBNotification {
 		super();
 	}
 
-	/**
-	 * @param notificationId
-	 * @param userName
-	 * @param snippetId
-	 * @param viewed
-	 * @param message
-	 * @param origin
-	 * @param createdAt
-	 */
-	DBNotification(long notificationId, String userName, long snippetId,
-			boolean viewed, String message, String origin, Date createdAt) {
-		super();
-		this.notificationId = notificationId;
-		this.userName = userName;
-		this.snippetId = snippetId;
-		this.viewed = viewed;
-		this.message = message;
-		this.origin = origin;
-		this.createdAt = createdAt;
-	}
+	// XXX remove constructor
+//	/**
+//	 * @param notificationId
+//	 * @param userName
+//	 * @param snippetId
+//	 * @param viewed
+//	 * @param message
+//	 * @param origin
+//	 * @param createdAt
+//	 */
+//	DBNotification(Long notificationId, String userName, Long snippetId,
+//			Boolean viewed, String message, String origin, Date createdAt) {
+//		super();
+//		this.notificationId = notificationId;
+//		this.userName = userName;
+//		this.snippetId = snippetId;
+//		this.viewed = viewed;
+//		this.message = message;
+//		this.origin = origin;
+//		this.createdAt = createdAt;
+//	}
 
 	/**
 	 * @return the notificationId
 	 */
-	public long getNotificationId() {
+	public Long getNotificationId() {
 		return this.notificationId;
 	}
 
@@ -102,7 +93,7 @@ public class DBNotification {
 	 * @param notificationId
 	 *            the notificationId to set
 	 */
-	public void setNotificationId(long notificationId) {
+	public void setNotificationId(Long notificationId) {
 		this.notificationId = notificationId;
 	}
 
@@ -124,7 +115,7 @@ public class DBNotification {
 	/**
 	 * @return the snippetId
 	 */
-	public long getSnippetId() {
+	public Long getSnippetId() {
 		return this.snippetId;
 	}
 
@@ -132,14 +123,14 @@ public class DBNotification {
 	 * @param snippetId
 	 *            the snippetId to set
 	 */
-	public void setSnippetId(long snippetId) {
+	public void setSnippetId(Long snippetId) {
 		this.snippetId = snippetId;
 	}
 
 	/**
 	 * @return the viewed
 	 */
-	public boolean isViewed() {
+	public Boolean isViewed() {
 		return this.viewed;
 	}
 
@@ -147,7 +138,7 @@ public class DBNotification {
 	 * @param viewed
 	 *            the viewed to set
 	 */
-	public void setViewed(boolean viewed) {
+	public void setViewed(Boolean viewed) {
 		this.viewed = viewed;
 	}
 
@@ -188,11 +179,11 @@ public class DBNotification {
 		return this.createdAt;
 	}
 
-	/**
-	 * @param createdAt
-	 *            the createdAt to set
-	 */
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
+//	/**
+//	 * @param createdAt
+//	 *            the createdAt to set
+//	 */
+//	public void setCreatedAt(Date createdAt) {
+//		this.createdAt = createdAt;
+//	}
 }

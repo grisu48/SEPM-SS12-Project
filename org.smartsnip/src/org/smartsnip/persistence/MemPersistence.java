@@ -796,4 +796,27 @@ public class MemPersistence implements IPersistence {
 	private static long nextInteger() {
 		return (long) (Math.random() * Integer.MAX_VALUE);
 	}
+
+	@Override
+	public void writeLogin(User user, String password, Boolean grantLogin,
+			int flags) throws IOException {
+		writePassword(user, password, flags);
+		
+	}
+
+	@Override
+	public void removeLogin(User user, int flags) throws IOException {
+		if (user != null) passwords.remove(user);
+	}
+
+	@Override
+	public boolean isLoginGranted(User user) throws IOException {
+		if (user == null)
+			return false;
+
+		String pass = passwords.get(user);
+		if (pass == null)
+			return false;
+		return true;
+	}
 }

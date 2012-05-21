@@ -42,14 +42,15 @@ public class DBVote {
 		super();
 	}
 
-	/**
-	 * @param vote
-	 */
-	DBVote(long commentId, String userName, Vote vote) {
-		super();
-		this.voteId = new VoteId(commentId, userName);
-		this.vote = vote;
-	}
+	// XXX remove constructor
+//	/**
+//	 * @param vote
+//	 */
+//	DBVote(Long commentId, String userName, Vote vote) {
+//		super();
+//		this.voteId = new VoteId(commentId, userName);
+//		this.vote = vote;
+//	}
 
 	/**
 	 * @return the voteId
@@ -104,14 +105,14 @@ public class DBVote {
 		private static final long serialVersionUID = 776274109892022330L;
 
 		@NotNull
-		@ManyToOne(targetEntity = DBComment.class, fetch = FetchType.EAGER)
-		@ForeignKey(name = "DBComment.commentId")
+//		@ManyToOne(targetEntity = DBComment.class, fetch = FetchType.EAGER)
+//		@ForeignKey(name = "DBComment.commentId")
 		@Column(name = "comment_id")
-		private long commentId;
+		private Long commentId;
 
 		@NotNull
-		@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-		@ForeignKey(name = "DBUser.userName")
+//		@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+//		@ForeignKey(name = "DBUser.userName")
 		@Column(name = "user_name", length = 20)
 		private String userName;
 
@@ -126,7 +127,7 @@ public class DBVote {
 		 * @param commentId
 		 * @param userName
 		 */
-		VoteId(long commentId, String userName) {
+		VoteId(Long commentId, String userName) {
 			super();
 			this.commentId = commentId;
 			this.userName = userName;
@@ -135,7 +136,7 @@ public class DBVote {
 		/**
 		 * @return the commentId
 		 */
-		public long getCommentId() {
+		public Long getCommentId() {
 			return this.commentId;
 		}
 
@@ -143,7 +144,7 @@ public class DBVote {
 		 * @param commentId
 		 *            the commentId to set
 		 */
-		public void setCommentId(long commentId) {
+		public void setCommentId(Long commentId) {
 			this.commentId = commentId;
 		}
 

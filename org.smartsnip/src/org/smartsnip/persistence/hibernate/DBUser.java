@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.smartsnip.core.User;
 
 /**
@@ -21,6 +23,11 @@ import org.smartsnip.core.User;
  * 
  */
 @Entity
+@SuppressWarnings("deprecation")
+// TODO update hibernate see issue HHH-7074
+// "the replacement annotations of @Entity are not working"
+@org.hibernate.annotations.Entity(dynamicInsert = true)
+// @DynamicInsert
 @Table(name = "User")
 class DBUser {
 	@Id
@@ -33,15 +40,10 @@ class DBUser {
 	@Column(name = "email", length = 255)
 	private String email;
 
-	@NotNull
+	// @NotNull
 	@Column(name = "user_state")
 	@Enumerated(EnumType.STRING)
 	private User.UserState userState;
-
-	// TODO move this item to table password ?
-	@NotNull
-	@Column(name = "grant_login")
-	private Boolean grantLogin;
 
 	/**
 	 * 
@@ -50,27 +52,26 @@ class DBUser {
 		super();
 	}
 
-	/**
-	 * @param userName
-	 * @param fullName
-	 * @param email
-	 * @param userState
-	 * @param grantLogin
-	 */
-	DBUser(String nickName, String fullName, String email,
-			User.UserState userState, Boolean grantLogin) {
-		super();
-		this.userName = nickName;
-		this.fullName = fullName;
-		this.email = email;
-		this.userState = userState;
-		this.grantLogin = grantLogin;
-	}
+	// XXX remove constructor
+	// /**
+	// * @param userName
+	// * @param fullName
+	// * @param email
+	// * @param userState
+	// */
+	// DBUser(String nickName, String fullName, String email,
+	// User.UserState userState) {
+	// super();
+	// this.userName = nickName;
+	// this.fullName = fullName;
+	// this.email = email;
+	// this.userState = userState;
+	// }
 
 	/**
 	 * @return the userName
 	 */
-	public String getNickName() {
+	public String getUserName() {
 		return this.userName;
 	}
 
@@ -125,20 +126,5 @@ class DBUser {
 	 */
 	public void setUserState(User.UserState userState) {
 		this.userState = userState;
-	}
-
-	/**
-	 * @return the grantLogin
-	 */
-	public Boolean getGrantLogin() {
-		return this.grantLogin;
-	}
-
-	/**
-	 * @param grantLogin
-	 *            the grantLogin to set
-	 */
-	public void setGrantLogin(Boolean grantLogin) {
-		this.grantLogin = grantLogin;
 	}
 }

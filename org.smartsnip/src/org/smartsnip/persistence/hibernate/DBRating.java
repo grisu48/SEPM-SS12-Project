@@ -30,7 +30,7 @@ public class DBRating {
 
 	@NotNull
 	@Column(name = "rating_value")
-	private int value;
+	private Integer value;
 
 	/**
 	 * 
@@ -39,16 +39,17 @@ public class DBRating {
 		super();
 	}
 
-	/**
-	 * @param snippetId
-	 * @param userName
-	 * @param value
-	 */
-	DBRating(long snippetId, String userName, int value) {
-		super();
-		this.ratingId = new RatingId(snippetId, userName);
-		this.value = value;
-	}
+	// XXX remove constructor
+	// /**
+	// * @param snippetId
+	// * @param userName
+	// * @param value
+	// */
+	// DBRating(Long snippetId, String userName, Integer value) {
+	// super();
+	// this.ratingId = new RatingId(snippetId, userName);
+	// this.value = value;
+	// }
 
 	/**
 	 * @return the ratingId
@@ -66,9 +67,17 @@ public class DBRating {
 	}
 
 	/**
+	 * @param snippetId
+	 * @param userName
+	 */
+	public void setRatingId(Long snippetId, String userName) {
+		this.ratingId = new RatingId(snippetId, userName);
+	}
+
+	/**
 	 * @return the value
 	 */
-	public int getValue() {
+	public Integer getValue() {
 		return this.value;
 	}
 
@@ -76,7 +85,7 @@ public class DBRating {
 	 * @param value
 	 *            the value to set
 	 */
-	public void setValue(int value) {
+	public void setValue(Integer value) {
 		this.value = value;
 	}
 
@@ -94,21 +103,21 @@ public class DBRating {
 		private static final long serialVersionUID = -2664532834291488550L;
 
 		@NotNull
-		@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
-		@ForeignKey(name = "DBSnippet.snippetId")
+		// @ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
+		// @ForeignKey(name = "DBSnippet.snippetId")
 		@Column(name = "snippet_id")
-		private long snippetId;
+		private Long snippetId;
 
 		@NotNull
-		@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-		@ForeignKey(name = "DBUser.userName")
+		// @ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+		// @ForeignKey(name = "DBUser.userName")
 		@Column(name = "user_name", length = 20)
 		private String userName;
 
 		/**
 		 * 
 		 */
-		public RatingId() {
+		RatingId() {
 			super();
 		}
 
@@ -116,7 +125,7 @@ public class DBRating {
 		 * @param snippetId
 		 * @param userName
 		 */
-		RatingId(long snippetId, String userName) {
+		RatingId(Long snippetId, String userName) {
 			super();
 			this.snippetId = snippetId;
 			this.userName = userName;
@@ -125,7 +134,7 @@ public class DBRating {
 		/**
 		 * @return the snippetId
 		 */
-		public long getSnippetId() {
+		public Long getSnippetId() {
 			return this.snippetId;
 		}
 
@@ -133,7 +142,7 @@ public class DBRating {
 		 * @param snippetId
 		 *            the snippetId to set
 		 */
-		public void setSnippetId(long snippetId) {
+		public void setSnippetId(Long snippetId) {
 			this.snippetId = snippetId;
 		}
 

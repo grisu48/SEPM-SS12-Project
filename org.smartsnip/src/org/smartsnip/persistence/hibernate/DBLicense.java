@@ -18,7 +18,7 @@ class DBLicense {
 	@Id
 	@GeneratedValue
 	@Column(name = "license_id", insertable = false, updatable = false)
-	private long licenseId;
+	private Long licenseId;
 
 	@Column(name = "short_descr", length = 255)
 	private String shortDescr;
@@ -33,22 +33,23 @@ class DBLicense {
 	DBLicense() {
 	}
 
-	/**
-	 * @param licenseId
-	 * @param shortDescr
-	 * @param licenseText
-	 */
-	DBLicense(long licenseId, String shortDescr, String licenseText) {
-		super();
-		this.licenseId = licenseId;
-		this.shortDescr = shortDescr;
-		this.LicenseText = licenseText;
-	}
+	// XXX remove constructor
+//	/**
+//	 * @param licenseId
+//	 * @param shortDescr
+//	 * @param licenseText
+//	 */
+//	DBLicense(Long licenseId, String shortDescr, String licenseText) {
+//		super();
+//		this.licenseId = licenseId;
+//		this.shortDescr = shortDescr;
+//		this.LicenseText = licenseText;
+//	}
 
 	/**
 	 * @return the licenseId
 	 */
-	public long getLicenseId() {
+	public Long getLicenseId() {
 		return this.licenseId;
 	}
 
@@ -56,7 +57,7 @@ class DBLicense {
 	 * @param licenseId
 	 *            the licenseId to set
 	 */
-	public void setLicenseId(long licenseId) {
+	public void setLicenseId(Long licenseId) {
 		this.licenseId = licenseId;
 	}
 

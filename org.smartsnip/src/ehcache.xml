@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache>
+	<diskStore path="java.io.tmpdir"/>
+	<defaultCache
+		maxElementsInMemory="5000"
+		eternal="true"
+		overflowToDisk="true"
+	/>
+	<cache name="de.ordix.BigObject"
+		maxElementsInMemory="10"
+		eternal="false"
+		timeToIdleSeconds="300"
+		timeToLiveSeconds="600"
+	/>
+</ehcache>

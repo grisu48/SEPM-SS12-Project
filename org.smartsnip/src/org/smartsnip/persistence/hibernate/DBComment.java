@@ -34,14 +34,13 @@ public class DBComment {
 	@Id
 	@GeneratedValue
 	@Column(name = "comment_id", insertable = false, updatable = false)
-	private long commentId;
+	private Long commentId;
 
-	@NotNull
-	@ManyToOne(targetEntity = Snippet.class, fetch = FetchType.EAGER)
-	@ForeignKey(name = "Snippet.snippetId")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+//	@ManyToOne(targetEntity = Snippet.class, fetch = FetchType.EAGER)
+//	@ForeignKey(name = "Snippet.snippetId")
+//	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Column(name = "snippet_id")
-	private long snippetId;
+	private Long snippetId;
 
 	@Column(name = "refers_to", length = 255)
 	private String refersTo;
@@ -50,26 +49,23 @@ public class DBComment {
 	@Column(name = "message", length = 255)
 	private String message;
 
-	@NotNull
 	@GeneratedValue
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private Date createdAt;
 
-	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-	@ForeignKey(name = "User.userName")
+//	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+//	@ForeignKey(name = "User.userName")
 	@Column(name = "user_name", length = 20)
 	private String userName;
 
-	@NotNull
 	@GeneratedValue
 	@Column(name = "pos_votes", insertable = false, updatable = false)
-	private int posVotes;
+	private Integer posVotes;
 
-	@NotNull
 	@GeneratedValue
 	@Column(name = "neg_votes", insertable = false, updatable = false)
-	private int negVotes;
+	private Integer negVotes;
 
 	/**
 	 * 
@@ -78,33 +74,34 @@ public class DBComment {
 		super();
 	}
 
-	/**
-	 * @param commentId
-	 * @param snippetId
-	 * @param refersTo
-	 * @param message
-	 * @param createdAt
-	 * @param userName
-	 * @param posVotes
-	 * @param negVotes
-	 */
-	DBComment(long commentId, long snippetId, String refersTo, String message,
-			Date createdAt, String userName, int posVotes, int negVotes) {
-		super();
-		this.commentId = commentId;
-		this.snippetId = snippetId;
-		this.refersTo = refersTo;
-		this.message = message;
-		this.createdAt = createdAt;
-		this.userName = userName;
-		this.posVotes = posVotes;
-		this.negVotes = negVotes;
-	}
+	// XXX remove constructor
+//	/**
+//	 * @param commentId
+//	 * @param snippetId
+//	 * @param refersTo
+//	 * @param message
+//	 * @param createdAt
+//	 * @param userName
+//	 * @param posVotes
+//	 * @param negVotes
+//	 */
+//	DBComment(Long commentId, Long snippetId, String refersTo, String message,
+//			Date createdAt, String userName, Integer posVotes, Integer negVotes) {
+//		super();
+//		this.commentId = commentId;
+//		this.snippetId = snippetId;
+//		this.refersTo = refersTo;
+//		this.message = message;
+//		this.createdAt = createdAt;
+//		this.userName = userName;
+//		this.posVotes = posVotes;
+//		this.negVotes = negVotes;
+//	}
 
 	/**
 	 * @return the commentId
 	 */
-	public long getCommentId() {
+	public Long getCommentId() {
 		return this.commentId;
 	}
 
@@ -112,14 +109,14 @@ public class DBComment {
 	 * @param commentId
 	 *            the commentId to set
 	 */
-	public void setCommentId(long commentId) {
+	public void setCommentId(Long commentId) {
 		this.commentId = commentId;
 	}
 
 	/**
 	 * @return the snippetId
 	 */
-	public long getSnippetId() {
+	public Long getSnippetId() {
 		return this.snippetId;
 	}
 
@@ -127,7 +124,7 @@ public class DBComment {
 	 * @param snippetId
 	 *            the snippetId to set
 	 */
-	public void setSnippetId(long snippetId) {
+	public void setSnippetId(Long snippetId) {
 		this.snippetId = snippetId;
 	}
 
@@ -194,7 +191,7 @@ public class DBComment {
 	/**
 	 * @return the posVotes
 	 */
-	public int getPosVotes() {
+	public Integer getPosVotes() {
 		return this.posVotes;
 	}
 
@@ -202,14 +199,14 @@ public class DBComment {
 	 * @param posVotes
 	 *            the posVotes to set
 	 */
-	public void setPosVotes(int posVotes) {
+	public void setPosVotes(Integer posVotes) {
 		this.posVotes = posVotes;
 	}
 
 	/**
 	 * @return the negVotes
 	 */
-	public int getNegVotes() {
+	public Integer getNegVotes() {
 		return this.negVotes;
 	}
 
@@ -217,7 +214,7 @@ public class DBComment {
 	 * @param negVotes
 	 *            the negVotes to set
 	 */
-	public void setNegVotes(int negVotes) {
+	public void setNegVotes(Integer negVotes) {
 		this.negVotes = negVotes;
 	}
 }

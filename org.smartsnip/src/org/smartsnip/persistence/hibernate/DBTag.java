@@ -30,8 +30,9 @@ class DBTag {
 	@NotNull
 	@GeneratedValue
 	@Column(name = "usage_freq", insertable = false, updatable = false)
-	private int usageFrequence;
+	private Integer usageFrequence;
 
+	// XXX remove snippets of tag if not necessary
 //	@Column(name = "snippet_id")
 //	@ManyToMany(targetEntity = DBSnippet.class, mappedBy="tags",fetch = FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.PERSIST})
 //	@ForeignKey(name= "DBTag.name", inverseName = "DBSnippet.snippetId")
@@ -41,9 +42,10 @@ class DBTag {
 	DBTag() {
 	}
 
-	DBTag(String name) {
-		this.name = name;
-	}
+	// XXX remove constructor
+//	DBTag(String name) {
+//		this.name = name;
+//	}
 
 	/**
 	 * @return the name
@@ -63,7 +65,7 @@ class DBTag {
 	/**
 	 * @return the usageFrequence
 	 */
-	public int getUsageFrequence() {
+	public Integer getUsageFrequence() {
 		return this.usageFrequence;
 	}
 
@@ -71,7 +73,7 @@ class DBTag {
 	 * @param usageFrequence
 	 *            the usageFrequence to set
 	 */
-	public void setUsageFrequence(int usageFrequence) {
+	public void setUsageFrequence(Integer usageFrequence) {
 		this.usageFrequence = usageFrequence;
 	}
 

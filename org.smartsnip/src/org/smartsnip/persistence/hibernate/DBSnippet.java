@@ -37,7 +37,7 @@ public class DBSnippet {
 	@Id
 	@GeneratedValue
 	@Column(name = "snippet_id", insertable = false, updatable = false)
-	private long snippetId;
+	private Long snippetId;
 
 	@Column(name = "headline", length = 255)
 	private String headline;
@@ -48,11 +48,11 @@ public class DBSnippet {
 
 	@GeneratedValue
 	@Column(name = "viewcount", insertable = false, updatable = false)
-	private int viewcount;
+	private Integer viewcount;
 
 	@GeneratedValue
 	@Column(name = "rating_average", insertable = false, updatable = false)
-	private float ratingAverage;
+	private Float ratingAverage;
 
 	@GeneratedValue
 	@Temporal(TemporalType.TIMESTAMP)
@@ -60,19 +60,19 @@ public class DBSnippet {
 	private Date lastEdited;
 
 	@Column(name = "user_name", length = 20)
-	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-	@ForeignKey(name = "DBUser.userName")
+//	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+//	@ForeignKey(name = "DBUser.userName")
 	private String owner;
 
 	@Column(name = "category_id")
-	@ManyToOne(targetEntity = DBCategory.class, fetch = FetchType.EAGER)
-	@ForeignKey(name = "DBCategory.categoryId")
-	private long categoryId;
+//	@ManyToOne(targetEntity = DBCategory.class, fetch = FetchType.EAGER)
+//	@ForeignKey(name = "DBCategory.categoryId")
+	private Long categoryId;
 
 	@Column(name = "license_id")
-	@ManyToOne(targetEntity = DBLicense.class, fetch = FetchType.EAGER)
-	@ForeignKey(name = "DBLicense.licenseId")
-	private long licenseId;
+//	@ManyToOne(targetEntity = DBLicense.class, fetch = FetchType.EAGER)
+//	@ForeignKey(name = "DBLicense.licenseId")
+	private Long licenseId;
 
 	@Column(name = "tag_name", length = 50)
 	@ManyToMany(targetEntity = DBTag.class, fetch = FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.PERSIST})
@@ -87,36 +87,37 @@ public class DBSnippet {
 		super();
 	}
 
-	/**
-	 * @param snippetId
-	 * @param headline
-	 * @param description
-	 * @param viewcount
-	 * @param ratingAverage
-	 * @param lastEdited
-	 * @param owner
-	 * @param categoryId
-	 * @param licenseId
-	 */
-	DBSnippet(long snippetId, String headline, String description,
-			int viewcount, float ratingAverage, Date lastEdited, String owner,
-			long categoryId, long licenseId) {
-		super();
-		this.snippetId = snippetId;
-		this.headline = headline;
-		this.description = description;
-		this.viewcount = viewcount;
-		this.ratingAverage = ratingAverage;
-		this.lastEdited = lastEdited;
-		this.owner = owner;
-		this.categoryId = categoryId;
-		this.licenseId = licenseId;
-	}
+	// XXX remove constructor
+//	/**
+//	 * @param snippetId
+//	 * @param headline
+//	 * @param description
+//	 * @param viewcount
+//	 * @param ratingAverage
+//	 * @param lastEdited
+//	 * @param owner
+//	 * @param categoryId
+//	 * @param licenseId
+//	 */
+//	DBSnippet(Long snippetId, String headline, String description,
+//			Integer viewcount, Float ratingAverage, Date lastEdited, String owner,
+//			Long categoryId, Long licenseId) {
+//		super();
+//		this.snippetId = snippetId;
+//		this.headline = headline;
+//		this.description = description;
+//		this.viewcount = viewcount;
+//		this.ratingAverage = ratingAverage;
+//		this.lastEdited = lastEdited;
+//		this.owner = owner;
+//		this.categoryId = categoryId;
+//		this.licenseId = licenseId;
+//	}
 
 	/**
 	 * @return the snippetId
 	 */
-	public long getSnippetId() {
+	public Long getSnippetId() {
 		return this.snippetId;
 	}
 
@@ -124,7 +125,7 @@ public class DBSnippet {
 	 * @param snippetId
 	 *            the snippetId to set
 	 */
-	public void setSnippetId(long snippetId) {
+	public void setSnippetId(Long snippetId) {
 		this.snippetId = snippetId;
 	}
 
@@ -161,7 +162,7 @@ public class DBSnippet {
 	/**
 	 * @return the viewcount
 	 */
-	public int getViewcount() {
+	public Integer getViewcount() {
 		return this.viewcount;
 	}
 
@@ -169,14 +170,14 @@ public class DBSnippet {
 	 * @param viewcount
 	 *            the viewcount to set
 	 */
-	public void setViewcount(int viewcount) {
+	public void setViewcount(Integer viewcount) {
 		this.viewcount = viewcount;
 	}
 
 	/**
 	 * @return the ratingAverage
 	 */
-	public float getRatingAverage() {
+	public Float getRatingAverage() {
 		return this.ratingAverage;
 	}
 
@@ -184,7 +185,7 @@ public class DBSnippet {
 	 * @param ratingAverage
 	 *            the ratingAverage to set
 	 */
-	public void setRatingAverage(float ratingAverage) {
+	public void setRatingAverage(Float ratingAverage) {
 		this.ratingAverage = ratingAverage;
 	}
 
@@ -221,7 +222,7 @@ public class DBSnippet {
 	/**
 	 * @return the categoryId
 	 */
-	public long getCategoryId() {
+	public Long getCategoryId() {
 		return this.categoryId;
 	}
 
@@ -229,14 +230,14 @@ public class DBSnippet {
 	 * @param categoryId
 	 *            the categoryId to set
 	 */
-	public void setCategoryId(long categoryId) {
+	public void setCategoryId(Long categoryId) {
 		this.categoryId = categoryId;
 	}
 
 	/**
 	 * @return the licenseId
 	 */
-	public long getLicenseId() {
+	public Long getLicenseId() {
 		return this.licenseId;
 	}
 
@@ -244,7 +245,7 @@ public class DBSnippet {
 	 * @param licenseId
 	 *            the licenseId to set
 	 */
-	public void setLicenseId(long licenseId) {
+	public void setLicenseId(Long licenseId) {
 		this.licenseId = licenseId;
 	}
 

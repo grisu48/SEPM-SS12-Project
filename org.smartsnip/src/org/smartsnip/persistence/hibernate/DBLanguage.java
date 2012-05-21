@@ -29,13 +29,14 @@ public class DBLanguage {
 		super();
 	}
 
-	/**
-	 * @param language
-	 */
-	DBLanguage(String language) {
-		super();
-		this.language = language;
-	}
+	// XXX remove constructor
+//	/**
+//	 * @param language
+//	 */
+//	DBLanguage(String language) {
+//		super();
+//		this.language = language;
+//	}
 
 	/**
 	 * @return the language

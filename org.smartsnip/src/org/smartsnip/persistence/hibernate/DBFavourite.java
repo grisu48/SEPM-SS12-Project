@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.ForeignKey;
+import org.smartsnip.persistence.IPersistence;
 
 /**
  * @author littlelion
@@ -28,9 +29,8 @@ public class DBFavourite {
 	@EmbeddedId
 	private FavouriteId favouriteId;
 
-	@NotNull
 	@Column(name = "is_favourite")
-	private boolean favourite;
+	private Boolean favourite;
 
 	/**
 	 * 
@@ -39,20 +39,21 @@ public class DBFavourite {
 		super();
 	}
 
-	/**
-	 * @param favouriteId
-	 * @param favourite
-	 */
-	DBFavourite(String userName, long snippetId, boolean favourite) {
-		super();
-		this.favouriteId = new FavouriteId(userName, snippetId);
-		this.favourite = favourite;
-	}
+	// XXX remove constructor
+	// /**
+	// * @param favouriteId
+	// * @param favourite
+	// */
+	// DBFavourite(String userName, Long snippetId, Boolean favourite) {
+	// super();
+	// this.favouriteId = new FavouriteId(userName, snippetId);
+	// this.favourite = favourite;
+	// }
 
 	/**
 	 * @return the favourite
 	 */
-	public boolean isFavourite() {
+	public Boolean isFavourite() {
 		return this.favourite;
 	}
 
@@ -60,7 +61,7 @@ public class DBFavourite {
 	 * @param favourite
 	 *            the favourite to set
 	 */
-	public void setFavourite(boolean favourite) {
+	public void setFavourite(Boolean favourite) {
 		this.favourite = favourite;
 	}
 
@@ -80,6 +81,15 @@ public class DBFavourite {
 	}
 
 	/**
+	 * This method is called by the remove methods of IPersistence in
+	 * {@code DB_NO_DELETE} mode. If this method is present the
+	 * remove method defaults to {@link IPersistence#DB_NO_DELETE}.
+	 */
+	void disable() {
+		this.setFavourite(false);
+	}
+
+	/**
 	 * 
 	 * @author littlelion
 	 * 
@@ -92,16 +102,16 @@ public class DBFavourite {
 		private static final long serialVersionUID = -5392254231626295258L;
 
 		@NotNull
-		@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-		@ForeignKey(name = "User.userName")
+		// @ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+		// @ForeignKey(name = "User.userName")
 		@Column(name = "user_name", length = 20)
 		private String userName;
 
 		@NotNull
-		@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
-		@ForeignKey(name = "Snippet.snippetId")
+		// @ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
+		// @ForeignKey(name = "Snippet.snippetId")
 		@Column(name = "snippet_id")
-		private long snippetId;
+		private Long snippetId;
 
 		/**
 		 * 
@@ -114,7 +124,7 @@ public class DBFavourite {
 		 * @param userName
 		 * @param snippetId
 		 */
-		FavouriteId(String userName, long snippetId) {
+		FavouriteId(String userName, Long snippetId) {
 			super();
 			this.userName = userName;
 			this.snippetId = snippetId;
@@ -138,7 +148,7 @@ public class DBFavourite {
 		/**
 		 * @return the snippetId
 		 */
-		public long getSnippetId() {
+		public Long getSnippetId() {
 			return this.snippetId;
 		}
 
@@ -146,7 +156,7 @@ public class DBFavourite {
 		 * @param snippetId
 		 *            the snippetId to set
 		 */
-		public void setSnippetId(long snippetId) {
+		public void setSnippetId(Long snippetId) {
 			this.snippetId = snippetId;
 		}
 

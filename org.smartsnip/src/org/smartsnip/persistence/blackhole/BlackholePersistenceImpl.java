@@ -39,6 +39,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 * accomplish a singleton pattern. It rejects any attempt to build an
 	 * instance except it is called by the
 	 * {@link PersistenceFactory#getInstance(int)} method.
+	 * @throws IllegalAccessException 
 	 */
 	protected BlackholePersistenceImpl() throws IllegalAccessException {
 		super();
@@ -72,10 +73,21 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      java.lang.String, int)
 	 */
 	@Override
+	@Deprecated
 	public void writePassword(User user, String password, int flags)
 			throws IOException {
 		// do nothing -> data vanish in the black hole!
 	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#writeLogin(org.smartsnip.core.User, java.lang.String, java.lang.Boolean, int)
+	 */
+	@Override
+	public void writeLogin(User user, String password, Boolean grantLogin,
+			int flags) throws IOException {
+		// do nothing -> data vanish in the black hole!
+	}
+
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#writeSnippet(org.smartsnip.core.Snippet,
@@ -98,7 +110,6 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @return
 	 * @see org.smartsnip.persistence.IPersistence#writeComment(org.smartsnip.core.Comment,
 	 *      int)
 	 */
@@ -136,7 +147,6 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @return
 	 * @see org.smartsnip.persistence.IPersistence#writeNotification(org.smartsnip.core.Notification,
 	 *      int)
 	 */
@@ -158,7 +168,6 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @return
 	 * @see org.smartsnip.persistence.IPersistence#writeCode(org.smartsnip.core.Code,
 	 *      int)
 	 */
@@ -178,7 +187,6 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @return
 	 * @see org.smartsnip.persistence.IPersistence#writeCategory(org.smartsnip.core.Category,
 	 *      int)
 	 */
@@ -317,6 +325,14 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#isLoginGranted(org.smartsnip.core.User)
+	 */
+	@Override
+	public boolean isLoginGranted(User user) throws IOException {
+		return true;
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#findUser(java.lang.String)
 	 */
 	@Override
@@ -371,7 +387,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#getSnippets(org.smartsnip.core.Category,
-	 *      int, int)
+	 *      java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
 	public List<Snippet> getSnippets(Category category, Integer start,
@@ -418,7 +434,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getAllTags()
+	 * @see org.smartsnip.persistence.IPersistence#getAllTags(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
 	public List<Tag> getAllTags(Integer start, Integer count)
@@ -548,8 +564,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String, int,
-	 *      int)
+	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String, java.lang.Integer,
+	 *      java.lang.Integer)
 	 */
 	@Override
 	public List<Snippet> search(String searchString, Integer start,
@@ -601,6 +617,13 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeUser(User user, int flags) throws IOException {
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeLogin(org.smartsnip.core.User, int)
+	 */
+	@Override
+	public void removeLogin(User user, int flags) throws IOException {
 	}
 
 	/**

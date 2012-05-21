@@ -30,12 +30,17 @@ import org.smartsnip.persistence.IPersistence;
 public class TagFactory {
 
 	private static SqlPersistenceHelper helper = new SqlPersistenceHelper();
-	
+
 	private TagFactory() {
 		// no instances
 	}
 
 	/**
+	 * Implementation of {@link IPersistence#writeTag(Tag, int)}
+	 * 
+	 * @param tag
+	 * @param flags
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.IPersistence#writeTag(org.smartsnip.core.Tag,
 	 *      int)
 	 */
@@ -45,6 +50,11 @@ public class TagFactory {
 	}
 
 	/**
+	 * Implementation of {@link IPersistence#writeTag(List, int)}
+	 * 
+	 * @param tags
+	 * @param flags
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.IPersistence#writeTag(java.util.List, int)
 	 */
 	static void writeTag(List<Tag> tags, int flags) throws IOException {
@@ -53,6 +63,11 @@ public class TagFactory {
 	}
 
 	/**
+	 * Implementation of {@link IPersistence#removeTag(Tag, int)}
+	 * 
+	 * @param tag
+	 * @param flags
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.IPersistence#removeTag(org.smartsnip.core.Tag,
 	 *      int)
 	 */
@@ -62,6 +77,11 @@ public class TagFactory {
 	}
 
 	/**
+	 * Implementation of {@link IPersistence#getTags(Snippet)}
+	 * 
+	 * @param snippet
+	 * @return a list of tags
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.IPersistence#getTags(org.smartsnip.core.Snippet)
 	 */
 	static List<Tag> getTags(Snippet snippet) throws IOException {
@@ -70,6 +90,12 @@ public class TagFactory {
 	}
 
 	/**
+	 * Implementation of {@link IPersistence#getAllTags(Integer, Integer)}
+	 * 
+	 * @param start
+	 * @param count
+	 * @return a list of tags
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.IPersistence#getAllTags(java.lang.Integer,
 	 *      java.lang.Integer)
 	 */
@@ -115,11 +141,34 @@ public class TagFactory {
 	}
 
 	/**
+	 * Implementation of {@link IPersistence#getTagsCount()}
+	 * 
+	 * @return the number of tags
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.IPersistence#getTagsCount()
 	 */
 	static int getTagsCount() throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		Session session = DBSessionFactory.open();
+		DBTag entity;
+		int result = 0;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			entity = new DBTag();
+
+			result = query.count(entity).intValue();
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 }

@@ -29,16 +29,14 @@ public class DBCode {
 	@Id
 	@GeneratedValue
 	@Column(name = "code_id")
-	private long codeId;
+	private Long codeId;
 
-	@NotNull
-	@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
-	@ForeignKey(name = "DBSnippet.snippetId")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+//	@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
+//	@ForeignKey(name = "DBSnippet.snippetId")
+//	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Column(name = "snippet_id")
-	private long snippetId;
+	private Long snippetId;
 
-	@NotNull
 	@Column(name = "language", length = 50)
 	private String language;
 
@@ -46,9 +44,8 @@ public class DBCode {
 	@Column(name = "file")
 	private String file;
 
-	@NotNull
 	@Column(name = "version")
-	private int version;
+	private Integer version;
 
 	/**
 	 * 
@@ -57,24 +54,25 @@ public class DBCode {
 		super();
 	}
 
-	/**
-	 * @param codeId
-	 * @param snippetId
-	 * @param language
-	 * @param file
-	 */
-	DBCode(long codeId, long snippetId, String language, String file) {
-		super();
-		this.codeId = codeId;
-		this.snippetId = snippetId;
-		this.language = language;
-		this.file = file;
-	}
+	// XXX remove constructor
+	// /**
+	// * @param codeId
+	// * @param snippetId
+	// * @param language
+	// * @param file
+	// */
+	// DBCode(Long codeId, Long snippetId, String language, String file) {
+	// super();
+	// this.codeId = codeId;
+	// this.snippetId = snippetId;
+	// this.language = language;
+	// this.file = file;
+	// }
 
 	/**
 	 * @return the codeId
 	 */
-	public long getCodeId() {
+	public Long getCodeId() {
 		return this.codeId;
 	}
 
@@ -82,14 +80,14 @@ public class DBCode {
 	 * @param codeId
 	 *            the codeId to set
 	 */
-	public void setCodeId(long codeId) {
+	public void setCodeId(Long codeId) {
 		this.codeId = codeId;
 	}
 
 	/**
 	 * @return the snippetId
 	 */
-	public long getSnippetId() {
+	public Long getSnippetId() {
 		return this.snippetId;
 	}
 
@@ -97,7 +95,7 @@ public class DBCode {
 	 * @param snippetId
 	 *            the snippetId to set
 	 */
-	public void setSnippetId(long snippetId) {
+	public void setSnippetId(Long snippetId) {
 		this.snippetId = snippetId;
 	}
 
@@ -131,10 +129,17 @@ public class DBCode {
 		this.file = file;
 	}
 
+	/**
+	 * @return the version
+	 */
 	public Integer getVersion() {
 		return version;
 	}
 
+	/**
+	 * @param version
+	 *            the version to set
+	 */
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
