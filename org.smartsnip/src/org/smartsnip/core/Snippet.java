@@ -651,4 +651,11 @@ public class Snippet {
 	public void setCodeWithoutWriting(Code fetchNewestCode) {
 		this.code = fetchNewestCode;
 	}
+
+	/**
+	 * @return the username of the owner
+	 */
+	public String getOwnerUsername() {
+		return owner;
+	}
 }
