@@ -658,4 +658,11 @@ public class Snippet {
 	public String getOwnerUsername() {
 		return owner;
 	}
+
+	/**
+	 * @return the category name
+	 */
+	public String getCategoryName() {
+		return this.category;
+	}
 }
