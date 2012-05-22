@@ -450,4 +450,11 @@ public class Category {
 	public int hashCode() {
 		return name.hashCode();
 	}
+
+	/**
+	 * @return the name of the parent category
+	 */
+	public String getParentName() {
+		return this.parent;
+	}
 }
