@@ -5,18 +5,23 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class Meta extends Composite {
 
-	private HorizontalPanel metaPanel;
-	private Anchor user;
-	private Anchor login;
-	private Anchor register;
-	private Anchor logout;
+	private final VerticalPanel metaVertical;
+	private final HorizontalPanel metaPanel;
+	private final HorizontalPanel metaControl;
+	private final Anchor user;
+	private final Anchor login;
+	private final Anchor register;
+	private final Anchor logout;
 
 	public Meta() {
 
+		metaVertical = new VerticalPanel();
+
+		metaControl = new HorizontalPanel();
 		metaPanel = new HorizontalPanel();
 		user = new Anchor(Control.getInstance().getUsername());
 		user.addClickHandler(new ClickHandler() {
@@ -27,8 +32,7 @@ public class Meta extends Composite {
 			}
 
 		});
-		
-		
+
 		login = new Anchor("Login");
 		login.addClickHandler(new ClickHandler() {
 			@Override
@@ -38,7 +42,7 @@ public class Meta extends Composite {
 			}
 
 		});
-		
+
 		register = new Anchor("Register");
 		register.addClickHandler(new ClickHandler() {
 			@Override
@@ -48,7 +52,7 @@ public class Meta extends Composite {
 			}
 
 		});
-		
+
 		logout = new Anchor("Logout");
 		logout.addClickHandler(new ClickHandler() {
 			@Override
@@ -58,34 +62,39 @@ public class Meta extends Composite {
 			}
 
 		});
-		
+
+		// btCreateSnippet = new Button("Create snippet");
+
 		metaPanel.add(user);
 		metaPanel.add(login);
 		metaPanel.add(register);
 		metaPanel.add(logout);
-		
-		initWidget(metaPanel);
+
+		metaVertical.add(metaPanel);
+		metaVertical.add(metaControl);
+
+		initWidget(metaVertical);
+
 		// Give the overall composite a style name.
 		setStyleName("meta");
 		refresh();
 	}
-	
+
 	public void refresh() {
 		user.setText(Control.getInstance().getUsername());
-// XXX Use session.isloggedin instant of check if username is guest 
+		// XXX Use session.isloggedin instant of check if username is guest
 		if (user.getText().equalsIgnoreCase("Guest")) {
 			login.setVisible(true);
 			register.setVisible(true);
 			user.setVisible(false);
 			logout.setVisible(false);
-		}
-		else {
+		} else {
 			user.setVisible(true);
 			login.setVisible(false);
 			register.setVisible(false);
 			logout.setVisible(true);
 		}
-		
+
 	}
 
 }
