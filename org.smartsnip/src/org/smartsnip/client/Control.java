@@ -31,7 +31,7 @@ public class Control implements EntryPoint {
 	private final static String COOKIE_SESSION = ISession.cookie_Session_ID;
 	private final static ISessionAsync session = ISession.Util.getInstance();
 
-	private static GUI myGUI = new GUI();
+	private final static GUI myGUI = new GUI();
 
 	private Control() {
 	}
@@ -109,6 +109,9 @@ public class Control implements EntryPoint {
 		case 'c':
 			myGUI.showContactForm();
 			break;
+		case 'n':
+			myGUI.showCreateSnippetForm();
+			break;
 		default:
 		}
 	}
@@ -175,7 +178,7 @@ public class Control implements EntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						String status =  searchArea.searchFailed(caught);
+						String status = searchArea.searchFailed(caught);
 						myGUI.updateSearchPage(null, status);
 					}
 

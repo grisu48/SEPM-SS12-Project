@@ -3,9 +3,9 @@ package org.smartsnip.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class XUser implements IsSerializable {
-	public final String username;
-	public final String realname;
-	public final String email;
+	public String username;
+	public String realname;
+	public String email;
 
 	public XUser(String username, String realname, String email) {
 		this.username = username;

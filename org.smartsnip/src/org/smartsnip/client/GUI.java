@@ -96,22 +96,20 @@ public class GUI {
 		mySortArea = new SortArea();
 		myCatArea = new CatArea();
 		myTagArea = new TagArea();
-		
+
 		VerticalPanel leftPanel = new VerticalPanel();
 		leftPanel.setStyleName("leftPanel");
-		
+
 		VerticalPanel rightPanel = new VerticalPanel();
 		rightPanel.setStyleName("rightPanel");
-		
+
 		leftPanel.add(mySortArea);
 		leftPanel.add(myResultArea);
 		rightPanel.add(myCatArea);
 		rightPanel.add(myTagArea);
-		
+
 		dataPanel.add(leftPanel);
 		dataPanel.add(rightPanel);
-	
-	
 
 	}
 
@@ -203,14 +201,13 @@ public class GUI {
 	}
 
 	public void updateSearchPage(XSearch result, String status) {
-		
+
 		if (result != null) {
 			mySortArea.update(status);
 			myResultArea.update(result.snippets);
 			myCatArea.update(result.categories);
 			myTagArea.update(result.tagsAppearingInSearchString);
-		}
-		else {
+		} else {
 			mySortArea.update(status);
 		}
 	}
@@ -225,5 +222,19 @@ public class GUI {
 		ppnlContact.setPopupPosition(110, 100);
 		ppnlContact.setWidth("340px");
 		ppnlContact.show();
+	}
+
+	public void showCreateSnippetForm() {
+		PopupPanel ppnlSnippet = new PopupPanel(true, true);
+		// TODO CSS Style
+		ppnlSnippet.setStyleName("contactForm");
+		ppnlSnippet.setTitle("Create snippet");
+		CreateSnippet newSnippet = new CreateSnippet(ppnlSnippet);
+		ppnlSnippet.setWidget(newSnippet);
+		ppnlSnippet.setGlassEnabled(true);
+		ppnlSnippet.setPopupPosition(110, 100);
+		ppnlSnippet.setWidth("340px");
+		ppnlSnippet.show();
+
 	}
 }

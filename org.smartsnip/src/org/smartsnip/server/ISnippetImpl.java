@@ -1,8 +1,13 @@
 package org.smartsnip.server;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.smartsnip.core.Category;
 import org.smartsnip.core.Snippet;
+import org.smartsnip.core.Tag;
+import org.smartsnip.core.User;
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XComment;
@@ -87,8 +92,57 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 	}
 
 	@Override
-	public void create(XSnippet snippet) throws NoAccessException, IllegalArgumentException {
-		// TODO Auto-generated method stub
+	public void create(String name, String desc, String code, String language,
+			String category, List<String> tags) throws NoAccessException,
+			IllegalArgumentException {
+
+		if (name == null || name.isEmpty())
+			throw new IllegalArgumentException(
+					"New snippet name cannot be empty");
+		if (desc == null || desc.isEmpty())
+			throw new IllegalArgumentException(
+					"New snippet desc cannot be empty");
+		if (code == null || code.isEmpty())
+			throw new IllegalArgumentException(
+					"New snippet code cannot be empty");
+		if (language == null || language.isEmpty())
+			throw new IllegalArgumentException(
+					"New snippet language cannot be empty");
+
+		if (category.isEmpty())
+			category = null;
+		if (tags == null)
+			tags = new ArrayList<String>();
+
+		Category cat = Category.getCategory(category);
+		if (category != null && cat == null)
+			throw new IllegalArgumentException("Category not found");
+
+		Session session = getSession();
+		if (!session.getPolicy().canCreateSnippet(session, cat))
+			throw new NoAccessException();
+
+		User owner = session.getUser();
+		if (owner == null)
+			throw new NoAccessException();
+
+		List<Tag> tagList = new ArrayList<Tag>();
+		for (String tag : tags)
+			tagList.add(Tag.createTag(tag));
+
+		try {
+			Snippet result = Snippet.createSnippet(owner.getUsername(), name,
+					desc, category, code, language, "", tagList);
+
+			if (result == null)
+				throw new RuntimeException("Unknown error");
+		} catch (IOException e) {
+			System.err.println("IOException while creating new snippet: "
+					+ e.getMessage());
+			e.printStackTrace(System.err);
+
+			throw new RuntimeException("Database access error");
+		}
 
 	}
 

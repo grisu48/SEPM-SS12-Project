@@ -154,14 +154,15 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	public void addComment(long id, String comment) throws NoAccessException;
 
 	/**
-	 * Creates a new snippet with the given parameters. The hash id is ignored.
+	 * Creates a new snippet with the given parameters.
 	 * 
-	 * @param snippet
-	 *            to be created
+	 * 
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 * @throws IllegalArgumentException
 	 *             Thrown if at least one argument is invalid
 	 */
-	public void create(XSnippet snippet) throws NoAccessException, IllegalArgumentException;
+	public void create(String name, String desc, String code, String language,
+			String category, List<String> tags) throws NoAccessException,
+			IllegalArgumentException;
 }
