@@ -33,16 +33,15 @@ public class PersistenceHelper {
 	 * @param category
 	 * @param tags
 	 * @param comments
-	 * @param code
 	 * @param license
 	 * @param viewcount
 	 * @return an initialized Snippet object
 	 */
-	protected Snippet createSnippet(Long id, User owner, String name,
-			String description, Category category, List<Tag> tags,
-			List<Long> comments, Code code, String license, int viewcount) {
-		return new Snippet(owner.getUsername(), name, description, id,
-				category.getName(), license, tags, comments, viewcount);
+	protected Snippet createSnippet(Long id, String owner, String name,
+			String description, String category, List<Tag> tags,
+			List<Long> comments, String license, int viewcount) {
+		return new Snippet(owner, name, description, id,
+				category, license, tags, comments, viewcount);
 	}
 
 	/**
@@ -77,7 +76,7 @@ public class PersistenceHelper {
 	 * Factory method for the persistence layer
 	 * 
 	 * @param owner
-	 * @param snippet
+	 * @param snippetId
 	 * @param message
 	 * @param id
 	 * @param time
@@ -85,9 +84,9 @@ public class PersistenceHelper {
 	 * @param negVotes
 	 * @return an initialized Comment object
 	 */
-	protected Comment createComment(User owner, Snippet snippet,
-			String message, long id, Date time, int posVotes, int negVotes) {
-		return new Comment(owner.getUsername(), snippet.getHashId(), message,
+	protected Comment createComment(String owner, Long snippetId,
+			String message, Long id, Date time, int posVotes, int negVotes) {
+		return new Comment(owner, snippetId, message,
 				id, time, posVotes, negVotes);
 	}
 
@@ -113,7 +112,6 @@ public class PersistenceHelper {
 	 * @param realName
 	 * @param email
 	 * @param state
-	 * @param favourites
 	 * @return an initialized User object
 	 */
 	protected User createUser(String username, String realName, String email,

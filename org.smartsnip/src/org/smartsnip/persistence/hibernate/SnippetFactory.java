@@ -496,10 +496,10 @@ public class SnippetFactory {
 					.hasNext();) {
 				entity = iterator.next();
 
-				snippet = helper.createSnippet(entity.getSnippetId(), owner,
+				snippet = helper.createSnippet(entity.getSnippetId(), owner.getUsername(),
 						entity.getHeadline(), entity.getDescription(),
-						CategoryFactory.fetchCategory(helper, session, entity),
-						buildTagList(helper, entity), null, null,
+						CategoryFactory.fetchCategory(helper, session, entity).getName(),
+						buildTagList(helper, entity), null,
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
 				snippet.setCode(fetchNewestCode(helper, session, snippet));
@@ -549,13 +549,13 @@ public class SnippetFactory {
 				snipQuery = new DBQuery(session);
 				snip = snipQuery.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
 
-				snippet = helper.createSnippet(snip.getSnippetId(), null,
+				snippet = helper.createSnippet(snip.getSnippetId(), snip.getOwner(),
 						snip.getHeadline(), snip.getDescription(),
-						CategoryFactory.fetchCategory(helper, session, snip),
-						buildTagList(helper, snip), null, null,
+						CategoryFactory.fetchCategory(helper, session, snip).getName(),
+						buildTagList(helper, snip), null,
 						fetchLicense(helper, session, snip).getShortDescr(),
 						snip.getViewcount());
-				snippet.setCode(fetchNewestCode(helper, session, snippet));
+				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -622,13 +622,13 @@ public class SnippetFactory {
 			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
 					.hasNext();) {
 				entity = iterator.next();
-				snippet = helper.createSnippet(entity.getSnippetId(), null,
+				snippet = helper.createSnippet(entity.getSnippetId(), entity.getOwner(),
 						entity.getHeadline(), entity.getDescription(),
-						CategoryFactory.fetchCategory(helper, session, entity),
-						buildTagList(helper, entity), null, null,
+						CategoryFactory.fetchCategory(helper, session, entity).getName(),
+						buildTagList(helper, entity), null,
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
-				snippet.setCode(fetchNewestCode(helper, session, snippet));
+				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -664,10 +664,10 @@ public class SnippetFactory {
 			entity.setSnippetId(id);
 			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 
-			result = helper.createSnippet(entity.getSnippetId(), null,
+			result = helper.createSnippet(entity.getSnippetId(), entity.getOwner(),
 					entity.getHeadline(), entity.getDescription(),
-					CategoryFactory.fetchCategory(helper, session, entity),
-					buildTagList(helper, entity), null, null,
+					CategoryFactory.fetchCategory(helper, session, entity).getName(),
+					buildTagList(helper, entity), null,
 					fetchLicense(helper, session, entity).getShortDescr(),
 					entity.getViewcount());
 			result.setCodeWithoutWriting(fetchNewestCode(helper, session,
@@ -794,7 +794,7 @@ public class SnippetFactory {
 
 				result.add(new Pair<User, Integer>(helper.createUser(
 						dbUser.getUserName(), dbUser.getFullName(),
-						dbUser.getEmail(), dbUser.getUserState(), null), entity
+						dbUser.getEmail(), dbUser.getUserState()), entity
 						.getValue()));
 			}
 

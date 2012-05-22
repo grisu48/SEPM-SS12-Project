@@ -317,7 +317,7 @@ public class CommentFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return helper.createComment(null, null, entity.getMessage(),
+		return helper.createComment(entity.getUserName(), entity.getSnippetId(), entity.getMessage(),
 				entity.getCommentId(), entity.getCreatedAt(),
 				entity.getPosVotes(), entity.getNegVotes());
 	}
@@ -345,7 +345,7 @@ public class CommentFactory {
 			for (Iterator<DBComment> iterator = query.iterate(entity); iterator
 					.hasNext();) {
 				entity = iterator.next();
-				result.add(helper.createComment(null, snippet,
+				result.add(helper.createComment(entity.getUserName(), entity.getSnippetId(),
 						entity.getMessage(), entity.getSnippetId(),
 						entity.getCreatedAt(), entity.getPosVotes(),
 						entity.getNegVotes()));

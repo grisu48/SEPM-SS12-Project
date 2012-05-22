@@ -28,9 +28,9 @@ public class BlackholePersistenceImpl implements IPersistence {
 	private BHPersistenceHelper helper = new BHPersistenceHelper();
 
 	private User staticUser1 = this.helper.createUser("nobody", "blabla",
-			"nobody@anonymus.org", User.UserState.validated, null);
+			"nobody@anonymus.org", User.UserState.validated);
 	private User staticUser2 = this.helper.createUser("bin_da", "asdfgh",
-			"bd@finger.net", User.UserState.validated, null);
+			"bd@finger.net", User.UserState.validated);
 	private Code staticCode = this.helper.createCode(1L,
 			"/* There's nothing interesting to know.*/", "java", null, 0);
 
@@ -290,7 +290,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public User getUser(String nick) throws IOException {
 		User result = this.helper.createUser(nick, "blabla", nick
-				+ "@anonymus.org", User.UserState.validated, null);
+				+ "@anonymus.org", User.UserState.validated);
 		return result;
 	}
 
@@ -300,7 +300,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public User getUserByEmail(String email) throws IOException {
 		User result = this.helper.createUser("nobody", "some anonymous writer",
-				email, User.UserState.validated, null);
+				email, User.UserState.validated);
 		return result;
 	}
 
@@ -339,9 +339,9 @@ public class BlackholePersistenceImpl implements IPersistence {
 	public List<User> findUser(String realName) throws IOException {
 		List<User> list = new ArrayList<User>();
 		list.add(this.helper.createUser("nobody", "blabla",
-				"nobody@anonymus.org", User.UserState.validated, null));
+				"nobody@anonymus.org", User.UserState.validated));
 		list.add(this.helper.createUser("bin_da", "asdfgh", "bd@finger.net",
-				User.UserState.validated, null));
+				User.UserState.validated));
 		return list;
 	}
 
@@ -351,12 +351,9 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public List<Snippet> getUserSnippets(User owner) throws IOException {
 		List<Snippet> snips = new ArrayList<Snippet>();
-		Snippet snip = this.helper.createSnippet(1L, owner, "The Header",
-				"Some Content", this.helper.createCategory("undefined",
-						"Undefined Content", null), new ArrayList<Tag>(),
-				new ArrayList<Comment>(), this.helper.createCode(1L,
-						"/* There's nothing interesting to know.*/", "java",
-						null, 0), "license free", 0);
+		Snippet snip = this.helper.createSnippet(1L, owner.getUsername(), "The Header",
+				"Some Content", "undefined", new ArrayList<Tag>(),
+				new ArrayList<Long>(), "license free", 0);
 		snips.add(snip);
 		return null;
 	}
@@ -401,10 +398,10 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public List<Comment> getComments(Snippet snippet) throws IOException {
 		List<Comment> list = new ArrayList<Comment>();
-		Comment comm1 = this.helper.createComment(staticUser1, snippet,
+		Comment comm1 = this.helper.createComment(staticUser1.getUsername(), snippet.getHashId(),
 				"commented by nobody", 1L, new Date(
 						System.currentTimeMillis() - 86400000), 5, 3);
-		Comment comm2 = this.helper.createComment(staticUser2, snippet,
+		Comment comm2 = this.helper.createComment(staticUser2.getUsername(), snippet.getHashId(),
 				"commented by bin_da", 2L, new Date(
 						System.currentTimeMillis() - 3600000), 1, 0);
 		list.add(comm1);
@@ -516,9 +513,9 @@ public class BlackholePersistenceImpl implements IPersistence {
 			throws IOException {
 		List<Category> list = new ArrayList<Category>();
 		Category cat1 = this.helper.createCategory("arraysearch",
-				"Searching algorithms for arrays", category);
+				"Searching algorithms for arrays", category.getName());
 		Category cat2 = this.helper.createCategory("listsearch",
-				"Searching algorithms for list", category);
+				"Searching algorithms for list", category.getName());
 		list.add(cat1);
 		list.add(cat2);
 		return list;
@@ -689,11 +686,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Snippet getSnippet(Long id) throws IOException {
-		return this.helper.createSnippet(id, this.staticUser1, "The Header",
-				"Some Content", this.helper.createCategory("undefined",
-						"Undefined Content", null), new ArrayList<Tag>(),
-				new ArrayList<Comment>(), this.helper.createCode(1L,
-						"/* There's nothing interesting to know.*/", "java",
-						null, 0), "license free", 0);
+		return this.helper.createSnippet(id, this.staticUser1.getUsername(), "The Header",
+				"Some Content", "undefined", new ArrayList<Tag>(),
+				new ArrayList<Long>(), "license free", 0);
 	}
 }

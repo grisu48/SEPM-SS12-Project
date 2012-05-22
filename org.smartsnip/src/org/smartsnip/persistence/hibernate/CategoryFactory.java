@@ -162,21 +162,11 @@ public class CategoryFactory {
 		Transaction tx = null;
 		List<Category> result = new ArrayList<Category>();
 
-		try {
+		try { // set the parent
 			tx = session.beginTransaction();
 			DBQuery query = new DBQuery(session);
 			DBCategory entity = new DBCategory();
 
-			// TODO simple alternative
-			// for (Iterator<DBCategory> iterator = query.iterate(entity);
-			// iterator
-			// .hasNext();) {
-			// entity = iterator.next();
-			// result.add(helper.createCategory(entity.getName(),
-			// entity.getDescription(), null));
-			// }
-
-			// XXX needed? begin set parent
 			List<Pair<Pair<Long, Long>, Category>> cat = new ArrayList<Pair<Pair<Long, Long>, Category>>();
 			for (Iterator<DBCategory> iterator = query.iterate(entity); iterator
 					.hasNext();) {
@@ -197,7 +187,6 @@ public class CategoryFactory {
 				}
 				result.add(c.second);
 			}
-			// XXX end set parent
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -246,7 +235,7 @@ public class CategoryFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createCategory(entity.getName(), entity.getDescription(),
-				null);
+				fetchParent(helper, session, entity).getName());
 	}
 
 	/**
@@ -280,7 +269,7 @@ public class CategoryFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createCategory(entity.getName(), entity.getDescription(),
-				null);
+				fetchParent(helper, session, entity).getName());
 	}
 
 	/**
@@ -320,7 +309,7 @@ public class CategoryFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createCategory(entity.getName(), entity.getDescription(),
-				null);
+				fetchParent(helper, session, entity).getName());
 	}
 
 	/**
@@ -354,7 +343,7 @@ public class CategoryFactory {
 					.hasNext();) {
 				entity = iterator.next();
 				result.add(helper.createCategory(entity.getName(),
-						entity.getDescription(), category));
+						entity.getDescription(), category.getName()));
 			}
 
 			tx.commit();
@@ -410,11 +399,31 @@ public class CategoryFactory {
 	 *            the snippet as source of the category
 	 * @return the category
 	 */
-	static Category fetchCategory(SqlPersistenceHelper helper, Session session,
+	static DBCategory fetchCategory(SqlPersistenceHelper helper, Session session,
 			DBSnippet snippet) {
 		DBQuery query = new DBQuery(session);
 		DBCategory entity = new DBCategory();
 		entity.setCategoryId(snippet.getCategoryId());
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		return entity;
+	}
+
+	/**
+	 * Helper method to fetch a parent of a category.
+	 * 
+	 * @param helper
+	 *            the PersisteceHelper object to create the tags
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param category
+	 *            the category as source of the parent
+	 * @return the category
+	 */
+	static Category fetchParent(SqlPersistenceHelper helper, Session session,
+			DBCategory category) {
+		DBQuery query = new DBQuery(session);
+		DBCategory entity = new DBCategory();
+		entity.setCategoryId(category.getParentId());
 		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 		return helper.createCategory(entity.getName(), entity.getDescription(),
 				null);

@@ -164,7 +164,7 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
  * Snippet
  */
 CREATE TABLE `Notification` (
-  `notification_id` INTEGER NOT NULL,
+  `notification_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_name` VARCHAR(20) NOT NULL,
   `snippet_id` INTEGER UNSIGNED DEFAULT NULL,
   `viewed` BOOLEAN NOT NULL DEFAULT FALSE,

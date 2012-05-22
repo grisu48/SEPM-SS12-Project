@@ -372,7 +372,7 @@ public class UserFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createUser(entity.getUserName(), entity.getFullName(),
-				entity.getEmail(), entity.getUserState(), null);
+				entity.getEmail(), entity.getUserState());
 	}
 
 	/**
@@ -409,7 +409,7 @@ public class UserFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createUser(entity.getUserName(), entity.getFullName(),
-				entity.getEmail(), entity.getUserState(), null);
+				entity.getEmail(), entity.getUserState());
 	}
 
 	/**
@@ -498,12 +498,11 @@ public class UserFactory {
 					snip = new DBQuery(session).fromSingle(snip,
 							DBQuery.QUERY_NOT_NULL);
 
-					snippet = helper.createSnippet(entity.getSnippetId(), null,
+					snippet = helper.createSnippet(entity.getSnippetId(), entity.getUserName(),
 							snip.getHeadline(), snip.getDescription(),
 							CategoryFactory
-									.fetchCategory(helper, session, snip),
+									.fetchCategory(helper, session, snip).getName(),
 							SnippetFactory.buildTagList(helper, snip), null,
-							null,
 							SnippetFactory.fetchLicense(helper, session, snip)
 									.getShortDescr(), snip.getViewcount());
 					snippet.setCode(SnippetFactory.fetchNewestCode(helper,

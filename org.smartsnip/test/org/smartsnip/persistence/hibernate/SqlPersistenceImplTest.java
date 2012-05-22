@@ -54,7 +54,7 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testWriteUserUserInt() throws Throwable {
-		User user = helper.createUser("si", "she ra", "sie@bla", null, null);
+		User user = helper.createUser("si", "she ra", "sie@bla", null);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
 	}
 
@@ -68,11 +68,11 @@ public class SqlPersistenceImplTest {
 	@Test
 	public void testWriteUserListOfUserInt() throws Throwable {
 		List<User> users = new ArrayList<User>();
-		users.add(helper.createUser("sick", "sick guy", "sick@guy.org", null, null));
-		users.add(helper.createUser("sie", "she bang", "she@bang", null, null));
-		users.add(helper.createUser("he", "he man", "er@bla", null, null));
-		users.add(helper.createUser("er", "erbie", "he@bla", null, null));
-		users.add(helper.createUser("xxx", "anonymus", "anon@ym", null, null));
+		users.add(helper.createUser("sick", "sick guy", "sick@guy.org", null));
+		users.add(helper.createUser("sie", "she bang", "she@bang", null));
+		users.add(helper.createUser("he", "he man", "er@bla", null));
+		users.add(helper.createUser("er", "erbie", "he@bla", null));
+		users.add(helper.createUser("xxx", "anonymus", "anon@ym", null));
 		instance.writeUser(users, IPersistence.DB_DEFAULT);
 	}
 
@@ -97,7 +97,7 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testWriteLogin() throws Throwable {
-		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd", User.UserState.validated, null);
+		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd", User.UserState.validated);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);	
 		instance.writeLogin(user, "blabla", true, IPersistence.DB_DEFAULT);
 	}
@@ -181,9 +181,16 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testWriteNotificationNotificationInt() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		User user = helper.createUser("si", "she ra", "sie@bla", null);
+		Category cat = helper.createCategory("bla", "viel bla bla", null);
+		Snippet snip = helper.createSnippet(1L, user.getUsername(), "name", "description", cat.getName(), null, null, null, 0);
+		Code code = helper.createCode(1L, "code", "language", snip, 0);
+		snip.setCodeWithoutWriting(code);
+		Notification notif = helper.createNotification(1L, user, "message", false, "now", "source", snip);
+		instance.writeSnippet(snip, IPersistence.DB_DEFAULT);
+		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
 	}
 
 	/**
@@ -195,11 +202,7 @@ public class SqlPersistenceImplTest {
 	 */
 	@Ignore
 	public void testWriteNotificationListOfNotificationInt() throws Throwable {
-		User user = helper.createUser("si", "she ra", "sie@bla", null, null);
-		Code code = helper.createCode(1L, "code", "language", null, 0);
-		Snippet snip = helper.createSnippet(1L, user, "name", "description", null, null, null, code, null, 0);
-		Notification notif = helper.createNotification(1L, user, "message", false, "now", "source", snip);
-//		instance.writeLogin(user, "blabla", true, IPersistence.DB_DEFAULT);
+		fail("Not yet implemented"); // TODO implement test case
 	}
 
 	/**
