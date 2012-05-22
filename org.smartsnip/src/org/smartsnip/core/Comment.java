@@ -12,7 +12,7 @@ public class Comment {
 	/** The owner (user) of the message */
 	public final String owner;
 	/** The snippet id where the comment belongs is fixed */
-	public final long snippet;
+	public final Long snippet;
 	/** Comment message. */
 	private String message = "";
 
