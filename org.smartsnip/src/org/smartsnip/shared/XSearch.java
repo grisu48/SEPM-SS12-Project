@@ -1,5 +1,6 @@
 package org.smartsnip.shared;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -10,14 +11,14 @@ public class XSearch implements IsSerializable {
 		mostViewed, highestRated, time;
 	}
 
-	public int totalresults;
-	public int start;
-	public int count;
+	public int totalresults = 0;
+	public int start = 0;
+	public int count = 0;
 
-	public String searchString;
-	public List<String> tags;
-	public List<String> tagsAppearingInSearchString;
-	public List<String> categories;
+	public String searchString = "";
+	public List<String> tags = new ArrayList<String>();
+	public List<String> tagsAppearingInSearchString = new ArrayList<String>();
+	public List<String> categories = new ArrayList<String>();
 
-	public List<XSnippet> snippets;
+	public List<XSnippet> snippets = new ArrayList<XSnippet>();
 }

@@ -670,7 +670,8 @@ public class SnippetFactory {
 					buildTagList(helper, entity), null, null,
 					fetchLicense(helper, session, entity).getShortDescr(),
 					entity.getViewcount());
-			result.setCode(fetchNewestCode(helper, session, result));
+			result.setCodeWithoutWriting(fetchNewestCode(helper, session,
+					result));
 
 			tx.commit();
 		} catch (RuntimeException e) {

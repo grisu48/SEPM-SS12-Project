@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Snippet;
-import org.smartsnip.core.User;
 import org.smartsnip.shared.ICategory;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XCategory;
@@ -71,35 +70,28 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 	}
 
 	@Override
-	public XCategory add(String name, String description, String parent) throws NoAccessException {
+	public XCategory add(String name, String description, String parent)
+			throws NoAccessException {
 		if (name == null || name.isEmpty())
 			return null;
 		if (description == null || description.isEmpty())
 			return null;
 
 		Session session = getSession();
-		User user = session.getUser();
-		// TODO Security policy
-		if (user == null)
+		// TODO Security
+		if (!session.isLoggedIn())
 			throw new NoAccessException();
-
-		Category root;
-		if (parent == null)
-			root = null;
-		else {
-			root = Category.getCategory(parent);
-			return null;
-		}
 
 		try {
 			// Exists already??
 			if (Category.getCategory(name) != null)
 				return null;
 
-			root = Category.createCategory(name, description, root);
+			Category root = Category.createCategory(name, description, parent);
 			return root.toXCategory();
 		} catch (IOException e) {
-			System.err.println("IOException during creation of new category: " + e.getMessage());
+			System.err.println("IOException during creation of new category: "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -140,7 +132,8 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 	}
 
 	@Override
-	public void createCategory(XCategory category) throws NoAccessException, IllegalArgumentException {
+	public void createCategory(XCategory category) throws NoAccessException,
+			IllegalArgumentException {
 		if (category == null)
 			return;
 		// Exists already??
@@ -162,10 +155,12 @@ public class ICategoryImpl extends SessionServlet implements ICategory {
 			throw new NoAccessException();
 
 		try {
-			Category.createCategory(category.name, category.description, parent);
+			Category.createCategory(category.name, category.description,
+					parent.getName());
 		} catch (IOException e) {
-			System.err.println("IOException during creation of new category \"" + category.name + "\" by user "
-					+ session.getUsername() + ": " + e.getMessage());
+			System.err.println("IOException during creation of new category \""
+					+ category.name + "\" by user " + session.getUsername()
+					+ ": " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}

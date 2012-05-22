@@ -220,7 +220,8 @@ public class Session {
 	 */
 	private static Session createNewSession(String cookie) {
 		if (cookie == null || cookie.length() == 0)
-			throw new NullPointerException("Cannot create session with null cookie");
+			throw new NullPointerException(
+					"Cannot create session with null cookie");
 		Session newSession = new Session(cookie);
 		synchronized (storedSessions) {
 			storedSessions.put(cookie, newSession);
@@ -256,6 +257,26 @@ public class Session {
 	}
 
 	/**
+	 * Checks if the given user is the user, that is currently logged in with
+	 * the session.
+	 * 
+	 * If the given user is null, the method checks, if the current session is a
+	 * guest session.
+	 * 
+	 * This method is mostly used in the security layer.
+	 * 
+	 * @param user
+	 *            to be checked. If null it is assumed as guest session
+	 * @return true if the user matches the session user
+	 */
+	public boolean isLoggedInUser(String owner) {
+		if (owner == null)
+			return false;
+		User user = User.getUser(owner);
+		return isLoggedInUser(user);
+	}
+
+	/**
 	 * Tries to do a login procedure. If currently a user is logged in a new
 	 * {@link NoAccessException} will be thrown. If the login fails also a new
 	 * {@link NoAccessException} will be thrown with a reason message. If the
@@ -271,7 +292,8 @@ public class Session {
 	 * @throws NoAccessException
 	 *             Thrown as security exception when the login process fails.
 	 */
-	public synchronized void login(String username, String password) throws NoAccessException {
+	public synchronized void login(String username, String password)
+			throws NoAccessException {
 		doActivity();
 		logout();
 

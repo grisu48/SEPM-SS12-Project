@@ -2,15 +2,15 @@ package org.smartsnip.core;
 
 /**
  * Dummy object, if no code object is currently assigned to a snippet.
- *
+ * 
  */
 public class CodeNull extends Code {
 
 	/** Singleton instance */
 	public static CodeNull instance = new CodeNull();
-	
+
 	private CodeNull() {
-		super("", "", null, 0L, 0);
+		super("/* NULL-CODE Object */", "Null", null, 0L, 0);
 	}
 
 	@Override

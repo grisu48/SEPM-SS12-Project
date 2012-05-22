@@ -9,10 +9,10 @@ import org.smartsnip.shared.Pair;
 import org.smartsnip.shared.XComment;
 
 public class Comment {
-	/** The owner of the message is fixed */
-	public final User owner;
-	/** The snippet where the comment belongs is fixed */
-	public final Snippet snippet;
+	/** The owner (user) of the message */
+	public final String owner;
+	/** The snippet id where the comment belongs is fixed */
+	public final long snippet;
 	/** Comment message. */
 	private String message = "";
 
@@ -39,16 +39,22 @@ public class Comment {
 	 * @param message
 	 *            of the comment
 	 */
-	Comment(User owner, Snippet snippet, String message, long id, Date time, int posVotes, int negVotes) {
-		if (owner == null || snippet == null || message == null)
+	Comment(String owner, long snippetid, String message, long id, Date time,
+			int posVotes, int negVotes) {
+		if (owner == null || message == null)
 			throw new NullPointerException();
+		if (owner.isEmpty())
+			throw new IllegalArgumentException(
+					"Snippet owner cannot be empty username");
 		if (message.length() == 0)
-			throw new IllegalArgumentException("Cannot create empty comment box");
+			throw new IllegalArgumentException(
+					"Cannot create empty comment box");
 		if (time == null)
-			throw new IllegalArgumentException("Cannot create comment with not creation time");
+			throw new IllegalArgumentException(
+					"Cannot create comment with not creation time");
 
 		this.owner = owner;
-		this.snippet = snippet;
+		this.snippet = snippetid;
 		this.message = message;
 		this.time = time;
 		this.id = id;
@@ -69,14 +75,18 @@ public class Comment {
 	 * @param message
 	 *            of the comment
 	 */
-	private Comment(User owner, Snippet snippet, String message) {
-		if (owner == null || snippet == null || message == null)
+	private Comment(String owner, long snippet_id, String message) {
+		if (owner == null || message == null)
 			throw new NullPointerException();
+		if (owner.isEmpty())
+			throw new IllegalArgumentException(
+					"Cannot create comment with empty username as owner");
 		if (message.length() == 0)
-			throw new IllegalArgumentException("Cannot create empty comment box");
+			throw new IllegalArgumentException(
+					"Cannot create empty comment box");
 
 		this.owner = owner;
-		this.snippet = snippet;
+		this.snippet = snippet_id;
 		this.message = message;
 		setCurrentSystemTime();
 
@@ -99,8 +109,13 @@ public class Comment {
 	 *            of the comment
 	 * @return the newly created comment if success
 	 */
-	public static Comment createComment(User owner, Snippet snippet, String message) throws IOException {
-		Comment comment = new Comment(owner, snippet, message);
+	public static Comment createComment(String owner, long snippet_id,
+			String message) throws IOException {
+		Comment comment = new Comment(owner, snippet_id, message);
+		Snippet snippet = Snippet.getSnippet(snippet_id);
+		if (snippet == null)
+			throw new IllegalArgumentException(
+					"Invalid snippet id: No such snippet found");
 		snippet.addComment(comment);
 		comment.setCurrentSystemTime();
 
@@ -121,10 +136,12 @@ public class Comment {
 		if (user == null)
 			return;
 		try {
-			Persistence.instance.votePositive(user, this, IPersistence.DB_DEFAULT);
+			Persistence.instance.votePositive(user, this,
+					IPersistence.DB_DEFAULT);
 			updateVotes();
 		} catch (IOException e) {
-			System.err.println("IOException during votePositive(" + user.getUsername() + ") " + e.getMessage());
+			System.err.println("IOException during votePositive("
+					+ user.getUsername() + ") " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -140,10 +157,12 @@ public class Comment {
 		if (user == null)
 			return;
 		try {
-			Persistence.instance.voteNegative(user, this, IPersistence.DB_DEFAULT);
+			Persistence.instance.voteNegative(user, this,
+					IPersistence.DB_DEFAULT);
 			updateVotes();
 		} catch (IOException e) {
-			System.err.println("IOException during voteNegative(" + user.getUsername() + ") " + e.getMessage());
+			System.err.println("IOException during voteNegative("
+					+ user.getUsername() + ") " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 
@@ -163,7 +182,8 @@ public class Comment {
 			Persistence.instance.unVote(user, this, IPersistence.DB_DEFAULT);
 			updateVotes();
 		} catch (IOException e) {
-			System.err.println("IOException during unvote(" + user.getUsername() + ") " + e.getMessage());
+			System.err.println("IOException during unvote("
+					+ user.getUsername() + ") " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -223,12 +243,18 @@ public class Comment {
 	 * Deletes this comment out of the database
 	 */
 	public void delete() {
+		Snippet snippet = Snippet.getSnippet(this.snippet);
+		if (snippet == null)
+			return; // if owner does not exists, this is in the nirwana - do
+					// nothing
+
 		snippet.removeComment(this);
 
 		try {
 			Persistence.instance.removeComment(this, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("IOException during delete of comment (id=" + getHashID() + "): " + e.getMessage());
+			System.err.println("IOException during delete of comment (id="
+					+ getHashID() + "): " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -247,13 +273,6 @@ public class Comment {
 
 		this.message = newMessage;
 		setCurrentSystemTime();
-	}
-
-	/**
-	 * Invokes the refreshing process for the database
-	 */
-	protected void refreshDB() {
-
 	}
 
 	/**
@@ -290,7 +309,8 @@ public class Comment {
 			chocolates = votes.first;
 			lemons = votes.second;
 		} catch (IOException e) {
-			System.err.println("IOException during getVotes() " + e.getMessage());
+			System.err.println("IOException during getVotes() "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -326,15 +346,16 @@ public class Comment {
 		if (comment == null)
 			return;
 
-		comment.id = Persistence.instance.writeComment(comment, IPersistence.DB_NEW_ONLY);
+		comment.id = Persistence.instance.writeComment(comment,
+				IPersistence.DB_NEW_ONLY);
 	}
 
 	/**
 	 * @return created serialisable comment object
 	 */
 	public XComment toXComment() {
-		return new XComment(owner.getUsername(), snippet.getHashId(), this.message, this.chocolates, this.lemons,
-				this.time);
+		return new XComment(owner, snippet, this.message, this.chocolates,
+				this.lemons, this.time);
 	}
 
 	/**
@@ -348,7 +369,8 @@ public class Comment {
 		try {
 			return Persistence.getInstance().getComment(commentID);
 		} catch (IOException e) {
-			System.err.println("IOException during getComment(" + commentID + "): " + e.getMessage());
+			System.err.println("IOException during getComment(" + commentID
+					+ "): " + e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -358,6 +380,15 @@ public class Comment {
 	 * @return the owner of the comment (User).
 	 */
 	public User getOwner() {
-		return this.owner;
+		User user = User.getUser(owner);
+		return user;
+	}
+
+	/**
+	 * @return the owner snippet of this comment
+	 */
+	public Snippet getSnippet() {
+		Snippet snippet = Snippet.getSnippet(this.snippet);
+		return snippet;
 	}
 }

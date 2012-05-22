@@ -159,8 +159,9 @@ public class Persistence {
 					throw new IOException(
 							"Snippet owner or snippet category not found");
 
-				Snippet.createSnippet(owner, "Snippet " + i, snippetDesc[i],
-						category, snippets[i], "Java", "GPLv3", null);
+				Snippet.createSnippet(owner.getUsername(), "Snippet " + i,
+						snippetDesc[i], category.getName(), snippets[i],
+						"Java", "GPLv3", null);
 			}
 
 		} catch (IOException e) {

@@ -30,11 +30,10 @@ public abstract class Code {
 	 */
 	Code(String code, String language, Snippet snippet, Long id, int version) {
 		if (code.length() == 0)
-			throw new IllegalArgumentException("Cannot create snippet with no code");
+			throw new IllegalArgumentException(
+					"Cannot create snippet with no code");
 		if (language.length() == 0)
 			throw new IllegalArgumentException("No coding language defined");
-		if (snippet == null)
-			throw new NullPointerException("Cannot create code segment to no snippet");
 		this.code = formatCode(code);
 		this.language = language;
 		this.snippet = snippet;
@@ -141,11 +140,14 @@ public abstract class Code {
 		if (code == null || language == null)
 			throw new NullPointerException();
 		if (code.isEmpty())
-			throw new IllegalArgumentException("Cannot create code object with no code");
+			throw new IllegalArgumentException(
+					"Cannot create code object with no code");
 		if (language.isEmpty())
-			throw new IllegalArgumentException("Cannot create code object with no language");
+			throw new IllegalArgumentException(
+					"Cannot create code object with no language");
 		if (owner == null)
-			throw new NullPointerException("Cannot create code segment without a snippet");
+			throw new NullPointerException(
+					"Cannot create code segment without a snippet");
 
 		language = language.trim().toLowerCase();
 
@@ -193,15 +195,19 @@ public abstract class Code {
 	 * @throws IllegalArgumentException
 	 *             Thrown if the code or if the language is empty
 	 */
-	public static Code createCodeDB(String code, String language, Snippet owner, long id, int version) {
+	public static Code createCodeDB(String code, String language,
+			Snippet owner, long id, int version) {
 		if (code == null || language == null)
 			throw new NullPointerException();
 		if (code.isEmpty())
-			throw new IllegalArgumentException("Cannot create code object with no code");
+			throw new IllegalArgumentException(
+					"Cannot create code object with no code");
 		if (language.isEmpty())
-			throw new IllegalArgumentException("Cannot create code object with no language");
+			throw new IllegalArgumentException(
+					"Cannot create code object with no language");
 		if (owner == null)
-			throw new NullPointerException("Cannot create code segment without a snippet");
+			throw new NullPointerException(
+					"Cannot create code segment without a snippet");
 
 		language = language.trim().toLowerCase();
 
@@ -248,8 +254,8 @@ public abstract class Code {
 		try {
 			Persistence.instance.writeCode(code, IPersistence.DB_NEW_ONLY);
 		} catch (IOException e) {
-			System.err.println("IOException writing out code object with id=" + code.getHashID() + ": "
-					+ e.getMessage());
+			System.err.println("IOException writing out code object with id="
+					+ code.getHashID() + ": " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}

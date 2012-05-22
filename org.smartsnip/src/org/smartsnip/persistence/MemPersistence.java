@@ -38,8 +38,10 @@ public class MemPersistence implements IPersistence {
 	 */
 	MemPersistence() throws IllegalAccessException {
 		super();
-		if (Reflection.getCallerClass(2) == null || Reflection.getCallerClass(2) != PersistenceFactory.class)
-			throw new IllegalAccessException("Singleton pattern: caller must be PersistenceFactory class.");
+		if (Reflection.getCallerClass(2) == null
+				|| Reflection.getCallerClass(2) != PersistenceFactory.class)
+			throw new IllegalAccessException(
+					"Singleton pattern: caller must be PersistenceFactory class.");
 	}
 
 	private final HashMap<String, User> allUsers = new HashMap<String, User>();
@@ -106,7 +108,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeSnippet(List<Snippet> snippets, int mode) throws IOException {
+	public void writeSnippet(List<Snippet> snippets, int mode)
+			throws IOException {
 		if (snippets == null)
 			return;
 
@@ -123,7 +126,7 @@ public class MemPersistence implements IPersistence {
 		HashMap<Integer, Comment> comments = allComments.get(comment.snippet);
 		if (comments == null) {
 			comments = new HashMap<Integer, Comment>();
-			allComments.put(comment.snippet, comments);
+			allComments.put(comment.getSnippet(), comments);
 		}
 
 		comments.put(key, comment);
@@ -131,7 +134,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeComment(List<Comment> comments, int mode) throws IOException {
+	public void writeComment(List<Comment> comments, int mode)
+			throws IOException {
 		if (comments == null)
 			return;
 
@@ -159,7 +163,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public Long writeNotification(Notification notification, int mode) throws IOException {
+	public Long writeNotification(Notification notification, int mode)
+			throws IOException {
 		// XXX In current version not used, and therefore not yet tested
 		if (notification == null)
 			return null;
@@ -174,7 +179,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeNotification(List<Notification> notifications, int mode) throws IOException {
+	public void writeNotification(List<Notification> notifications, int mode)
+			throws IOException {
 		// XXX In current version not used, and therefore not yet tested
 		if (notifications == null)
 			return;
@@ -219,7 +225,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeCategory(List<Category> categories, int mode) throws IOException {
+	public void writeCategory(List<Category> categories, int mode)
+			throws IOException {
 		if (categories == null)
 			return;
 
@@ -244,7 +251,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeRating(Integer rating, Snippet snippet, User user, int mode) throws IOException {
+	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
+			throws IOException {
 		if (rating == null || snippet == null || user == null)
 			return;
 
@@ -257,7 +265,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeVote(Integer vote, Comment comment, User user, int mode) throws IOException {
+	public void writeVote(Integer vote, Comment comment, User user, int mode)
+			throws IOException {
 		if (vote == null || comment == null || user == null)
 			return;
 
@@ -271,12 +280,14 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void votePositive(User user, Comment comment, int mode) throws IOException {
+	public void votePositive(User user, Comment comment, int mode)
+			throws IOException {
 		writeVote(+1, comment, user, mode);
 	}
 
 	@Override
-	public void voteNegative(User user, Comment comment, int mode) throws IOException {
+	public void voteNegative(User user, Comment comment, int mode)
+			throws IOException {
 		writeVote(-1, comment, user, mode);
 	}
 
@@ -286,7 +297,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void addFavourite(Snippet snippet, User user, int mode) throws IOException {
+	public void addFavourite(Snippet snippet, User user, int mode)
+			throws IOException {
 		if (snippet == null || user == null)
 			return;
 
@@ -300,7 +312,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void removeFavourite(Snippet snippet, User user, int mode) throws IOException {
+	public void removeFavourite(Snippet snippet, User user, int mode)
+			throws IOException {
 		if (snippet == null || user == null)
 			return;
 
@@ -354,7 +367,7 @@ public class MemPersistence implements IPersistence {
 		List<Snippet> snippets = new ArrayList<Snippet>(allSnippets.values());
 		List<Snippet> result = new ArrayList<Snippet>();
 		for (Snippet snippet : snippets)
-			if (snippet.owner == owner)
+			if (snippet.owner.equalsIgnoreCase(owner.getUsername()))
 				result.add(snippet);
 		return result;
 	}
@@ -437,7 +450,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Notification> getNotifications(User user, boolean unreadOnly) throws IOException {
+	public List<Notification> getNotifications(User user, boolean unreadOnly)
+			throws IOException {
 		// XXX This method is not yet needed and therefore not tested
 
 		if (user == null)
@@ -486,7 +500,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Category> getSubcategories(Category category) throws IOException {
+	public List<Category> getSubcategories(Category category)
+			throws IOException {
 		if (category == null)
 			return null;
 
@@ -499,7 +514,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Pair<User, Integer>> getRatings(Snippet snippet) throws IOException {
+	public List<Pair<User, Integer>> getRatings(Snippet snippet)
+			throws IOException {
 		if (snippet == null)
 			return null;
 
@@ -507,7 +523,8 @@ public class MemPersistence implements IPersistence {
 		if (list == null)
 			return new ArrayList<Pair<User, Integer>>();
 		List<Pair<User, Integer>> result = new ArrayList<Pair<User, Integer>>();
-		List<Entry<User, Integer>> set = new ArrayList<Entry<User, Integer>>(list.entrySet());
+		List<Entry<User, Integer>> set = new ArrayList<Entry<User, Integer>>(
+				list.entrySet());
 		for (Entry<User, Integer> entry : set)
 			result.add(new Pair<User, Integer>(entry.getKey(), entry.getValue()));
 		return result;
@@ -535,27 +552,30 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Snippet> search(String searchString, Integer min, Integer max) throws IOException {
+	public List<Snippet> search(String searchString, Integer min, Integer max)
+			throws IOException {
 		// TODO Eliminate min and max, that are ignored
-		
+
 		/*
 		 * NOTE: Search string is NOT case senstitive
 		 */
-		
-		if (searchString == null) return null;
+
+		if (searchString == null)
+			return null;
 		searchString = searchString.trim().toLowerCase();
-		if (searchString.isEmpty()) return null;
-		
+		if (searchString.isEmpty())
+			return null;
+
 		List<Snippet> results = new ArrayList<Snippet>();
 		List<Snippet> snippets = new ArrayList<Snippet>(allSnippets.values());
-		
+
 		for (Snippet snippet : snippets) {
 			String name = snippet.getName().trim().toLowerCase();
-			
+
 			if (searchString.contains(name) || name.contains(searchString))
 				results.add(snippet);
 		}
-		
+
 		return results;
 	}
 
@@ -580,7 +600,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writePassword(User user, String password, int mode) throws IOException {
+	public void writePassword(User user, String password, int mode)
+			throws IOException {
 		if (user == null || password == null)
 			return;
 
@@ -588,12 +609,15 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public String getPassword(User user) throws IOException, UnsupportedOperationException {
-		throw new UnsupportedOperationException("getPassword unsupported. Use verifyPassword");
+	public String getPassword(User user) throws IOException,
+			UnsupportedOperationException {
+		throw new UnsupportedOperationException(
+				"getPassword unsupported. Use verifyPassword");
 	}
 
 	@Override
-	public boolean verifyPassword(User user, String password) throws IOException {
+	public boolean verifyPassword(User user, String password)
+			throws IOException {
 		if (user == null || password == null || password.isEmpty())
 			return false;
 
@@ -613,7 +637,8 @@ public class MemPersistence implements IPersistence {
 			return new Float(0);
 		int sum = 0;
 		int num = 0;
-		List<Entry<User, Integer>> set = new ArrayList<Entry<User, Integer>>(list.entrySet());
+		List<Entry<User, Integer>> set = new ArrayList<Entry<User, Integer>>(
+				list.entrySet());
 		if (set.size() == 0)
 			return new Float(0);
 		for (Entry<User, Integer> entry : set) {
@@ -624,7 +649,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Snippet> getSnippets(Category category, Integer start, Integer count) throws IOException {
+	public List<Snippet> getSnippets(Category category, Integer start,
+			Integer count) throws IOException {
 		if (category == null || start < 0 || count < 0)
 			return null;
 
@@ -743,7 +769,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void removeNotification(Notification notification, int mode) throws IOException {
+	public void removeNotification(Notification notification, int mode)
+			throws IOException {
 		// TODO Not implemented because not used currently
 
 	}
@@ -766,7 +793,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Tag> getAllTags(Integer start, Integer count) throws IOException {
+	public List<Tag> getAllTags(Integer start, Integer count)
+			throws IOException {
 		if (start < 0 || count < 0)
 			return null;
 		if (start > allTags.size())
@@ -801,12 +829,13 @@ public class MemPersistence implements IPersistence {
 	public void writeLogin(User user, String password, Boolean grantLogin,
 			int flags) throws IOException {
 		writePassword(user, password, flags);
-		
+
 	}
 
 	@Override
 	public void removeLogin(User user, int flags) throws IOException {
-		if (user != null) passwords.remove(user);
+		if (user != null)
+			passwords.remove(user);
 	}
 
 	@Override

@@ -206,9 +206,10 @@ public class MemPersistenceTest {
 				fail("Failure getting category \"" + testSnippet.category
 						+ "\" for snippet!");
 
-			Snippet snippet = Snippet.createSnippet(owner, testSnippet.name,
-					testSnippet.description, category, testSnippet.code,
-					testSnippet.language, "GPLv3", testSnippet.tags);
+			Snippet snippet = Snippet.createSnippet(owner.getUsername(),
+					testSnippet.name, testSnippet.description,
+					category.getName(), testSnippet.code, testSnippet.language,
+					"GPLv3", testSnippet.tags);
 
 			testSnippet.id = snippet.getHashId();
 

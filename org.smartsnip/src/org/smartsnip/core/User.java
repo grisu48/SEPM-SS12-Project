@@ -34,11 +34,6 @@ public class User {
 	private UserState state = UserState.unvalidated;
 
 	/**
-	 * List of favourite snippets of the user
-	 */
-	private final List<Snippet> favorites;
-
-	/**
 	 * Determines the status of the user, currently if the user has been
 	 * validated or not
 	 * 
@@ -70,8 +65,7 @@ public class User {
 	 * @throws IllegalArgumentException
 	 *             Thrown if one of the arguments is null or empty
 	 */
-	User(String username, String realName, String email, UserState state,
-			List<Snippet> favorites) {
+	User(String username, String realName, String email, UserState state) {
 		if (username == null || username.isEmpty())
 			throw new IllegalArgumentException(
 					"Cannot create user with empty username");
@@ -81,16 +75,11 @@ public class User {
 		if (email == null || email.isEmpty())
 			throw new IllegalArgumentException(
 					"Cannot create user with empty email");
-		if (favorites == null) {
-			favorites = new ArrayList<Snippet>();
-		}
 
 		this.username = username.toLowerCase();
 		this.realName = realName;
 		this.email = email;
 		this.state = state;
-
-		this.favorites = favorites;
 	}
 
 	/**
@@ -109,7 +98,6 @@ public class User {
 		this.username = username.toLowerCase();
 		this.email = email;
 		this.realName = realName;
-		this.favorites = new ArrayList<Snippet>();
 	}
 
 	/**
@@ -366,7 +354,7 @@ public class User {
 		password = hashAlgorithm.hash(password);
 
 		try {
-			Persistence.instance.writePassword(this, password,
+			Persistence.instance.writeLogin(this, password, true,
 					IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
 			System.err
@@ -421,9 +409,15 @@ public class User {
 	 */
 	public List<Snippet> getFavoriteSnippets() {
 		/* Copy list */
-		List<Snippet> result = new ArrayList<Snippet>(favorites.size());
-		for (Snippet snippet : favorites) {
-			result.add(snippet);
+		List<Snippet> result = null;
+		try {
+			result = new ArrayList<Snippet>(Persistence.getInstance()
+					.getFavorited(this));
+		} catch (IOException e) {
+			System.err
+					.println("IOException during getting favorites for user \""
+							+ getUsername() + "\": " + e.getMessage());
+			e.printStackTrace(System.err);
 		}
 		return result;
 
@@ -433,6 +427,7 @@ public class User {
 	 * @return a list of the hash codes of the users' favourite snippets
 	 */
 	List<Long> getFavoriteSnippetsHash() {
+		List<Snippet> favorites = getFavoriteSnippets();
 		List<Long> result = new ArrayList<Long>(favorites.size());
 		for (Snippet snippet : favorites) {
 			result.add(snippet.id);
@@ -472,10 +467,15 @@ public class User {
 		if (snippet == null)
 			return;
 
-		if (favorites.contains(snippet))
-			return;
-		favorites.add(snippet);
-		refreshDB();
+		try {
+			Persistence.getInstance().addFavourite(snippet, this,
+					IPersistence.DB_NEW_ONLY);
+		} catch (IOException e) {
+			System.err.println("IOException writing favorite snippet (id="
+					+ snippet.getHashId() + ") for user \"" + username + "\": "
+					+ e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 
 	/**
@@ -489,10 +489,15 @@ public class User {
 		if (snippet == null)
 			return;
 
-		if (!favorites.contains(snippet))
-			return;
-		favorites.remove(snippet);
-		refreshDB();
+		try {
+			Persistence.getInstance().removeFavourite(snippet, this,
+					IPersistence.DB_NEW_ONLY);
+		} catch (IOException e) {
+			System.err.println("IOException writing favorite snippet (id="
+					+ snippet.getHashId() + ") for user \"" + username + "\": "
+					+ e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 
 	/**

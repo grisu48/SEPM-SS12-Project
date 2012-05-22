@@ -25,6 +25,7 @@ public class PersistenceHelper {
 
 	/**
 	 * Factory method for the persistence layer
+	 * 
 	 * @param id
 	 * @param owner
 	 * @param name
@@ -37,13 +38,16 @@ public class PersistenceHelper {
 	 * @param viewcount
 	 * @return an initialized Snippet object
 	 */
-	protected Snippet createSnippet(Long id, User owner, String name, String description, Category category, List<Tag> tags,
-			List<Comment> comments, Code code, String license, int viewcount) {
-		return new Snippet(owner, name, description, id, code, category, license, tags, comments, viewcount);
+	protected Snippet createSnippet(Long id, User owner, String name,
+			String description, Category category, List<Tag> tags,
+			List<Long> comments, Code code, String license, int viewcount) {
+		return new Snippet(owner.getUsername(), name, description, id,
+				category.getName(), license, tags, comments, viewcount);
 	}
 
 	/**
 	 * Factory method for the persistence layer
+	 * 
 	 * @param tag
 	 * @return an initialized Tag object
 	 */
@@ -53,6 +57,7 @@ public class PersistenceHelper {
 
 	/**
 	 * Factory method for the persistence layer
+	 * 
 	 * @param id
 	 * @param owner
 	 * @param message
@@ -62,12 +67,15 @@ public class PersistenceHelper {
 	 * @param target
 	 * @return an initialized Notification object
 	 */
-	protected Notification createNotification(Long id, User owner, String message, Boolean read, String time, String source, Snippet target) {
+	protected Notification createNotification(Long id, User owner,
+			String message, Boolean read, String time, String source,
+			Snippet target) {
 		return new Notification(id, owner, message, read, time, source, target);
 	}
 
 	/**
 	 * Factory method for the persistence layer
+	 * 
 	 * @param owner
 	 * @param snippet
 	 * @param message
@@ -77,13 +85,15 @@ public class PersistenceHelper {
 	 * @param negVotes
 	 * @return an initialized Comment object
 	 */
-	protected Comment createComment(User owner, Snippet snippet, String message, long id, Date time, int posVotes,
-			int negVotes) {
-		return new Comment(owner, snippet, message, id, time, posVotes, negVotes);
+	protected Comment createComment(User owner, Snippet snippet,
+			String message, long id, Date time, int posVotes, int negVotes) {
+		return new Comment(owner.getUsername(), snippet.getHashId(), message,
+				id, time, posVotes, negVotes);
 	}
 
 	/**
 	 * Factory method for the persistence layer
+	 * 
 	 * @param id
 	 * @param code
 	 * @param language
@@ -91,12 +101,14 @@ public class PersistenceHelper {
 	 * @param version
 	 * @return an initialized Code object
 	 */
-	protected Code createCode(Long id, String code, String language, Snippet snippet, int version) {
+	protected Code createCode(Long id, String code, String language,
+			Snippet snippet, int version) {
 		return Code.createCodeDB(code, language, snippet, id, version);
 	}
 
 	/**
 	 * Factory method for the persistence layer
+	 * 
 	 * @param username
 	 * @param realName
 	 * @param email
@@ -104,29 +116,35 @@ public class PersistenceHelper {
 	 * @param favourites
 	 * @return an initialized User object
 	 */
-	protected User createUser(String username, String realName, String email, User.UserState state,
-			List<Snippet> favourites) {
-		return new User(username, realName, email, state, favourites);
+	protected User createUser(String username, String realName, String email,
+			User.UserState state) {
+
+		return new User(username, realName, email, state);
 	}
 
 	/**
 	 * Factory method for the persistence layer
+	 * 
 	 * @param name
 	 * @param description
 	 * @param parent
 	 * @return an initialized Category object
 	 */
-	protected Category createCategory(String name, String description, Category parent) {
+	protected Category createCategory(String name, String description,
+			String parent) {
 		return new Category(name, description, parent);
 	}
-	
+
 	/**
 	 * evaluates the flags
-	 * @param flags the value containing some flags
-	 * @param flag the flag to test
+	 * 
+	 * @param flags
+	 *            the value containing some flags
+	 * @param flag
+	 *            the flag to test
 	 * @return true if the flag is present
 	 */
-	public static boolean hasFlag (int flags, int flag) {
+	public static boolean hasFlag(int flags, int flag) {
 		return (flags & flag) == flag;
 	}
 }
