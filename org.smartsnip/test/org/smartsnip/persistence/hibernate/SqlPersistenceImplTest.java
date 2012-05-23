@@ -185,12 +185,22 @@ public class SqlPersistenceImplTest {
 	public void testWriteNotificationNotificationInt() throws Throwable {
 		User user = helper.createUser("si", "she ra", "sie@bla", null);
 		Category cat = helper.createCategory("bla", "viel bla bla", null);
-		Snippet snip = helper.createSnippet(1L, user.getUsername(), "name", "description", cat.getName(), null, null, null, 0);
+		List<Tag> tags = new ArrayList<Tag>();
+		tags.add(helper.createTag("eins"));
+		tags.add(helper.createTag("zwei"));
+		tags.add(helper.createTag("drei"));
+		tags.add(helper.createTag("vier"));
+		tags.add(helper.createTag("fünf"));
+		Snippet snip = helper.createSnippet(5L, user.getUsername(), "xx", "hhhhhhhhhh", cat.getName(), tags, null, null, 0);
 		Code code = helper.createCode(1L, "code", "language", snip, 0);
 		snip.setCodeWithoutWriting(code);
-		Notification notif = helper.createNotification(1L, user, "message", false, "now", "source", snip);
-		instance.writeSnippet(snip, IPersistence.DB_DEFAULT);
+		instance.writeTag(tags, IPersistence.DB_DEFAULT);
+		instance.writeCategory(cat, IPersistence.DB_DEFAULT);
+		Long snipId = instance.writeSnippet(snip, IPersistence.DB_DEFAULT);
+		snip.id = snipId;
+		Notification notif = helper.createNotification(22L, user, "notif", false, "now", "source", snip);
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
+		System.out.println("Snippet Id = " + snipId);
 	}
 
 	/**

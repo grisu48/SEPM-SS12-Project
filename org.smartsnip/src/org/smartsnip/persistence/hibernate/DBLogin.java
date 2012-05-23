@@ -5,12 +5,7 @@
 package org.smartsnip.persistence.hibernate;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.ColumnTransformer;
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.smartsnip.persistence.IPersistence;
 
 /**
@@ -20,6 +15,11 @@ import org.smartsnip.persistence.IPersistence;
  * 
  */
 @Entity
+//TODO update hibernate see issue HHH-7074
+//"the replacement annotations of @Entity are not working"
+@SuppressWarnings("deprecation")
+@org.hibernate.annotations.Entity(dynamicInsert = true)
+//@DynamicInsert
 @Table(name = "Login")
 class DBLogin {
 

@@ -501,7 +501,7 @@ public class UserFactory {
 					snippet = helper.createSnippet(entity.getSnippetId(), entity.getUserName(),
 							snip.getHeadline(), snip.getDescription(),
 							CategoryFactory
-									.fetchCategory(helper, session, snip).getName(),
+									.fetchCategory(session, snip).getName(),
 							SnippetFactory.buildTagList(helper, snip), null,
 							SnippetFactory.fetchLicense(helper, session, snip)
 									.getShortDescr(), snip.getViewcount());

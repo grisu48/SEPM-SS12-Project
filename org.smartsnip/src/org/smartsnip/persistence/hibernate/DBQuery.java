@@ -22,6 +22,7 @@ import org.smartsnip.shared.Pair;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.annotations.NaturalId;
 
 /**
  * This class keeps and handles queries of a session. It can set up and execute
@@ -287,6 +288,7 @@ class DBQuery {
 		for (Pair<Vector<String>, Object> w : this.whereParameters) {
 			result.setParameter(w.first.get(1), w.second);
 		}
+		System.out.println(result);// XXX
 		return result;
 	}
 
@@ -375,17 +377,23 @@ class DBQuery {
 				try {
 					if ((value = m.invoke(targetEntity, (Object[]) null)) != null
 							|| forceNull) {
-						if (m.isAnnotationPresent(Id.class)
-								|| targetEntity.getClass()
-										.getDeclaredField(parameter)
-										.isAnnotationPresent(Id.class)) {
+						if (value != null
+								&& (m.isAnnotationPresent(Id.class) || targetEntity
+										.getClass().getDeclaredField(parameter)
+										.isAnnotationPresent(Id.class))) {
 							key = this.testAndSetKey(targetEntity, key, value);
 							this.addWhereParameter(parameter + " =", parameter,
 									"", value);
-						} else if (m.isAnnotationPresent(EmbeddedId.class)
-								|| targetEntity.getClass()
-										.getDeclaredField(parameter)
-										.isAnnotationPresent(EmbeddedId.class)) {
+						} else if (value != null
+								&& (m.isAnnotationPresent(NaturalId.class) || targetEntity
+										.getClass().getDeclaredField(parameter)
+										.isAnnotationPresent(NaturalId.class))) {
+							this.addWhereParameter(parameter + " =", parameter,
+									"", value);
+						} else if (value != null
+								&& (m.isAnnotationPresent(EmbeddedId.class) || targetEntity
+										.getClass().getDeclaredField(parameter)
+										.isAnnotationPresent(EmbeddedId.class))) {
 							key = this.testAndSetKey(targetEntity, key, value);
 							this.getWhereClauseFromEmbeddedId(key);
 
@@ -397,6 +405,73 @@ class DBQuery {
 					throw new HibernateException(e);
 				}
 			}
+		}
+		return key;
+	}
+
+	/**
+	 * Search for a {@code Serializable} primary key of an entity fetched from
+	 * the database. This method fails with a {@link NullPointerException} if
+	 * the key results to null.
+	 * 
+	 * @param targetEntity
+	 * @param notNull
+	 *            If set to {@code true} the query fails on a null result. Use
+	 *            constants {@link #QUERY_NOT_NULL} or {@link #QUERY_NULLABLE}.
+	 * @return the primary key (Id).
+	 */
+	private Serializable getKey(Object targetEntity, boolean notNull) {
+		if (!targetEntity.getClass().isAnnotationPresent(Entity.class)) {
+			throw new HibernateException("Class "
+					+ targetEntity.getClass().getSimpleName()
+					+ " is no @Entity.");
+		}
+		Method[] methods = targetEntity.getClass().getDeclaredMethods();
+		String parameter;
+		Serializable key = null;
+		Object value;
+		for (Method m : methods) {
+			if ((m.getName().startsWith("get") || m.getName().startsWith("is"))
+					&& m.getGenericParameterTypes().length == 0) {
+				int prefixLength = 3;
+				if (m.getName().startsWith("is")) {
+					prefixLength = 2;
+				}
+				parameter = m.getName()
+						.substring(prefixLength, prefixLength + 1)
+						.toLowerCase()
+						+ m.getName().substring(prefixLength + 1);
+				try {
+					if (m.isAnnotationPresent(Id.class)
+							|| targetEntity.getClass()
+									.getDeclaredField(parameter)
+									.isAnnotationPresent(Id.class)
+							|| m.isAnnotationPresent(EmbeddedId.class)
+							|| targetEntity.getClass()
+									.getDeclaredField(parameter)
+									.isAnnotationPresent(EmbeddedId.class)) {
+						Query query = this.session.createQuery("select "
+								+ parameter + " from "
+								+ targetEntity.getClass().getName() + " "
+								+ buildWhereClause(QUERY_NOT_EMPTY));
+						for (Pair<Vector<String>, Object> w : this.whereParameters) {
+							query.setParameter(w.first.get(1), w.second);
+						}
+						value = query.uniqueResult();
+
+						if (value != null) {
+							key = this.testAndSetKey(targetEntity, key, value);
+						}
+					}
+				} catch (ReflectiveOperationException e) {
+					throw new HibernateException(e);
+				}
+			}
+		}
+		if (key == null && notNull) {
+			throw new NullPointerException("The primary key of entity "
+					+ targetEntity.getClass().getSimpleName()
+					+ " must not be null");
 		}
 		return key;
 	}
@@ -487,12 +562,12 @@ class DBQuery {
 	 */
 	Serializable update(Object targetEntity, boolean forceNull) {
 		Serializable key = getParameters(targetEntity, forceNull);
-		if (key == null) {
-			throw new HibernateException("update query needs a serializable Id");
-		}
-		if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
-			throw new HibernateException("failed to update entity with key"
-					+ key.toString());
+		if (!this.parameters.isEmpty()) {
+			key = getKey(targetEntity, QUERY_NOT_NULL);
+			if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
+				throw new HibernateException("failed to update entity with key"
+						+ key);
+			}
 		}
 		return key;
 	}
@@ -523,20 +598,18 @@ class DBQuery {
 	 */
 	Serializable insertOrUpdate(Object targetEntity, boolean forceNull) {
 		Serializable key = getParameters(targetEntity, forceNull);
-		if (key == null) { // XXX is this Exn. needed?
-			throw new HibernateException(
-					"insertOrUpdate query needs a serializable Id");
-		}
-		if (buildFromQuery(targetEntity, QUERY_WHERE_PARAMETERS_ONLY).iterate()
-				.hasNext()) {
-			if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
-				throw new HibernateException("failed to update entity with key"
-						+ key.toString());
+		if (!this.parameters.isEmpty()) {
+			if ((key = getKey(targetEntity, QUERY_NULLABLE)) != null) {
+				if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
+					throw new HibernateException(
+							"failed to update entity with key" + key);
+				}
+
+			} else {
+				key = insert(targetEntity);
 			}
-			return key;
-		} else {
-			return insert(targetEntity);
 		}
+		return key;
 	}
 
 	/**
@@ -936,7 +1009,8 @@ class DBQuery {
 	 *            max. number of results to fetch
 	 * @return a list of entities of type {@code <T>}
 	 */
-	Iterator<Object> customIterator(String queryString, Integer start, Integer count) {
+	Iterator<Object> customIterator(String queryString, Integer start,
+			Integer count) {
 		Query query = this.session.createQuery(queryString);
 		if (start != null) {
 			query.setFirstResult(start);
@@ -948,10 +1022,12 @@ class DBQuery {
 			query.setParameter(p.first, p.second);
 		}
 		@SuppressWarnings("unchecked")
-		// query.iterator() returns an iterator according to the given query string
+		// query.iterator() returns an iterator according to the given query
+		// string
 		Iterator<Object> result = query.iterate();
 		return result;
 	}
+
 	/**
 	 * reset this query. All parameters are cleared and the initialized state is
 	 * set to {@code false}.

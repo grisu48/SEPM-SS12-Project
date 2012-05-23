@@ -13,6 +13,11 @@ import javax.persistence.*;
  * 
  */
 @Entity
+//TODO update hibernate see issue HHH-7074
+//"the replacement annotations of @Entity are not working"
+@SuppressWarnings("deprecation")
+@org.hibernate.annotations.Entity(dynamicInsert = true)
+//@DynamicInsert
 @Table(name = "License")
 class DBLicense {
 	@Id

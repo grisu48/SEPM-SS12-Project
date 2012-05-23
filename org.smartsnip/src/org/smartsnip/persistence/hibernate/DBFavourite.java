@@ -10,12 +10,9 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.ForeignKey;
 import org.smartsnip.persistence.IPersistence;
 
 /**
@@ -23,6 +20,11 @@ import org.smartsnip.persistence.IPersistence;
  * 
  */
 @Entity
+//TODO update hibernate see issue HHH-7074
+//"the replacement annotations of @Entity are not working"
+@SuppressWarnings("deprecation")
+@org.hibernate.annotations.Entity(dynamicInsert = true)
+//@DynamicInsert
 @Table(name = "Favourite")
 public class DBFavourite {
 

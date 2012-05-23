@@ -6,23 +6,21 @@ package org.smartsnip.persistence.hibernate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * @author littlelion
  * 
  */
 @Entity
+//TODO update hibernate see issue HHH-7074
+//"the replacement annotations of @Entity are not working"
+@SuppressWarnings("deprecation")
+@org.hibernate.annotations.Entity(dynamicInsert = true)
+//@DynamicInsert
 @Table(name = "Code")
 public class DBCode {
 

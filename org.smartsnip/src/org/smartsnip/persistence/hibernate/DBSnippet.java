@@ -17,12 +17,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.NaturalId;
 
 /**
  * Database OR mapping class for table Snippet
@@ -31,6 +32,11 @@ import org.hibernate.annotations.ForeignKey;
  * 
  */
 @Entity
+//TODO update hibernate see issue HHH-7074
+//"the replacement annotations of @Entity are not working"
+@SuppressWarnings("deprecation")
+@org.hibernate.annotations.Entity(dynamicInsert = true)
+//@DynamicInsert
 @Table(name = "Snippet")
 public class DBSnippet {
 
@@ -60,25 +66,30 @@ public class DBSnippet {
 	private Date lastEdited;
 
 	@Column(name = "user_name", length = 20)
-//	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-//	@ForeignKey(name = "DBUser.userName")
+	// @ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
+	// @ForeignKey(name = "DBUser.userName")
 	private String owner;
 
 	@Column(name = "category_id")
-//	@ManyToOne(targetEntity = DBCategory.class, fetch = FetchType.EAGER)
-//	@ForeignKey(name = "DBCategory.categoryId")
+	// @ManyToOne(targetEntity = DBCategory.class, fetch = FetchType.EAGER)
+	// @ForeignKey(name = "DBCategory.categoryId")
 	private Long categoryId;
 
 	@Column(name = "license_id")
-//	@ManyToOne(targetEntity = DBLicense.class, fetch = FetchType.EAGER)
-//	@ForeignKey(name = "DBLicense.licenseId")
+	// @ManyToOne(targetEntity = DBLicense.class, fetch = FetchType.EAGER)
+	// @ForeignKey(name = "DBLicense.licenseId")
 	private Long licenseId;
 
 	@Column(name = "tag_name", length = 50)
-	@ManyToMany(targetEntity = DBTag.class, fetch = FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.PERSIST})
-	@JoinTable(name="RelTagSnippet", joinColumns=@JoinColumn(name="snippet_id"),inverseJoinColumns=@JoinColumn(name="tag_name"))
+	@ManyToMany(targetEntity = DBTag.class, fetch = FetchType.EAGER, cascade = {
+			CascadeType.MERGE, CascadeType.PERSIST })
+	@JoinTable(name = "RelTagSnippet", joinColumns = @JoinColumn(name = "snippet_id"), inverseJoinColumns = @JoinColumn(name = "tag_name"))
 	@ForeignKey(name = "DBTag.tagName")
-	private List<String> tags;
+	private List<String> tags; //FIXME
+
+	@OneToMany(targetEntity = DBComment.class, fetch = FetchType.LAZY, mappedBy = "commentId")
+	@ForeignKey(name = "DBComent.commentId")
+	private List<Long> comments; //FIXME
 
 	/**
 	 * 
@@ -88,31 +99,31 @@ public class DBSnippet {
 	}
 
 	// XXX remove constructor
-//	/**
-//	 * @param snippetId
-//	 * @param headline
-//	 * @param description
-//	 * @param viewcount
-//	 * @param ratingAverage
-//	 * @param lastEdited
-//	 * @param owner
-//	 * @param categoryId
-//	 * @param licenseId
-//	 */
-//	DBSnippet(Long snippetId, String headline, String description,
-//			Integer viewcount, Float ratingAverage, Date lastEdited, String owner,
-//			Long categoryId, Long licenseId) {
-//		super();
-//		this.snippetId = snippetId;
-//		this.headline = headline;
-//		this.description = description;
-//		this.viewcount = viewcount;
-//		this.ratingAverage = ratingAverage;
-//		this.lastEdited = lastEdited;
-//		this.owner = owner;
-//		this.categoryId = categoryId;
-//		this.licenseId = licenseId;
-//	}
+	// /**
+	// * @param snippetId
+	// * @param headline
+	// * @param description
+	// * @param viewcount
+	// * @param ratingAverage
+	// * @param lastEdited
+	// * @param owner
+	// * @param categoryId
+	// * @param licenseId
+	// */
+	// DBSnippet(Long snippetId, String headline, String description,
+	// Integer viewcount, Float ratingAverage, Date lastEdited, String owner,
+	// Long categoryId, Long licenseId) {
+	// super();
+	// this.snippetId = snippetId;
+	// this.headline = headline;
+	// this.description = description;
+	// this.viewcount = viewcount;
+	// this.ratingAverage = ratingAverage;
+	// this.lastEdited = lastEdited;
+	// this.owner = owner;
+	// this.categoryId = categoryId;
+	// this.licenseId = licenseId;
+	// }
 
 	/**
 	 * @return the snippetId
@@ -262,5 +273,20 @@ public class DBSnippet {
 	 */
 	public void setTags(List<String> tags) {
 		this.tags = tags;
+	}
+
+	/**
+	 * @return the comments
+	 */
+	List<Long> getComments() {
+		return this.comments;
+	}
+
+	/**
+	 * @param comments
+	 *            the comments to set
+	 */
+	void setComments(List<Long> comments) {
+		this.comments = comments;
 	}
 }

@@ -6,14 +6,12 @@ package org.smartsnip.persistence.hibernate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.NaturalId;
 
 /**
  * Database OR mapping class for table Category
@@ -22,7 +20,11 @@ import org.hibernate.annotations.ForeignKey;
  * 
  */
 @Entity
-@org.hibernate.annotations.DynamicInsert(value=true)
+//TODO update hibernate see issue HHH-7074
+//"the replacement annotations of @Entity are not working"
+@SuppressWarnings("deprecation")
+@org.hibernate.annotations.Entity(dynamicInsert = true)
+//@DynamicInsert
 @Table(name = "Category")
 public class DBCategory {
 
@@ -36,6 +38,7 @@ public class DBCategory {
 //	@ForeignKey(name = "DBCategory.categoryId")
 	private Long parentId;
 
+	@NaturalId
 	@Column(name = "name", length = 255)
 	private String name;
 

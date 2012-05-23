@@ -50,11 +50,15 @@ public class CategoryFactory {
 			DBCategory entity = new DBCategory();
 			// categoryId is read-only
 
-			parent = new DBCategory();
-			parentQuery = new DBQuery(session);
-			parent.setName(category.getParent().getName());
-			parent = parentQuery.fromSingle(parent, DBQuery.QUERY_NOT_NULL);
-			entity.setParentId(parent.getCategoryId());
+			if (category.getParentName() != null) {//FIXME
+				parent = new DBCategory();
+				parentQuery = new DBQuery(session);
+				parent.setName(category.getParentName());
+				parent = parentQuery.fromSingle(parent, DBQuery.QUERY_NOT_NULL);
+				entity.setParentId(parent.getCategoryId());
+			} else {//FIXME
+				entity.setParentId(null);//FIXME
+			}//FIXME
 
 			entity.setName(category.getName());
 			entity.setDescription(category.getDescription());
@@ -99,7 +103,7 @@ public class CategoryFactory {
 
 				parent = new DBCategory();
 				parentQuery = new DBQuery(session);
-				parent.setName(category.getParent().getName());
+				parent.setName(category.getParentName());
 				parent = parentQuery.fromSingle(parent, DBQuery.QUERY_NOT_NULL);
 				entity.setParentId(parent.getCategoryId());
 
@@ -389,21 +393,39 @@ public class CategoryFactory {
 	}
 
 	/**
-	 * Helper method to fetch a category from a snippet.
+	 * Helper method to fetch a category from a snippet. Source is a
+	 * {@link org.smartsnip.persistence.hibernate.DBSnippet}.
 	 * 
-	 * @param helper
-	 *            the PersisteceHelper object to create the tags
 	 * @param session
 	 *            the session in which the query is to execute
 	 * @param snippet
 	 *            the snippet as source of the category
+	 * 
 	 * @return the category
 	 */
-	static DBCategory fetchCategory(SqlPersistenceHelper helper, Session session,
-			DBSnippet snippet) {
+	static DBCategory fetchCategory(Session session, DBSnippet snippet) {
 		DBQuery query = new DBQuery(session);
 		DBCategory entity = new DBCategory();
 		entity.setCategoryId(snippet.getCategoryId());
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		return entity;
+	}
+
+	/**
+	 * Helper method to fetch a category from a snippet. Source is a
+	 * {@link org.smartsnip.core.Snippet}.
+	 * 
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippet
+	 *            the snippet as source of the category
+	 * 
+	 * @return the category
+	 */
+	static DBCategory fetchCategory(Session session, Snippet snippet) {
+		DBQuery query = new DBQuery(session);
+		DBCategory entity = new DBCategory();
+		entity.setName(snippet.getCategoryName());
 		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 		return entity;
 	}

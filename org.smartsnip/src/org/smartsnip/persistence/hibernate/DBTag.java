@@ -4,15 +4,7 @@
  */
 package org.smartsnip.persistence.hibernate;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Database OR mapping class for table Tag
@@ -21,6 +13,11 @@ import org.hibernate.annotations.OnDeleteAction;
  * 
  */
 @Entity
+//TODO update hibernate see issue HHH-7074
+//"the replacement annotations of @Entity are not working"
+@SuppressWarnings("deprecation")
+@org.hibernate.annotations.Entity(dynamicInsert = true)
+//@DynamicInsert
 @Table(name = "Tag")
 class DBTag {
 	@Id
