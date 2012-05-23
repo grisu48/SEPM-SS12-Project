@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.shared.XCategory;
 import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
@@ -580,10 +581,15 @@ public class Snippet {
 		ArrayList<XComment> commentList = getXComments();
 
 		// TODO Comment list with hash codes
-		return new XSnippet(owner, id, this.getName(), description, this
-				.getCategory().toXCategory(), new ArrayList<String>(
-				getStringTags()), commentList, code.getCode(),
-				code.getFormattedHTML(), code.getLanguage(), license, viewcount);
+		XCategory category = new XCategory("Root", "Desc", "",
+				new ArrayList<String>());
+		Category objCategory = this.getCategory();
+		if (objCategory != null)
+			category = objCategory.toXCategory();
+		return new XSnippet(owner, id, this.getName(), description, category,
+				new ArrayList<String>(getStringTags()), commentList,
+				code.getCode(), code.getFormattedHTML(), code.getLanguage(),
+				license, viewcount);
 	}
 
 	/**
@@ -657,5 +663,12 @@ public class Snippet {
 	 */
 	public String getOwnerUsername() {
 		return owner;
+	}
+
+	/**
+	 * @return the category name
+	 */
+	public String getCategoryName() {
+		return this.category;
 	}
 }

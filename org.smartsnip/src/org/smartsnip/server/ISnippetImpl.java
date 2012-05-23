@@ -109,7 +109,7 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 			throw new IllegalArgumentException(
 					"New snippet language cannot be empty");
 
-		if (category.isEmpty())
+		if (category != null && category.isEmpty())
 			category = null;
 		if (tags == null)
 			tags = new ArrayList<String>();
