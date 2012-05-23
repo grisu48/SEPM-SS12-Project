@@ -94,7 +94,7 @@ public class Meta extends Composite {
 	}
 
 	public void refresh() {
-		user.setText(Control.getInstance().getUsername());
+		user.setText(Control.getInstance().username);
 		// XXX Use session.isloggedin instant of check if username is guest
 		if (user.getText().equalsIgnoreCase("Guest")) {
 			login.setVisible(true);

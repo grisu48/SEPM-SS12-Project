@@ -63,6 +63,7 @@ public class GUI {
 		// showLoginPopup();
 		// showRegisterPopup();
 		// showTestPopup();
+
 	}
 
 	public void createBasicPage() {

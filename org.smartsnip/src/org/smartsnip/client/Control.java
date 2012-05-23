@@ -24,7 +24,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class Control implements EntryPoint {
 
-	private String username = "Guest";
+	String username = "Guest";
 	private boolean loggedIn = false;
 
 	private static Control instance = null;
@@ -65,6 +65,7 @@ public class Control implements EntryPoint {
 			}
 		});
 		myGUI.getReady();
+		
 
 		// No contents yet added here
 		// myGUI.showTestPopup("Currently no contents here ... ");
@@ -191,12 +192,12 @@ public class Control implements EntryPoint {
 	}
 
 	public String getUsername() {
-		// refresh();
+		refresh();
 		return username;
 	}
 
 	public boolean isLoggedIn() {
-		// refresh();
+		refresh();
 		return loggedIn;
 	}
 
