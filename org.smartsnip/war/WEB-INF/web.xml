@@ -18,6 +18,15 @@
     <url-pattern>/org_smartsnip/session</url-pattern>
   </servlet-mapping>
   
+   <servlet>
+    <servlet-name>Snippet</servlet-name>
+    <servlet-class>org.smartsnip.server.ISnippetImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>Snippet</servlet-name>
+    <url-pattern>/org_smartsnip/snippet</url-pattern>
+  </servlet-mapping>
   
 
 
