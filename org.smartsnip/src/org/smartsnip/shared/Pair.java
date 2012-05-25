@@ -54,4 +54,15 @@ public class Pair<E, V> implements Serializable, IsSerializable {
 
 		return true;
 	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Pair [first=").append(this.first).append(", second=")
+				.append(this.second).append("]");
+		return builder.toString();
+	}
 }
