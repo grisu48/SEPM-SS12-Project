@@ -58,7 +58,7 @@ public class GUI {
 		createBasicPage();
 		showSearchPage();
 		// showImpressum();
-		// showSnipPage();
+		 //showSnipPage(SNIPPET);
 		// showPersonalPage();
 		// showLoginPopup();
 		// showRegisterPopup();
@@ -114,13 +114,12 @@ public class GUI {
 
 	}
 
-	public void showSnipPage() {
-		SnipArea mySnipArea = new SnipArea(SNIPPET);
-
-		CommentArea myCommentArea = new CommentArea(SNIPPET);
+	public void showSnipPage(XSnippet snip) {
+		dataPanel.clear();
+		SnipArea mySnipArea = new SnipArea(snip);
+		CommentArea myCommentArea = new CommentArea(snip);
 		dataPanel.add(mySnipArea);
 		dataPanel.add(myCommentArea);
-
 	}
 
 	public void showPersonalPage() {

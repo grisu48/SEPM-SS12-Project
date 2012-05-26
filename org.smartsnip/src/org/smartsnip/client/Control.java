@@ -6,6 +6,7 @@ import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.ISessionAsync;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XSearch;
+import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Cookies;
@@ -116,6 +117,14 @@ public class Control implements EntryPoint {
 		default:
 		}
 	}
+	
+	
+	public void changeToSnipPage(XSnippet snip) {
+		myGUI.showSnipPage(snip);
+	}
+	
+	
+	
 
 	public void login(final String user, final String pw, final Login login) {
 

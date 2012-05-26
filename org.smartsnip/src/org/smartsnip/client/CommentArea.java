@@ -26,9 +26,12 @@ public class CommentArea extends Composite {
 		vertPanel = new VerticalPanel();
 		horPanel = new HorizontalPanel();
 		
-		for (XComment i: mySnippet.comments) {
-			vertPanel.add(new CommentField(i));
+		if (mySnippet.comments != null) {
+			for (XComment i: mySnippet.comments) {
+				vertPanel.add(new CommentField(i));
+			}
 		}
+		
 		
 		myComment = new TextArea();
 		send = new Button("Send");
