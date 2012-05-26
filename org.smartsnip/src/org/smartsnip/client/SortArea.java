@@ -3,6 +3,8 @@ package org.smartsnip.client;
 
 
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -28,7 +30,20 @@ public class SortArea extends Composite {
 		lbSelectSort.addItem("Latest Snippets");
 		lbSelectSort.addItem("Mostly Viewed");
 		lbSelectSort.addItem("Best Rated");
-		
+		lbSelectSort.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				switch (lbSelectSort.getSelectedIndex()) {
+				case 0:
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+				}
+				
+			}
+		    });
 	    
 		pnlBasis.add(lblStatus);
 		pnlBasis.add(lblSort);

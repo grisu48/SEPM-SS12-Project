@@ -50,6 +50,8 @@ public class GUI {
 	CatArea myCatArea = null;
 	TagArea myTagArea = null;
 	CommentArea myCommentArea = null;
+	Meta myMeta = null;
+	Footer myFooter = null;
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -60,8 +62,7 @@ public class GUI {
 	// Create footerPanel
 	SimplePanel footerPanel = new SimplePanel();
 
-	/** Meta */
-	private final Meta meta = new Meta();
+	
 
 	public void getReady() {
 		// Adds a personalized CSS-File
@@ -69,9 +70,9 @@ public class GUI {
 
 		// Create the Page
 		createBasicPage();
-		//showSearchPage();
+		showSearchPage();
 		// showImpressum();
-		showSnipPage(SNIPPET);
+		//showSnipPage(SNIPPET);
 	
 		// showPersonalPage();
 		// showLoginPopup();
@@ -83,16 +84,16 @@ public class GUI {
 	public void createBasicPage() {
 
 		// Fill userPanel
-		userPanel.add(meta);
+		userPanel.add(myMeta);
 
 		// Fill searchPanel
 		SearchArea search = new SearchArea();
 		searchPanel.add(search);
 
 		// Fill footerPanel
-		Footer footer = new Footer();
+		myFooter = new Footer();
 		footerPanel.setWidth("100%");
-		footerPanel.add(footer);
+		footerPanel.add(myFooter);
 
 		// Fix Panels to divs
 		RootPanel.get("user").add(userPanel);
@@ -207,14 +208,7 @@ public class GUI {
 		dataPanel.add(impressum);
 	}
 
-	/** Refreshes the GUI */
-	public void metaRefresh() {
-		meta.refresh();
-	}
 
-	public ResultArea getResultArea() {
-		return this.myResultArea;
-	}
 
 	public void updateSearchPage(XSearch result, String status) {
 

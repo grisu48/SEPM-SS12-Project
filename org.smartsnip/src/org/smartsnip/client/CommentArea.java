@@ -1,14 +1,13 @@
 package org.smartsnip.client;
 
 
-import java.util.List;
+
 
 
 import org.smartsnip.shared.XComment;
-import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSnippet;
 
-import sun.security.jca.GetInstance;
+
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

@@ -226,7 +226,7 @@ public class Control implements EntryPoint {
 				if (result.isEmpty())
 					result = "Guest";
 				username = result;
-				myGUI.metaRefresh();
+				myGUI.myMeta.refresh();
 			}
 		});
 		session.isLoggedIn(new AsyncCallback<Boolean>() {

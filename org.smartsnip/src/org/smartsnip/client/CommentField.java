@@ -1,6 +1,5 @@
 package org.smartsnip.client;
 
-import org.smartsnip.shared.IComment;
 import org.smartsnip.shared.XComment;
 
 import com.google.gwt.user.client.ui.Composite;
