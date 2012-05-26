@@ -6,11 +6,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -25,11 +22,12 @@ public class Footer extends Composite {
 	private Label name2;
 	private Label name3;
 	private Label links;
-	private Label link1;
 	private Label about;
 	private Anchor impressum;
 	private Anchor register;
 	private Anchor aContact;
+	private Anchor aLink1;
+	private Anchor aLink2;
 	
 	
 	public Footer() {
@@ -44,7 +42,8 @@ public class Footer extends Composite {
 		name3 = new Label("Paul Opitz");
 		links = new Label("Links");
 		links.addStyleName("h3");
-		link1 = new Label("Example link");
+		aLink1 = new Anchor("Universität Innsbruck", false ,"http://uibk.ac.at");
+		aLink2 = new Anchor("You can make IT", false ,"http://youcanmakeit.at");
 		about = new Label("About this Website");
 		about.addStyleName("h3");
 		impressum = new Anchor("Impressum");
@@ -87,7 +86,8 @@ public class Footer extends Composite {
 		vertPanel2.add(register);
 		vertPanel2.add(aContact);
 		vertPanel3.add(links);
-		vertPanel3.add(link1);
+		vertPanel3.add(aLink1);
+		vertPanel3.add(aLink2);
 		footerGrid.setWidget(0,0,vertPanel1);
 		footerGrid.setWidget(0,1,vertPanel2);
 		footerGrid.setWidget(0,2,vertPanel3);
