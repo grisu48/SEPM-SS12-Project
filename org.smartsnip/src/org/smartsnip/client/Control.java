@@ -11,6 +11,7 @@ import org.smartsnip.shared.XSnippet;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.TextArea;
 
 /**
  * The controller according to a MVC pattern.
@@ -260,6 +261,24 @@ public class Control implements EntryPoint {
 			}
 		});
 
+	}
+
+	public void writeComment(TextArea myComment, long hash) {
+		//XXX Todo Felix
+		//ein neuer Kommentar soll zum einem bestimmten Snippet gespeichert werden.
+		
+	}
+
+	public void rateSnippet(int rate, long hash) {
+		//XXX Todo Felix
+			// schicke neue Bewertung an den Server
+		
+	}
+
+	public void toFav(long hash) {
+		// TODO
+		// ermittle den aktuellen User und füge das Snippet zu seiner Lieblingsliste
+		
 	}
 
 }

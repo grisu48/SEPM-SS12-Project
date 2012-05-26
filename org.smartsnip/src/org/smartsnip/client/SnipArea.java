@@ -3,6 +3,8 @@ package org.smartsnip.client;
 
 import org.smartsnip.shared.XSnippet;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
@@ -25,13 +27,12 @@ public class SnipArea extends Composite {
 	private Label language;
 	private Label license;
 	private HTMLPanel snipFull;
-	private Button fav;
-	private Button del;
+	private Button btnFav;
 	private Button edit;
-	private Button rate;
+	private Button btnRate;
 	
 	
-	SnipArea(XSnippet mySnip) {
+	SnipArea(final XSnippet mySnip) {
 	
 		vertPanel = new VerticalPanel();
 		horPanel = new HorizontalPanel();
@@ -49,18 +50,40 @@ public class SnipArea extends Composite {
 		properties.setWidget(3, 0, license);
 		
 		
-		fav = new Button("Add to Favourites");
-		rate = new Button("Rate this Snippet");
-		del = new Button("Delete");
+		btnFav = new Button("Add to Favourites");
+		btnFav.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Control control = Control.getInstance();
+				control.toFav(mySnip.hash);
+			}
+		});
+		
+		
+		
+		
+		btnRate = new Button("Rate this Snippet");
+		btnRate.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Control control = Control.getInstance();
+				int rate = 3;
+				control.rateSnippet(rate, mySnip.hash);
+			}
+		});
+		
+
+		
+		
+		
 		edit = new Button("Edit");
 		
 		vertPanel.add(properties);
 		vertPanel.add(scrPanel);
 		vertPanel.add(horPanel);
 		scrPanel.add(snipFull);
-		horPanel.add(rate);
-		horPanel.add(fav);
-		horPanel.add(del);
+		horPanel.add(btnRate);
+		horPanel.add(btnFav);
 		horPanel.add(edit);
 
 		

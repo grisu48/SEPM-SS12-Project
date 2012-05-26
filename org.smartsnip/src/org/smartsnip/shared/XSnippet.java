@@ -31,9 +31,9 @@ public class XSnippet implements IsSerializable {
 		this.hash = hash;
 		this.title = title;
 		this.description = description;
-		//this.category = category;
-		//this.tags = tags;
-		//this.comments = comments;
+		this.category = category;
+		this.tags = tags;
+		this.comments = comments;
 		this.code = code;
 		this.codeHTML = codeHTML;
 		this.language = language;

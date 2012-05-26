@@ -2,6 +2,7 @@ package org.smartsnip.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.smartsnip.shared.XCategory;
@@ -26,17 +27,29 @@ public class GUI {
 			"Tag4");
 	static final XCategory CAT = new XCategory("catname", "description",
 			"parent", new ArrayList<String>());
+	static final XComment COM = new XComment("owner", 123, "worst snippet ever", 2, 23, new Date());
+	
+	
+	static final List<XComment> commList = Arrays.asList(COM, COM, COM);
+	static final ArrayList<XComment> comList = new ArrayList<XComment>(commList);
+	
+
+	
+	
 	static final XSnippet SNIPPET = new XSnippet("owner", 123, "title",
-			"description", CAT, new ArrayList<String>(TESTTAGS),
-			new ArrayList<XComment>(), "code", "codeHTML", "language",
+			"description", CAT, new ArrayList<String>(TESTTAGS), comList, "code", "codeHTML", "language",
 			"license", 4);
 	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET,
 			SNIPPET, SNIPPET, SNIPPET, SNIPPET);
+	
 
-	private ResultArea myResultArea = null;
-	private SortArea mySortArea = null;
-	private CatArea myCatArea = null;
-	private TagArea myTagArea = null;
+	
+	//visible in package, Control can modify
+	ResultArea myResultArea = null;
+	SortArea mySortArea = null;
+	CatArea myCatArea = null;
+	TagArea myTagArea = null;
+	CommentArea myCommentArea = null;
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -56,9 +69,10 @@ public class GUI {
 
 		// Create the Page
 		createBasicPage();
-		showSearchPage();
+		//showSearchPage();
 		// showImpressum();
-		 //showSnipPage(SNIPPET);
+		showSnipPage(SNIPPET);
+	
 		// showPersonalPage();
 		// showLoginPopup();
 		// showRegisterPopup();
