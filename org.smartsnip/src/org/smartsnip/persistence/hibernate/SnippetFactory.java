@@ -67,10 +67,15 @@ public class SnippetFactory {
 			if (dblicense != null) {
 				entity.setLicenseId(dblicense.getLicenseId());
 			}
-
-			entity.setTags(snippet.getStringTags());//FIXME
-
 			result = (Long) query.write(entity, flags);
+			
+			// allow new tags even if IPersistence.DB_UPDATE_ONLY flag is present
+			// skip existing tags even if IPersistence.DB_NEW_ONLY flag is present
+			TagFactory.pushTags(session, snippet, flags & ~(IPersistence.DB_UPDATE_ONLY | IPersistence.DB_NEW_ONLY));
+
+			// allow new tag-snippet relationships even if IPersistence.DB_UPDATE_ONLY flag is present
+			TagFactory.updateRelTagSnippet(session, result, snippet.getTags(), flags & ~(IPersistence.DB_UPDATE_ONLY));
+			
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -102,6 +107,7 @@ public class SnippetFactory {
 			DBQuery licQuery;
 			DBLicense dblicense;
 			DBSnippet entity;
+			Long snippetId;
 
 			for (Snippet snippet : snippets) {
 				query = new DBQuery(session);
@@ -121,9 +127,14 @@ public class SnippetFactory {
 						DBQuery.QUERY_NULLABLE);
 				entity.setLicenseId(dblicense.getLicenseId());
 
-				entity.setTags(snippet.getStringTags());
+				snippetId = (Long)query.write(entity, flags);
+				
+				// allow new tags even if IPersistence.DB_UPDATE_ONLY flag is present
+				// skip existing tags even if IPersistence.DB_NEW_ONLY flag is present
+				TagFactory.pushTags(session, snippet, flags & ~(IPersistence.DB_UPDATE_ONLY | IPersistence.DB_NEW_ONLY));
 
-				query.write(entity, flags);
+				// allow new tag-snippet relationships even if IPersistence.DB_UPDATE_ONLY flag is present
+				TagFactory.updateRelTagSnippet(session, snippetId, snippet.getTags(), flags & ~(IPersistence.DB_UPDATE_ONLY));
 			}
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -503,7 +514,7 @@ public class SnippetFactory {
 						.getUsername(), entity.getHeadline(), entity
 						.getDescription(),
 						CategoryFactory.fetchCategory(session, entity)
-								.getName(), buildTagList(helper, entity), null,
+								.getName(), TagFactory.fetchTags(helper, session, entity.getSnippetId()), null,
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
 				snippet.setCode(fetchNewestCode(helper, session, snippet));
@@ -557,7 +568,7 @@ public class SnippetFactory {
 						snip.getOwner(), snip.getHeadline(),
 						snip.getDescription(),
 						CategoryFactory.fetchCategory(session, snip).getName(),
-						buildTagList(helper, snip), null,
+						TagFactory.fetchTags(helper, session, snip.getSnippetId()), null,
 						fetchLicense(helper, session, snip).getShortDescr(),
 						snip.getViewcount());
 				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
@@ -632,7 +643,7 @@ public class SnippetFactory {
 						.getOwner(), entity.getHeadline(), entity
 						.getDescription(),
 						CategoryFactory.fetchCategory(session, entity)
-								.getName(), buildTagList(helper, entity), null,
+								.getName(), TagFactory.fetchTags(helper, session, entity.getSnippetId()), null,
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
 				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
@@ -676,7 +687,7 @@ public class SnippetFactory {
 					entity.getOwner(), entity.getHeadline(),
 					entity.getDescription(),
 					CategoryFactory.fetchCategory(session, entity).getName(),
-					buildTagList(helper, entity), null,
+					TagFactory.fetchTags(helper, session, entity.getSnippetId()), null,
 					fetchLicense(helper, session, entity).getShortDescr(),
 					entity.getViewcount());
 			result.setCodeWithoutWriting(fetchNewestCode(helper, session,
@@ -896,23 +907,6 @@ public class SnippetFactory {
 			DBSessionFactory.close(session);
 		}
 		return result;
-	}
-
-	/**
-	 * build a list of tags from a given list of strings
-	 * 
-	 * @param helper
-	 *            the PersisteceHelper object to create the tags
-	 * @param snippet
-	 *            the snippet which contains the list of tag-strings
-	 * @return the list of tags
-	 */
-	static List<Tag> buildTagList(SqlPersistenceHelper helper, DBSnippet snippet) {
-		List<Tag> tags = new ArrayList<Tag>();
-		for (String t : snippet.getTags()) {
-			tags.add(helper.createTag(t));
-		}
-		return tags;
 	}
 
 	/**

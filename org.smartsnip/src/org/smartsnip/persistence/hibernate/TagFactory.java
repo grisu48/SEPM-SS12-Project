@@ -139,19 +139,13 @@ public class TagFactory {
 	static List<Tag> getTags(Snippet snippet) throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
-		List<Tag> result = new ArrayList<Tag>();
+		List<Tag> result;
 
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
-			DBSnippet entity = new DBSnippet();
 
-			entity.setSnippetId(snippet.getHashId());
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
-			for (String tag : entity.getTags()) {
-				result.add(helper.createTag(tag));
-			}
+			result = fetchTags(helper, session, snippet.getHashId());
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -236,6 +230,105 @@ public class TagFactory {
 			DBSessionFactory.close(session);
 		}
 		return result;
+	}
+
+	/**
+	 * Helper method to fetch all tags from a snippet.
+	 * 
+	 * @param helper
+	 *            the PersisteceHelper object to create the tags
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippetId
+	 *            the id of the snippet as source of the code
+	 * @return a list of code fragments
+	 */
+	static List<Tag> fetchTags(SqlPersistenceHelper helper, Session session,
+			Long snippetId) {
+		DBQuery query = new DBQuery(session);
+		DBRelTagSnippet relationship = new DBRelTagSnippet();
+		DBTag tag;
+		List<Tag> result = new ArrayList<Tag>();
+		relationship.setTagSnippetId(snippetId, null);
+		for (Iterator<DBRelTagSnippet> itr = query.iterate(relationship); itr
+				.hasNext();) {
+			relationship = itr.next();
+			query = new DBQuery(session);
+			tag = new DBTag();
+			tag.setName(relationship.getTagSnippetId().getTagName());
+			tag = query.fromSingle(tag, DBQuery.QUERY_NOT_NULL);
+			result.add(helper.createTag(tag.getName()));
+		}
+		return result;
+	}
+
+	/**
+	 * Helper method to update all relationships of the tags of a snippet. New
+	 * relationships to tags are pushed into the database, old are removed.
+	 * 
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippetId
+	 *            the id of the snippet
+	 * @param tags
+	 *            a list of tags
+	 * @param flags
+	 *            the flags of the write query. Details see
+	 *            {@link IPersistence#DB_DEFAULT}.
+	 */
+	static void updateRelTagSnippet(Session session, Long snippetId,
+			List<Tag> tags, int flags) {
+		System.out.println("pushRelTagSnippet: flags = " + flags);
+		if (tags != null && !tags.isEmpty()) {
+			DBQuery query = new DBQuery(session);
+			DBRelTagSnippet entity = new DBRelTagSnippet();
+			entity.setTagSnippetId(snippetId, null);
+			List<DBRelTagSnippet> oldTags = query.from(entity);
+			System.err.println("old tags: " + oldTags);// XXX
+
+			for (Tag tag : tags) {
+				query = new DBQuery(session);
+				entity = new DBRelTagSnippet();
+				entity.setTagSnippetId(snippetId, tag.toString());
+				System.out.println("tag removed: " + oldTags.remove(entity)
+						+ ", " + entity); // FIXME equals?
+				System.err.println("DBRelTagSnippet: "
+						+ entity.getTagSnippetId() + ", "
+						+ entity.getTagSnippetId().getTagName() + ", "
+						+ entity.getTagSnippetId().getSnippetId());// XXX
+				query.write(entity, flags);
+			}
+			for (DBRelTagSnippet dbTag: oldTags){
+				query = new DBQuery(session);
+				query.remove(dbTag, flags);
+			}
+			System.err.println("remaining: " + oldTags);// XXX
+		}
+	}
+
+	/**
+	 * Helper method to persist all tags of a snippet into the database.
+	 * 
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippet
+	 *            the snippet as source of the code
+	 * @param flags
+	 *            the flags of the write query. Details see
+	 *            {@link IPersistence#DB_DEFAULT}.
+	 */
+	static void pushTags(Session session, Snippet snippet, int flags) {
+		List<Tag> tags = snippet.getTags();
+		if (tags != null && !tags.isEmpty()) {
+			DBQuery query;
+			DBTag entity;
+			for (Tag tag : tags) {
+				query = new DBQuery(session);
+				entity = new DBTag();
+				entity.setName(tag.toString());
+				query.write(entity, flags);
+			}
+		}
 	}
 
 }

@@ -502,7 +502,7 @@ public class UserFactory {
 							snip.getHeadline(), snip.getDescription(),
 							CategoryFactory
 									.fetchCategory(session, snip).getName(),
-							SnippetFactory.buildTagList(helper, snip), null,
+							TagFactory.fetchTags(helper, session, snip.getSnippetId()), null,
 							SnippetFactory.fetchLicense(helper, session, snip)
 									.getShortDescr(), snip.getViewcount());
 					snippet.setCode(SnippetFactory.fetchNewestCode(helper,

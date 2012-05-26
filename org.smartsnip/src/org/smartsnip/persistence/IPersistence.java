@@ -590,6 +590,17 @@ public interface IPersistence {
 	 */
 	public void removeTag(Tag tag, int flags) throws IOException;
 
+	// TODO add method: 
+//	/**
+//	 * Remove all unused tags.
+//	 * @param flags
+//	 *            the constraints for the write access. The default is
+//	 *            {@link #DB_FORCE_DELETE}
+//	 * @throws IOException
+//	 *             at a problem committing the data
+//	 */
+//	public void removeUnusedTags(int flags) throws IOException;
+
 	/**
 	 * remove the Notification from the database
 	 * 
@@ -1053,5 +1064,4 @@ public interface IPersistence {
 	// * at a problem retrieving the data
 	// */
 	// public int getTagFrequency(Tag tag) throws IOException;
-
 }

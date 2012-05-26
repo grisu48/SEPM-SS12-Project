@@ -184,17 +184,19 @@ public class SqlPersistenceImplTest {
 	@Test
 	public void testWriteNotificationNotificationInt() throws Throwable {
 		User user = helper.createUser("si", "she ra", "sie@bla", null);
-		Category cat = helper.createCategory("bla", "viel bla bla", null);
+		Category par = helper.createCategory("bla", "viel bla bla", null);
+		Category cat = helper.createCategory("blabla", "noch mehr bla bla", "bla");
 		List<Tag> tags = new ArrayList<Tag>();
-		tags.add(helper.createTag("eins"));
-		tags.add(helper.createTag("zwei"));
-		tags.add(helper.createTag("drei"));
-		tags.add(helper.createTag("vier"));
-		tags.add(helper.createTag("fünf"));
-		Snippet snip = helper.createSnippet(5L, user.getUsername(), "xx", "hhhhhhhhhh", cat.getName(), tags, null, null, 0);
+		tags.add(helper.createTag("xxx"));
+		tags.add(helper.createTag("bbb"));
+		tags.add(helper.createTag("new"));
+		tags.add(helper.createTag("ddd"));
+		tags.add(helper.createTag("old"));
+		Snippet snip = helper.createSnippet(5L, user.getUsername(), "something", "something stupid stuff", cat.getName(), tags, null, null, 0);
 		Code code = helper.createCode(1L, "code", "language", snip, 0);
 		snip.setCodeWithoutWriting(code);
 		instance.writeTag(tags, IPersistence.DB_DEFAULT);
+		instance.writeCategory(par, IPersistence.DB_DEFAULT);
 		instance.writeCategory(cat, IPersistence.DB_DEFAULT);
 		Long snipId = instance.writeSnippet(snip, IPersistence.DB_DEFAULT);
 		snip.id = snipId;

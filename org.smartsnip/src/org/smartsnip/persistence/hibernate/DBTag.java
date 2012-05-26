@@ -28,13 +28,9 @@ class DBTag {
 	@Column(name = "usage_freq", insertable = false, updatable = false)
 	private Integer usageFrequence;
 
-	// XXX remove snippets of tag if not necessary
-//	@Column(name = "snippet_id")
-//	@ManyToMany(targetEntity = DBSnippet.class, mappedBy="tags",fetch = FetchType.EAGER, cascade={CascadeType.MERGE, CascadeType.PERSIST})
-//	@ForeignKey(name= "DBTag.name", inverseName = "DBSnippet.snippetId")
-//	@OnDelete(action = OnDeleteAction.CASCADE)
-//	private Set<Long> snippets = new HashSet<Long>();
-
+	/**
+	 * 
+	 */
 	DBTag() {
 	}
 
@@ -73,19 +69,35 @@ class DBTag {
 		this.usageFrequence = usageFrequence;
 	}
 
-//	/**
-//	 * @return the snippets
-//	 */
-//	public Set<Long> getSnippets() {
-//		return snippets;
-//	}
-//
-//	/**
-//	 * @param snippets
-//	 *            the snippets to set
-//	 */
-//	public void setSnippets(Set<Long> snippets) {
-//		this.snippets = snippets;
-//	}
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((this.name == null) ? 0 : this.name.hashCode());
+		return result;
+	}
 
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DBTag other = (DBTag) obj;
+		if (this.name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!this.name.equals(other.name))
+			return false;
+		return true;
+	}
 }

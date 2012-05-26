@@ -48,6 +48,7 @@ public class DBSessionFactory {
 				configuration.configure().addAnnotatedClass(DBTag.class);
 				configuration.configure().addAnnotatedClass(DBUser.class);
 				configuration.configure().addAnnotatedClass(DBVote.class);
+				configuration.configure().addAnnotatedClass(DBRelTagSnippet.class);
 
 				serviceRegistry = new ServiceRegistryBuilder().applySettings(
 						configuration.getProperties()).buildServiceRegistry();

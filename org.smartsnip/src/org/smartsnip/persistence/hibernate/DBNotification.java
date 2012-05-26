@@ -184,11 +184,45 @@ public class DBNotification {
 		return this.createdAt;
 	}
 
-//	/**
-//	 * @param createdAt
-//	 *            the createdAt to set
-//	 */
-//	public void setCreatedAt(Date createdAt) {
-//		this.createdAt = createdAt;
-//	}
+	/**
+	 * @param createdAt
+	 *            the createdAt to set
+	 */
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((this.notificationId == null) ? 0 : this.notificationId
+						.hashCode());
+		return result;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DBNotification other = (DBNotification) obj;
+		if (this.notificationId == null) {
+			if (other.notificationId != null)
+				return false;
+		} else if (!this.notificationId.equals(other.notificationId))
+			return false;
+		return true;
+	}
 }

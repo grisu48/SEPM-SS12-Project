@@ -56,4 +56,36 @@ public class DBLanguage {
 	public void setLanguage(String language) {
 		this.language = language;
 	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((this.language == null) ? 0 : this.language.hashCode());
+		return result;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DBLanguage other = (DBLanguage) obj;
+		if (this.language == null) {
+			if (other.language != null)
+				return false;
+		} else if (!this.language.equals(other.language))
+			return false;
+		return true;
+	}
 }

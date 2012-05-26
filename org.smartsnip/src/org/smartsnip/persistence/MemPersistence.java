@@ -35,6 +35,7 @@ public class MemPersistence implements IPersistence {
 	 * accomplish a singleton pattern. It rejects any attempt to build an
 	 * instance except it is called by the
 	 * {@link PersistenceFactory#getInstance(int)} method.
+	 * @throws IllegalAccessException 
 	 */
 	MemPersistence() throws IllegalAccessException {
 		super();

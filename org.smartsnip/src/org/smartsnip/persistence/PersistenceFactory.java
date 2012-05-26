@@ -161,7 +161,7 @@ public class PersistenceFactory {
 
 	/**
 	 * @return the defaultType
-	 * @see PersistenceFactory#setDefaultType()
+	 * @see PersistenceFactory#setDefaultType(int)
 	 */
 	public static int getDefaultType() {
 		return defaultType;

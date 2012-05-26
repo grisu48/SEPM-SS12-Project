@@ -5,25 +5,14 @@
 package org.smartsnip.persistence.hibernate;
 
 import java.util.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.NaturalId;
 
 /**
  * Database OR mapping class for table Snippet
@@ -80,16 +69,17 @@ public class DBSnippet {
 	// @ForeignKey(name = "DBLicense.licenseId")
 	private Long licenseId;
 
-	@Column(name = "tag_name", length = 50)
-	@ManyToMany(targetEntity = DBTag.class, fetch = FetchType.EAGER, cascade = {
-			CascadeType.MERGE, CascadeType.PERSIST })
-	@JoinTable(name = "RelTagSnippet", joinColumns = @JoinColumn(name = "snippet_id"), inverseJoinColumns = @JoinColumn(name = "tag_name"))
-	@ForeignKey(name = "DBTag.tagName")
-	private List<String> tags; //FIXME
+	// XXX to remove ?
+//	@Column(name = "tag_name", length = 50)
+//	@ManyToMany(targetEntity = DBTag.class, fetch = FetchType.EAGER, cascade = {
+//			CascadeType.MERGE, CascadeType.PERSIST })
+//	@JoinTable(name = "RelTagSnippet", joinColumns = @JoinColumn(name = "snippet_id"), inverseJoinColumns = @JoinColumn(name = "tag_name"))
+//	@ForeignKey(name = "DBTag.tagName")
+//	private List<String> tags; //FIXME
 
-	@OneToMany(targetEntity = DBComment.class, fetch = FetchType.LAZY, mappedBy = "commentId")
-	@ForeignKey(name = "DBComent.commentId")
-	private List<Long> comments; //FIXME
+//	@OneToMany(targetEntity = DBComment.class, fetch = FetchType.LAZY, mappedBy = "commentId")
+//	@ForeignKey(name = "DBComent.commentId")
+//	private List<Long> comments; //FIXME
 
 	/**
 	 * 
@@ -261,32 +251,65 @@ public class DBSnippet {
 	}
 
 	/**
-	 * @return the tags
+	 * @see java.lang.Object#hashCode()
 	 */
-	public List<String> getTags() {
-		return tags;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((this.snippetId == null) ? 0 : this.snippetId.hashCode());
+		return result;
 	}
 
 	/**
-	 * @param tags
-	 *            the tags to set
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public void setTags(List<String> tags) {
-		this.tags = tags;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DBSnippet other = (DBSnippet) obj;
+		if (this.snippetId == null) {
+			if (other.snippetId != null)
+				return false;
+		} else if (!this.snippetId.equals(other.snippetId))
+			return false;
+		return true;
 	}
 
-	/**
-	 * @return the comments
-	 */
-	List<Long> getComments() {
-		return this.comments;
-	}
-
-	/**
-	 * @param comments
-	 *            the comments to set
-	 */
-	void setComments(List<Long> comments) {
-		this.comments = comments;
-	}
+	// XXX to remove
+//	/**
+//	 * @return the tags
+//	 */
+//	public List<String> getTags() {
+//		return tags;
+//	}
+//
+//	/**
+//	 * @param tags
+//	 *            the tags to set
+//	 */
+//	public void setTags(List<String> tags) {
+//		this.tags = tags;
+//	}
+//
+//	/**
+//	 * @return the comments
+//	 */
+//	List<Long> getComments() {
+//		return this.comments;
+//	}
+//
+//	/**
+//	 * @param comments
+//	 *            the comments to set
+//	 */
+//	void setComments(List<Long> comments) {
+//		this.comments = comments;
+//	}
 }

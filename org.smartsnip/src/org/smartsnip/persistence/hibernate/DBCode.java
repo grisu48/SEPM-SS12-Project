@@ -141,4 +141,36 @@ public class DBCode {
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((this.codeId == null) ? 0 : this.codeId.hashCode());
+		return result;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DBCode other = (DBCode) obj;
+		if (this.codeId == null) {
+			if (other.codeId != null)
+				return false;
+		} else if (!this.codeId.equals(other.codeId))
+			return false;
+		return true;
+	}
 }

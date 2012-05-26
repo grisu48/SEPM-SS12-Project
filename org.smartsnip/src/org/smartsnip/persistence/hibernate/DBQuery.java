@@ -5,12 +5,14 @@
 package org.smartsnip.persistence.hibernate;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -314,6 +316,7 @@ class DBQuery {
 				result.setParameter(p.first, p.second);
 			}
 		}
+		System.out.println(result);// XXX
 		return result;
 	}
 
@@ -334,6 +337,7 @@ class DBQuery {
 		} else {
 			builder.append(buildWhereClause(QUERY_EMPTY_VALID));
 		}
+		System.out.println(builder.toString());// XXX
 		return builder.toString();
 	}
 
@@ -364,50 +368,118 @@ class DBQuery {
 		Serializable key = null;
 		Object value;
 		for (Method m : methods) {
-			if ((m.getName().startsWith("get") || m.getName().startsWith("is"))
-					&& m.getGenericParameterTypes().length == 0) {
-				int prefixLength = 3;
-				if (m.getName().startsWith("is")) {
-					prefixLength = 2;
-				}
-				parameter = m.getName()
-						.substring(prefixLength, prefixLength + 1)
-						.toLowerCase()
-						+ m.getName().substring(prefixLength + 1);
-				try {
-					if ((value = m.invoke(targetEntity, (Object[]) null)) != null
-							|| forceNull) {
-						if (value != null
-								&& (m.isAnnotationPresent(Id.class) || targetEntity
-										.getClass().getDeclaredField(parameter)
-										.isAnnotationPresent(Id.class))) {
-							key = this.testAndSetKey(targetEntity, key, value);
-							this.addWhereParameter(parameter + " =", parameter,
-									"", value);
-						} else if (value != null
-								&& (m.isAnnotationPresent(NaturalId.class) || targetEntity
-										.getClass().getDeclaredField(parameter)
-										.isAnnotationPresent(NaturalId.class))) {
-							this.addWhereParameter(parameter + " =", parameter,
-									"", value);
-						} else if (value != null
-								&& (m.isAnnotationPresent(EmbeddedId.class) || targetEntity
-										.getClass().getDeclaredField(parameter)
-										.isAnnotationPresent(EmbeddedId.class))) {
-							key = this.testAndSetKey(targetEntity, key, value);
-							this.getWhereClauseFromEmbeddedId(key);
+			try {
+				if ((parameter = getColumnName(targetEntity, m)) != null
+						&& ((value = m.invoke(targetEntity, (Object[]) null)) != null || forceNull)) {
+					if (value != null
+							&& (hasAnnotationAndField(Id.class, targetEntity,
+									parameter, m))) {// ||
+														// hasAnnotationAndField(EmbeddedId.class,
+														// targetEntity,
+														// parameter, m))) {
+						key = this.testAndSetKey(targetEntity, key, value);
+						this.addWhereParameter(parameter + " =", parameter, "",
+								value);
+					} else if (value != null
+							&& hasAnnotationAndField(NaturalId.class,
+									targetEntity, parameter, m)) {
+						this.addWhereParameter(parameter + " =", parameter, "",
+								value);
+					} else if (value != null
+							&& hasAnnotationAndField(EmbeddedId.class,
+									targetEntity, parameter, m)) {
+						key = this.testAndSetKey(targetEntity, key, value);
+						// this.addWhereParameter(parameter + " =", parameter,
+						// "",
+						// value);//XXX
+						this.getWhereClauseFromEmbeddedId(parameter, key,
+								QUERY_NULLABLE);// FIXME
 
-						} else {
-							this.addParameter(parameter, value);
-						}
+					} else {
+						this.addParameter(parameter, value);
 					}
-				} catch (ReflectiveOperationException e) {
-					throw new HibernateException(e);
 				}
+			} catch (ReflectiveOperationException e) {
+				throw new HibernateException(e);
+
 			}
+			// System.err.println("method " + m.getName() + ", parameter "
+			// + parameter);// XXX
 		}
+		this.initialized = true;
+		// System.out.println(this);// XXX
 		return key;
 	}
+
+	/**
+	 * Tests the method and the field on the presence of the given annotation.
+	 * 
+	 * @param annotation
+	 *            the annotation to test for
+	 * @param object
+	 *            the object to test
+	 * @param field
+	 *            the name of the field
+	 * @param method
+	 * @return {@code true} if field exists and the method or field has the
+	 *         requested annotation.
+	 */
+	private boolean hasAnnotationAndField(
+			Class<? extends Annotation> annotation, Object object,
+			String field, Method method) {
+		boolean result = false;
+		try {
+			result = method.isAnnotationPresent(annotation)
+					|| object.getClass().getDeclaredField(field)
+							.isAnnotationPresent(annotation);
+		} catch (NoSuchFieldException e) {
+			// System.err.println("method " + method.getName() + " of entity "
+			// + object.getClass().getSimpleName() + " failed");// XXX
+			// return false
+		}
+		return result;
+	}
+
+	// /** //XXX delete if not needed
+	// * Tests the method and the field on the presence of a
+	// * {@link javax.persistence.Column} annotation and fetches the {@code
+	// name}
+	// * parameter.
+	// *
+	// * @param object
+	// * the object to test
+	// * @param field
+	// * the name of the field
+	// * @param method
+	// * @return the name of the column if the method or field represents a
+	// column
+	// */
+	// private String annotatedNameOfColumn(Object object, String field,
+	// Method method) {
+	// String result = field;
+	// String name;
+	// Column annotation;
+	// try {
+	// if ((annotation = method.getAnnotation(Column.class)) != null) {
+	// name = annotation.name();
+	// if (!name.isEmpty()) {
+	// result = name;
+	// }
+	// } else if ((annotation = object.getClass().getDeclaredField(field)
+	// .getAnnotation(Column.class)) != null) {
+	// name = annotation.name();
+	// if (!name.isEmpty()) {
+	// result = name;
+	// }
+	// }
+	// } catch (NoSuchFieldException e) {
+	// result = null;
+	//
+	// // System.err.println("method " + method.getName() + " of entity "
+	// // + object.getClass().getSimpleName() + " failed");// XXX
+	// }
+	// return result;
+	// }
 
 	/**
 	 * Search for a {@code Serializable} primary key of an entity fetched from
@@ -421,6 +493,11 @@ class DBQuery {
 	 * @return the primary key (Id).
 	 */
 	private Serializable getKey(Object targetEntity, boolean notNull) {
+		if (!this.initialized) {
+			throw new HibernateException("The query of target "
+					+ targetEntity.getClass().getSimpleName()
+					+ " is not initialized.");
+		}
 		if (!targetEntity.getClass().isAnnotationPresent(Entity.class)) {
 			throw new HibernateException("Class "
 					+ targetEntity.getClass().getSimpleName()
@@ -431,42 +508,25 @@ class DBQuery {
 		Serializable key = null;
 		Object value;
 		for (Method m : methods) {
-			if ((m.getName().startsWith("get") || m.getName().startsWith("is"))
-					&& m.getGenericParameterTypes().length == 0) {
-				int prefixLength = 3;
-				if (m.getName().startsWith("is")) {
-					prefixLength = 2;
+			if ((parameter = getColumnName(targetEntity, m)) != null
+					&& (hasAnnotationAndField(Id.class, targetEntity,
+							parameter, m) || hasAnnotationAndField(
+							EmbeddedId.class, targetEntity, parameter, m))) {
+				Query query = this.session.createQuery("select " + parameter
+						+ " from " + targetEntity.getClass().getName() + " "
+						+ buildWhereClause(QUERY_NOT_EMPTY));
+				for (Pair<Vector<String>, Object> w : this.whereParameters) {
+					query.setParameter(w.first.get(1), w.second);
 				}
-				parameter = m.getName()
-						.substring(prefixLength, prefixLength + 1)
-						.toLowerCase()
-						+ m.getName().substring(prefixLength + 1);
-				try {
-					if (m.isAnnotationPresent(Id.class)
-							|| targetEntity.getClass()
-									.getDeclaredField(parameter)
-									.isAnnotationPresent(Id.class)
-							|| m.isAnnotationPresent(EmbeddedId.class)
-							|| targetEntity.getClass()
-									.getDeclaredField(parameter)
-									.isAnnotationPresent(EmbeddedId.class)) {
-						Query query = this.session.createQuery("select "
-								+ parameter + " from "
-								+ targetEntity.getClass().getName() + " "
-								+ buildWhereClause(QUERY_NOT_EMPTY));
-						for (Pair<Vector<String>, Object> w : this.whereParameters) {
-							query.setParameter(w.first.get(1), w.second);
-						}
-						value = query.uniqueResult();
+				// System.err.println(query);// XXX
+				// System.out.println(this);// XXX
+				value = query.uniqueResult();
 
-						if (value != null) {
-							key = this.testAndSetKey(targetEntity, key, value);
-						}
-					}
-				} catch (ReflectiveOperationException e) {
-					throw new HibernateException(e);
+				if (value != null) {
+					key = this.testAndSetKey(targetEntity, key, value);
 				}
 			}
+
 		}
 		if (key == null && notNull) {
 			throw new NullPointerException("The primary key of entity "
@@ -477,15 +537,88 @@ class DBQuery {
 	}
 
 	/**
+	 * Tests if the method is a getter of a field representing a column of a
+	 * DB-table and builds a string representing the name of the according
+	 * column.
+	 * 
+	 * @param entity
+	 *            the target entity.
+	 * @param method
+	 *            the method to test
+	 * @return the name of the field or {@code null} if the field is no getter.
+	 */
+	private String getColumnName(Object entity, Method method) {
+		String parameter = null;
+		if ((method.getName().startsWith("get") || method.getName().startsWith(
+				"is"))
+				&& method.getGenericParameterTypes().length == 0) {
+			int prefixLength = 3;
+			if (method.getName().startsWith("is")) {
+				prefixLength = 2;
+			}
+			parameter = method.getName()
+					.substring(prefixLength, prefixLength + 1).toLowerCase()
+					+ method.getName().substring(prefixLength + 1);
+
+			if (!hasAnnotationAndField(Column.class, entity, parameter, method)
+					&& !hasAnnotationAndField(EmbeddedId.class, entity,
+							parameter, method)) {
+				parameter = null;
+			}
+		}
+		return parameter;
+	}
+
+	// /** // XXX delete if not needed
+	// * Tests if the method is a getter of a field representing a column of a
+	// * DB-table and builds a string representing the name of the according
+	// * column.
+	// *
+	// * @param entity
+	// * the target entity.
+	// * @param method
+	// * the method to test
+	// * @return a pair of Strings: first element is the name of the field and
+	// the
+	// * second element is the name of the column in the database. This
+	// * method returns {@code null} if the method is no getter of a
+	// * column.
+	// */
+	// private String getEmbeddedColumnName(Object entity, Method method) {
+	// String column = null;
+	// if ((method.getName().startsWith("get") || method.getName().startsWith(
+	// "is"))
+	// && method.getGenericParameterTypes().length == 0) {
+	// int prefixLength = 3;
+	// if (method.getName().startsWith("is")) {
+	// prefixLength = 2;
+	// }
+	// column = method.getName().substring(prefixLength, prefixLength + 1)
+	// .toLowerCase()
+	// + method.getName().substring(prefixLength + 1);
+	//
+	// column = annotatedNameOfColumn(entity, column, method);
+	// }
+	// return column;
+	// }
+
+	/**
 	 * Extract the field values from the embedded id of an entity and add them
 	 * to the where clause.
 	 * 
+	 * @param idString
+	 *            the name of the embedded id
 	 * @param embeddedId
+	 *            the embedded id as {@link Serializable} object
+	 * @param notNull
+	 *            If set to {@code true} the query fails on a null result. Use
+	 *            constants {@link #QUERY_NOT_NULL} or {@link #QUERY_NULLABLE}.
 	 * @throws NullPointerException
 	 *             if a field contains null.
 	 * @see #getParameters(Object, boolean)
 	 */
-	private void getWhereClauseFromEmbeddedId(Serializable embeddedId) {
+	private void getWhereClauseFromEmbeddedId(String idString,
+			Serializable embeddedId, boolean notNull) {
 		if (!embeddedId.getClass().isAnnotationPresent(Embeddable.class)) {
 			throw new HibernateException("Embedded Id of class "
 					+ embeddedId.getClass().getSimpleName()
@@ -495,23 +628,15 @@ class DBQuery {
 		String parameter;
 		Object value;
 		for (Method m : methods) {
-			if ((m.getName().startsWith("get") || m.getName().startsWith("is"))
-					&& m.getGenericParameterTypes().length == 0) {
-				int prefixLength = 3;
-				if (m.getName().startsWith("is")) {
-					prefixLength = 2;
-				}
-				parameter = m.getName()
-						.substring(prefixLength, prefixLength + 1)
-						.toLowerCase()
-						+ m.getName().substring(prefixLength + 1);
+			if ((parameter = getColumnName(embeddedId, m)) != null) {
 				try {
 					if ((value = m.invoke(embeddedId, (Object[]) null)) != null) {
-						this.addWhereParameter(parameter + " =", parameter, "",
-								value);
-					} else {
+						this.addWhereParameter(idString + "." + parameter
+								+ " =", parameter, "", value);
+					} else if (notNull) {
 						throw new NullPointerException(
-								"Forbidden null value in embedded id detected.");
+								"Forbidden null value in embedded id "
+										+ idString + " detected.");
 					}
 				} catch (ReflectiveOperationException e) {
 					throw new HibernateException(e);
@@ -545,6 +670,7 @@ class DBQuery {
 					+ targetEntity.getClass().getSimpleName()
 					+ " must be serializable");
 		}
+		// System.out.println("key: " + key + "(" + value + ")");// XXX
 		return key;
 	}
 
@@ -598,16 +724,20 @@ class DBQuery {
 	 */
 	Serializable insertOrUpdate(Object targetEntity, boolean forceNull) {
 		Serializable key = getParameters(targetEntity, forceNull);
-		if (!this.parameters.isEmpty()) {
-			if ((key = getKey(targetEntity, QUERY_NULLABLE)) != null) {
+		// System.err.println("ins/upd key before: " + key);// XXX
+		//
+		// key = getKey(targetEntity, QUERY_NULLABLE);// XXX
+		// System.err.println("ins/upd key: " + key);// XXX
+		if ((key = getKey(targetEntity, QUERY_NULLABLE)) != null) {
+			if (!this.parameters.isEmpty()) {
 				if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
 					throw new HibernateException(
 							"failed to update entity with key" + key);
 				}
-
-			} else {
-				key = insert(targetEntity);
 			}
+		} else {
+			key = insert(targetEntity);
+
 		}
 		return key;
 	}
@@ -689,8 +819,7 @@ class DBQuery {
 							"DB_NO_DELETE flag detected but no disable strategy available for "
 									+ targetEntity.getClass().getSimpleName(),
 							cause);
-				}
-				if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
+				} else if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
 					throw new HibernateException(
 							"failed to update entity with key" + key.toString());
 				}
@@ -702,8 +831,7 @@ class DBQuery {
 										+ key.toString());
 					}
 					key = null;
-				}
-				if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
+				} else if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
 					throw new HibernateException(
 							"failed to update entity with key" + key.toString());
 				}
@@ -1038,4 +1166,25 @@ class DBQuery {
 		this.selectParameters = new ArrayList<Pair<String, Object>>();
 		this.initialized = false;
 	}
+
+	/**
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("DBQuery [session=");
+		builder.append(this.session);
+		builder.append(", initialized=");
+		builder.append(this.initialized);
+		builder.append(", parameters=");
+		builder.append(this.parameters);
+		builder.append(", whereParameters=");
+		builder.append(this.whereParameters);
+		builder.append(", selectParameters=");
+		builder.append(this.selectParameters);
+		builder.append("]");
+		return builder.toString();
+	}
+
 }
