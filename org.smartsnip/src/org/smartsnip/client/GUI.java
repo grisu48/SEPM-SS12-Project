@@ -93,6 +93,8 @@ public class GUI {
 
 	public void showSearchPage() {
 
+		dataPanel.clear();
+		
 		myResultArea = new ResultArea();
 		mySortArea = new SortArea();
 		myCatArea = new CatArea();
@@ -202,6 +204,8 @@ public class GUI {
 
 	public void updateSearchPage(XSearch result, String status) {
 
+		showSearchPage();
+		
 		if (result != null) {
 			mySortArea.update(status);
 			myResultArea.update(result.snippets);
