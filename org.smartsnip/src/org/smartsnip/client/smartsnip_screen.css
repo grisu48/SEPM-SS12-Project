@@ -25,7 +25,7 @@ h1 {
 }
 
 a:link {text-decoration: none;}
-a:visited {text-decoration: none;}
+a:visited {text-decoration: none;color:white;}
 a:active {text-decoration: none;}
 a:hover {text-decoration: underline; color:white;}
 

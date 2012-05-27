@@ -4,6 +4,11 @@ import org.smartsnip.shared.XSearch;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -32,18 +37,31 @@ public class SearchArea extends Composite {
 		   oracle.add("Quicksort");
 		   oracle.add("Smartsnip");
 		searchSnippet = new SuggestBox(oracle);
+		searchSnippet.addKeyDownHandler(new KeyDownHandler() {
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if(KeyCodes.KEY_ENTER == event.getNativeKeyCode()) {
+					fireSearch();
+			      }
+			}
+			});
+
+		
+		
+		
+		
 		searchButton = new Button("Search Snippet");
 		searchButton.addStyleName("searchButton");
 		searchButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Control control = Control.getInstance();
-				searchDuration = System.currentTimeMillis();
-				control.search(searchSnippet.getText(), null, null,
-						XSearch.SearchSorting.highestRated, 0, 10,
-						SearchArea.this);
+				fireSearch();
 			}
 		});
+		
+
+		
+		
 		horPanel.add(searchSnippet);
 		horPanel.add(searchButton);
 
@@ -52,6 +70,24 @@ public class SearchArea extends Composite {
 		setStyleName("searchArea");
 	}
 
+	
+	
+	
+	public void fireSearch() {
+		Control control = Control.getInstance();
+		searchDuration = System.currentTimeMillis();
+		control.search(searchSnippet.getText(), null, null,
+				XSearch.SearchSorting.highestRated, 0, 10,
+				SearchArea.this); 
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Callback if the search failed with an exception
 	 * 
