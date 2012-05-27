@@ -1,20 +1,12 @@
 package org.smartsnip.client;
 
-import java.util.Set;
 
-import org.smartsnip.shared.ISnippet;
+
+
 import org.smartsnip.shared.XSnippet;
-
 import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+
 
 public class ShortSnipCell extends AbstractCell<XSnippet> {
 

@@ -6,13 +6,8 @@ import java.util.List;
 
 import org.smartsnip.shared.XCategory;
 import org.smartsnip.shared.XComment;
-import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSnippet;
-
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.view.client.SelectionChangeEvent;
