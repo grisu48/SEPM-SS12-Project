@@ -7,6 +7,7 @@ import org.smartsnip.shared.ISessionAsync;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSnippet;
+import org.smartsnip.shared.XUser;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Cookies;
@@ -26,7 +27,7 @@ import com.google.gwt.user.client.ui.TextArea;
  */
 public class Control implements EntryPoint {
 
-	String username = "Guest";
+	private XUser user = new XUser("Guest", "noreal", "nomail");
 	private boolean loggedIn = false;
 
 	private static Control instance = null;
@@ -64,6 +65,7 @@ public class Control implements EntryPoint {
 					return;
 				}
 				Cookies.setCookie(COOKIE_SESSION, cookie);
+				
 			}
 		});
 		myGUI.getReady();
@@ -202,33 +204,24 @@ public class Control implements EntryPoint {
 	}
 
 	public String getUsername() {
-		refresh();
-		return username;
+		return user.username;
+	}
+	
+	public String getUserMail() {
+		return user.email;
 	}
 
 	public boolean isLoggedIn() {
-		refresh();
 		return loggedIn;
 	}
 
-	private void refresh() {
-		session.getUsername(new AsyncCallback<String>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				handleException("Error while refreshing the username", caught);
-			}
-
-			@Override
-			public void onSuccess(String result) {
-				if (result == null)
-					result = "";
-				if (result.isEmpty())
-					result = "Guest";
-				username = result;
-				myGUI.myMeta.refresh();
-			}
-		});
+	
+	
+	
+	
+	public void refresh() {
+		
+		
 		session.isLoggedIn(new AsyncCallback<Boolean>() {
 
 			@Override
@@ -239,10 +232,41 @@ public class Control implements EntryPoint {
 			@Override
 			public void onSuccess(Boolean result) {
 				loggedIn = result;
+				myGUI.myMeta.update();
 			}
 		});
+		
+		
+		
+		session.getUser(user.username, new AsyncCallback<XUser>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handleException("Error while refreshing the user", caught);
+				
+			}
+
+			@Override
+			public void onSuccess(XUser result) {
+				if (result == null)
+					user.username = "Guest";
+				if (result.username.isEmpty())
+					user.username = "Guest";
+				else
+				user.username = result.username;
+				user.email = result.email;
+				user.realname = result.realname;
+				
+				myGUI.myMeta.update();
+				
+			}
+		});
+				
+		
 	}
 
+	
+	
 	private void handleException(String message, Throwable cause) {
 		// TODO Write me!
 	}
@@ -258,6 +282,8 @@ public class Control implements EntryPoint {
 			@Override
 			public void onSuccess(Void result) {
 				refresh();
+				myGUI.myMeta.update();
+				myGUI.showSearchPage();
 			}
 		});
 

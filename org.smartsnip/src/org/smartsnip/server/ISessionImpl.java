@@ -13,6 +13,7 @@ import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSearch.SearchSorting;
 import org.smartsnip.shared.XSnippet;
+import org.smartsnip.shared.XUser;
 
 /**
  * This class acts as the servlet that coordiantes the transactions between the
@@ -177,5 +178,17 @@ public class ISessionImpl extends SessionServlet implements ISession {
 		result.totalresults = search.getTotalResults();
 
 		return result;
+	}
+
+	@Override
+	public XUser getUser(String username) {
+		
+		Session session = getSession();
+		if (!session.isLoggedIn())
+			return null;
+
+		XUser user = new XUser(session.getUsername(), session.getRealname(), session.getMail());
+		
+		return user;
 	}
 }

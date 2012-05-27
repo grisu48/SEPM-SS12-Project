@@ -26,6 +26,7 @@ public class Meta extends Composite {
 
 		metaControl = new HorizontalPanel();
 		metaPanel = new HorizontalPanel();
+		
 		user = new Anchor(Control.getInstance().getUsername());
 		user.addClickHandler(new ClickHandler() {
 			@Override
@@ -90,25 +91,28 @@ public class Meta extends Composite {
 
 		// Give the overall composite a style name.
 		setStyleName("meta");
-		refresh();
+		update();
 	}
 
-	public void refresh() {
-		user.setText(Control.getInstance().username);
-		// XXX Use session.isloggedin instant of check if username is guest
-		if (user.getText().equalsIgnoreCase("Guest")) {
-			login.setVisible(true);
-			register.setVisible(true);
-			user.setVisible(false);
-			logout.setVisible(false);
-			btCreateSnippet.setVisible(false);
-		} else {
+	public void update() {
+		
+		user.setText(Control.getInstance().getUsername());
+		Control control = Control.getInstance();
+		
+		if (control.isLoggedIn()) {
 			user.setVisible(true);
 			login.setVisible(false);
 			register.setVisible(false);
 			logout.setVisible(true);
 			btCreateSnippet.setVisible(true);
+		} else {
+			login.setVisible(true);
+			register.setVisible(true);
+			user.setVisible(false);
+			logout.setVisible(false);
+			btCreateSnippet.setVisible(false);
 		}
+		
 
 	}
 

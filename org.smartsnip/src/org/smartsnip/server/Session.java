@@ -684,4 +684,16 @@ public class Session {
 	public int hashCode() {
 		return cookie.hashCode();
 	}
+
+	public String getRealname() {
+		if (!isLoggedIn())
+			return "realname guest";
+		return user.getRealName();
+	}
+
+	public String getMail() {
+		if (!isLoggedIn())
+			return "mail guest";
+		return user.getEmail();
+	}
 }

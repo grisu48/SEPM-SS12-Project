@@ -6,6 +6,10 @@ public class XUser implements IsSerializable {
 	public String username;
 	public String realname;
 	public String email;
+	
+	public XUser() {
+		
+	}
 
 	public XUser(String username, String realname, String email) {
 		this.username = username;

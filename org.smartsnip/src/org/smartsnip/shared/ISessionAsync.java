@@ -36,4 +36,6 @@ public interface ISessionAsync {
 			AsyncCallback<Boolean> callback);
 
 	void getSessionCookie(AsyncCallback<String> callback);
+
+	public void getUser(String username, AsyncCallback<XUser> callback);
 }

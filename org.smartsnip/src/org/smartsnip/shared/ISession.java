@@ -143,5 +143,7 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @return Gets the cookie value for this session
 	 */
 	public String getSessionCookie();
+	
+	public XUser getUser(String username);
 
 }
