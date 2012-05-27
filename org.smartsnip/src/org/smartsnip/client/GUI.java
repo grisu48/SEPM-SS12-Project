@@ -84,6 +84,7 @@ public class GUI {
 	public void createBasicPage() {
 
 		// Fill userPanel
+		myMeta = new Meta();
 		userPanel.add(myMeta);
 
 		// Fill searchPanel

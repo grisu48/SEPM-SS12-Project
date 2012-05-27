@@ -167,7 +167,7 @@ footer .gwt-Label, .gwt-Anchor {
 	height:30px;
 	padding:10px;
 	margin: 20px 0px 0px 350px;
-	font-size:180%;
+	font-size:150%;
 }
 
 .gwt-SuggestBoxPopup { 
@@ -216,8 +216,11 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 
-.searchButton {;
+.searchButton {
+	
+	padding:13px;
 	margin: 20px 0px 0px 20px;
+	font-size:150%;
 }
 
 .gwt-TextBox {
