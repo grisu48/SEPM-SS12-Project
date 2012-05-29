@@ -5,10 +5,12 @@
 
 
 <hibernate-configuration>
-<!--         xmlns="http://www.hibernate.org/xsd/hibernate-configuration"
+<!-- 
+        xmlns="http://www.hibernate.org/xsd/hibernate-configuration"
         xsi:schemaLocation="http://www.hibernate.org/xsd/hibernate-configuration hibernate-configuration-4.0.xsd"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
- -->  <session-factory>
+ -->
+  <session-factory>
     <!-- Database connection settings -->
     <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
     <property name="connection.url">jdbc:mysql://localhost:3306/smartsnip</property>
@@ -41,6 +43,8 @@
     <!-- property name="hbm2ddl.auto">update</property -->
     <!-- mapping resource="org/hibernate/tutorial/domain/Event.hbm.xml"/ -->
     
-    <!-- mapping class="org.smartsnip.persistence.DBTag"/ -->
+    <!-- Switch off javax bean validator - doesn't work with GWT -->
+    <property name="javax.persistence.validation.mode">none</property>
+    
   </session-factory>
 </hibernate-configuration>
