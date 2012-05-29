@@ -188,11 +188,12 @@ public class SnippetFactory {
 
 			DBCode entity = new DBCode();
 			// codeId is read-only
-			entity.setSnippetId(code.getHashID());
+			entity.setSnippetId(code.getSnippet().getHashId());
 			entity.setLanguage(code.getLanguage());
 			entity.setFile(code.getCode());
 			entity.setVersion(code.getVersion());
-
+			
+			System.out.println("Snippet of Code: "+ entity.getSnippetId());//XXX
 			result = (Long) query.write(entity, flags);
 			tx.commit();
 		} catch (RuntimeException e) {
