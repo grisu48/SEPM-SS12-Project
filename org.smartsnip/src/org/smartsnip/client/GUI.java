@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+
 public class GUI {
 
 	static final List<String> TESTTAGS = Arrays.asList("Tag1", "Tag2", "Tag3",
@@ -47,6 +48,7 @@ public class GUI {
 	CommentArea myCommentArea = null;
 	Meta myMeta = null;
 	Footer myFooter = null;
+	SnipArea mySnipArea = null;
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -131,8 +133,8 @@ public class GUI {
 
 	public void showSnipPage(XSnippet snip) {
 		dataPanel.clear();
-		SnipArea mySnipArea = new SnipArea(snip);
-		CommentArea myCommentArea = new CommentArea(snip);
+		mySnipArea = new SnipArea(snip);
+		myCommentArea = new CommentArea(snip);
 		dataPanel.add(mySnipArea);
 		dataPanel.add(myCommentArea);
 	}
@@ -273,7 +275,7 @@ public class GUI {
 		// TODO CSS Style
 		ppnlSnippet.setStyleName("contactForm");
 		ppnlSnippet.setTitle("Create snippet");
-		CreateSnippet newSnippet = new CreateSnippet(ppnlSnippet);
+		CreateSnippet newSnippet = new CreateSnippet(ppnlSnippet, "Create snippet");
 		ppnlSnippet.setWidget(newSnippet);
 		ppnlSnippet.setGlassEnabled(true);
 		ppnlSnippet.setPopupPosition(110, 100);
@@ -281,8 +283,15 @@ public class GUI {
 		ppnlSnippet.show();
 
 	}
+	
+
+	
+
+	
 
 	public void startSearch() {
 		mySortArea.update("Searching ... ");
 	}
+
+	
 }

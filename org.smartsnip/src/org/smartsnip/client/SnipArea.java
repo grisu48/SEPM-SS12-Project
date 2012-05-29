@@ -6,6 +6,7 @@ import org.smartsnip.shared.XSnippet;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -16,21 +17,21 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 
+
 public class SnipArea extends Composite {
 
 	private VerticalPanel vertPanel;
 	private HorizontalPanel horPanel;
 	private ScrollPanel scrPanel;
 	private Grid properties;
-	private Label title;
-	private Label description;
-	private Label language;
-	private Label license;
+	private EditableLabel title;
+	private EditableLabel description;
+	private EditableLabel language;
+	private EditableLabel license;
 	private HTMLPanel snipFull;
 	private Button btnFav;
-	private Button edit;
 	private Button btnRate;
-	
+
 	
 	SnipArea(final XSnippet mySnip) {
 	
@@ -38,10 +39,10 @@ public class SnipArea extends Composite {
 		horPanel = new HorizontalPanel();
 		scrPanel = new ScrollPanel();
 		properties = new Grid(4,1);
-		title = new Label("titel");
-		description = new Label(mySnip.description);
-		language = new Label(mySnip.language);
-		license = new Label(mySnip.license);
+		title = new EditableLabel("titel");
+		description = new EditableLabel(mySnip.description);
+		language = new EditableLabel(mySnip.language);
+		license = new EditableLabel(mySnip.license);
 		snipFull = new HTMLPanel(mySnip.codeHTML);
 		
 		properties.setWidget(0, 0, title );
@@ -75,8 +76,10 @@ public class SnipArea extends Composite {
 
 		
 		
+	
 		
-		edit = new Button("Edit");
+		
+		
 		
 		vertPanel.add(properties);
 		vertPanel.add(scrPanel);
@@ -84,12 +87,16 @@ public class SnipArea extends Composite {
 		scrPanel.add(snipFull);
 		horPanel.add(btnRate);
 		horPanel.add(btnFav);
-		horPanel.add(edit);
 
 		
 		initWidget(vertPanel);
 	    // Give the overall composite a style name.
 	    setStyleName("snipArea");
+	}
+
+
+	public void update() {
+		//if necessary
 	}
 	
 }

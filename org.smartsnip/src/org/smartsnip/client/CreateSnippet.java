@@ -38,7 +38,7 @@ public class CreateSnippet extends Composite {
 	private final Button btCreate;
 	private final Button btCancel;
 
-	public CreateSnippet(PopupPanel parent) {
+	public CreateSnippet(PopupPanel parent, String buttonname) {
 		this.parent = parent;
 
 		pnlRootPanel = new VerticalPanel();
@@ -56,7 +56,7 @@ public class CreateSnippet extends Composite {
 		txtCode = new TextArea();
 		txtLanguage = new TextBox();
 
-		btCreate = new Button("Create snippet");
+		btCreate = new Button(buttonname);
 		btCreate.addClickHandler(new ClickHandler() {
 
 			@Override

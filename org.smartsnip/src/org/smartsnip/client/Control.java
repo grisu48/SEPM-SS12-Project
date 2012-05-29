@@ -117,7 +117,7 @@ public class Control implements EntryPoint {
 			break;
 		case 'n':
 			myGUI.showCreateSnippetForm();
-			break;
+			break;	
 		default:
 		}
 	}
@@ -292,6 +292,7 @@ public class Control implements EntryPoint {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Comment written successfully");
+				myGUI.myCommentArea.update();
 			}
 		});
 	}
@@ -309,6 +310,7 @@ public class Control implements EntryPoint {
 			@Override
 			public void onSuccess(Void result) {
 				System.out.println("Snippet rated successfully");
+				myGUI.mySnipArea.update();
 			}
 		});
 	}
@@ -336,6 +338,14 @@ public class Control implements EntryPoint {
 				System.out.println("Snippet added to favorites");
 			}
 		});
+	}
+
+	public void changeSnippet(XSnippet snip) {
+		// XXX 
+		//Das veränderte XSnippet soll in die Datenbank geschrieben werden.
+		//ÜBer ISnippet?
+		//Ist dies geschehen -> mySnipArea.update();
+		
 	}
 
 }
