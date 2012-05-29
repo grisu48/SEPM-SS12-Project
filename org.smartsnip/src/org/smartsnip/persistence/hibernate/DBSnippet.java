@@ -14,6 +14,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
+
 /**
  * Database OR mapping class for table Snippet
  * 
@@ -21,6 +28,7 @@ import javax.persistence.TemporalType;
  * 
  */
 @Entity
+@Indexed
 //TODO update hibernate see issue HHH-7074
 //"the replacement annotations of @Entity are not working"
 @SuppressWarnings("deprecation")
@@ -30,14 +38,17 @@ import javax.persistence.TemporalType;
 public class DBSnippet {
 
 	@Id
+	@DocumentId
 	@GeneratedValue
 	@Column(name = "snippet_id", insertable = false, updatable = false)
 	private Long snippetId;
 
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	@Column(name = "headline", length = 255)
 	private String headline;
 
 	@Lob
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	@Column(name = "description")
 	private String description;
 

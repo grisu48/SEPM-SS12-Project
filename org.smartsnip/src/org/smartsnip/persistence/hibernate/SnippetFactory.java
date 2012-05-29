@@ -13,6 +13,9 @@ import java.util.TreeSet;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
 import org.smartsnip.core.Snippet;
@@ -193,7 +196,6 @@ public class SnippetFactory {
 			entity.setFile(code.getCode());
 			entity.setVersion(code.getVersion());
 			
-			System.out.println("Snippet of Code: "+ entity.getSnippetId());//XXX
 			result = (Long) query.write(entity, flags);
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -952,6 +954,32 @@ public class SnippetFactory {
 	static List<Snippet> search(String searchString, Integer start,
 			Integer count) throws IOException {
 		// TODO Auto-generated method stub
+//		FullTextSession fullTextSession = Search.getFullTextSession(session);
+//		Transaction tx = fullTextSession.beginTransaction();
+//
+//		// create native Lucene query unsing the query DSL
+//		// alternatively you can write the Lucene query using the Lucene query parser
+//		// or the Lucene programmatic API. The Hibernate Search DSL is recommended though
+//		QueryBuilder qb = fullTextSession.getSearchFactory()
+//		    .buildQueryBuilder().forEntity( Book.class ).get();
+//		org.apache.lucene.search.Query query = qb
+//		  .keyword()
+//		  .onFields("headline", "description")
+//		  .matching(searchString);
+//		  .createQuery();
+//
+//		// wrap Lucene query in a org.hibernate.Query
+//		org.hibernate.Query hibQuery = 
+//		    fullTextSession.createFullTextQuery(query, Book.class);
+//
+//		// execute search
+//		List result = hibQuery.list();
+//		  
+//		tx.commit();
+//		session.close();
+		
+		
+		
 		return null;
 	}
 

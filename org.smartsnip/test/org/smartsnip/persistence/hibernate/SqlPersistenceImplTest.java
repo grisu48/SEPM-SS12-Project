@@ -17,6 +17,9 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.hibernate.Session;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -44,7 +47,8 @@ public class SqlPersistenceImplTest {
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	public static void setUpBeforeClass() throws Exception {	
+		// get a bean validator instance
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
 		
@@ -54,6 +58,12 @@ public class SqlPersistenceImplTest {
 			throw new InitializationError("persistence type not PERSIST_SQL_DB");
 		}
 		helper = new SqlPersistenceHelper();
+
+		// Build Index for Hibernate Search
+		Session session = DBSessionFactory.open();
+		FullTextSession fullTextSession = Search.getFullTextSession(session);
+		fullTextSession.createIndexer().startAndWait();
+		DBSessionFactory.close(session);
 	}
 
 	/**

@@ -46,5 +46,11 @@
     <!-- Switch off javax bean validator - doesn't work with GWT -->
     <property name="javax.persistence.validation.mode">none</property>
     
+    <!-- Hibernate Search -->
+    <!-- org.hibernate.search.store.FSDirectoryProvider -->
+    <!-- org.hibernate.search.store.RAMDirectoryProvider for test -->
+    <property name="hibernate.search.default.directory_provider">filesystem</property>
+    <property name="hibernate.search.default.indexBase">/tmp/lucene/indexes</property>
+    
   </session-factory>
 </hibernate-configuration>

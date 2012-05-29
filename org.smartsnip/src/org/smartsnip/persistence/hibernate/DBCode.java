@@ -26,7 +26,7 @@ public class DBCode {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "code_id")
+	@Column(name = "code_id", insertable = false, updatable = false)
 	private Long codeId;
 
 //	@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
