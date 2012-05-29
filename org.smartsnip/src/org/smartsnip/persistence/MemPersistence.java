@@ -591,7 +591,7 @@ public class MemPersistence implements IPersistence {
 				results.remove(0);
 		}
 
-		while (results.size() > max)
+		while (results.size() > max && results.size() > 0)
 			results.remove(results.size() - 1);
 
 		return results;
