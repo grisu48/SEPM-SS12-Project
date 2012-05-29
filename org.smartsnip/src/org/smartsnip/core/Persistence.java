@@ -27,12 +27,12 @@ public class Persistence {
 	 */
 	public static void initialize() throws IllegalAccessException {
 		// XXX MEMORY ONLY MODE CURRENTLY ENABLED!!
-		initialize(true);
+		initialize(false);
 	}
 
 	public synchronized static void initialize(boolean memOnly)
 			throws IllegalAccessException {
-		initialize(memOnly, true);
+		initialize(memOnly, false);
 	}
 
 	/**
