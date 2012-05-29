@@ -348,4 +348,17 @@ public class Control implements EntryPoint {
 		
 	}
 
+	public void setPassword(String pw1, String pw2) {
+		if (pw1.equals(pw2)) {
+			
+			myGUI.myPersonalArea.update(true);
+		}
+		else {
+			myGUI.myPersonalArea.update(false);
+		}
+		
+		// XXX
+		
+	}
+
 }

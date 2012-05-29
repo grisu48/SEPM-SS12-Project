@@ -49,6 +49,8 @@ public class GUI {
 	Meta myMeta = null;
 	Footer myFooter = null;
 	SnipArea mySnipArea = null;
+	PersonalArea myPersonalArea = null;
+	
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -141,7 +143,7 @@ public class GUI {
 
 	public void showPersonalPage() {
 		dataPanel.clear();
-		PersonalArea myPersonalArea = new PersonalArea();
+		myPersonalArea = new PersonalArea();
 		VerticalPanel vertPanel = new VerticalPanel();
 		dataPanel.add(myPersonalArea);
 		dataPanel.add(vertPanel);

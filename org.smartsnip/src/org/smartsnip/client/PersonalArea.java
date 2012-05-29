@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 public class PersonalArea extends Composite {
 
 	private HorizontalPanel horPanel;
-	private PersonalField pfData;
+	private PersonalField myPersonalField;
 	private ResultArea raOwn;
 	private ResultArea raFav;
 	
@@ -15,7 +15,7 @@ public class PersonalArea extends Composite {
 	public PersonalArea() {
 
 		horPanel = new HorizontalPanel();
-		pfData = new PersonalField();
+		myPersonalField = new PersonalField();
 		raOwn = new ResultArea();
 		raOwn.setWidth("400px");
 		raFav = new ResultArea();
@@ -23,7 +23,7 @@ public class PersonalArea extends Composite {
 		
 		
 	
-		horPanel.add(pfData);
+		horPanel.add(myPersonalField);
 		horPanel.add(raOwn);
 		horPanel.add(raFav);
 
@@ -31,6 +31,10 @@ public class PersonalArea extends Composite {
 		// Give the overall composite a style name.
 		setStyleName("personalArea");
 
+	}
+	
+	public void update(boolean worked) {
+		myPersonalField.update(worked);
 	}
 
 }
