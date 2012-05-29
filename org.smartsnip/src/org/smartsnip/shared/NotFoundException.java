@@ -13,7 +13,11 @@ public class NotFoundException extends RuntimeException implements
 	/**
 	 * Serialisation ID
 	 */
-	private static final long serialVersionUID = 4931908122999323471L;
+	private static final long serialVersionUID = -8211568975962922119L;
+
+	public NotFoundException() {
+		super();
+	}
 
 	public NotFoundException(String message) {
 		super(message);

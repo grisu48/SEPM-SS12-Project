@@ -246,17 +246,14 @@ public class GUI {
 	}
 
 	public void updateSearchPage(XSearch result, String status) {
+		showSearchPage();
 
+		mySortArea.update(status);
 		if (result != null) {
-			mySortArea.update(status);
 			myResultArea.update(result.snippets);
 			myCatArea.update(result.categories);
 			myTagArea.update(result.tagsAppearingInSearchString);
-		} else {
-			mySortArea.update(status);
 		}
-
-		showSearchPage();
 	}
 
 	public void showContactForm() {
@@ -283,5 +280,9 @@ public class GUI {
 		ppnlSnippet.setWidth("340px");
 		ppnlSnippet.show();
 
+	}
+
+	public void startSearch() {
+		mySortArea.update("Searching ... ");
 	}
 }

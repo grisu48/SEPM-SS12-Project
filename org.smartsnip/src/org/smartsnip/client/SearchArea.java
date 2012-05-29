@@ -47,6 +47,7 @@ public class SearchArea extends Composite {
 		searchButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+
 				fireSearch();
 			}
 		});

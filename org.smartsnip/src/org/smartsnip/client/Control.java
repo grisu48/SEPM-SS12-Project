@@ -29,14 +29,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class Control implements EntryPoint {
 
-	private XUser user = new XUser("Guest", "noreal", "nomail");
+	private final XUser user = new XUser("Guest", "noreal", "nomail");
 	private boolean loggedIn = false;
 
 	private static Control instance = null;
 	private final static String COOKIE_SESSION = ISession.cookie_Session_ID;
 	private final static ISessionAsync session = ISession.Util.getInstance();
 
-	private final static GUI myGUI = new GUI();
+	public final static GUI myGUI = new GUI();
 
 	private Control() {
 	}
@@ -183,6 +183,8 @@ public class Control implements EntryPoint {
 	public void search(String searchString, List<String> tags,
 			List<String> categories, XSearch.SearchSorting sorting, int start,
 			int count, final SearchArea searchArea) {
+
+		myGUI.startSearch();
 		session.doSearch(searchString, tags, categories, sorting, start, count,
 				new AsyncCallback<XSearch>() {
 
@@ -289,7 +291,7 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onSuccess(Void result) {
-				// Ignore this
+				System.out.println("Comment written successfully");
 			}
 		});
 	}
@@ -306,7 +308,7 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onSuccess(Void result) {
-				// Ignore this
+				System.out.println("Snippet rated successfully");
 			}
 		});
 	}
@@ -331,7 +333,7 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onSuccess(Void result) {
-				// Ignore success
+				System.out.println("Snippet added to favorites");
 			}
 		});
 	}

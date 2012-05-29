@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.core.Category;
+import org.smartsnip.core.Comment;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
@@ -14,15 +15,29 @@ import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
+import com.google.gwt.rpc.client.impl.RemoteException;
+
 public class ISnippetImpl extends SessionServlet implements ISnippet {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = -1493947420774219096L;
 
 	@Override
-	public List<XComment> getComments(long snippet, int start, int count) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<XComment> getComments(long snippet, int start, int count)
+			throws NotFoundException {
+
+		Snippet snip = Snippet.getSnippet(snippet);
+		if (snip == null)
+			throw new NotFoundException("Snippet with id " + snippet
+					+ " not found");
+
+		List<Comment> comments = snip.getComments();
+		List<XComment> result = new ArrayList<XComment>(comments.size());
+
+		for (Comment obj : comments)
+			result.add(obj.toXComment());
+
+		return result;
 	}
 
 	@Override
@@ -87,8 +102,31 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 	}
 
 	@Override
-	public void addComment(long id, String comment) throws NoAccessException {
-		// TODO Auto-generated method stub
+	public void addComment(long id, String comment) throws NoAccessException,
+			NotFoundException {
+		if (comment == null || comment.isEmpty())
+			return;
+
+		Session session = getSession();
+		if (!session.getPolicy().canComment(session))
+			throw new NoAccessException();
+		User user = session.getUser();
+		if (user == null)
+			throw new NoAccessException();
+
+		Snippet snippet = Snippet.getSnippet(id);
+		if (snippet == null)
+			throw new NotFoundException("Snippet with id " + id + " not found");
+
+		try {
+			snippet.addComment(comment, user);
+		} catch (IOException e) {
+			System.err
+					.println("IOException during creating of new comment on snippet "
+							+ id + ": " + e.getMessage());
+			e.printStackTrace(System.err);
+			throw new RemoteException();
+		}
 
 	}
 

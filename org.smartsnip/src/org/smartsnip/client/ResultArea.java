@@ -7,6 +7,7 @@ import java.util.List;
 import org.smartsnip.shared.XCategory;
 import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
+
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -35,22 +36,23 @@ public class ResultArea extends Composite {
 
 		ShortSnipCell myShortSnipCell = new ShortSnipCell();
 		myCellList = new CellList<XSnippet>(myShortSnipCell);
-		
+
 		// Add a selection model to handle user selection.
-	    final SingleSelectionModel<XSnippet> selectionModel = new SingleSelectionModel<XSnippet>();
-	    myCellList.setSelectionModel(selectionModel);
-	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-	      public void onSelectionChange(SelectionChangeEvent event) {
-	        XSnippet selected = selectionModel.getSelectedObject();
-	        if (selected != null) {
-	          Control control = Control.getInstance();
-	          control.changeToSnipPage(selected);
-	        }
-	      }
-	    });
-	    
-	    
-		//myCellList.setRowData(0, TESTLIST);
+		final SingleSelectionModel<XSnippet> selectionModel = new SingleSelectionModel<XSnippet>();
+		myCellList.setSelectionModel(selectionModel);
+		selectionModel
+				.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+					@Override
+					public void onSelectionChange(SelectionChangeEvent event) {
+						XSnippet selected = selectionModel.getSelectedObject();
+						if (selected != null) {
+							Control control = Control.getInstance();
+							control.changeToSnipPage(selected);
+						}
+					}
+				});
+
+		// myCellList.setRowData(0, TESTLIST);
 		myPanel.setHeight("600px");
 		myPanel.add(myCellList);
 		initWidget(myPanel);
@@ -58,10 +60,9 @@ public class ResultArea extends Composite {
 		setStyleName("resultArea");
 	}
 
-	
 	void update(List<XSnippet> snippets) {
-		myCellList.setRowData(0, snippets);
 		myCellList.setRowCount(snippets.size(), true);
+		myCellList.setRowData(0, snippets);
 	}
 
 }

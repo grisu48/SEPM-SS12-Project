@@ -23,6 +23,7 @@ public interface ISnippet extends RemoteService, IsSerializable {
 		public static ISnippetAsync getInstance() {
 			if (instance == null) {
 				instance = GWT.create(ISnippet.class);
+				System.out.println("Snippet proxy created");
 			}
 			return instance;
 		}
@@ -46,7 +47,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @return a list containing at most count number of comments of the snippet
 	 *         or null, if the snippet hash is not found
 	 */
-	public List<XComment> getComments(long snippet, int start, int count);
+	public List<XComment> getComments(long snippet, int start, int count)
+			throws NotFoundException;
 
 	/**
 	 * @param snippet
@@ -151,7 +153,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public void addComment(long id, String comment) throws NoAccessException;
+	public void addComment(long id, String comment) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Adds a snippet that is identified by the id to the favorites
