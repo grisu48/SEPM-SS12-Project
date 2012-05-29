@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -68,14 +70,23 @@ public class SnippetFactory {
 				entity.setLicenseId(dblicense.getLicenseId());
 			}
 			result = (Long) query.write(entity, flags);
-			
-			// allow new tags even if IPersistence.DB_UPDATE_ONLY flag is present
-			// skip existing tags even if IPersistence.DB_NEW_ONLY flag is present
-			TagFactory.pushTags(session, snippet, flags & ~(IPersistence.DB_UPDATE_ONLY | IPersistence.DB_NEW_ONLY));
 
-			// allow new tag-snippet relationships even if IPersistence.DB_UPDATE_ONLY flag is present
-			TagFactory.updateRelTagSnippet(session, result, snippet.getTags(), flags & ~(IPersistence.DB_UPDATE_ONLY));
-			
+			// allow new tags even if IPersistence.DB_UPDATE_ONLY flag is
+			// present
+			// skip existing tags even if IPersistence.DB_NEW_ONLY flag is
+			// present
+			TagFactory
+					.pushTags(
+							session,
+							snippet,
+							flags
+									& ~(IPersistence.DB_UPDATE_ONLY | IPersistence.DB_NEW_ONLY));
+
+			// allow new tag-snippet relationships even if
+			// IPersistence.DB_UPDATE_ONLY flag is present
+			TagFactory.updateRelTagSnippet(session, result, snippet.getTags(),
+					flags & ~(IPersistence.DB_UPDATE_ONLY));
+
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -127,14 +138,24 @@ public class SnippetFactory {
 						DBQuery.QUERY_NULLABLE);
 				entity.setLicenseId(dblicense.getLicenseId());
 
-				snippetId = (Long)query.write(entity, flags);
-				
-				// allow new tags even if IPersistence.DB_UPDATE_ONLY flag is present
-				// skip existing tags even if IPersistence.DB_NEW_ONLY flag is present
-				TagFactory.pushTags(session, snippet, flags & ~(IPersistence.DB_UPDATE_ONLY | IPersistence.DB_NEW_ONLY));
+				snippetId = (Long) query.write(entity, flags);
 
-				// allow new tag-snippet relationships even if IPersistence.DB_UPDATE_ONLY flag is present
-				TagFactory.updateRelTagSnippet(session, snippetId, snippet.getTags(), flags & ~(IPersistence.DB_UPDATE_ONLY));
+				// allow new tags even if IPersistence.DB_UPDATE_ONLY flag is
+				// present
+				// skip existing tags even if IPersistence.DB_NEW_ONLY flag is
+				// present
+				TagFactory
+						.pushTags(
+								session,
+								snippet,
+								flags
+										& ~(IPersistence.DB_UPDATE_ONLY | IPersistence.DB_NEW_ONLY));
+
+				// allow new tag-snippet relationships even if
+				// IPersistence.DB_UPDATE_ONLY flag is present
+				TagFactory.updateRelTagSnippet(session, snippetId,
+						snippet.getTags(), flags
+								& ~(IPersistence.DB_UPDATE_ONLY));
 			}
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -514,7 +535,8 @@ public class SnippetFactory {
 						.getUsername(), entity.getHeadline(), entity
 						.getDescription(),
 						CategoryFactory.fetchCategory(session, entity)
-								.getName(), TagFactory.fetchTags(helper, session, entity.getSnippetId()), null,
+								.getName(), TagFactory.fetchTags(helper,
+								session, entity.getSnippetId()), CommentFactory.fetchCommentIds(session, entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
 				snippet.setCode(fetchNewestCode(helper, session, snippet));
@@ -564,11 +586,14 @@ public class SnippetFactory {
 				snipQuery = new DBQuery(session);
 				snip = snipQuery.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
 
-				snippet = helper.createSnippet(snip.getSnippetId(),
-						snip.getOwner(), snip.getHeadline(),
+				snippet = helper.createSnippet(
+						snip.getSnippetId(),
+						snip.getOwner(),
+						snip.getHeadline(),
 						snip.getDescription(),
 						CategoryFactory.fetchCategory(session, snip).getName(),
-						TagFactory.fetchTags(helper, session, snip.getSnippetId()), null,
+						TagFactory.fetchTags(helper, session,
+								snip.getSnippetId()), CommentFactory.fetchCommentIds(session, snip.getSnippetId()),
 						fetchLicense(helper, session, snip).getShortDescr(),
 						snip.getViewcount());
 				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
@@ -596,8 +621,58 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getSnippets(java.util.List)
 	 */
 	static List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		List<Snippet> result = new ArrayList<Snippet>();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query;
+			DBRelTagSnippet entity;
+			DBSnippet snip;
+			Snippet snippet;
+			Set<Tag> tags = new TreeSet<Tag>(matchingTags);
+			Set<Long> snippetIds = new TreeSet<Long>();
+
+			// fetch all relationships of tags
+			for (Tag tag : tags) {
+				query = new DBQuery(session);
+				entity = new DBRelTagSnippet();
+				entity.setTagSnippetId(null, tag.toString());
+				for (Iterator<DBRelTagSnippet> itr = query.iterate(entity); itr
+						.hasNext();) {
+					snippetIds.add(itr.next().getTagSnippetId().getSnippetId());
+				}
+			}
+
+			for (Long id : snippetIds) {
+				snip = new DBSnippet();
+				snip.setSnippetId(id);
+				query = new DBQuery(session);
+				snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
+
+				snippet = helper.createSnippet(snip.getSnippetId(),
+						snip.getOwner(), snip.getHeadline(),
+						snip.getDescription(),
+						CategoryFactory.fetchCategory(session, snip).getName(),
+						TagFactory.fetchTags(helper, session, id),
+						CommentFactory.fetchCommentIds(session, id),
+						fetchLicense(helper, session, snip).getShortDescr(),
+						snip.getViewcount());
+				snippet.setCode(fetchNewestCode(helper, session, snippet));
+				result.add(snippet);
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -643,7 +718,8 @@ public class SnippetFactory {
 						.getOwner(), entity.getHeadline(), entity
 						.getDescription(),
 						CategoryFactory.fetchCategory(session, entity)
-								.getName(), TagFactory.fetchTags(helper, session, entity.getSnippetId()), null,
+								.getName(), TagFactory.fetchTags(helper,
+								session, entity.getSnippetId()), CommentFactory.fetchCommentIds(session, entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
 				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
@@ -683,13 +759,14 @@ public class SnippetFactory {
 			entity.setSnippetId(id);
 			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 
-			result = helper.createSnippet(entity.getSnippetId(),
-					entity.getOwner(), entity.getHeadline(),
-					entity.getDescription(),
-					CategoryFactory.fetchCategory(session, entity).getName(),
-					TagFactory.fetchTags(helper, session, entity.getSnippetId()), null,
-					fetchLicense(helper, session, entity).getShortDescr(),
-					entity.getViewcount());
+			result = helper
+					.createSnippet(entity.getSnippetId(), entity.getOwner(),
+							entity.getHeadline(), entity.getDescription(),
+							CategoryFactory.fetchCategory(session, entity)
+									.getName(), TagFactory.fetchTags(helper,
+									session, entity.getSnippetId()), CommentFactory.fetchCommentIds(session, entity.getSnippetId()),
+							fetchLicense(helper, session, entity)
+									.getShortDescr(), entity.getViewcount());
 			result.setCodeWithoutWriting(fetchNewestCode(helper, session,
 					result));
 
@@ -874,7 +951,6 @@ public class SnippetFactory {
 	static List<Snippet> search(String searchString, Integer start,
 			Integer count) throws IOException {
 		// TODO Auto-generated method stub
-		// null: Snippet.category.parent, Snippet.comments, Snippet.owner
 		return null;
 	}
 

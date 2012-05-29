@@ -424,9 +424,37 @@ public class UserFactory {
 	 *      java.lang.String)
 	 */
 	static boolean verifyPassword(User user, String password)
-			throws IOException, UnsupportedOperationException {
-		// TODO Auto-generated method stub
-		return false;
+			throws IOException {
+		boolean result = false;
+		Session session = DBSessionFactory.open();
+		DBLogin entity;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			entity = new DBLogin();
+			if (user == null || user.getUsername() == null) {
+				throw new IOException("empty username is invalid");
+			}
+			entity.setUser(user.getUsername());
+			if (password != null && !password.isEmpty()) {
+				entity.setPassword(password);
+				Boolean granted = (Boolean)query.selectSingle(entity, "grantLogin", DBQuery.QUERY_NULLABLE);
+				if (granted != null) {
+					result = granted;
+				}
+			}
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -434,11 +462,37 @@ public class UserFactory {
 	 * 
 	 * @param user
 	 * @return true if grantLogin flag is set
+	 * @throws IOException 
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#isLoginGranted(User)
 	 */
-	static boolean isLoginGranted(User user) {
-		// TODO Auto-generated method stub
-		return false;
+	static boolean isLoginGranted(User user) throws IOException {
+		boolean result = false;
+		Session session = DBSessionFactory.open();
+		DBLogin entity;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			entity = new DBLogin();
+			if (user == null || user.getUsername() == null) {
+				throw new IOException("empty username is invalid");
+			}
+			entity.setUser(user.getUsername());
+			Boolean granted = (Boolean)query.selectSingle(entity, "grantLogin", DBQuery.QUERY_NULLABLE);
+			if (granted != null) {
+				result = granted;
+			}
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -451,7 +505,6 @@ public class UserFactory {
 	 */
 	static List<User> findUser(String realName) throws IOException {
 		// TODO Auto-generated method stub
-		// favourites = null
 		return null;
 	}
 
@@ -498,11 +551,14 @@ public class UserFactory {
 					snip = new DBQuery(session).fromSingle(snip,
 							DBQuery.QUERY_NOT_NULL);
 
-					snippet = helper.createSnippet(entity.getSnippetId(), entity.getUserName(),
-							snip.getHeadline(), snip.getDescription(),
-							CategoryFactory
+					snippet = helper.createSnippet(entity.getSnippetId(),
+							entity.getUserName(), snip.getHeadline(), snip
+									.getDescription(), CategoryFactory
 									.fetchCategory(session, snip).getName(),
-							TagFactory.fetchTags(helper, session, snip.getSnippetId()), null,
+							TagFactory.fetchTags(helper, session,
+									snip.getSnippetId()), CommentFactory
+									.fetchCommentIds(session,
+											snip.getSnippetId()),
 							SnippetFactory.fetchLicense(helper, session, snip)
 									.getShortDescr(), snip.getViewcount());
 					snippet.setCode(SnippetFactory.fetchNewestCode(helper,

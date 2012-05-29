@@ -233,7 +233,7 @@ public class TagFactory {
 	}
 
 	/**
-	 * Helper method to fetch all tags from a snippet.
+	 * Helper method to fetch all tags of a snippet.
 	 * 
 	 * @param helper
 	 *            the PersisteceHelper object to create the tags
@@ -284,25 +284,17 @@ public class TagFactory {
 			DBRelTagSnippet entity = new DBRelTagSnippet();
 			entity.setTagSnippetId(snippetId, null);
 			List<DBRelTagSnippet> oldTags = query.from(entity);
-			System.err.println("old tags: " + oldTags);// XXX
 
 			for (Tag tag : tags) {
 				query = new DBQuery(session);
 				entity = new DBRelTagSnippet();
 				entity.setTagSnippetId(snippetId, tag.toString());
-				System.out.println("tag removed: " + oldTags.remove(entity)
-						+ ", " + entity); // FIXME equals?
-				System.err.println("DBRelTagSnippet: "
-						+ entity.getTagSnippetId() + ", "
-						+ entity.getTagSnippetId().getTagName() + ", "
-						+ entity.getTagSnippetId().getSnippetId());// XXX
 				query.write(entity, flags);
 			}
 			for (DBRelTagSnippet dbTag: oldTags){
 				query = new DBQuery(session);
 				query.remove(dbTag, flags);
 			}
-			System.err.println("remaining: " + oldTags);// XXX
 		}
 	}
 

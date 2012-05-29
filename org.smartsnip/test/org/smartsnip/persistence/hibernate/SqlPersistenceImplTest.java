@@ -8,7 +8,14 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -31,12 +38,16 @@ public class SqlPersistenceImplTest {
 
 	private static IPersistence instance;
 	private static SqlPersistenceHelper helper;
-
+	private static Validator validator;
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+		
 		PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_SQL_DB);
 		instance = PersistenceFactory.getInstance();
 		if (PersistenceFactory.getPersistenceType() != PersistenceFactory.PERSIST_SQL_DB) {
@@ -56,6 +67,12 @@ public class SqlPersistenceImplTest {
 	public void testWriteUserUserInt() throws Throwable {
 		User user = helper.createUser("si", "she ra", "sie@bla", null);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
+		
+		Set<ConstraintViolation<User>> constraintViolations =
+	            validator.validate(user);
+		for(Iterator<ConstraintViolation<User>> itr = constraintViolations.iterator(); itr.hasNext();) {
+			System.out.println("Constraint Violation: " + itr.next().getMessage());
+		}
 	}
 
 	/**
@@ -514,9 +531,14 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@SuppressWarnings("deprecation")
+	@Test
 	public void testGetPassword() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		try{
+			instance.getPassword(null);
+			fail("UnsupportedOperationException expected");
+		} catch (UnsupportedOperationException ignore) {
+		}
 	}
 
 	/**
@@ -526,9 +548,11 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testVerifyPassword() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd", User.UserState.validated);
+		assertTrue(instance.verifyPassword(user, "blabla"));
+		assertFalse(instance.verifyPassword(user, "blabaa"));
 	}
 
 	/**
@@ -538,9 +562,10 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testIsLoginGranted() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd", User.UserState.validated);
+		assertTrue(instance.isLoginGranted(user));
 	}
 
 	/**

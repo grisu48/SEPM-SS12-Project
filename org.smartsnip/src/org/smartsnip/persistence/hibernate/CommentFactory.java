@@ -317,7 +317,8 @@ public class CommentFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return helper.createComment(entity.getUserName(), entity.getSnippetId(), entity.getMessage(),
+		return helper.createComment(entity.getUserName(),
+				entity.getSnippetId(), entity.getMessage(),
 				entity.getCommentId(), entity.getCreatedAt(),
 				entity.getPosVotes(), entity.getNegVotes());
 	}
@@ -333,24 +334,12 @@ public class CommentFactory {
 	static List<Comment> getComments(Snippet snippet) throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
-		Transaction tx = null;
 		List<Comment> result = new ArrayList<Comment>();
+		Transaction tx = null;
 
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
-			DBComment entity = new DBComment();
-			entity.setSnippetId(snippet.getHashId());
-
-			for (Iterator<DBComment> iterator = query.iterate(entity); iterator
-					.hasNext();) {
-				entity = iterator.next();
-				result.add(helper.createComment(entity.getUserName(), entity.getSnippetId(),
-						entity.getMessage(), entity.getSnippetId(),
-						entity.getCreatedAt(), entity.getPosVotes(),
-						entity.getNegVotes()));
-			}
-
+			result = fetchComments(helper, session, snippet.getHashId());
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -432,6 +421,57 @@ public class CommentFactory {
 			throw new IOException(e);
 		} finally {
 			DBSessionFactory.close(session);
+		}
+		return result;
+	}
+
+	/**
+	 * Helper method to fetch all comments of a snippet.
+	 * 
+	 * @param helper
+	 *            the PersisteceHelper object to create the tags
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippetId
+	 *            the id of the snippet as source of the code
+	 * @return a list of comments
+	 */
+	static List<Comment> fetchComments(SqlPersistenceHelper helper,
+			Session session, Long snippetId) {
+		DBQuery query = new DBQuery(session);
+		DBComment entity = new DBComment();
+		entity.setSnippetId(snippetId);
+		List<Comment> result = new ArrayList<Comment>();
+
+		for (Iterator<DBComment> iterator = query.iterate(entity); iterator
+				.hasNext();) {
+			entity = iterator.next();
+			result.add(helper.createComment(entity.getUserName(),
+					entity.getSnippetId(), entity.getMessage(),
+					entity.getSnippetId(), entity.getCreatedAt(),
+					entity.getPosVotes(), entity.getNegVotes()));
+		}
+		return result;
+	}
+
+	/**
+	 * Helper method to fetch all is's of the comments of a snippet.
+	 * 
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippetId
+	 *            the id of the snippet as source of the code
+	 * @return a list of commentId's
+	 */
+	static List<Long> fetchCommentIds(Session session, Long snippetId) {
+		DBQuery query = new DBQuery(session);
+		DBComment entity = new DBComment();
+		entity.setSnippetId(snippetId);
+		List<Long> result = new ArrayList<Long>();
+
+		for (Iterator<DBComment> iterator = query.iterate(entity); iterator
+				.hasNext();) {
+			result.add(iterator.next().getCommentId());
 		}
 		return result;
 	}

@@ -1012,11 +1012,14 @@ class DBQuery {
 	 *            The entity to fetch as prototype. Set all fields to null which
 	 *            aren't to use as query parameter.
 	 * @param selectString
-	 *            the select part of the HQL query (part before the "from"
-	 *            keyword).
+	 *            the select part of the HQL query (part before the {@code from}
+	 *            keyword without {@code select}). All parameters used in the string must be added with
+	 *            the method {@link #addSelectParameter(String, Object)} with
+	 *            equal parameter strings declared.
 	 * @return a list of results according to the select string
 	 */
 	List<Object> select(Object targetEntity, String selectString) {
+		getParameters(targetEntity, QUERY_SKIP_NULL);
 		Query query = buildSelectQuery(targetEntity, selectString,
 				QUERY_ALL_PARAMETERS);
 		@SuppressWarnings("unchecked")
@@ -1032,8 +1035,10 @@ class DBQuery {
 	 *            The entity to fetch as prototype. Set all fields to null which
 	 *            aren't to use as query parameter.
 	 * @param selectString
-	 *            the select part of the HQL query (part before the "from"
-	 *            keyword).
+	 *            the select part of the HQL query (part before the {@code from}
+	 *            keyword without {@code select}). All parameters used in the string must be added with
+	 *            the method {@link #addSelectParameter(String, Object)} with
+	 *            equal parameter strings declared.
 	 * @param start
 	 *            first index to fetch
 	 * @param count
@@ -1042,6 +1047,7 @@ class DBQuery {
 	 */
 	List<Object> select(Object targetEntity, String selectString,
 			Integer start, Integer count) {
+		getParameters(targetEntity, QUERY_SKIP_NULL);
 		Query query = buildSelectQuery(targetEntity, selectString,
 				QUERY_ALL_PARAMETERS);
 		if (start != null) {
@@ -1057,6 +1063,37 @@ class DBQuery {
 	}
 
 	/**
+	 * perform a select query
+	 * 
+	 * @param targetEntity
+	 *            The entity to fetch as prototype. Set all fields to null which
+	 *            aren't to use as query parameter.
+	 * @param selectString
+	 *            the select part of the HQL query (part before the {@code from}
+	 *            keyword without {@code select}). All parameters used in the string must be added with
+	 *            the method {@link #addSelectParameter(String, Object)} with
+	 *            equal parameter strings declared.
+	 * @param notNull
+	 *            If set to {@code true} the query fails on a null result. Use
+	 *            constants {@link #QUERY_NOT_NULL} or {@link #QUERY_NULLABLE}.
+	 * @return an object as result according to the select string
+	 */
+	Object selectSingle(Object targetEntity, String selectString, boolean notNull) {
+		getParameters(targetEntity, QUERY_SKIP_NULL);
+		Query query = buildSelectQuery(targetEntity, selectString,
+				QUERY_ALL_PARAMETERS);
+		query.setFetchSize(1);
+		@SuppressWarnings("unchecked")
+		// query.list() returns a list of a subtype of Object
+		List<Object> values = query.list();
+		Object result = null;
+		if (!values.isEmpty() || notNull) {
+			result = values.get(0);
+		}
+		return result;
+	}
+
+	/**
 	 * Build a HQL select query
 	 * 
 	 * @param targetEntity
@@ -1066,8 +1103,8 @@ class DBQuery {
 	 */
 	private Query buildSelectQuery(Object targetEntity, String selectString,
 			boolean allParameters) {
-		StringBuilder builder = new StringBuilder(selectString);
-		builder.append(" ").append(
+		StringBuilder builder = new StringBuilder("select ");
+		builder.append(selectString).append(" ").append(
 				buildFromQueryString(targetEntity, allParameters));
 		Query result = this.session.createQuery(builder.toString());
 		for (Pair<String, Object> s : this.selectParameters) {
@@ -1081,11 +1118,12 @@ class DBQuery {
 				result.setParameter(p.first, p.second);
 			}
 		}
+		System.out.println(result);//XXX
 		return result;
 	}
 
 	Long count(Object targetEntity) {
-		return (Long) select(targetEntity, "select count(*) ").get(0);
+		return (Long) select(targetEntity, "count(*)").get(0);
 	}
 
 	/**

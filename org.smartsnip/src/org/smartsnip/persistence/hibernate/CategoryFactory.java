@@ -50,15 +50,15 @@ public class CategoryFactory {
 			DBCategory entity = new DBCategory();
 			// categoryId is read-only
 
-			if (category.getParentName() != null) {//FIXME
+			if (category.getParentName() != null) {// FIXME not tested
 				parent = new DBCategory();
 				parentQuery = new DBQuery(session);
 				parent.setName(category.getParentName());
 				parent = parentQuery.fromSingle(parent, DBQuery.QUERY_NOT_NULL);
 				entity.setParentId(parent.getCategoryId());
-			} else {//FIXME
-				entity.setParentId(null);//FIXME
-			}//FIXME
+			} else {// FIXME
+				entity.setParentId(null);// FIXME
+			}// FIXME
 
 			entity.setName(category.getName());
 			entity.setDescription(category.getDescription());
@@ -239,7 +239,7 @@ public class CategoryFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createCategory(entity.getName(), entity.getDescription(),
-				fetchParent(helper, session, entity).getName());
+				fetchParentFlatend(helper, session, entity).getName());
 	}
 
 	/**
@@ -273,7 +273,7 @@ public class CategoryFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createCategory(entity.getName(), entity.getDescription(),
-				fetchParent(helper, session, entity).getName());
+				fetchParentFlatend(helper, session, entity).getName());
 	}
 
 	/**
@@ -313,7 +313,7 @@ public class CategoryFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createCategory(entity.getName(), entity.getDescription(),
-				fetchParent(helper, session, entity).getName());
+				fetchParentFlatend(helper, session, entity).getName());
 	}
 
 	/**
@@ -431,7 +431,31 @@ public class CategoryFactory {
 	}
 
 	/**
-	 * Helper method to fetch a parent of a category.
+	 * Helper method to fetch a parent of a category. This method initializes
+	 * the parent field with {@code null}, so there is no tree up to the root
+	 * created.
+	 * 
+	 * @param helper
+	 *            the PersisteceHelper object to create the tags
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param category
+	 *            the category as source of the parent
+	 * @return the category
+	 */
+	static Category fetchParentFlatend(SqlPersistenceHelper helper,
+			Session session, DBCategory category) {
+		DBQuery query = new DBQuery(session);
+		DBCategory entity = new DBCategory();
+		entity.setCategoryId(category.getParentId());
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		return helper.createCategory(entity.getName(), entity.getDescription(),
+				null); // flat object: no parent of the parent
+	}
+
+	/**
+	 * Helper method to fetch a full initialized parent. This Method iterates
+	 * through two queries to get the data to initialize the parent field.
 	 * 
 	 * @param helper
 	 *            the PersisteceHelper object to create the tags
@@ -447,7 +471,12 @@ public class CategoryFactory {
 		DBCategory entity = new DBCategory();
 		entity.setCategoryId(category.getParentId());
 		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+
+		DBCategory parent = new DBCategory();
+		parent.setCategoryId(entity.getParentId());
+		parent = query.fromSingle(parent, DBQuery.QUERY_NOT_NULL);
+
 		return helper.createCategory(entity.getName(), entity.getDescription(),
-				null);
+				parent.getName());
 	}
 }

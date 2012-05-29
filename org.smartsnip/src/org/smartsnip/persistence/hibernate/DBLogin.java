@@ -31,7 +31,7 @@ class DBLogin {
 	private String user;
 
 	@Column(name = "password", length = 255)
-	@ColumnTransformer(read = "decrypt(password)", write = "encrypt(?)")
+	@ColumnTransformer(read = "des_decrypt(password, 'key')", write = "des_encrypt(?, 'key')")
 	private String password;
 
 	@Column(name = "grant_login")
