@@ -146,8 +146,8 @@ public class Snippet {
 
 		Snippet snippet = new Snippet(owner, name, description, null, category,
 				license, tags, null, 0);
-		snippet.code = Code.createCode(code, language, snippet);
 		addToDB(snippet);
+		snippet.code = Code.createCode(code, language, snippet);
 
 		return snippet;
 	}

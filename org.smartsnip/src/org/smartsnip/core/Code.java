@@ -259,4 +259,11 @@ public abstract class Code {
 			e.printStackTrace(System.err);
 		}
 	}
+
+	/**
+	 * @return the associated snippet to the code
+	 */
+	public Snippet getSnippet() {
+		return snippet;
+	}
 }
