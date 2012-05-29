@@ -350,15 +350,34 @@ public class Control implements EntryPoint {
 
 	public void setPassword(String pw1, String pw2) {
 		if (pw1.equals(pw2)) {
-			
+			// XXX
+			// tausche das alte Password mit dem neuen und liefere true, wenn alles in Ordnung ist
 			myGUI.myPersonalArea.update(true);
 		}
 		else {
 			myGUI.myPersonalArea.update(false);
 		}
 		
+		
+		
+	}
+
+	public List<XSnippet> getOwn() {
 		// XXX
 		
+		//Hätte gern:
+		//Eine XSNippetliste mit allen Snippets von diesem User
+		//Wenn keine vorhanden, bitte leere Liste, nicht null
+		
+		return null;
+	}
+	
+	public List<XSnippet> getFav() {
+		// XXX
+		//Hätte gern:
+		//Eine XSNippetliste mit allen Snippets, die dieser User als Favourit gespeichert hat.
+		//Wenn keine vorhanden, bitte leere Liste, nicht null
+		return null;
 	}
 
 }
