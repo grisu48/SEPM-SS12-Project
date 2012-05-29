@@ -12,7 +12,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * 
  */
 public class XServerStatus implements IsSerializable {
-	private final String message;
+	private String message;
 
 	public String servername;
 	public long totalMemory;

@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.ISessionAsync;
+import org.smartsnip.shared.ISnippet;
+import org.smartsnip.shared.ISnippetAsync;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSnippet;
 import org.smartsnip.shared.XUser;
@@ -12,7 +15,6 @@ import org.smartsnip.shared.XUser;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.TextArea;
 
 /**
  * The controller according to a MVC pattern.
@@ -65,11 +67,10 @@ public class Control implements EntryPoint {
 					return;
 				}
 				Cookies.setCookie(COOKIE_SESSION, cookie);
-				
+
 			}
 		});
 		myGUI.getReady();
-		
 
 		// No contents yet added here
 		// myGUI.showTestPopup("Currently no contents here ... ");
@@ -120,14 +121,10 @@ public class Control implements EntryPoint {
 		default:
 		}
 	}
-	
-	
+
 	public void changeToSnipPage(XSnippet snip) {
 		myGUI.showSnipPage(snip);
 	}
-	
-	
-	
 
 	public void login(final String user, final String pw, final Login login) {
 
@@ -206,7 +203,7 @@ public class Control implements EntryPoint {
 	public String getUsername() {
 		return user.username;
 	}
-	
+
 	public String getUserMail() {
 		return user.email;
 	}
@@ -215,13 +212,8 @@ public class Control implements EntryPoint {
 		return loggedIn;
 	}
 
-	
-	
-	
-	
 	public void refresh() {
-		
-		
+
 		session.isLoggedIn(new AsyncCallback<Boolean>() {
 
 			@Override
@@ -235,38 +227,31 @@ public class Control implements EntryPoint {
 				myGUI.myMeta.update();
 			}
 		});
-		
-		
-		
+
 		session.getUser(user.username, new AsyncCallback<XUser>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
 				handleException("Error while refreshing the user", caught);
-				
+
 			}
 
 			@Override
 			public void onSuccess(XUser result) {
-				if (result == null)
+				if (result == null || result.username.isEmpty())
 					user.username = "Guest";
-				if (result.username.isEmpty())
-					user.username = "Guest";
-				else
-				user.username = result.username;
-				user.email = result.email;
-				user.realname = result.realname;
-				
+				else {
+					user.username = result.username;
+					user.email = result.email;
+					user.realname = result.realname;
+				}
 				myGUI.myMeta.update();
-				
+
 			}
 		});
-				
-		
+
 	}
 
-	
-	
 	private void handleException(String message, Throwable cause) {
 		// TODO Write me!
 	}
@@ -289,22 +274,66 @@ public class Control implements EntryPoint {
 
 	}
 
-	public void writeComment(TextArea myComment, long hash) {
-		//XXX Todo Felix
-		//ein neuer Kommentar soll zum einem bestimmten Snippet gespeichert werden.
-		
+	public void writeComment(String comment, long hash) {
+		if (comment == null || comment.isEmpty())
+			return;
+
+		ISnippetAsync snippetProxy = ISnippet.Util.getInstance();
+
+		snippetProxy.addComment(hash, comment, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				myGUI.showErrorPopup("Creation of new comment failed", caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// Ignore this
+			}
+		});
 	}
 
 	public void rateSnippet(int rate, long hash) {
-		//XXX Todo Felix
-			// schicke neue Bewertung an den Server
-		
+		ISnippetAsync snippetProxy = ISnippet.Util.getInstance();
+
+		snippetProxy.rateSnippet(hash, rate, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				myGUI.showErrorPopup("Rating failed", caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// Ignore this
+			}
+		});
 	}
 
 	public void toFav(long hash) {
-		// TODO
-		// ermittle den aktuellen User und füge das Snippet zu seiner Lieblingsliste
-		
+		ISnippetAsync snippetProxy = ISnippet.Util.getInstance();
+
+		snippetProxy.addToFavorites(hash, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				if (caught instanceof NoAccessException) {
+					myGUI.showErrorPopup("Access denial", caught);
+				} else if (caught instanceof NotFoundException) {
+					myGUI.showErrorPopup("Snippet cannot be found by server",
+							caught);
+				} else {
+					myGUI.showErrorPopup("Adding snippet to favorites failed",
+							caught);
+				}
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// Ignore success
+			}
+		});
 	}
 
 }

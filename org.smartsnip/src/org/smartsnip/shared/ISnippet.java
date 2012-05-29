@@ -154,6 +154,17 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	public void addComment(long id, String comment) throws NoAccessException;
 
 	/**
+	 * Adds a snippet that is identified by the id to the favorites
+	 * 
+	 * @param id
+	 *            hash id of the snippet to be added to the favorites
+	 * @throws NoAccessException
+	 *             Thrown if the access is denied by the server
+	 */
+	public void addToFavorites(long id) throws NoAccessException,
+			NotFoundException;
+
+	/**
 	 * Creates a new snippet with the given parameters.
 	 * 
 	 * 

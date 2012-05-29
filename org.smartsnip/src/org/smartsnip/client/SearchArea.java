@@ -10,10 +10,8 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
-
 
 public class SearchArea extends Composite {
 
@@ -28,26 +26,22 @@ public class SearchArea extends Composite {
 	public SearchArea() {
 
 		horPanel = new HorizontalPanel();
-		
-		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();  
-		   oracle.add("Java");
-		   oracle.add("Snippet");
-		   oracle.add("Quicksort");
-		   oracle.add("Smartsnip");
+
+		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+		oracle.add("Java");
+		oracle.add("Snippet");
+		oracle.add("Quicksort");
+		oracle.add("Smartsnip");
 		searchSnippet = new SuggestBox(oracle);
 		searchSnippet.addKeyDownHandler(new KeyDownHandler() {
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
-				if(KeyCodes.KEY_ENTER == event.getNativeKeyCode()) {
+				if (KeyCodes.KEY_ENTER == event.getNativeKeyCode()) {
 					fireSearch();
-			      }
+				}
 			}
-			});
+		});
 
-		
-		
-		
-		
 		searchButton = new Button("Search Snippet");
 		searchButton.addStyleName("searchButton");
 		searchButton.addClickHandler(new ClickHandler() {
@@ -56,10 +50,7 @@ public class SearchArea extends Composite {
 				fireSearch();
 			}
 		});
-		
 
-		
-		
 		horPanel.add(searchSnippet);
 		horPanel.add(searchButton);
 
@@ -68,24 +59,13 @@ public class SearchArea extends Composite {
 		setStyleName("searchArea");
 	}
 
-	
-	
-	
 	public void fireSearch() {
 		Control control = Control.getInstance();
 		searchDuration = System.currentTimeMillis();
 		control.search(searchSnippet.getText(), null, null,
-				XSearch.SearchSorting.highestRated, 0, 10,
-				SearchArea.this); 
+				XSearch.SearchSorting.highestRated, 0, 10, SearchArea.this);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * Callback if the search failed with an exception
 	 * 

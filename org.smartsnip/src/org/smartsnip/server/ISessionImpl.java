@@ -152,6 +152,9 @@ public class ISessionImpl extends SessionServlet implements ISession {
 		result.start = start;
 		result.count = count;
 
+		if (searchString == null || searchString.isEmpty())
+			return new XSearch();
+
 		Search search = Search.createSearch(searchString);
 		if (tags != null) {
 			for (String tag : tags) {
@@ -176,19 +179,22 @@ public class ISessionImpl extends SessionServlet implements ISession {
 		}
 
 		result.totalresults = search.getTotalResults();
+		logInfo("Search for: \"" + searchString + "\". "
+				+ search.getTotalResults() + " results total");
 
 		return result;
 	}
 
 	@Override
 	public XUser getUser(String username) {
-		
+
 		Session session = getSession();
 		if (!session.isLoggedIn())
 			return null;
 
-		XUser user = new XUser(session.getUsername(), session.getRealname(), session.getMail());
-		
+		XUser user = new XUser(session.getUsername(), session.getRealname(),
+				session.getMail());
+
 		return user;
 	}
 }

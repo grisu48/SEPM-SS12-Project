@@ -10,6 +10,7 @@ import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
@@ -144,6 +145,27 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 			throw new RuntimeException("Database access error");
 		}
 
+	}
+
+	@Override
+	public void addToFavorites(long id) throws NoAccessException,
+			NotFoundException {
+		Session session = getSession();
+		Snippet snippet = Snippet.getSnippet(id);
+		if (snippet == null) {
+			// Snippet is not found
+			throw new NotFoundException("No snippet with id " + id + " found");
+		}
+
+		if (session.isLoggedIn()) {
+			User user = session.getUser();
+			if (user == null)
+				throw new NoAccessException();
+
+			user.addFavorite(snippet);
+		} else {
+			session.addFavorite(snippet);
+		}
 	}
 
 }

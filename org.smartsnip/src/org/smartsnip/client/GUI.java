@@ -27,24 +27,19 @@ public class GUI {
 			"Tag4");
 	static final XCategory CAT = new XCategory("catname", "description",
 			"parent", new ArrayList<String>());
-	static final XComment COM = new XComment("owner", 123, "worst snippet ever", 2, 23, new Date());
-	
-	
+	static final XComment COM = new XComment("owner", 123,
+			"worst snippet ever", 2, 23, new Date());
+
 	static final List<XComment> commList = Arrays.asList(COM, COM, COM);
 	static final ArrayList<XComment> comList = new ArrayList<XComment>(commList);
-	
 
-	
-	
 	static final XSnippet SNIPPET = new XSnippet("owner", 123, "title",
-			"description", CAT, new ArrayList<String>(TESTTAGS), comList, "code", "codeHTML", "language",
-			"license", 4);
+			"description", CAT, new ArrayList<String>(TESTTAGS), comList,
+			"code", "codeHTML", "language", "license", 4);
 	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET,
 			SNIPPET, SNIPPET, SNIPPET, SNIPPET);
-	
 
-	
-	//visible in package, Control can modify
+	// visible in package, Control can modify
 	ResultArea myResultArea = null;
 	SortArea mySortArea = null;
 	CatArea myCatArea = null;
@@ -62,22 +57,20 @@ public class GUI {
 	// Create footerPanel
 	SimplePanel footerPanel = new SimplePanel();
 
-	
-
 	public void getReady() {
 		// Adds a personalized CSS-File
 		Resources.INSTANCE.css().ensureInjected();
 
-		//Get the updated userdata
+		// Get the updated userdata
 		Control control = Control.getInstance();
 		control.refresh();
-		
+
 		// Create the Page
 		createBasicPage();
 		showSearchPage();
 		// showImpressum();
-		//showSnipPage(SNIPPET);
-	
+		// showSnipPage(SNIPPET);
+
 		// showPersonalPage();
 		// showLoginPopup();
 		// showRegisterPopup();
@@ -86,7 +79,7 @@ public class GUI {
 	}
 
 	public void createBasicPage() {
-		
+
 		// Fill userPanel
 		myMeta = new Meta();
 		userPanel.add(myMeta);
@@ -114,7 +107,7 @@ public class GUI {
 	public void showSearchPage() {
 
 		dataPanel.clear();
-		
+
 		myResultArea = new ResultArea();
 		mySortArea = new SortArea();
 		myCatArea = new CatArea();
@@ -190,6 +183,41 @@ public class GUI {
 		});
 	}
 
+	public void showErrorPopup(String message) {
+		if (message == null || message.isEmpty())
+			return;
+
+		final PopupPanel errorPopup = new PopupPanel(true, true);
+		Button close = new Button("<b>Close</b>");
+
+		errorPopup.setTitle("Error");
+		VerticalPanel vertPanel = new VerticalPanel();
+		Label lname = new Label(message);
+		vertPanel.add(lname);
+		vertPanel.add(close);
+		errorPopup.setWidget(vertPanel);
+		errorPopup.setGlassEnabled(true);
+		errorPopup.setPopupPosition(110, 100);
+		errorPopup.setWidth("340px");
+		errorPopup.show();
+		close.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				errorPopup.hide();
+			}
+		});
+	}
+
+	public void showErrorPopup(String message, Throwable cause) {
+		if (message == null)
+			message = "";
+		if (cause != null) {
+			message = message + "\n" + cause.getMessage();
+		}
+		showErrorPopup(message);
+	}
+
 	public void showRegisterPopup() {
 
 		PopupPanel registerPanel = new PopupPanel(true);
@@ -209,15 +237,13 @@ public class GUI {
 		HTML impressum = new HTML(
 				"<p><br /><strong>Verantwortlich für den Inhalt<br /></strong>Paul Opitz <br />"
 						+ "Roveretoplatz 2 <br />6330 Kufstein <br />Österreich</p><p><br /><strong>Haftung</strong><br />"
-						+ "Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann ich jedoch keine Gewähr übernehmen.</p><p><br /><strong>Haftung für Links</strong><br />Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Deshalb kann ich für diese fremden Inhalte auch keine Gewähr übernehmen. " +
-						"Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter " +
-						"oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Links umgehend entfernen.</p><br /><strong>Rechte</strong><br />" +
-						"Die Inhalte stehen unter einer Creative Commons Namensnennung-Nicht-kommerziell-Weitergabe unter gleichen Bedingungen 3.0 Österreich Lizenz.<p><br /><strong>Datenschutz</strong><br />Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf meinen Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder E-Mail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.Ich weise darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Der Betreiber der Seiten behaltet sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.</p>");
+						+ "Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann ich jedoch keine Gewähr übernehmen.</p><p><br /><strong>Haftung für Links</strong><br />Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Deshalb kann ich für diese fremden Inhalte auch keine Gewähr übernehmen. "
+						+ "Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter "
+						+ "oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Links umgehend entfernen.</p><br /><strong>Rechte</strong><br />"
+						+ "Die Inhalte stehen unter einer Creative Commons Namensnennung-Nicht-kommerziell-Weitergabe unter gleichen Bedingungen 3.0 Österreich Lizenz.<p><br /><strong>Datenschutz</strong><br />Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit auf meinen Seiten personenbezogene Daten (beispielsweise Name, Anschrift oder E-Mail-Adressen) erhoben werden, erfolgt dies, soweit möglich, stets auf freiwilliger Basis. Diese Daten werden ohne Ihre ausdrückliche Zustimmung nicht an Dritte weitergegeben.Ich weise darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Der Betreiber der Seiten behaltet sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.</p>");
 		impressum.setWidth("800px");
 		dataPanel.add(impressum);
 	}
-
-
 
 	public void updateSearchPage(XSearch result, String status) {
 
@@ -229,7 +255,7 @@ public class GUI {
 		} else {
 			mySortArea.update(status);
 		}
-		
+
 		showSearchPage();
 	}
 

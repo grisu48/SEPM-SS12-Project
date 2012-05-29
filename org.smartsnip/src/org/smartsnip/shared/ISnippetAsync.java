@@ -30,4 +30,6 @@ public interface ISnippetAsync {
 	void create(String name, String desc, String code, String language,
 			String category, List<String> tags, AsyncCallback<Void> callback);
 
+	void addToFavorites(long id, AsyncCallback<Void> callback);
+
 }
