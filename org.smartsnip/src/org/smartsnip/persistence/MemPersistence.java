@@ -35,7 +35,8 @@ public class MemPersistence implements IPersistence {
 	 * accomplish a singleton pattern. It rejects any attempt to build an
 	 * instance except it is called by the
 	 * {@link PersistenceFactory#getInstance(int)} method.
-	 * @throws IllegalAccessException 
+	 * 
+	 * @throws IllegalAccessException
 	 */
 	MemPersistence() throws IllegalAccessException {
 		super();
@@ -104,7 +105,8 @@ public class MemPersistence implements IPersistence {
 		}
 
 		allSnippets.put(id, snippet);
-		// TODO snippetTags.put(snippet, );
+		List<Tag> tags = new ArrayList<Tag>(snippet.getTags());
+		snippetTags.put(snippet, tags);
 		return id;
 	}
 
@@ -331,7 +333,12 @@ public class MemPersistence implements IPersistence {
 		if (nick == null || nick.isEmpty())
 			return null;
 		nick = toKey(nick);
-		return allUsers.get(nick);
+		User result = allUsers.get(nick);
+		if (result == null)
+			return null;
+		if (result.isDeleted())
+			return null;
+		return result;
 	}
 
 	@Override
@@ -555,8 +562,6 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public List<Snippet> search(String searchString, Integer min, Integer max)
 			throws IOException {
-		// TODO Eliminate min and max, that are ignored
-
 		/*
 		 * NOTE: Search string is NOT case senstitive
 		 */
@@ -576,6 +581,18 @@ public class MemPersistence implements IPersistence {
 			if (searchString.contains(name) || name.contains(searchString))
 				results.add(snippet);
 		}
+
+		// Trim list
+		if (min > results.size()) {
+			results.clear();
+			return results;
+		} else {
+			while (min > 0)
+				results.remove(0);
+		}
+
+		while (results.size() > max)
+			results.remove(results.size() - 1);
 
 		return results;
 	}
@@ -696,8 +713,13 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void unRate(User user, Snippet snippet, int mode) throws IOException {
-		// TODO Auto-generated method stub
+		if (snippet == null || user == null)
+			return;
 
+		HashMap<User, Integer> list = ratings.get(snippet);
+		if (list == null)
+			return;
+		list.remove(user);
 	}
 
 	@Override
@@ -705,7 +727,10 @@ public class MemPersistence implements IPersistence {
 		if (tag == null)
 			return;
 
-		// TODO Search for tags and remove them
+		List<Snippet> snippets = new ArrayList<Snippet>(allSnippets.values());
+		for (Snippet snippet : snippets) {
+			snippet.removeTag(tag);
+		}
 
 		allTags.remove(tag);
 	}
@@ -746,8 +771,8 @@ public class MemPersistence implements IPersistence {
 		if (user == null)
 			return;
 
+		user.setDeleted(true);
 		allUsers.remove(user.username);
-		// TODO: Cross references should also be removed some day ...
 	}
 
 	@Override
@@ -773,6 +798,7 @@ public class MemPersistence implements IPersistence {
 	public void removeNotification(Notification notification, int mode)
 			throws IOException {
 		// TODO Not implemented because not used currently
+		// Increment!
 
 	}
 

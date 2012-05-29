@@ -39,7 +39,7 @@ public class User {
 	 * 
 	 */
 	public enum UserState {
-		unvalidated, validated
+		unvalidated, validated, deleted
 	}
 
 	/**
@@ -555,5 +555,35 @@ public class User {
 		if (username == null)
 			return null;
 		return username.trim().toLowerCase();
+	}
+
+	/**
+	 * Sets the status of the user to deleted or not deleted
+	 * 
+	 * If the user returns into the world of the living, the state is set to
+	 * invalidated
+	 * 
+	 * @param deleted
+	 *            true if the user is deleted, othwerise false.
+	 */
+	public void setDeleted(boolean deleted) {
+		UserState newState = state;
+		if (deleted) {
+			newState = UserState.deleted;
+		} else {
+			newState = UserState.unvalidated;
+		}
+
+		if (state != newState) {
+			state = newState;
+			refreshDB();
+		}
+	}
+
+	/**
+	 * @return true if the user is deleted, otherwise false
+	 */
+	public boolean isDeleted() {
+		return getState() == UserState.deleted;
 	}
 }

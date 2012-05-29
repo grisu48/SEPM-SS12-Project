@@ -179,8 +179,10 @@ public class ISessionImpl extends SessionServlet implements ISession {
 		}
 
 		result.totalresults = search.getTotalResults();
-		logInfo("Search for: \"" + searchString + "\". "
-				+ search.getTotalResults() + " results total");
+		if (result.totalresults > 0) {
+			logInfo("Search for: \"" + searchString + "\". "
+					+ result.totalresults + " results total");
+		}
 
 		return result;
 	}
