@@ -72,7 +72,7 @@ public class SnipArea extends Composite {
 			}
 		});
 
-		rating.setRatingHandler(new RatingHandler() {
+		rating.setRatingHandler(new Rating.RatingHandler() {
 
 			@Override
 			public void unrate() {
