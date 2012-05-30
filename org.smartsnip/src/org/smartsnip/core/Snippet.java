@@ -319,7 +319,7 @@ public class Snippet {
 			return;
 
 		// IMPORTANT: This command must be in this order,
-		// oderwise we are in an endless loop!
+		// otherwise we are in an endless loop!
 		this.category = category.getName();
 		category.addSnippet(this);
 
@@ -398,12 +398,18 @@ public class Snippet {
 	 * @return the comments of the snippet
 	 */
 	public List<Comment> getComments() {
-		List<Comment> result = new ArrayList<Comment>(comments.size());
+		List<Comment> comments = null;
 
-		for (Long id : comments) {
-			result.add(Comment.getComment(id));
+		try {
+			comments = Persistence.getInstance().getComments(this);
+		} catch (IOException e) {
+			System.err
+					.println("IOException refreshing the comments of snippet \""
+							+ name + "\" (id=" + id + ": " + e.getMessage());
+			e.printStackTrace(System.err);
 		}
-		return result;
+		return comments;
+
 	}
 
 	/**
@@ -434,6 +440,7 @@ public class Snippet {
 						"Comment owner not equals snippet to be added");
 
 			Persistence.instance.writeComment(comment, IPersistence.DB_DEFAULT);
+			refreshComments();
 
 		} catch (IOException e) {
 			Logging.printError("IOException during addComment(Comment object) "
@@ -525,7 +532,7 @@ public class Snippet {
 	 * Re-Read comments out of database
 	 */
 	protected final synchronized void refreshComments() {
-		// XXX Ugly hack altough COW-method
+		// XXX Ugly hack although COW-method
 		try {
 			List<Comment> comments = Persistence.getInstance()
 					.getComments(this);
@@ -670,5 +677,55 @@ public class Snippet {
 	 */
 	public String getCategoryName() {
 		return this.category;
+	}
+
+	/**
+	 * Removes a rating from a given user. If the user is null, nothing happens
+	 * 
+	 * @param user
+	 *            the rating should be removed from
+	 */
+	public void unrate(User user) {
+		if (user == null)
+			return;
+		try {
+			Persistence.getInstance().unRate(user, this,
+					IPersistence.DB_DEFAULT);
+		} catch (IOException e) {
+			System.err.println("IOException during unrating of snippet "
+					+ getHashId() + " of user " + user.getUsername() + ": "
+					+ e.getMessage());
+			e.printStackTrace(System.err);
+		}
+	}
+
+	/**
+	 * Set the rating of this snippet. If the rating is zero, the rating is
+	 * removed. If the rating is not between 0 and 5, the rating is ignored and
+	 * nothing is done.
+	 * 
+	 * @param user
+	 *            that gives this rating. IF null, nothing is done
+	 * @param rate
+	 *            must be between 0 and 5. If 0, the rating is removed. If
+	 *            between 1 and 5, the according rating is set
+	 */
+	public void setRating(User user, int rate) {
+		if (user == null || rate < 0 || rate > 5)
+			return;
+
+		if (rate == 0)
+			unrate(user);
+		else {
+			try {
+				Persistence.getInstance().writeRating(rate, this, user,
+						IPersistence.DB_DEFAULT);
+			} catch (IOException e) {
+				System.err.println("IOException during rating of snippet "
+						+ getHashId() + " to score=" + rate + " of user "
+						+ user.getUsername() + ": " + e.getMessage());
+				e.printStackTrace(System.err);
+			}
+		}
 	}
 }

@@ -169,8 +169,22 @@ public class ISessionImpl extends SessionServlet implements ISession {
 			}
 
 		List<Snippet> snippets = search.getResults(sorting, start, count);
-		for (Snippet snippet : snippets)
+		List<String> resultCategories = new ArrayList<String>();
+		List<String> resultTags = new ArrayList<String>();
+		for (Snippet snippet : snippets) {
 			result.snippets.add(snippet.toXSnippet());
+
+			String category = snippet.getCategoryName();
+			if (!resultCategories.contains(category))
+				resultCategories.add(category);
+			for (Tag tag : snippet.getTags()) {
+				if (!resultTags.contains(tag.name))
+					resultTags.add(tag.name);
+			}
+		}
+
+		result.categories = resultCategories;
+		result.tags = resultTags;
 
 		List<Tag> allTagsMatchingSearchCriteria = search
 				.getAllTagsMatchingSearchCriteria();

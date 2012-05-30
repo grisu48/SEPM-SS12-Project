@@ -61,6 +61,9 @@ public class ResultArea extends Composite {
 	}
 
 	void update(List<XSnippet> snippets) {
+		if (snippets == null)
+			return;
+
 		myCellList.setRowCount(snippets.size(), true);
 		myCellList.setRowData(0, snippets);
 	}

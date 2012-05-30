@@ -23,7 +23,6 @@ public interface ISnippet extends RemoteService, IsSerializable {
 		public static ISnippetAsync getInstance() {
 			if (instance == null) {
 				instance = GWT.create(ISnippet.class);
-				System.out.println("Snippet proxy created");
 			}
 			return instance;
 		}
@@ -56,7 +55,7 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @return the total number of comments or -1, if the given snippet hash is
 	 *         not found
 	 */
-	public int getCommentCount(long snippet);
+	public int getCommentCount(long snippet) throws NotFoundException;
 
 	/**
 	 * Gets the snippet given with the hash id, or null, if no such snippet
@@ -75,7 +74,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown, if the access was denied by the server
 	 */
-	public void delete(long snippet) throws NoAccessException;
+	public void delete(long snippet) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Rates a snippet, identified by it's hash code. If the rateing score is
@@ -88,7 +88,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public void rateSnippet(long id, int rate) throws NoAccessException;
+	public void rateSnippet(long id, int rate) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Changes the description of a snippet, based on it's id hash. If the given
@@ -101,7 +102,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if you don't have the permission to edit the snippet
 	 */
-	public void setDescription(long id, String desc) throws NoAccessException;
+	public void setDescription(long id, String desc) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Changes the code of a snippet, based on it's id hash. If the given
@@ -114,7 +116,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if you don't have the permission to edit the snippet
 	 */
-	public void setCode(long id, String code) throws NoAccessException;
+	public void setCode(long id, String code) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Adds a tag to a given snippet. If the snippet is not found, nothing
@@ -127,7 +130,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access to tag the snippet
 	 */
-	public void addTag(long id, String tag) throws NoAccessException;
+	public void addTag(long id, String tag) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Removes a tag to a given snippet. If the snippet is not found, nothing
@@ -140,7 +144,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access to tag the snippet
 	 */
-	public void removeTag(long id, String tag) throws NoAccessException;
+	public void removeTag(long id, String tag) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Adds a comment to a snippet, identified by its hash id. If the comment is

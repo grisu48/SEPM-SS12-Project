@@ -28,7 +28,7 @@ public class SessionServlet extends RemoteServiceServlet {
 	 */
 	public SessionServlet() {
 	}
-	
+
 	/**
 	 * Adds a cookie to the http servlet session.
 	 * 
@@ -139,9 +139,11 @@ public class SessionServlet extends RemoteServiceServlet {
 
 			if (cookie == null) {
 				session = Session.createNewSession();
-				cookie = new Cookie(ISession.cookie_Session_ID, session.getCookie());
+				cookie = new Cookie(ISession.cookie_Session_ID,
+						session.getCookie());
 				addCookie(cookie);
-				Logging.printInfo("New Session (SID=" + cookie + ") attached. Host: " + getRemoteHost());
+				Logging.printInfo("New Session (SID=" + cookie
+						+ ") attached. Host: " + getRemoteHost());
 			} else {
 				/** TODO: Check handling if cookies are disabled in browser */
 				String sid = cookie.getValue();
@@ -170,29 +172,72 @@ public class SessionServlet extends RemoteServiceServlet {
 
 		return result;
 	}
-	
+
 	/**
-	 * Prints a session specific log message. Additional information will be attached to the message
-	 * @param message to be printed
+	 * Prints a session specific log message. Additional information will be
+	 * attached to the message
+	 * 
+	 * @param message
+	 *            to be printed
 	 */
 	protected void logInfo(String message) {
-		if (message == null || message.isEmpty()) return;
-		
+		if (message == null || message.isEmpty())
+			return;
+
 		String cookie = getSession().getCookie();
 		if (cookie == null) {
-			Logging.printInfo("(" + getRemoteHost() +"): " + message);
-		} else  {
+			Logging.printInfo("(" + getRemoteHost() + "): " + message);
+		} else {
 			String user = session.getUsername();
 			if (user.equalsIgnoreCase("guest"))
 				Logging.printInfo("(SID=" + cookie + "): " + message);
 			else
-				Logging.printInfo("(SID=" + cookie + ", USER=" + user + "): " + message);
+				Logging.printInfo("(SID=" + cookie + ", USER=" + user + "): "
+						+ message);
 		}
 	}
-	
+
+	/**
+	 * Prints a session specific log message that is an error. Additional
+	 * information will be attached to the message
+	 * 
+	 * @param message
+	 *            to be printed
+	 */
+	protected void logError(String message) {
+		if (message == null || message.isEmpty())
+			return;
+
+		String cookie = getSession().getCookie();
+		if (cookie == null) {
+			Logging.printInfo("(" + getRemoteHost() + "): " + message);
+		} else {
+			String user = session.getUsername();
+			if (user.equalsIgnoreCase("guest"))
+				Logging.printError("(SID=" + cookie + "): " + message);
+			else
+				Logging.printError("(SID=" + cookie + ", USER=" + user + "): "
+						+ message);
+		}
+	}
+
+	/**
+	 * Prints a session specific log message that is an error. Additional
+	 * information will be attached to the message
+	 * 
+	 * @param cause
+	 *            to be printed
+	 */
+	protected void logError(Throwable cause) {
+		if (cause == null)
+			return;
+		logError(cause.getMessage());
+	}
+
 	protected String getRemoteHost() {
 		HttpServletRequest request = getThreadLocalRequest();
-		if (request == null) return "0.0.0.0";
+		if (request == null)
+			return "0.0.0.0";
 		return request.getRemoteHost();
 	}
 }

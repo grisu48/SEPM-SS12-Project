@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.core.Category;
+import org.smartsnip.core.Code;
 import org.smartsnip.core.Comment;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
@@ -72,33 +73,79 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 	}
 
 	@Override
-	public void rateSnippet(long id, int rate) throws NoAccessException {
-		// TODO Auto-generated method stub
+	public void rateSnippet(long id, int rate) throws NoAccessException,
+			NotFoundException {
+		Snippet snippet = findSnippetThrowsException(id);
+		Session session = getSession();
+		if (!session.getPolicy().canRateSnippet(session, snippet))
+			throw new NoAccessException();
+		User user = session.getUser();
+		if (user == null)
+			throw new NoAccessException();
+
+		if (rate < 0 || rate > 5)
+			return;
+		if (rate == 0) {
+			snippet.unrate(user);
+		} else {
+			snippet.setRating(user, rate);
+		}
 
 	}
 
 	@Override
-	public void setDescription(long id, String desc) throws NoAccessException {
-		// TODO Auto-generated method stub
+	public void setDescription(long id, String desc) throws NoAccessException,
+			NotFoundException {
+		if (desc == null || desc.isEmpty())
+			return;
 
+		Snippet snippet = findSnippetThrowsException(id);
+		Session session = getSession();
+		if (!session.getPolicy().canEditSnippet(session, snippet))
+			throw new NoAccessException();
+		snippet.setDescription(desc);
 	}
 
 	@Override
-	public void setCode(long id, String code) throws NoAccessException {
-		// TODO Auto-generated method stub
+	public void setCode(long id, String code) throws NoAccessException,
+			NotFoundException {
+		if (code == null || code.isEmpty())
+			return;
 
+		Snippet snippet = findSnippetThrowsException(id);
+		Session session = getSession();
+		if (!session.getPolicy().canEditSnippet(session, snippet))
+			throw new NoAccessException();
+
+		Code objCode = Code.createCode(code, snippet.getCode().getLanguage(),
+				snippet);
+		snippet.setCode(objCode);
 	}
 
 	@Override
-	public void addTag(long id, String tag) throws NoAccessException {
-		// TODO Auto-generated method stub
+	public void addTag(long id, String tag) throws NoAccessException,
+			NotFoundException {
+		if (tag == null || tag.isEmpty())
+			return;
+		Snippet snippet = findSnippetThrowsException(id);
+		Session session = getSession();
+		if (!session.getPolicy().canEditSnippet(session, snippet))
+			throw new NoAccessException();
 
+		snippet.addTag(Tag.createTag(tag));
 	}
 
 	@Override
-	public void removeTag(long id, String tag) throws NoAccessException {
-		// TODO Auto-generated method stub
+	public void removeTag(long id, String tag) throws NoAccessException,
+			NotFoundException {
+		if (tag == null || tag.isEmpty())
+			return;
+		Snippet snippet = findSnippetThrowsException(id);
+		Session session = getSession();
+		if (!session.getPolicy().canEditSnippet(session, snippet))
+			throw new NoAccessException();
 
+		snippet.removeTag(Tag.createTag(tag));
 	}
 
 	@Override
@@ -119,8 +166,12 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 			throw new NotFoundException("Snippet with id " + id + " not found");
 
 		try {
-			snippet.addComment(comment, user);
+			Comment objComment = null;
+			objComment = snippet.addComment(comment, user);
+			logInfo("Added new comment with id=" + objComment.getHashID());
 		} catch (IOException e) {
+			logError("IOException during adding a new comment: "
+					+ e.getMessage());
 			System.err
 					.println("IOException during creating of new comment on snippet "
 							+ id + ": " + e.getMessage());
@@ -206,4 +257,22 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 		}
 	}
 
+	/**
+	 * Searches for a snippet by its hash id and returns the snippet if found.
+	 * If not found, it throws a {@link NotFoundException}
+	 * 
+	 * @param id
+	 *            hash id of the snippet to search for
+	 * @return the found snippet
+	 * @throws NotFoundException
+	 *             Thrown if the snippet is not found
+	 */
+	private Snippet findSnippetThrowsException(long id)
+			throws NotFoundException {
+		Snippet snippet = Snippet.getSnippet(id);
+		if (snippet == null)
+			throw new NotFoundException("Snippet with id " + id
+					+ " could not be found");
+		return snippet;
+	}
 }

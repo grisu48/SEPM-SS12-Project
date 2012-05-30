@@ -29,13 +29,23 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class Control implements EntryPoint {
 
+	/** User currently logged in */
 	private final XUser user = new XUser("Guest", "noreal", "nomail");
+	/** Indicating if logged in */
 	private boolean loggedIn = false;
 
+	/** Singleton instance */
 	private static Control instance = null;
+	/** Session cookie */
 	private final static String COOKIE_SESSION = ISession.cookie_Session_ID;
-	private final static ISessionAsync session = ISession.Util.getInstance();
 
+	/** Session proxy object, used for RPC in GWT */
+	public final static ISessionAsync proxySession = ISession.Util
+			.getInstance();
+	/** Snippet proxy object, used for RPC in GWT */
+	public final static ISnippetAsync proxySnippet = ISnippet.Util
+			.getInstance();
+	/** Main GUI distributor */
 	public final static GUI myGUI = new GUI();
 
 	private Control() {
@@ -50,7 +60,7 @@ public class Control implements EntryPoint {
 
 	@Override
 	public void onModuleLoad() {
-		session.getSessionCookie(new AsyncCallback<String>() {
+		proxySession.getSessionCookie(new AsyncCallback<String>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -117,7 +127,7 @@ public class Control implements EntryPoint {
 			break;
 		case 'n':
 			myGUI.showCreateSnippetForm();
-			break;	
+			break;
 		default:
 		}
 	}
@@ -129,7 +139,7 @@ public class Control implements EntryPoint {
 	public void login(final String user, final String pw, final Login login) {
 
 		try {
-			session.login(user, pw, new AsyncCallback<Boolean>() {
+			proxySession.login(user, pw, new AsyncCallback<Boolean>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -162,22 +172,23 @@ public class Control implements EntryPoint {
 		if (user.isEmpty() || mail.isEmpty() || pw.isEmpty())
 			return;
 
-		session.registerNewUser(user, pw, mail, new AsyncCallback<Boolean>() {
+		proxySession.registerNewUser(user, pw, mail,
+				new AsyncCallback<Boolean>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				if (caught instanceof NoAccessException) {
-					register.registerFailure("Access denied");
-				} else
-					register.registerFailure("Unknown error: "
-							+ caught.getMessage());
-			}
+					@Override
+					public void onFailure(Throwable caught) {
+						if (caught instanceof NoAccessException) {
+							register.registerFailure("Access denied");
+						} else
+							register.registerFailure("Unknown error: "
+									+ caught.getMessage());
+					}
 
-			@Override
-			public void onSuccess(Boolean result) {
-				register.registerSuccess();
-			}
-		});
+					@Override
+					public void onSuccess(Boolean result) {
+						register.registerSuccess();
+					}
+				});
 	}
 
 	public void search(String searchString, List<String> tags,
@@ -185,8 +196,8 @@ public class Control implements EntryPoint {
 			int count, final SearchArea searchArea) {
 
 		myGUI.startSearch();
-		session.doSearch(searchString, tags, categories, sorting, start, count,
-				new AsyncCallback<XSearch>() {
+		proxySession.doSearch(searchString, tags, categories, sorting, start,
+				count, new AsyncCallback<XSearch>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -216,7 +227,7 @@ public class Control implements EntryPoint {
 
 	public void refresh() {
 
-		session.isLoggedIn(new AsyncCallback<Boolean>() {
+		proxySession.isLoggedIn(new AsyncCallback<Boolean>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -230,7 +241,7 @@ public class Control implements EntryPoint {
 			}
 		});
 
-		session.getUser(user.username, new AsyncCallback<XUser>() {
+		proxySession.getUser(user.username, new AsyncCallback<XUser>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -259,7 +270,7 @@ public class Control implements EntryPoint {
 	}
 
 	public void logout() {
-		session.logout(new AsyncCallback<Void>() {
+		proxySession.logout(new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -286,12 +297,19 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				myGUI.showErrorPopup("Creation of new comment failed", caught);
+				if (caught instanceof NoAccessException) {
+					if (!isLoggedIn())
+						myGUI.showErrorPopup("You must login first");
+					else
+						myGUI.showErrorPopup("Access denied.");
+
+				} else
+					myGUI.showErrorPopup("Creation of new comment failed",
+							caught);
 			}
 
 			@Override
 			public void onSuccess(Void result) {
-				System.out.println("Comment written successfully");
 				myGUI.myCommentArea.update();
 			}
 		});
@@ -335,48 +353,47 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onSuccess(Void result) {
-				System.out.println("Snippet added to favorites");
+
 			}
 		});
 	}
 
 	public void changeSnippet(XSnippet snip) {
-		// XXX 
-		//Das veränderte XSnippet soll in die Datenbank geschrieben werden.
-		//ÜBer ISnippet?
-		//Ist dies geschehen -> mySnipArea.update();
-		
+		// XXX
+		// Das veränderte XSnippet soll in die Datenbank geschrieben werden.
+		// ÜBer ISnippet?
+		// Ist dies geschehen -> mySnipArea.update();
+
 	}
 
 	public void setPassword(String pw1, String pw2) {
 		if (pw1.equals(pw2)) {
 			// XXX
-			// tausche das alte Password mit dem neuen und liefere true, wenn alles in Ordnung ist
+			// tausche das alte Password mit dem neuen und liefere true, wenn
+			// alles in Ordnung ist
 			myGUI.myPersonalArea.update(true);
-		}
-		else {
+		} else {
 			myGUI.myPersonalArea.update(false);
 		}
-		
-		
-		
+
 	}
 
 	public List<XSnippet> getOwn() {
 		// XXX
-		
-		//Hätte gern:
-		//Eine XSNippetliste mit allen Snippets von diesem User
-		//Wenn keine vorhanden, bitte leere Liste, nicht null
-		
+
+		// Hätte gern:
+		// Eine XSNippetliste mit allen Snippets von diesem User
+		// Wenn keine vorhanden, bitte leere Liste, nicht null
+
 		return null;
 	}
-	
+
 	public List<XSnippet> getFav() {
 		// XXX
-		//Hätte gern:
-		//Eine XSNippetliste mit allen Snippets, die dieser User als Favourit gespeichert hat.
-		//Wenn keine vorhanden, bitte leere Liste, nicht null
+		// Hätte gern:
+		// Eine XSNippetliste mit allen Snippets, die dieser User als Favourit
+		// gespeichert hat.
+		// Wenn keine vorhanden, bitte leere Liste, nicht null
 		return null;
 	}
 

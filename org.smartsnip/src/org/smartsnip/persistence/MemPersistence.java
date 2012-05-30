@@ -49,7 +49,7 @@ public class MemPersistence implements IPersistence {
 	private final HashMap<String, User> allUsers = new HashMap<String, User>();
 	private final HashMap<Long, Snippet> allSnippets = new HashMap<Long, Snippet>();
 
-	private final HashMap<Snippet, HashMap<Integer, Comment>> allComments = new HashMap<Snippet, HashMap<Integer, Comment>>();
+	private final HashMap<Snippet, HashMap<Long, Comment>> allComments = new HashMap<Snippet, HashMap<Long, Comment>>();
 	private final HashMap<Long, Comment> commentMap = new HashMap<Long, Comment>();
 
 	private final List<Tag> allTags = new ArrayList<Tag>();
@@ -99,7 +99,7 @@ public class MemPersistence implements IPersistence {
 			return null;
 
 		Long id = snippet.getHashId();
-		if (id == null) {
+		if (id == null || id == 0L) {
 			id = createNewSnippetId();
 			snippet.id = id;
 		}
@@ -124,11 +124,16 @@ public class MemPersistence implements IPersistence {
 	public Long writeComment(Comment comment, int mode) throws IOException {
 		if (comment == null)
 			return null;
-		int key = comment.hashCode();
+		long key = comment.getHashID();
+		if (key == 0) {
+			key = comment.getMessage().hashCode()
+					^ comment.getOwner().hashCode();
+			comment.setID(key);
+		}
 
-		HashMap<Integer, Comment> comments = allComments.get(comment.snippet);
+		HashMap<Long, Comment> comments = allComments.get(comment.snippet);
 		if (comments == null) {
-			comments = new HashMap<Integer, Comment>();
+			comments = new HashMap<Long, Comment>();
 			allComments.put(comment.getSnippet(), comments);
 		}
 
@@ -436,9 +441,9 @@ public class MemPersistence implements IPersistence {
 		if (snippet == null)
 			return null;
 
-		HashMap<Integer, Comment> comments = allComments.get(snippet);
+		HashMap<Long, Comment> comments = allComments.get(snippet);
 		if (comments == null) {
-			comments = new HashMap<Integer, Comment>();
+			comments = new HashMap<Long, Comment>();
 			allComments.put(snippet, comments);
 		}
 		return new ArrayList<Comment>(comments.values());
@@ -591,8 +596,9 @@ public class MemPersistence implements IPersistence {
 				results.remove(0);
 		}
 
-		while (results.size() > max && results.size() > 0)
-			results.remove(results.size() - 1);
+		if (max >= 0)
+			while (results.size() > max && results.size() > 0)
+				results.remove(results.size() - 1);
 
 		return results;
 	}
@@ -788,7 +794,7 @@ public class MemPersistence implements IPersistence {
 		if (comment == null)
 			return;
 
-		HashMap<Integer, Comment> comments = allComments.get(comment.snippet);
+		HashMap<Long, Comment> comments = allComments.get(comment.snippet);
 		if (comment != null)
 			comments.remove(comment.getHashID());
 		commentMap.remove(comment.getHashID());

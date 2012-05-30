@@ -391,4 +391,17 @@ public class Comment {
 		Snippet snippet = Snippet.getSnippet(this.snippet);
 		return snippet;
 	}
+
+	/**
+	 * Manually sets the id of this comment. This call does not writes out into
+	 * the db.
+	 * 
+	 * DO NOT USE THIS METHOD UNLESS YOU KNOW WHAT YOUR ARE DOING
+	 * 
+	 * @param key
+	 *            to be set
+	 */
+	public void setID(long key) {
+		this.id = key;
+	}
 }
