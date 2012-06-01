@@ -254,6 +254,7 @@ public class CategoryFactory {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		DBCategory entity;
+		Category result = null;
 
 		Transaction tx = null;
 		try {
@@ -264,6 +265,8 @@ public class CategoryFactory {
 			entity.setName(name);
 			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 
+			result = helper.createCategory(entity.getName(), entity.getDescription(),
+				fetchParentFlatend(helper, session, entity).getName());
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -272,8 +275,7 @@ public class CategoryFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return helper.createCategory(entity.getName(), entity.getDescription(),
-				fetchParentFlatend(helper, session, entity).getName());
+		return result;
 	}
 
 	/**

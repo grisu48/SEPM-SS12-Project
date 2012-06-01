@@ -57,11 +57,11 @@ public class DBComment {
 	private String userName;
 
 	@GeneratedValue
-	@Column(name = "pos_votes", insertable = false, updatable = false)
+	@Column(name = "pos_votes_sum", insertable = false, updatable = false)
 	private Integer posVotes;
 
 	@GeneratedValue
-	@Column(name = "neg_votes", insertable = false, updatable = false)
+	@Column(name = "neg_votes_sum", insertable = false, updatable = false)
 	private Integer negVotes;
 
 	/**

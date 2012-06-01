@@ -88,9 +88,9 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
  */
 CREATE TABLE `Snippet` (
   `snippet_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  `headline` VARCHAR(255)  DEFAULT NULL,
+  `headline` VARCHAR(255) DEFAULT NULL,
   `description` TEXT DEFAULT NULL,
-  `viewcount` INTEGER UNSIGNED DEFAULT NULL,
+  `viewcount` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `rating_average` FLOAT NOT NULL DEFAULT 0,
   `last_edited` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP 
     ON UPDATE CURRENT_TIMESTAMP,
@@ -278,3 +278,183 @@ CREATE TABLE `Vote` (
 )
 ENGINE = InnoDB
 CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+/* alternating delimiter for multi-statement operations */
+DELIMITER $
+
+/*
+ * triggers to manage the rating average of a snippet
+ */
+CREATE TRIGGER `insert_rating_trigger` 
+  AFTER INSERT
+  ON `Rating`
+  FOR EACH ROW
+    BEGIN
+	    DECLARE average FLOAT DEFAULT 0;
+	    SET average = (SELECT SUM(rating_value)/COUNT(*) FROM `Rating` rat 
+	      WHERE rat.snippet_id = NEW.snippet_id 
+	      AND rat.rating_value != 0);
+	    UPDATE `Snippet` snip set snip.rating_average = average 
+	      WHERE snip.snippet_id = NEW.snippet_id;
+    END; 
+$
+
+CREATE TRIGGER `update_rating_trigger` 
+  AFTER UPDATE
+  ON `Rating`
+  FOR EACH ROW
+    BEGIN
+	    DECLARE average FLOAT DEFAULT 0;
+	    SET average = (SELECT SUM(rating_value)/COUNT(*) FROM `Rating` rat 
+	      WHERE rat.snippet_id = NEW.snippet_id 
+	      AND rat.rating_value != 0);
+	    UPDATE `Snippet` snip set snip.rating_average = average 
+	      WHERE snip.snippet_id = NEW.snippet_id;
+
+	      IF NEW.snippet_id != OLD.snippet_id
+	      THEN
+	        SET average = (SELECT SUM(rating_value)/COUNT(*) FROM `Rating` rat 
+	          WHERE rat.snippet_id = OLD.snippet_id 
+	          AND rat.rating_value != 0);
+	        UPDATE `Snippet` snip set snip.rating_average = average 
+	          WHERE snip.snippet_id = OLD.snippet_id;	      
+	      END IF;
+    END; 
+$
+
+CREATE TRIGGER `delete_rating_trigger` 
+  AFTER DELETE
+  ON `Rating`
+  FOR EACH ROW
+    BEGIN
+	    DECLARE average FLOAT DEFAULT 0;
+	    SET average = (SELECT SUM(rating_value)/COUNT(*) FROM `Rating` rat 
+	      WHERE rat.snippet_id = OLD.snippet_id 
+	      AND rat.rating_value != 0);
+	    UPDATE `Snippet` snip set snip.rating_average = average 
+	      WHERE snip.snippet_id = OLD.snippet_id;
+    END; 
+$
+
+/*
+ * triggers to manage the number of positive and nagative votes
+ * of a comment
+ */
+CREATE TRIGGER `insert_vote_trigger` 
+  AFTER INSERT
+  ON `Vote`
+  FOR EACH ROW
+    BEGIN
+	    DECLARE pos INTEGER DEFAULT 0;
+	    DECLARE neg INTEGER DEFAULT 0;
+	    SET pos = (SELECT COUNT(*) FROM `Vote` vot 
+	      WHERE vot.comment_id = NEW.comment_id 
+	      AND vot.vote = "positive");
+	    SET neg = (SELECT COUNT(*) FROM `Vote` vot 
+	      WHERE vot.comment_id = NEW.comment_id 
+	      AND vot.vote = "negative");
+	    UPDATE `Comment` comm set comm.pos_votes_sum = pos, comm.neg_votes_sum = neg
+	      WHERE comm.comment_id = NEW.comment_id;
+    END; 
+$
+
+CREATE TRIGGER `update_vote_trigger` 
+  AFTER UPDATE
+  ON `Vote`
+  FOR EACH ROW
+    BEGIN
+	    DECLARE pos INTEGER DEFAULT 0;
+	    DECLARE neg INTEGER DEFAULT 0;
+	    SET pos = (SELECT COUNT(*) FROM `Vote` vot 
+	      WHERE vot.comment_id = NEW.comment_id 
+	      AND vot.vote = "positive");
+	    SET neg = (SELECT COUNT(*) FROM `Vote` vot 
+	      WHERE vot.comment_id = NEW.comment_id 
+	      AND vot.vote = "negative");
+	    UPDATE `Comment` comm set comm.pos_votes_sum = pos, comm.neg_votes_sum = neg
+	      WHERE comm.comment_id = NEW.comment_id;
+
+	      IF NEW.comment_id != OLD.comment_id
+	    THEN
+	    SET pos = (SELECT COUNT(*) FROM `Vote` vot 
+	      WHERE vot.comment_id = OLD.comment_id 
+	      AND vot.vote = "positive");
+	    SET neg = (SELECT COUNT(*) FROM `Vote` vot 
+	      WHERE vot.comment_id = OLD.comment_id 
+	      AND vot.vote = "negative");
+	    UPDATE `Comment` comm set comm.pos_votes_sum = pos, comm.neg_votes_sum = neg
+	      WHERE comm.comment_id = OLD.comment_id;
+	    END IF;
+    END; 
+$
+
+CREATE TRIGGER `delete_vote_trigger` 
+  AFTER DELETE
+  ON `Vote`
+  FOR EACH ROW
+    BEGIN
+	    DECLARE pos INTEGER DEFAULT 0;
+	    DECLARE neg INTEGER DEFAULT 0;
+	    SET pos = (SELECT COUNT(*) FROM `Vote` vot 
+	      WHERE vot.comment_id = OLD.comment_id 
+	      AND vot.vote = "positive");
+	    SET neg = (SELECT COUNT(*) FROM `Vote` vot 
+	      WHERE vot.comment_id = OLD.comment_id 
+	      AND vot.vote = "negative");
+	    UPDATE `Comment` comm set comm.pos_votes_sum = pos, comm.neg_votes_sum = neg
+	      WHERE comm.comment_id = OLD.comment_id;
+    END; 
+$
+
+/*
+ * triggers to manage the usage frequency of a tag
+ */
+CREATE TRIGGER `insert_tag_trigger` 
+  AFTER INSERT
+  ON `RelTagSnippet`
+  FOR EACH ROW
+    BEGIN
+	    DECLARE frequency INTEGER DEFAULT 0;
+	    SET frequency = (SELECT COUNT(*) FROM `RelTagSnippet` rel 
+	      WHERE rel.tag_name = NEW.tag_name);
+	    UPDATE `Tag` tag set tag.usage_freq = frequency 
+	    WHERE tag.tag_name = NEW.tag_name;
+    END; 
+$
+
+CREATE TRIGGER `update_tag_trigger` 
+  AFTER UPDATE
+  ON `RelTagSnippet`
+  FOR EACH ROW
+    BEGIN
+	    DECLARE frequency INTEGER DEFAULT 0;
+	    SET frequency = (SELECT COUNT(*) FROM `RelTagSnippet` rel 
+	      WHERE rel.tag_name = NEW.tag_name);
+	    UPDATE `Tag` tag set tag.usage_freq = frequency 
+	    WHERE tag.tag_name = NEW.tag_name;
+
+	    IF NEW.tag_name != OLD.tag_name
+	    THEN
+	      SET frequency = (SELECT COUNT(*) FROM `RelTagSnippet` rel 
+	        WHERE rel.tag_name = OLD.tag_name);
+	      UPDATE `Tag` tag set tag.usage_freq = frequency 
+	      WHERE tag.tag_name = OLD.tag_name;
+	    END IF;
+    END; 
+$
+
+CREATE TRIGGER `delete_tag_trigger` 
+  AFTER DELETE
+  ON `RelTagSnippet`
+  FOR EACH ROW
+    BEGIN
+	    DECLARE frequency INTEGER DEFAULT 0;
+	    SET frequency = (SELECT COUNT(*) FROM `RelTagSnippet` rel 
+	      WHERE rel.tag_name = OLD.tag_name);
+	    UPDATE `Tag` tag set tag.usage_freq = frequency 
+	    WHERE tag.tag_name = OLD.tag_name;
+    END; 
+$
+
+DELIMITER ;
+

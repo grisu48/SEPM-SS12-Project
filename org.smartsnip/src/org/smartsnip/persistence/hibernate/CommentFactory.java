@@ -48,7 +48,7 @@ public class CommentFactory {
 
 			DBComment entity = new DBComment();
 			// commentId is read-only
-			entity.setSnippetId(comment.getHashID());
+			entity.setSnippetId(comment.getSnippetId());
 			entity.setMessage(comment.getMessage());
 			// createdAt is read-only
 			entity.setUserName(comment.getOwner().getUsername());
@@ -90,7 +90,7 @@ public class CommentFactory {
 				query = new DBQuery(session);
 				entity = new DBComment();
 				// commentId is read-only
-				entity.setSnippetId(comment.getHashID());
+				entity.setSnippetId(comment.getSnippetId());
 				entity.setMessage(comment.getMessage());
 				// createdAt is read-only
 				entity.setUserName(comment.getOwner().getUsername());

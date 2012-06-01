@@ -391,7 +391,14 @@ public class Comment {
 		Snippet snippet = Snippet.getSnippet(this.snippet);
 		return snippet;
 	}
-
+	
+	/**
+	 * @return the snippet id
+	 */
+	public Long getSnippetId() {
+		return this.snippet;
+	}
+	
 	/**
 	 * Manually sets the id of this comment. This call does not writes out into
 	 * the db.
