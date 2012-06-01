@@ -6,10 +6,12 @@ package org.smartsnip.persistence.hibernate;
 
 import static org.junit.Assert.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -17,9 +19,17 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.hibernate.CacheMode;
 import org.hibernate.Session;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.event.service.spi.EventListenerRegistry;
+import org.hibernate.event.spi.EventType;
+import org.hibernate.event.spi.PostInsertEventListener;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
+import org.hibernate.search.event.impl.FullTextIndexEventListener;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -49,9 +59,23 @@ public class SqlPersistenceImplTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {	
 		// get a bean validator instance
+//		Configuration config = new Configuration().configure();
+//		Properties prop = config.getProperties();
+//		prop.list(System.out);
+		
+		
+//		SessionBuilder builder = new SessionBuilder();
+//		builder.run();
+//		System.out.println("waiting for init ...");
+//		builder.waitForInitialization();
+//		System.out.println("init complete.");
+//		Thread.sleep(100);
+//		System.out.println("wake up.");
+//		instance = builder.getFactory();
+		
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-		
+        
 		PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_SQL_DB);
 		instance = PersistenceFactory.getInstance();
 		if (PersistenceFactory.getPersistenceType() != PersistenceFactory.PERSIST_SQL_DB) {
@@ -59,11 +83,35 @@ public class SqlPersistenceImplTest {
 		}
 		helper = new SqlPersistenceHelper();
 
-		// Build Index for Hibernate Search
+		// Build Index for Hibernate Search with a mass-indexer
 		Session session = DBSessionFactory.open();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
-		fullTextSession.createIndexer().startAndWait();
+		fullTextSession
+		 .createIndexer()
+		 .batchSizeToLoadObjects( 25 )
+		 .cacheMode( CacheMode.IGNORE )
+		 .threadsToLoadObjects( 1 ) // 5
+		 .idFetchSize( 150 )
+		 .threadsForSubsequentFetching( 1 ) // 20
+		 .startAndWait();
+		
 		DBSessionFactory.close(session);
+		
+		SessionFactoryImplementor sfi = (SessionFactoryImplementor) ((SessionImplementor) session).getFactory();
+		EventListenerRegistry service = sfi
+				.getServiceRegistry()
+				.getService( EventListenerRegistry.class );
+		final Iterable<PostInsertEventListener> listeners = service.getEventListenerGroup( EventType.POST_INSERT )
+				.listeners();
+		FullTextIndexEventListener listener = null;
+		System.err.println("Listeners:");
+		for ( PostInsertEventListener candidate : listeners ) {
+			if ( candidate instanceof FullTextIndexEventListener ) {
+				listener = (FullTextIndexEventListener) candidate;
+				System.out.println(listener);
+			}
+		}
+		
 	}
 
 	/**
@@ -81,7 +129,7 @@ public class SqlPersistenceImplTest {
 		Set<ConstraintViolation<User>> constraintViolations =
 	            validator.validate(user);
 		for(Iterator<ConstraintViolation<User>> itr = constraintViolations.iterator(); itr.hasNext();) {
-			System.out.println("Constraint Violation: " + itr.next().getMessage());
+			System.err.println("Constraint Violation: " + itr.next().getMessage());
 		}
 	}
 
@@ -873,9 +921,13 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testSearch() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		List<Snippet> snippets = instance.search("description", null, null);
+		System.err.println("Search:");
+		for (Snippet s: snippets) {
+			System.out.println("Search result: snippetId = " + s.getHashId() + " Headline: " + s.getName() + " Data: " + s.getDescription());
+		}
 	}
 
 	/**

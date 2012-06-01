@@ -51,6 +51,6 @@
     <!-- org.hibernate.search.store.RAMDirectoryProvider for test -->
     <property name="hibernate.search.default.directory_provider">filesystem</property>
     <property name="hibernate.search.default.indexBase">/tmp/lucene/indexes</property>
-    
+    <property name="hibernate.search.lucene_version">LUCENE_CURRENT</property>
   </session-factory>
 </hibernate-configuration>

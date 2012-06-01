@@ -952,35 +952,58 @@ public class SnippetFactory {
 	 *      java.lang.Integer, java.lang.Integer)
 	 */
 	static List<Snippet> search(String searchString, Integer start,
-			Integer count) throws IOException {
-		// TODO Auto-generated method stub
-//		FullTextSession fullTextSession = Search.getFullTextSession(session);
-//		Transaction tx = fullTextSession.beginTransaction();
-//
-//		// create native Lucene query unsing the query DSL
-//		// alternatively you can write the Lucene query using the Lucene query parser
-//		// or the Lucene programmatic API. The Hibernate Search DSL is recommended though
-//		QueryBuilder qb = fullTextSession.getSearchFactory()
-//		    .buildQueryBuilder().forEntity( Book.class ).get();
-//		org.apache.lucene.search.Query query = qb
-//		  .keyword()
-//		  .onFields("headline", "description")
-//		  .matching(searchString);
-//		  .createQuery();
-//
-//		// wrap Lucene query in a org.hibernate.Query
-//		org.hibernate.Query hibQuery = 
-//		    fullTextSession.createFullTextQuery(query, Book.class);
-//
-//		// execute search
-//		List result = hibQuery.list();
-//		  
-//		tx.commit();
-//		session.close();
+			Integer count) throws IOException {// TODO add limits
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		List<Snippet> result = new ArrayList<Snippet>();
 		
-		
-		
-		return null;
+		FullTextSession fullTextSession = Search.getFullTextSession(session);
+		Transaction tx = null;
+		try {
+		tx = fullTextSession.beginTransaction();
+
+		// lucene full text query
+		QueryBuilder builder = fullTextSession.getSearchFactory()
+		    .buildQueryBuilder().forEntity( DBSnippet.class ).get();
+		org.apache.lucene.search.Query ftQuery = builder
+		  .keyword()
+		  .onFields("headline", "description")
+		  .matching(searchString)
+		  .createQuery();
+
+		// wrap Lucene query in a org.hibernate.Query
+		org.hibernate.Query query = 
+		    fullTextSession.createFullTextQuery(ftQuery, DBSnippet.class);
+
+		// execute search and build Snippets
+		DBSnippet entity;
+		Snippet snippet;
+		@SuppressWarnings("unchecked")
+		Iterator<DBSnippet> iterator = query.iterate();
+		for (; iterator.hasNext();) {
+			entity = iterator.next();
+			snippet = helper.createSnippet(entity.getSnippetId(), entity
+					.getOwner(), entity.getHeadline(), entity
+					.getDescription(),
+					CategoryFactory.fetchCategory(session, entity)
+							.getName(), TagFactory.fetchTags(helper,
+							session, entity.getSnippetId()), CommentFactory.fetchCommentIds(session, entity.getSnippetId()),
+					fetchLicense(helper, session, entity).getShortDescr(),
+					entity.getViewcount());
+			snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
+					snippet));
+			result.add(snippet);
+		}
+		  
+		tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
