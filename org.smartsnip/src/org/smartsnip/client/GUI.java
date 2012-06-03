@@ -50,6 +50,7 @@ public class GUI {
 	Footer myFooter = null;
 	SnipArea mySnipArea = null;
 	PersonalArea myPersonalArea = null;
+	SearchArea mySearchArea = null;
 	
 
 	// Create userPanel
@@ -87,10 +88,10 @@ public class GUI {
 		// Fill userPanel
 		myMeta = new Meta();
 		userPanel.add(myMeta);
-
+		
 		// Fill searchPanel
-		SearchArea search = new SearchArea();
-		searchPanel.add(search);
+		mySearchArea = new SearchArea();
+		searchPanel.add(mySearchArea);
 
 		// Fill footerPanel
 		myFooter = new Footer();

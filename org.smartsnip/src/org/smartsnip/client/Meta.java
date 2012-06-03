@@ -3,9 +3,9 @@ package org.smartsnip.client;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class Meta extends Composite {
@@ -17,8 +17,9 @@ public class Meta extends Composite {
 	private final Anchor login;
 	private final Anchor register;
 	private final Anchor logout;
+	private Image icon;
 
-	private final Button btCreateSnippet;
+	
 
 	public Meta() {
 
@@ -26,6 +27,10 @@ public class Meta extends Composite {
 
 		metaControl = new HorizontalPanel();
 		metaPanel = new HorizontalPanel();
+		
+
+		icon = new Image("/images/user1.png");
+		icon.setSize("35px", "35px");
 		
 		user = new Anchor(Control.getInstance().getUsername());
 		user.addClickHandler(new ClickHandler() {
@@ -67,22 +72,15 @@ public class Meta extends Composite {
 
 		});
 
-		btCreateSnippet = new Button("Create snippet");
-		btCreateSnippet.setVisible(false);
-		btCreateSnippet.addClickHandler(new ClickHandler() {
+		
 
-			@Override
-			public void onClick(ClickEvent event) {
-				Control.getInstance().changeSite('n');
-			}
-		});
 
+		metaPanel.add(icon);
 		metaPanel.add(user);
 		metaPanel.add(login);
 		metaPanel.add(register);
 		metaPanel.add(logout);
 
-		metaControl.add(btCreateSnippet);
 
 		metaVertical.add(metaPanel);
 		metaVertical.add(metaControl);
@@ -100,17 +98,17 @@ public class Meta extends Composite {
 		Control control = Control.getInstance();
 		
 		if (control.isLoggedIn()) {
+			icon.setVisible(true);
 			user.setVisible(true);
 			login.setVisible(false);
 			register.setVisible(false);
 			logout.setVisible(true);
-			btCreateSnippet.setVisible(true);
 		} else {
+			icon.setVisible(false);
 			login.setVisible(true);
 			register.setVisible(true);
 			user.setVisible(false);
 			logout.setVisible(false);
-			btCreateSnippet.setVisible(false);
 		}
 		
 

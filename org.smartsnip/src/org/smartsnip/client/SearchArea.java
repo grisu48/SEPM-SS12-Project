@@ -18,12 +18,16 @@ public class SearchArea extends Composite {
 	private final HorizontalPanel horPanel;
 	private final SuggestBox searchSnippet;
 	private final Button searchButton;
+	private final Button btCreateSnippet;
+	private Control control;
 	private String status;
 
 	/** Search duration timer */
 	private long searchDuration = 0L;
 
 	public SearchArea() {
+		
+		control = Control.getInstance();
 
 		horPanel = new HorizontalPanel();
 
@@ -51,13 +55,30 @@ public class SearchArea extends Composite {
 				fireSearch();
 			}
 		});
+		
+		btCreateSnippet = new Button("Create snippet");
+		btCreateSnippet.setVisible(true);
+		btCreateSnippet.addStyleName("createButton");
+		btCreateSnippet.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				Control.getInstance().changeSite('n');
+			}
+		});
+		
+		
 
 		horPanel.add(searchSnippet);
 		horPanel.add(searchButton);
+		horPanel.add(btCreateSnippet);
 
 		initWidget(horPanel);
 		// Give the overall composite a style name.
 		setStyleName("searchArea");
+		
+		
+		update();
 	}
 
 	public void fireSearch() {
@@ -66,6 +87,19 @@ public class SearchArea extends Composite {
 		control.search(searchSnippet.getText(), null, null,
 				XSearch.SearchSorting.highestRated, 0, 10, SearchArea.this);
 	}
+	
+public void update() {
+		if (control.isLoggedIn()) {
+			btCreateSnippet.setVisible(true);
+		} 
+		else {
+			btCreateSnippet.setVisible(false);
+			System.out.println(control.isLoggedIn());
+		} 
+		
+	}
+	
+	
 
 	/**
 	 * Callback if the search failed with an exception
@@ -91,5 +125,7 @@ public class SearchArea extends Composite {
 		status = result.totalresults + " results in " + time + " ms";
 		return status;
 	}
+	
+	
 
 }

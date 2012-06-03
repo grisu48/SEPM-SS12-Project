@@ -216,7 +216,7 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 
-.searchButton {
+.searchButton, .createButton {
 	
 	padding:13px;
 	margin: 20px 0px 0px 20px;
@@ -366,5 +366,10 @@ footer .gwt-Label, .gwt-Anchor {
 	font-family:"Lato";
 	font-weight:700;
 }
- 
+
+.meta {
+	margin-top: 30px;
+	margin-right: 20px;
+}
+
 

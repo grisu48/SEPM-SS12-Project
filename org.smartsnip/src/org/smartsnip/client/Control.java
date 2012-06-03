@@ -238,6 +238,7 @@ public class Control implements EntryPoint {
 			public void onSuccess(Boolean result) {
 				loggedIn = result;
 				myGUI.myMeta.update();
+				myGUI.mySearchArea.update();
 			}
 		});
 
@@ -259,6 +260,7 @@ public class Control implements EntryPoint {
 					user.realname = result.realname;
 				}
 				myGUI.myMeta.update();
+				myGUI.mySearchArea.update();
 
 			}
 		});
