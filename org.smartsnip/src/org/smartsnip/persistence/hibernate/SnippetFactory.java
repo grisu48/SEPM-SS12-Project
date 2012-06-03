@@ -533,7 +533,8 @@ public class SnippetFactory {
 			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
 					.hasNext();) {
 				entity = iterator.next();
-
+				incrementViewcount(session, entity);
+				
 				snippet = helper.createSnippet(entity.getSnippetId(), owner
 						.getUsername(), entity.getHeadline(), entity
 						.getDescription(),
@@ -588,7 +589,8 @@ public class SnippetFactory {
 				snip.setSnippetId(entity.getFavouriteId().getSnippetId());
 				snipQuery = new DBQuery(session);
 				snip = snipQuery.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
-
+				incrementViewcount(session, snip);
+				
 				snippet = helper.createSnippet(
 						snip.getSnippetId(),
 						snip.getOwner(),
@@ -654,7 +656,8 @@ public class SnippetFactory {
 				snip.setSnippetId(id);
 				query = new DBQuery(session);
 				snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
-
+				incrementViewcount(session, snip);
+				
 				snippet = helper.createSnippet(snip.getSnippetId(),
 						snip.getOwner(), snip.getHeadline(),
 						snip.getDescription(),
@@ -717,6 +720,8 @@ public class SnippetFactory {
 			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
 					.hasNext();) {
 				entity = iterator.next();
+				incrementViewcount(session, entity);
+				
 				snippet = helper.createSnippet(entity.getSnippetId(), entity
 						.getOwner(), entity.getHeadline(), entity
 						.getDescription(),
@@ -761,7 +766,8 @@ public class SnippetFactory {
 			DBSnippet entity = new DBSnippet();
 			entity.setSnippetId(id);
 			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
-
+			incrementViewcount(session, entity);
+			
 			result = helper
 					.createSnippet(entity.getSnippetId(), entity.getOwner(),
 							entity.getHeadline(), entity.getDescription(),
@@ -1103,5 +1109,20 @@ public class SnippetFactory {
 		entity.setLicenseId(snippet.getLicenseId());
 		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 		return entity;
+	}
+	
+	/**
+	 * increment the viewcount of a snippet
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param snippet
+	 *            the snippet as source of the viewcount
+	 */
+	static void incrementViewcount(Session session, DBSnippet snippet) {
+		DBQuery query = new DBQuery(session);
+		DBSnippet entity = new DBSnippet();
+		entity.setSnippetId(snippet.getSnippetId());
+		entity.setViewcount(snippet.getViewcount() + 1);
+		query.update(entity, DBQuery.QUERY_SKIP_NULL);
 	}
 }

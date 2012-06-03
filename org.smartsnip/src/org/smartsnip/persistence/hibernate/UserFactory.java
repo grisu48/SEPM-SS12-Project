@@ -550,7 +550,8 @@ public class UserFactory {
 					snip.setSnippetId(n.getSnippetId());
 					snip = new DBQuery(session).fromSingle(snip,
 							DBQuery.QUERY_NOT_NULL);
-
+					SnippetFactory.incrementViewcount(session, snip);
+					
 					snippet = helper.createSnippet(entity.getSnippetId(),
 							entity.getUserName(), snip.getHeadline(), snip
 									.getDescription(), CategoryFactory
