@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
@@ -29,11 +30,7 @@ import org.hibernate.search.annotations.Store;
  */
 @Entity
 @Indexed
-//TODO update hibernate see issue HHH-7074
-//"the replacement annotations of @Entity are not working"
-@SuppressWarnings("deprecation")
-@org.hibernate.annotations.Entity(dynamicInsert = true)
-//@DynamicInsert
+@DynamicInsert
 @Table(name = "Snippet")
 public class DBSnippet {
 
@@ -66,34 +63,16 @@ public class DBSnippet {
 	private Date lastEdited;
 
 	@Column(name = "user_name", length = 20)
-	// @ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-	// @ForeignKey(name = "DBUser.userName")
 	private String owner;
 
 	@Column(name = "category_id")
-	// @ManyToOne(targetEntity = DBCategory.class, fetch = FetchType.EAGER)
-	// @ForeignKey(name = "DBCategory.categoryId")
 	private Long categoryId;
 
 	@Column(name = "license_id")
-	// @ManyToOne(targetEntity = DBLicense.class, fetch = FetchType.EAGER)
-	// @ForeignKey(name = "DBLicense.licenseId")
 	private Long licenseId;
 
-	// XXX to remove ?
-//	@Column(name = "tag_name", length = 50)
-//	@ManyToMany(targetEntity = DBTag.class, fetch = FetchType.EAGER, cascade = {
-//			CascadeType.MERGE, CascadeType.PERSIST })
-//	@JoinTable(name = "RelTagSnippet", joinColumns = @JoinColumn(name = "snippet_id"), inverseJoinColumns = @JoinColumn(name = "tag_name"))
-//	@ForeignKey(name = "DBTag.tagName")
-//	private List<String> tags; //FIXME
-
-//	@OneToMany(targetEntity = DBComment.class, fetch = FetchType.LAZY, mappedBy = "commentId")
-//	@ForeignKey(name = "DBComent.commentId")
-//	private List<Long> comments; //FIXME
-
 	/**
-	 * 
+	 * Entity, POJO class
 	 */
 	DBSnippet() {
 		super();
@@ -292,35 +271,4 @@ public class DBSnippet {
 			return false;
 		return true;
 	}
-
-	// XXX to remove
-//	/**
-//	 * @return the tags
-//	 */
-//	public List<String> getTags() {
-//		return tags;
-//	}
-//
-//	/**
-//	 * @param tags
-//	 *            the tags to set
-//	 */
-//	public void setTags(List<String> tags) {
-//		this.tags = tags;
-//	}
-//
-//	/**
-//	 * @return the comments
-//	 */
-//	List<Long> getComments() {
-//		return this.comments;
-//	}
-//
-//	/**
-//	 * @param comments
-//	 *            the comments to set
-//	 */
-//	void setComments(List<Long> comments) {
-//		this.comments = comments;
-//	}
 }

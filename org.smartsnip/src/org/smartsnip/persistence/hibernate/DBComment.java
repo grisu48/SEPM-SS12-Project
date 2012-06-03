@@ -15,16 +15,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.DynamicInsert;
+
 /**
  * @author littlelion
  * 
  */
 @Entity
-//TODO update hibernate see issue HHH-7074
-//"the replacement annotations of @Entity are not working"
-@SuppressWarnings("deprecation")
-@org.hibernate.annotations.Entity(dynamicInsert = true)
-//@DynamicInsert
+@DynamicInsert
 @Table(name = "Comment")
 public class DBComment {
 
@@ -33,9 +31,6 @@ public class DBComment {
 	@Column(name = "comment_id", insertable = false, updatable = false)
 	private Long commentId;
 
-//	@ManyToOne(targetEntity = Snippet.class, fetch = FetchType.EAGER)
-//	@ForeignKey(name = "Snippet.snippetId")
-//	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Column(name = "snippet_id")
 	private Long snippetId;
 
@@ -51,8 +46,6 @@ public class DBComment {
 	@Column(name = "created_at", insertable = false, updatable = false)
 	private Date createdAt;
 
-//	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-//	@ForeignKey(name = "User.userName")
 	@Column(name = "user_name", length = 20)
 	private String userName;
 
@@ -65,7 +58,7 @@ public class DBComment {
 	private Integer negVotes;
 
 	/**
-	 * 
+	 * Entity, POJO class
 	 */
 	DBComment() {
 		super();

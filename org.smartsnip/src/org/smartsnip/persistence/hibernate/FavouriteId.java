@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 class FavouriteId implements Serializable {
 
 	/**
-	 * 
+	 * Id class
 	 */
 	private static final long serialVersionUID = -1167154781761177082L;
 

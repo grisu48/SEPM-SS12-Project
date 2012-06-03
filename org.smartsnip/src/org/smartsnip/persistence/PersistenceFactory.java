@@ -162,7 +162,6 @@ public class PersistenceFactory {
 	 */
 	public static void closeFactory() {
 		Logger log = Logger.getLogger(PersistenceFactory.class);
-		System.out.println(instance);
 		String name = null;
 		try {
 			if (instance != null) {

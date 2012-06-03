@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.DynamicInsert;
 import org.smartsnip.persistence.IPersistence;
 
 /**
@@ -15,11 +17,7 @@ import org.smartsnip.persistence.IPersistence;
  * 
  */
 @Entity
-//TODO update hibernate see issue HHH-7074
-//"the replacement annotations of @Entity are not working"
-@SuppressWarnings("deprecation")
-@org.hibernate.annotations.Entity(dynamicInsert = true)
-//@DynamicInsert
+@DynamicInsert
 @Table(name = "Rating")
 public class DBRating {
 
@@ -30,7 +28,7 @@ public class DBRating {
 	private Integer value;
 
 	/**
-	 * 
+	 * Entity, POJO class
 	 */
 	DBRating() {
 		super();
@@ -128,121 +126,4 @@ public class DBRating {
 			return false;
 		return true;
 	}
-	
-//	/**
-//	 * 
-//	 * @author littlelion
-//	 * 
-//	 */
-//	@Embeddable
-//	class RatingId implements Serializable {
-//
-//		/**
-//		 * 
-//		 */
-//		private static final long serialVersionUID = -2664532834291488550L;
-//
-//		@NotNull
-//		// @ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
-//		// @ForeignKey(name = "DBSnippet.snippetId")
-//		@Column(name = "snippet_id")
-//		private Long snippetId;
-//
-//		@NotNull
-//		// @ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-//		// @ForeignKey(name = "DBUser.userName")
-//		@Column(name = "user_name", length = 20)
-//		private String userName;
-//
-//		/**
-//		 * 
-//		 */
-//		RatingId() {
-//			super();
-//		}
-//
-//		/**
-//		 * @param snippetId
-//		 * @param userName
-//		 */
-//		RatingId(Long snippetId, String userName) {
-//			super();
-//			this.snippetId = snippetId;
-//			this.userName = userName;
-//		}
-//
-//		/**
-//		 * @return the snippetId
-//		 */
-//		public Long getSnippetId() {
-//			return this.snippetId;
-//		}
-//
-//		/**
-//		 * @param snippetId
-//		 *            the snippetId to set
-//		 */
-//		public void setSnippetId(Long snippetId) {
-//			this.snippetId = snippetId;
-//		}
-//
-//		/**
-//		 * @return the userName
-//		 */
-//		public String getUserName() {
-//			return this.userName;
-//		}
-//
-//		/**
-//		 * @param userName
-//		 *            the userName to set
-//		 */
-//		public void setUserName(String userName) {
-//			this.userName = userName;
-//		}
-//
-//		/**
-//		 * @see java.lang.Object#hashCode()
-//		 */
-//		@Override
-//		public int hashCode() {
-//			final int prime = 31;
-//			int result = 1;
-//			result = prime * result + getOuterType().hashCode();
-//			result = prime * result
-//					+ (int) (this.snippetId ^ (this.snippetId >>> 32));
-//			result = prime * result
-//					+ ((this.userName == null) ? 0 : this.userName.hashCode());
-//			return result;
-//		}
-//
-//		/**
-//		 * @see java.lang.Object#equals(java.lang.Object)
-//		 */
-//		@Override
-//		public boolean equals(Object obj) {
-//			if (this == obj)
-//				return true;
-//			if (obj == null)
-//				return false;
-//			if (getClass() != obj.getClass())
-//				return false;
-//			RatingId other = (RatingId) obj;
-//			if (!getOuterType().equals(other.getOuterType()))
-//				return false;
-//			if (this.snippetId != other.snippetId)
-//				return false;
-//			if (this.userName == null) {
-//				if (other.userName != null)
-//					return false;
-//			} else if (!this.userName.equals(other.userName))
-//				return false;
-//			return true;
-//		}
-//
-//		private DBRating getOuterType() {
-//			return DBRating.this;
-//		}
-//
-//	}
 }

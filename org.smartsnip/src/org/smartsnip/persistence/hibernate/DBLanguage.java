@@ -9,17 +9,15 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicInsert;
+
 /**
  * Database OR mapping class for table Language
  * @author littlelion
  * 
  */
 @Entity
-//TODO update hibernate see issue HHH-7074
-//"the replacement annotations of @Entity are not working"
-@SuppressWarnings("deprecation")
-@org.hibernate.annotations.Entity(dynamicInsert = true)
-//@DynamicInsert
+@DynamicInsert
 @Table(name = "Language")
 public class DBLanguage {
 
@@ -28,7 +26,7 @@ public class DBLanguage {
 	String language;
 
 	/**
-	 * 
+	 * Entity, POJO class
 	 */
 	DBLanguage() {
 		super();

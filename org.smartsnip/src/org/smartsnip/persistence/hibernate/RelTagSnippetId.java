@@ -32,7 +32,7 @@ class RelTagSnippetId implements Serializable {
 	private String tagName;
 
 	/**
-	 * 
+	 * Id class
 	 */
 	RelTagSnippetId() {
 		super();

@@ -14,16 +14,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.DynamicInsert;
+
 /**
  * @author littlelion
  * 
  */
 @Entity
-//TODO update hibernate see issue HHH-7074
-//"the replacement annotations of @Entity are not working"
-@SuppressWarnings("deprecation")
-@org.hibernate.annotations.Entity(dynamicInsert = true)
-//@DynamicInsert
+@DynamicInsert
 @Table(name = "Notification")
 public class DBNotification {
 
@@ -32,14 +30,9 @@ public class DBNotification {
 	@Column(name = "notification_id", insertable = false, updatable = false)
 	private Long notificationId;
 
-//	@ManyToOne(targetEntity = DBUser.class, fetch = FetchType.EAGER)
-//	@ForeignKey(name = "DBUser.userName")
-//	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Column(name = "user_name", length = 20)
 	private String userName;
 
-//	@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
-//	@ForeignKey(name = "DBSnippet.snippetId")
 	@Column(name = "snippet_id")
 	private Long snippetId;
 
@@ -59,7 +52,7 @@ public class DBNotification {
 	private Date createdAt;
 
 	/**
-	 * 
+	 * Entity, POJO class
 	 */
 	public DBNotification() {
 		super();

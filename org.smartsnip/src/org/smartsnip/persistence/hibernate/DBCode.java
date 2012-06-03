@@ -11,34 +11,39 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
+
 /**
  * @author littlelion
  * 
  */
 @Entity
-//TODO update hibernate see issue HHH-7074
-//"the replacement annotations of @Entity are not working"
-@SuppressWarnings("deprecation")
-@org.hibernate.annotations.Entity(dynamicInsert = true)
-//@DynamicInsert
+@Indexed
+@DynamicInsert
 @Table(name = "Code")
 public class DBCode {
 
 	@Id
+	@DocumentId
 	@GeneratedValue
 	@Column(name = "code_id", insertable = false, updatable = false)
 	private Long codeId;
 
-//	@ManyToOne(targetEntity = DBSnippet.class, fetch = FetchType.EAGER)
-//	@ForeignKey(name = "DBSnippet.snippetId")
-//	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Column(name = "snippet_id")
 	private Long snippetId;
 
 	@Column(name = "language", length = 50)
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	private String language;
 
 	@Lob
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	@Column(name = "file")
 	private String file;
 
@@ -46,7 +51,7 @@ public class DBCode {
 	private Integer version;
 
 	/**
-	 * 
+	 * Entity, POJO class
 	 */
 	DBCode() {
 		super();

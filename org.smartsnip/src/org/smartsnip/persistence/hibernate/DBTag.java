@@ -6,6 +6,14 @@ package org.smartsnip.persistence.hibernate;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
+
 /**
  * Database OR mapping class for table Tag
  * 
@@ -13,14 +21,13 @@ import javax.persistence.*;
  * 
  */
 @Entity
-//TODO update hibernate see issue HHH-7074
-//"the replacement annotations of @Entity are not working"
-@SuppressWarnings("deprecation")
-@org.hibernate.annotations.Entity(dynamicInsert = true)
-//@DynamicInsert
+@Indexed
+@DynamicInsert
 @Table(name = "Tag")
 class DBTag {
 	@Id
+	@DocumentId
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	@Column(name = "tag_name", length = 50)
 	private String name;
 
@@ -29,7 +36,7 @@ class DBTag {
 	private Integer usageFrequence;
 
 	/**
-	 * 
+	 * Entity, POJO class
 	 */
 	DBTag() {
 	}

@@ -5,7 +5,7 @@
 package org.smartsnip.persistence.hibernate;
 
 import javax.persistence.*;
-import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.DynamicInsert;
 import org.smartsnip.persistence.IPersistence;
 
 /**
@@ -15,18 +15,11 @@ import org.smartsnip.persistence.IPersistence;
  * 
  */
 @Entity
-//TODO update hibernate see issue HHH-7074
-//"the replacement annotations of @Entity are not working"
-@SuppressWarnings("deprecation")
-@org.hibernate.annotations.Entity(dynamicInsert = true)
-//@DynamicInsert
+@DynamicInsert
 @Table(name = "Login")
 class DBLogin {
 
 	@Id
-	// @OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	// @ForeignKey(name = "DBUser.userName")
-	// @OnDelete(action = OnDeleteAction.CASCADE)
 	@Column(name = "user_name", length = 20)
 	private String user;
 
@@ -38,7 +31,7 @@ class DBLogin {
 	private Boolean grantLogin;
 
 	/**
-	 * 
+	 * Entity, POJO class
 	 */
 	DBLogin() {
 		super();
@@ -71,7 +64,6 @@ class DBLogin {
 		this.user = user;
 	}
 
-	// XXX remove this item if unused or on security reasons
 	/**
 	 * @return the password
 	 */

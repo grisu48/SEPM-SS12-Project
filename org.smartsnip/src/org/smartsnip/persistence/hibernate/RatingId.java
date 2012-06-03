@@ -32,7 +32,7 @@ class RatingId implements Serializable {
 	private String userName;
 
 	/**
-	 * 
+	 * Id class
 	 */
 	RatingId() {
 		super();

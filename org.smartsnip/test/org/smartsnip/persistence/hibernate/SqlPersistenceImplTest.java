@@ -60,24 +60,6 @@ public class SqlPersistenceImplTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {	
 		// get a bean validator instance
-//		Configuration config = new Configuration().configure();
-//		Properties prop = config.getProperties();
-//		prop.list(System.out);
-		
-		
-//		SessionBuilder builder = new SessionBuilder();
-//		builder.run();
-//		System.out.println("waiting for init ...");
-//		builder.waitForInitialization();
-//		System.out.println("init complete.");
-//		Thread.sleep(100);
-//		System.out.println("wake up.");
-//		instance = builder.getFactory();
-		
-		Logger log = Logger.getLogger(PersistenceFactory.class);
-		log.info("Test output");
-
-		
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
         
@@ -153,7 +135,7 @@ public class SqlPersistenceImplTest {
 		users.add(helper.createUser("sick", "sick guy", "sick@guy.org", null));
 		users.add(helper.createUser("sie", "she bang", "she@bang", null));
 		users.add(helper.createUser("he", "he man", "er@bla", null));
-		users.add(helper.createUser("er", "erbie", "he@bla", null));
+		users.add(helper.createUser("samson", "samie blu", "heini@bla", null));
 		users.add(helper.createUser("xxx", "anonymus", "anon@ym", null));
 		instance.writeUser(users, IPersistence.DB_DEFAULT);
 	}
@@ -265,7 +247,7 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testWriteNotificationNotificationInt() throws Throwable {
-		User user = helper.createUser("si", "she ra", "sie@bla", null);
+		User user = helper.createUser("sulu", "su lu", "su@bla", null);
 		Category par = helper.createCategory("bla", "viel bla bla", null);
 		Category cat = helper.createCategory("blabla", "noch mehr bla bla", "bla");
 		List<Tag> tags = new ArrayList<Tag>();
@@ -274,9 +256,10 @@ public class SqlPersistenceImplTest {
 		tags.add(helper.createTag("new"));
 		tags.add(helper.createTag("ddd"));
 		tags.add(helper.createTag("old"));
-		Snippet snip = helper.createSnippet(5L, user.getUsername(), "something", "something stupid stuff", cat.getName(), tags, null, null, 0);
+		Snippet snip = helper.createSnippet(7L, user.getUsername(), "more stupid", "something else stupid stuff", cat.getName(), tags, null, null, 0);
 		Code code = helper.createCode(1L, "code", "language", snip, 0);
 		snip.setCodeWithoutWriting(code);
+		instance.writeUser(user, IPersistence.DB_DEFAULT);
 		instance.writeTag(tags, IPersistence.DB_DEFAULT);
 		instance.writeCategory(par, IPersistence.DB_DEFAULT);
 		instance.writeCategory(cat, IPersistence.DB_DEFAULT);

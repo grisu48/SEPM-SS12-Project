@@ -10,6 +10,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.NaturalId;
 import org.smartsnip.core.User;
 
@@ -20,11 +22,7 @@ import org.smartsnip.core.User;
  * 
  */
 @Entity
-//TODO update hibernate see issue HHH-7074
-//"the replacement annotations of @Entity are not working"
-@SuppressWarnings("deprecation")
-@org.hibernate.annotations.Entity(dynamicInsert = true)
-//@DynamicInsert
+@DynamicInsert
 @Table(name = "User")
 class DBUser {
 	@Id
@@ -43,7 +41,7 @@ class DBUser {
 	private User.UserState userState;
 
 	/**
-	 * 
+	 * Entity, POJO class
 	 */
 	DBUser() {
 		super();

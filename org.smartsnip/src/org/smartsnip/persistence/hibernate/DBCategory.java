@@ -11,7 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 
 /**
  * Database OR mapping class for table Category
@@ -20,34 +27,32 @@ import org.hibernate.annotations.NaturalId;
  * 
  */
 @Entity
-//TODO update hibernate see issue HHH-7074
-//"the replacement annotations of @Entity are not working"
-@SuppressWarnings("deprecation")
-@org.hibernate.annotations.Entity(dynamicInsert = true)
-//@DynamicInsert
+@Indexed
+@DynamicInsert
 @Table(name = "Category")
 public class DBCategory {
 
 	@Id
+	@DocumentId
 	@GeneratedValue
 	@Column(name = "category_id", insertable = false, updatable = false)
 	private Long categoryId;
 
 	@Column(name = "parent_id")
-//	@ManyToOne(targetEntity = DBCategory.class, fetch = FetchType.EAGER)
-//	@ForeignKey(name = "DBCategory.categoryId")
 	private Long parentId;
 
 	@NaturalId
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	@Column(name = "name", length = 255)
 	private String name;
 
 	@Lob
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	@Column(name = "description")
 	private String description;
 
 	/**
-	 * 
+	 * Entity, POJO class
 	 */
 	DBCategory() {
 		super();
