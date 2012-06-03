@@ -25,6 +25,8 @@ import sun.reflect.Reflection;
  */
 public class BlackholePersistenceImpl implements IPersistence {
 
+	private boolean fail = false;
+	
 	private BHPersistenceHelper helper = new BHPersistenceHelper();
 
 	private User staticUser1 = this.helper.createUser("nobody", "blabla",
@@ -56,6 +58,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeUser(User user, int flags) throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -65,6 +68,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeUser(List<User> users, int flags) throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -76,6 +80,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Deprecated
 	public void writePassword(User user, String password, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -85,6 +90,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void writeLogin(User user, String password, Boolean grantLogin,
 			int flags) throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -95,6 +101,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Long writeSnippet(Snippet snippet, int flags) throws IOException {
+		checkFail();
 		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
@@ -106,6 +113,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void writeSnippet(List<Snippet> snippets, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -115,6 +123,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Long writeComment(Comment comment, int flags) throws IOException {
+		checkFail();
 		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
@@ -126,6 +135,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void writeComment(List<Comment> comments, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -135,6 +145,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeTag(Tag tag, int flags) throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -143,6 +154,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeTag(List<Tag> tags, int flags) throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -153,6 +165,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public Long writeNotification(Notification notification, int flags)
 			throws IOException {
+		checkFail();
 		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
@@ -164,6 +177,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void writeNotification(List<Notification> notifications, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -173,6 +187,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Long writeCode(Code code, int flags) throws IOException {
+		checkFail();
 		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
@@ -183,6 +198,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeCode(List<Code> codes, int flags) throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -192,6 +208,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Long writeCategory(Category category, int flags) throws IOException {
+		checkFail();
 		return 1L;
 		// do nothing -> data vanish in the black hole!
 	}
@@ -203,6 +220,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void writeCategory(List<Category> categories, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -212,6 +230,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeLanguage(String language, int flags) throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -222,6 +241,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void writeRating(Integer rating, Snippet snippet, User user, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -232,6 +252,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void writeVote(Integer vote, Comment comment, User user, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -242,6 +263,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void votePositive(User user, Comment comment, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -252,6 +274,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void voteNegative(User user, Comment comment, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -261,6 +284,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void unVote(User user, Comment comment, int flags) throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -271,6 +295,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void addFavourite(Snippet snippet, User user, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -281,6 +306,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void removeFavourite(Snippet snippet, User user, int flags)
 			throws IOException {
+		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
 
@@ -289,6 +315,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public User getUser(String nick) throws IOException {
+		checkFail();
 		User result = this.helper.createUser(nick, "blabla", nick
 				+ "@anonymus.org", User.UserState.validated);
 		return result;
@@ -299,6 +326,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public User getUserByEmail(String email) throws IOException {
+		checkFail();
 		User result = this.helper.createUser("nobody", "some anonymous writer",
 				email, User.UserState.validated);
 		return result;
@@ -321,6 +349,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public boolean verifyPassword(User user, String password)
 			throws IOException {
+		checkFail();
 		return true;
 	}
 
@@ -329,6 +358,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public boolean isLoginGranted(User user) throws IOException {
+		checkFail();
 		return true;
 	}
 
@@ -337,6 +367,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<User> findUser(String realName) throws IOException {
+		checkFail();
 		List<User> list = new ArrayList<User>();
 		list.add(this.helper.createUser("nobody", "blabla",
 				"nobody@anonymus.org", User.UserState.validated));
@@ -350,6 +381,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getUserSnippets(User owner) throws IOException {
+		checkFail();
 		List<Snippet> snips = new ArrayList<Snippet>();
 		Snippet snip = this.helper.createSnippet(1L, owner.getUsername(), "The Header",
 				"Some Content", "undefined", new ArrayList<Tag>(),
@@ -363,6 +395,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getFavorited(User user) throws IOException {
+		checkFail();
 		return getUserSnippets(user);
 	}
 
@@ -371,6 +404,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException {
+		checkFail();
 		return getUserSnippets(staticUser1);
 	}
 
@@ -379,6 +413,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> getSnippets(Category category) throws IOException {
+		checkFail();
 		return getUserSnippets(staticUser1);
 	}
 
@@ -389,6 +424,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public List<Snippet> getSnippets(Category category, Integer start,
 			Integer count) throws IOException {
+		checkFail();
 		return getSnippets(category);
 	}
 
@@ -397,6 +433,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Comment> getComments(Snippet snippet) throws IOException {
+		checkFail();
 		List<Comment> list = new ArrayList<Comment>();
 		Comment comm1 = this.helper.createComment(staticUser1.getUsername(), snippet.getHashId(),
 				"commented by nobody", 1L, new Date(
@@ -414,6 +451,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Comment getComment(Long id) throws IOException {
+		checkFail();
 		return getComments(null).get(0);
 	}
 
@@ -422,6 +460,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Tag> getTags(Snippet snippet) throws IOException {
+		checkFail();
 		List<Tag> list = new ArrayList<Tag>();
 		Tag tag1 = this.helper.createTag("java");
 		Tag tag2 = this.helper.createTag("sort");
@@ -436,6 +475,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public List<Tag> getAllTags(Integer start, Integer count)
 			throws IOException {
+		checkFail();
 		List<Tag> list = getTags(null);
 		list.add(this.helper.createTag("merge"));
 		return list;
@@ -448,6 +488,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public List<Notification> getNotifications(User user, boolean unreadOnly)
 			throws IOException {
+		checkFail();
 		List<Notification> list = new ArrayList<Notification>();
 		Notification not1 = this.helper.createNotification(1L, user,
 				"Some obscure things happened.", false, "12. 3. 2012, 13.00",
@@ -461,6 +502,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Code> getCodes(Snippet snippet) throws IOException {
+		checkFail();
 		List<Code> list = new ArrayList<Code>();
 		list.add(staticCode);
 		return list;
@@ -471,6 +513,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Category> getAllCategories() throws IOException {
+		checkFail();
 		List<Category> result = new ArrayList<Category>();
 		result.add(getCategory("0"));
 		for (Category cat : getSubcategories(getCategory("0"))) {
@@ -484,6 +527,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Category getCategory(String name) throws IOException {
+		checkFail();
 		return this.helper.createCategory("search", "Searching algorithms",
 				null);
 	}
@@ -493,6 +537,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Category getCategory(Snippet snippet) throws IOException {
+		checkFail();
 		return getCategory("0");
 	}
 
@@ -501,6 +546,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Category getParentCategory(Category category) throws IOException {
+		checkFail();
 		return this.helper.createCategory("search", "Searching algorithms",
 				null);
 	}
@@ -511,6 +557,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public List<Category> getSubcategories(Category category)
 			throws IOException {
+		checkFail();
 		List<Category> list = new ArrayList<Category>();
 		Category cat1 = this.helper.createCategory("arraysearch",
 				"Searching algorithms for arrays", category.getName());
@@ -526,6 +573,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<String> getAllLanguages() throws IOException {
+		checkFail();
 		List<String> list = new ArrayList<String>();
 		list.add(new String("c"));
 		list.add(new String("java"));
@@ -538,6 +586,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public List<Pair<User, Integer>> getRatings(Snippet snippet)
 			throws IOException {
+		checkFail();
 		List<Pair<User, Integer>> list = new ArrayList<Pair<User, Integer>>();
 		list.add(new Pair<User, Integer>(staticUser1, 4));
 		list.add(new Pair<User, Integer>(staticUser2, 3));
@@ -549,6 +598,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Float getAverageRating(Snippet snippet) throws IOException {
+		checkFail();
 		return new Float(3.5);
 	}
 
@@ -557,6 +607,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Pair<Integer, Integer> getVotes(Comment comment) throws IOException {
+		checkFail();
 		return new Pair<Integer, Integer>(new Integer(7), new Integer(4));
 	}
 
@@ -567,6 +618,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public List<Snippet> search(String searchString, Integer start,
 			Integer count) throws IOException {
+		checkFail();
 		return getUserSnippets(staticUser1);
 	}
 
@@ -575,6 +627,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public int getUserCount() throws IOException {
+		checkFail();
 		return 3;
 	}
 
@@ -583,6 +636,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public int getCategoryCount() throws IOException {
+		checkFail();
 		return 2;
 	}
 
@@ -591,6 +645,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public int getSnippetsCount() throws IOException {
+		checkFail();
 		return 4;
 	}
 
@@ -599,6 +654,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public int getTagsCount() throws IOException {
+		checkFail();
 		return 3;
 	}
 
@@ -607,6 +663,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void unRate(User user, Snippet snippet, int flags) throws IOException {
+		checkFail();
 	}
 
 	/**
@@ -614,6 +671,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeUser(User user, int flags) throws IOException {
+		checkFail();
 	}
 
 	/**
@@ -621,6 +679,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeLogin(User user, int flags) throws IOException {
+		checkFail();
 	}
 
 	/**
@@ -628,6 +687,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeSnippet(Snippet snippet, int flags) throws IOException {
+		checkFail();
 	}
 
 	/**
@@ -635,6 +695,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeComment(Comment comment, int flags) throws IOException {
+		checkFail();
 	}
 
 	/**
@@ -642,6 +703,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeTag(Tag tag, int flags) throws IOException {
+		checkFail();
 	}
 
 	/**
@@ -650,6 +712,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public void removeNotification(Notification notification, int flags)
 			throws IOException {
+		checkFail();
 	}
 
 	/**
@@ -657,6 +720,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeCode(Code code, int flags) throws IOException {
+		checkFail();
 	}
 
 	/**
@@ -664,6 +728,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeCategory(Category category, int flags) throws IOException {
+		checkFail();
 	}
 
 	/**
@@ -671,6 +736,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeLanguage(String language, int flags) throws IOException {
+		checkFail();
 	}
 
 	/**
@@ -678,6 +744,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Integer getVote(User user, Comment comment) throws IOException {
+		checkFail();
 		return null; // no vote exists
 	}
 
@@ -686,8 +753,27 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Snippet getSnippet(Long id) throws IOException {
+		checkFail();
 		return this.helper.createSnippet(id, this.staticUser1.getUsername(), "The Header",
 				"Some Content", "undefined", new ArrayList<Tag>(),
 				new ArrayList<Long>(), "license free", 0);
+	}
+
+	@Override
+	public void close() throws IOException {
+		checkFail();
+		this.fail = true;
+	}
+
+	/**
+	 * checks if MemPersistence had been closed. Every call to a closed
+	 * MemPersistence will fail.
+	 * 
+	 * @throws IOException
+	 */
+	private void checkFail() throws IOException {
+		if (fail) {
+			throw new IOException("MemPersistence closed.");
+		}
 	}
 }

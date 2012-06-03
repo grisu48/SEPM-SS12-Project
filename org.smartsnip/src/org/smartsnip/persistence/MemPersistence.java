@@ -46,6 +46,8 @@ public class MemPersistence implements IPersistence {
 					"Singleton pattern: caller must be PersistenceFactory class.");
 	}
 
+	private boolean fail = false;
+
 	private final HashMap<String, User> allUsers = new HashMap<String, User>();
 	private final HashMap<Long, Snippet> allSnippets = new HashMap<Long, Snippet>();
 
@@ -78,6 +80,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void writeUser(User user, int mode) throws IOException {
+		checkFail();
 		if (user == null)
 			return;
 		String key = toKey(user.username);
@@ -86,6 +89,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void writeUser(List<User> users, int mode) throws IOException {
+		checkFail();
 		if (users == null)
 			return;
 
@@ -95,6 +99,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Long writeSnippet(Snippet snippet, int mode) throws IOException {
+		checkFail();
 		if (snippet == null)
 			return null;
 
@@ -113,6 +118,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public void writeSnippet(List<Snippet> snippets, int mode)
 			throws IOException {
+		checkFail();
 		if (snippets == null)
 			return;
 
@@ -122,6 +128,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Long writeComment(Comment comment, int mode) throws IOException {
+		checkFail();
 		if (comment == null)
 			return null;
 		long key = comment.getHashID();
@@ -144,6 +151,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public void writeComment(List<Comment> comments, int mode)
 			throws IOException {
+		checkFail();
 		if (comments == null)
 			return;
 
@@ -153,6 +161,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void writeTag(Tag tag, int mode) throws IOException {
+		checkFail();
 		if (tag == null)
 			return;
 
@@ -163,6 +172,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void writeTag(List<Tag> tags, int mode) throws IOException {
+		checkFail();
 		if (tags == null)
 			return;
 
@@ -173,6 +183,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public Long writeNotification(Notification notification, int mode)
 			throws IOException {
+		checkFail();
 		// XXX In current version not used, and therefore not yet tested
 		if (notification == null)
 			return null;
@@ -189,6 +200,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public void writeNotification(List<Notification> notifications, int mode)
 			throws IOException {
+		checkFail();
 		// XXX In current version not used, and therefore not yet tested
 		if (notifications == null)
 			return;
@@ -199,6 +211,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Long writeCode(Code code, int mode) throws IOException {
+		checkFail();
 		if (code == null)
 			return null;
 		int key = code.hashCode();
@@ -216,6 +229,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void writeCode(List<Code> codes, int mode) throws IOException {
+		checkFail();
 		if (codes == null)
 			return;
 
@@ -225,6 +239,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Long writeCategory(Category category, int mode) throws IOException {
+		checkFail();
 		if (category == null)
 			return null;
 
@@ -235,6 +250,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public void writeCategory(List<Category> categories, int mode)
 			throws IOException {
+		checkFail();
 		if (categories == null)
 			return;
 
@@ -244,6 +260,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void writeLanguage(String language, int mode) throws IOException {
+		checkFail();
 		if (language == null)
 			return;
 		language = language.trim();
@@ -261,6 +278,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
 			throws IOException {
+		checkFail();
 		if (rating == null || snippet == null || user == null)
 			return;
 
@@ -275,6 +293,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public void writeVote(Integer vote, Comment comment, User user, int mode)
 			throws IOException {
+		checkFail();
 		if (vote == null || comment == null || user == null)
 			return;
 
@@ -290,23 +309,27 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public void votePositive(User user, Comment comment, int mode)
 			throws IOException {
+		checkFail();
 		writeVote(+1, comment, user, mode);
 	}
 
 	@Override
 	public void voteNegative(User user, Comment comment, int mode)
 			throws IOException {
+		checkFail();
 		writeVote(-1, comment, user, mode);
 	}
 
 	@Override
 	public void unVote(User user, Comment comment, int mode) throws IOException {
+		checkFail();
 		writeVote(0, comment, user, mode);
 	}
 
 	@Override
 	public void addFavourite(Snippet snippet, User user, int mode)
 			throws IOException {
+		checkFail();
 		if (snippet == null || user == null)
 			return;
 
@@ -322,6 +345,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public void removeFavourite(Snippet snippet, User user, int mode)
 			throws IOException {
+		checkFail();
 		if (snippet == null || user == null)
 			return;
 
@@ -335,6 +359,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public User getUser(String nick) throws IOException {
+		checkFail();
 		if (nick == null || nick.isEmpty())
 			return null;
 		nick = toKey(nick);
@@ -348,6 +373,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public User getUserByEmail(String email) throws IOException {
+		checkFail();
 		if (email == null || email.isEmpty())
 			return null;
 
@@ -360,6 +386,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<User> findUser(String realName) throws IOException {
+		checkFail();
 		if (realName == null || realName.isEmpty())
 			return null;
 
@@ -374,6 +401,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Snippet> getUserSnippets(User owner) throws IOException {
+		checkFail();
 		if (owner == null)
 			return null;
 
@@ -387,6 +415,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Snippet> getFavorited(User owner) throws IOException {
+		checkFail();
 		if (owner == null)
 			return null;
 
@@ -400,6 +429,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException {
+		checkFail();
 		if (matchingTags == null)
 			return null;
 
@@ -424,6 +454,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Snippet> getSnippets(Category category) throws IOException {
+		checkFail();
 		if (category == null)
 			return null;
 
@@ -438,6 +469,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Comment> getComments(Snippet snippet) throws IOException {
+		checkFail();
 		if (snippet == null)
 			return null;
 
@@ -451,6 +483,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Tag> getTags(Snippet snippet) throws IOException {
+		checkFail();
 		if (snippet == null)
 			return null;
 
@@ -465,6 +498,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public List<Notification> getNotifications(User user, boolean unreadOnly)
 			throws IOException {
+		checkFail();
 		// XXX This method is not yet needed and therefore not tested
 
 		if (user == null)
@@ -487,6 +521,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Code> getCodes(Snippet snippet) throws IOException {
+		checkFail();
 		if (snippet == null)
 			return null;
 
@@ -500,6 +535,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Category getCategory(Snippet snippet) throws IOException {
+		checkFail();
 		if (snippet == null)
 			return null;
 		return snippet.getCategory();
@@ -507,6 +543,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Category getParentCategory(Category category) throws IOException {
+		checkFail();
 		if (categoryTree.getParent(category) == null)
 			return null;
 		return categoryTree.getParent(category).value();
@@ -515,6 +552,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public List<Category> getSubcategories(Category category)
 			throws IOException {
+		checkFail();
 		if (category == null)
 			return null;
 
@@ -523,12 +561,14 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<String> getAllLanguages() throws IOException {
+		checkFail();
 		return allLanguages;
 	}
 
 	@Override
 	public List<Pair<User, Integer>> getRatings(Snippet snippet)
 			throws IOException {
+		checkFail();
 		if (snippet == null)
 			return null;
 
@@ -545,6 +585,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Pair<Integer, Integer> getVotes(Comment comment) throws IOException {
+		checkFail();
 		// Pair<positiveVotes, negativeVotes>
 		if (comment == null)
 			return null;
@@ -567,6 +608,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public List<Snippet> search(String searchString, Integer min, Integer max)
 			throws IOException {
+		checkFail();
 		/*
 		 * NOTE: Search string is NOT case senstitive
 		 */
@@ -605,27 +647,32 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public int getUserCount() throws IOException {
+		checkFail();
 		return allUsers.size();
 	}
 
 	@Override
 	public int getCategoryCount() throws IOException {
+		checkFail();
 		return categoryTree.size();
 	}
 
 	@Override
 	public int getSnippetsCount() throws IOException {
+		checkFail();
 		return allSnippets.size();
 	}
 
 	@Override
 	public int getTagsCount() throws IOException {
+		checkFail();
 		return allTags.size();
 	}
 
 	@Override
 	public void writePassword(User user, String password, int mode)
 			throws IOException {
+		checkFail();
 		if (user == null || password == null)
 			return;
 
@@ -642,6 +689,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public boolean verifyPassword(User user, String password)
 			throws IOException {
+		checkFail();
 		if (user == null || password == null || password.isEmpty())
 			return false;
 
@@ -653,6 +701,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Float getAverageRating(Snippet snippet) throws IOException {
+		checkFail();
 		if (snippet == null)
 			return null;
 
@@ -675,6 +724,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public List<Snippet> getSnippets(Category category, Integer start,
 			Integer count) throws IOException {
+		checkFail();
 		if (category == null || start < 0 || count < 0)
 			return null;
 
@@ -696,6 +746,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Comment getComment(Long id) throws IOException {
+		checkFail();
 		if (id == null)
 			return null;
 		return commentMap.get(id);
@@ -703,11 +754,13 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public List<Category> getAllCategories() throws IOException {
+		checkFail();
 		return new ArrayList<Category>(categoryTree.flatten());
 	}
 
 	@Override
 	public Category getCategory(String name) throws IOException {
+		checkFail();
 		Iterator<Category> iterator = categoryTree.iterator();
 		while (iterator.hasNext()) {
 			Category category = iterator.next();
@@ -719,6 +772,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void unRate(User user, Snippet snippet, int mode) throws IOException {
+		checkFail();
 		if (snippet == null || user == null)
 			return;
 
@@ -730,6 +784,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void removeTag(Tag tag, int mode) throws IOException {
+		checkFail();
 		if (tag == null)
 			return;
 
@@ -743,6 +798,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void removeLanguage(String language, int mode) throws IOException {
+		checkFail();
 		if (language == null || language.isEmpty())
 			return;
 		language = language.trim();
@@ -756,6 +812,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Integer getVote(User user, Comment comment) throws IOException {
+		checkFail();
 		if (user == null || comment == null)
 			return null;
 
@@ -767,6 +824,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Snippet getSnippet(Long hashid) throws IOException {
+		checkFail();
 		if (hashid == null)
 			return null;
 		return allSnippets.get(hashid);
@@ -774,6 +832,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void removeUser(User user, int mode) throws IOException {
+		checkFail();
 		if (user == null)
 			return;
 
@@ -783,6 +842,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void removeSnippet(Snippet snippet, int mode) throws IOException {
+		checkFail();
 		if (snippet == null)
 			return;
 
@@ -791,6 +851,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void removeComment(Comment comment, int mode) throws IOException {
+		checkFail();
 		if (comment == null)
 			return;
 
@@ -803,6 +864,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public void removeNotification(Notification notification, int mode)
 			throws IOException {
+		checkFail();
 		// TODO Not implemented because not used currently
 		// Increment!
 
@@ -810,6 +872,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void removeCode(Code code, int mode) throws IOException {
+		checkFail();
 		if (code == null)
 			return;
 
@@ -820,6 +883,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public void removeCategory(Category category, int mode) throws IOException {
+		checkFail();
 		if (category == null)
 			return;
 		categoryTree.deleteItem(category);
@@ -828,6 +892,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public List<Tag> getAllTags(Integer start, Integer count)
 			throws IOException {
+		checkFail();
 		if (start < 0 || count < 0)
 			return null;
 		if (start > allTags.size())
@@ -861,18 +926,21 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public void writeLogin(User user, String password, Boolean grantLogin,
 			int flags) throws IOException {
+		checkFail();
 		writePassword(user, password, flags);
 
 	}
 
 	@Override
 	public void removeLogin(User user, int flags) throws IOException {
+		checkFail();
 		if (user != null)
 			passwords.remove(user);
 	}
 
 	@Override
 	public boolean isLoginGranted(User user) throws IOException {
+		checkFail();
 		if (user == null)
 			return false;
 
@@ -880,5 +948,23 @@ public class MemPersistence implements IPersistence {
 		if (pass == null)
 			return false;
 		return true;
+	}
+
+	@Override
+	public void close() throws IOException {
+		checkFail();
+		this.fail = true;
+	}
+
+	/**
+	 * checks if MemPersistence had been closed. Every call to a closed
+	 * MemPersistence will fail.
+	 * 
+	 * @throws IOException
+	 */
+	private void checkFail() throws IOException {
+		if (fail) {
+			throw new IOException("MemPersistence closed.");
+		}
 	}
 }

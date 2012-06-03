@@ -359,8 +359,8 @@ public interface IPersistence {
 	/**
 	 * Persist a rating. This operation updates an existing rating if the user
 	 * has rated already for the given snippet. This operation will be rejected
-	 * in {@link #DB_NEW_ONLY} flag if an update on an existing
-	 * rating should be performed.
+	 * in {@link #DB_NEW_ONLY} flag if an update on an existing rating should be
+	 * performed.
 	 * 
 	 * @param rating
 	 *            the rating to write
@@ -380,9 +380,8 @@ public interface IPersistence {
 
 	/**
 	 * Remove a rating. This operation updates an existing rating to '0' in
-	 * {@link #DB_NO_DELETE} flag which is currently the default
-	 * behavior. In {@link #DB_FORCE_DELETE} flag the given database
-	 * entry is deleted.
+	 * {@link #DB_NO_DELETE} flag which is currently the default behavior. In
+	 * {@link #DB_FORCE_DELETE} flag the given database entry is deleted.
 	 * 
 	 * @param user
 	 *            the user who rated
@@ -400,8 +399,8 @@ public interface IPersistence {
 	/**
 	 * Persist a vote. This operation updates an existing vote if the user has
 	 * voted already for the given comment. This operation will be rejected in
-	 * {@link #DB_NEW_ONLY} flag if an update on an existing vote
-	 * should be performed.
+	 * {@link #DB_NEW_ONLY} flag if an update on an existing vote should be
+	 * performed.
 	 * 
 	 * @param vote
 	 *            the vote to write
@@ -423,8 +422,8 @@ public interface IPersistence {
 	/**
 	 * Persist a positive vote. This operation updates an existing vote if the
 	 * user has voted already for the given comment. This operation will be
-	 * rejected in {@link #DB_NEW_ONLY} flag if an update on an
-	 * existing vote should be performed.
+	 * rejected in {@link #DB_NEW_ONLY} flag if an update on an existing vote
+	 * should be performed.
 	 * 
 	 * @param user
 	 *            the user who voted
@@ -443,8 +442,8 @@ public interface IPersistence {
 	/**
 	 * Persist a negative vote. This operation updates an existing vote if the
 	 * user has voted already for the given comment. This operation will be
-	 * rejected in {@link #DB_NEW_ONLY} flag if an update on an
-	 * existing vote should be performed.
+	 * rejected in {@link #DB_NEW_ONLY} flag if an update on an existing vote
+	 * should be performed.
 	 * 
 	 * @param user
 	 *            the user who voted
@@ -462,9 +461,8 @@ public interface IPersistence {
 
 	/**
 	 * Remove a vote. This operation updates an existing vote to 'none' in
-	 * {@link #DB_NO_DELETE} flag which is currently the default
-	 * behavior. In {@link #DB_FORCE_DELETE} flag the given database
-	 * entry is deleted.
+	 * {@link #DB_NO_DELETE} flag which is currently the default behavior. In
+	 * {@link #DB_FORCE_DELETE} flag the given database entry is deleted.
 	 * 
 	 * @param user
 	 *            the user who voted
@@ -590,16 +588,16 @@ public interface IPersistence {
 	 */
 	public void removeTag(Tag tag, int flags) throws IOException;
 
-	// TODO add method: 
-//	/**
-//	 * Remove all unused tags.
-//	 * @param flags
-//	 *            the constraints for the write access. The default is
-//	 *            {@link #DB_FORCE_DELETE}
-//	 * @throws IOException
-//	 *             at a problem committing the data
-//	 */
-//	public void removeUnusedTags(int flags) throws IOException;
+	// TODO add method:
+	// /**
+	// * Remove all unused tags.
+	// * @param flags
+	// * the constraints for the write access. The default is
+	// * {@link #DB_FORCE_DELETE}
+	// * @throws IOException
+	// * at a problem committing the data
+	// */
+	// public void removeUnusedTags(int flags) throws IOException;
 
 	/**
 	 * remove the Notification from the database
@@ -1064,4 +1062,12 @@ public interface IPersistence {
 	// * at a problem retrieving the data
 	// */
 	// public int getTagFrequency(Tag tag) throws IOException;
+
+	/**
+	 * close the implementing factory
+	 * 
+	 * @throws IOException
+	 *             on a problem closing the factory
+	 */
+	void close() throws IOException;
 }

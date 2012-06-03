@@ -19,6 +19,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.apache.log4j.Logger;
 import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
@@ -73,10 +74,16 @@ public class SqlPersistenceImplTest {
 //		System.out.println("wake up.");
 //		instance = builder.getFactory();
 		
+		Logger log = Logger.getLogger(PersistenceFactory.class);
+		log.info("Test output");
+
+		
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
         
+		PersistenceFactory.closeFactory();
 		PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_SQL_DB);
+		DBSessionFactory.getInstance("/hibernate.cfg.local_db.xml");
 		instance = PersistenceFactory.getInstance();
 		if (PersistenceFactory.getPersistenceType() != PersistenceFactory.PERSIST_SQL_DB) {
 			throw new InitializationError("persistence type not PERSIST_SQL_DB");
@@ -982,4 +989,5 @@ public class SqlPersistenceImplTest {
 		System.out.println("tags count = " + count);
 	}
 
+	
 }

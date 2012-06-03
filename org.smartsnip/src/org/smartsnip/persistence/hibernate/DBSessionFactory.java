@@ -26,29 +26,38 @@ public class DBSessionFactory {
 	private static SessionFactory factory = null;
 	private static ServiceRegistry serviceRegistry;
 
-	private static synchronized void initialize()
+	/**
+	 * initialize the session factory
+	 * 
+	 * @param configFile
+	 *            the path to the configuration file
+	 * @throws ExceptionInInitializerError
+	 */
+	private static synchronized void initialize(String configFile)
 			throws ExceptionInInitializerError {
+		if (configFile == null || configFile.isEmpty()) {
+			configFile = "/hibernate.cfg.xml";
+		}
 		if (factory == null) {
 			try {
 				Configuration configuration = new Configuration();
-				configuration.configure().setProperty("hibernate.show_sql",
-						"true"); // XXX set "hibernate.show_sql" to false
+				configuration.configure(configFile);
 
 				// add entity classes
-				configuration.configure().addAnnotatedClass(DBCategory.class);
-				configuration.configure().addAnnotatedClass(DBCode.class);
-				configuration.configure().addAnnotatedClass(DBComment.class);
-				configuration.configure().addAnnotatedClass(DBFavourite.class);
-				configuration.configure().addAnnotatedClass(DBLanguage.class);
-				configuration.configure().addAnnotatedClass(DBLicense.class);
-				configuration.configure().addAnnotatedClass(DBLogin.class);
-				configuration.configure().addAnnotatedClass(DBNotification.class);
-				configuration.configure().addAnnotatedClass(DBRating.class);
-				configuration.configure().addAnnotatedClass(DBSnippet.class);
-				configuration.configure().addAnnotatedClass(DBTag.class);
-				configuration.configure().addAnnotatedClass(DBUser.class);
-				configuration.configure().addAnnotatedClass(DBVote.class);
-				configuration.configure().addAnnotatedClass(DBRelTagSnippet.class);
+				configuration.addAnnotatedClass(DBCategory.class);
+				configuration.addAnnotatedClass(DBCode.class);
+				configuration.addAnnotatedClass(DBComment.class);
+				configuration.addAnnotatedClass(DBFavourite.class);
+				configuration.addAnnotatedClass(DBLanguage.class);
+				configuration.addAnnotatedClass(DBLicense.class);
+				configuration.addAnnotatedClass(DBLogin.class);
+				configuration.addAnnotatedClass(DBNotification.class);
+				configuration.addAnnotatedClass(DBRating.class);
+				configuration.addAnnotatedClass(DBSnippet.class);
+				configuration.addAnnotatedClass(DBTag.class);
+				configuration.addAnnotatedClass(DBUser.class);
+				configuration.addAnnotatedClass(DBVote.class);
+				configuration.addAnnotatedClass(DBRelTagSnippet.class);
 
 				serviceRegistry = new ServiceRegistryBuilder().applySettings(
 						configuration.getProperties()).buildServiceRegistry();
@@ -62,14 +71,36 @@ public class DBSessionFactory {
 	}
 
 	/**
-	 * @return the factory
+	 * Get a SessionFactory instance.
+	 * 
+	 * @return the factory with default configuration from the hibernate.cfg.xml
+	 *         file
 	 */
 	public static SessionFactory getInstance() {
+		return getInstance(null);
+	}
+
+	/**
+	 * Get a SessionFactory instance.
+	 * 
+	 * @param configFile
+	 *            the file to read the configuration from
+	 * @return the factory with custom configuration
+	 */
+	public static SessionFactory getInstance(String configFile) {
 		if (factory == null)
-			initialize();
+			initialize(configFile);
 		return factory;
 	}
 
+	/**
+	 * close the session factory
+	 * @see org.hibernate.SessionFactory#close()
+	 */
+	public static void closeFactory() {
+		factory.close();
+	}
+	
 	/**
 	 * Open a new session. It is recommended to handle a session by one thread.
 	 * 
@@ -82,6 +113,7 @@ public class DBSessionFactory {
 
 	/**
 	 * close the given session
+	 * 
 	 * @param session
 	 * @throws IOException
 	 */

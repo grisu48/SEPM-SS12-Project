@@ -24,7 +24,8 @@ public class SqlPersistenceImpl implements IPersistence {
 	 * accomplish a singleton pattern. It rejects any attempt to build an
 	 * instance except it is called by the
 	 * {@link PersistenceFactory#getInstance(int)} method.
-	 * @throws IllegalAccessException 
+	 * 
+	 * @throws IllegalAccessException
 	 */
 	protected SqlPersistenceImpl() throws IllegalAccessException {
 		super();
@@ -54,14 +55,14 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writePassword(org.smartsnip.core.User, String, int)
+	 * @see org.smartsnip.persistence.IPersistence#writePassword(org.smartsnip.core.User,
+	 *      String, int)
 	 */
 	@Override
 	@Deprecated
 	public void writePassword(User user, String password, int flags)
 			throws IOException {
 		writeLogin(user, password, false, flags);
-		// XXX deprecated
 	}
 
 	/**
@@ -485,7 +486,8 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getAllTags(java.lang.Integer, java.lang.Integer)
+	 * @see org.smartsnip.persistence.IPersistence#getAllTags(java.lang.Integer,
+	 *      java.lang.Integer)
 	 */
 	@Override
 	public List<Tag> getAllTags(Integer start, Integer count)
@@ -595,8 +597,8 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String, java.lang.Integer,
-	 *      java.lang.Integer)
+	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String,
+	 *      java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
 	public List<Snippet> search(String searchString, Integer start,
@@ -634,5 +636,14 @@ public class SqlPersistenceImpl implements IPersistence {
 	@Override
 	public int getTagsCount() throws IOException {
 		return TagFactory.getTagsCount();
+	}
+
+	@Override
+	public void close() throws IOException {
+		try {
+			DBSessionFactory.closeFactory();
+		} catch (RuntimeException e) {
+			throw new IOException(e);
+		}
 	}
 }

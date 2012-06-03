@@ -6,6 +6,8 @@ package org.smartsnip.persistence;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 /**
  * This factory class is a singleton. It holds an instance of a persistence
  * class. Only one kind of persistence object selected of multiple
@@ -107,6 +109,7 @@ public class PersistenceFactory {
 	public synchronized static IPersistence getInstance(int type)
 			throws IllegalAccessException {
 		IPersistence result = null;
+		Logger log = Logger.getLogger(PersistenceFactory.class);
 		if (instance == null) {
 			switch (type) {
 			case PERSIST_BLACKHOLE:
@@ -129,6 +132,8 @@ public class PersistenceFactory {
 			throw new IllegalAccessException(
 					"Mismatch between requested and initialized persistence object.");
 		}
+		log.info("Session Factory " + result.getClass().getSimpleName()
+				+ " opened.");
 		return instance;
 	}
 
@@ -150,6 +155,26 @@ public class PersistenceFactory {
 			getInstance(defaultType);
 		}
 		return instance;
+	}
+
+	/**
+	 * close the persistence factory
+	 */
+	public static void closeFactory() {
+		Logger log = Logger.getLogger(PersistenceFactory.class);
+		System.out.println(instance);
+		String name = null;
+		try {
+			if (instance != null) {
+				name = instance.toString();
+				instance.close();
+				log.info("Session Factory " + name + " closed.");
+			}
+		} catch (IOException e) {
+			log.warn("Session Factory " + name + " not closed regulary.", e);
+		} finally {
+			instance = null;
+		}
 	}
 
 	/**
