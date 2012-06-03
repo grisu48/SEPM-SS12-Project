@@ -56,7 +56,7 @@ public class SearchArea extends Composite {
 			}
 		});
 		
-		btCreateSnippet = new Button("Create snippet");
+		btCreateSnippet = new Button("Create Snippet");
 		btCreateSnippet.setVisible(true);
 		btCreateSnippet.addStyleName("createButton");
 		btCreateSnippet.addClickHandler(new ClickHandler() {
@@ -94,7 +94,6 @@ public void update() {
 		} 
 		else {
 			btCreateSnippet.setVisible(false);
-			System.out.println(control.isLoggedIn());
 		} 
 		
 	}

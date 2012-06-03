@@ -152,9 +152,9 @@ footer .gwt-Label, .gwt-Anchor {
 
 .h3 {
 	font-family:"Lato";
-	font-weight:700;
+	font-size: xx-large;
+	font-weight:300;
 	margin:10px, 0px, 10px, 0px;
-	color:#a9c34a;
 }
 
 .gwt-Image {
@@ -214,8 +214,6 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 
-
-
 .searchButton, .createButton {
 	
 	padding:13px;
@@ -236,25 +234,30 @@ footer .gwt-Label, .gwt-Anchor {
 
  .popupContent {
 	border: 1px solid #4a3320;
-	padding: 30px;
+	padding: 40px;
 	background-color: #e6e6e6;
-	box-shadow:4px 4px 25px #666
+	background-image: url("images/verlauf_grau.png");
+	box-shadow:4px 4px 25px #666;
 }
 
 .popupContent .gwt-Label {
-	margin: 15px 0px 3px 0px;
+	margin: 25px 0px 3px 0px;
 }
 
-.popupContent .gwt-TextBox {
-	margin: 0px 0px 0px 0px;
+.popupContent .gwt-Button {
+	margin: 25px 15px 3px 0px;
+	width: 100px;
 }
-.popupContent .gwt-PasswordTextBox {
+
+.popupContent .gwt-TextBox, .popupContent .gwt-PasswordTextBox {
 	margin: 0px 0px 0px 0px;
+	width: 193px;
 }
+
 
 
 .gwt-PopupPanelGlass {
-	background-color: #000;
+	background-color: #111;
 	opacity: 0.8;
 }
 
@@ -371,5 +374,6 @@ footer .gwt-Label, .gwt-Anchor {
 	margin-top: 30px;
 	margin-right: 20px;
 }
+
 
 

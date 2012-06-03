@@ -21,15 +21,18 @@ public class Login extends Composite {
 	private TextBox name = new TextBox();
 	private Label lpw = new Label("Password");
 	private PasswordTextBox pw = new PasswordTextBox();
-	private Button login = new Button("Login");
-	private Button close = new Button("Cancel");
+	private Button login;
+	private Button close;
 	private Label lStatus = new Label("");
+	private Label lTitle;
 
 	public Login(PopupPanel parent) {
 
 		this.parent = parent;
 
 		vertPanel = new VerticalPanel();
+		lTitle = new Label("Smartsnip Login");
+		lTitle.setStyleName("h3");
 		lname = new Label("Username");
 		name = new TextBox();
 		lpw = new Label("Password");
@@ -44,6 +47,7 @@ public class Login extends Composite {
 			}
 
 		});
+		close = new Button("Close");
 		close.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -52,6 +56,7 @@ public class Login extends Composite {
 			}
 		});
 
+		vertPanel.add(lTitle);
 		vertPanel.add(lname);
 		vertPanel.add(name);
 		vertPanel.add(lpw);

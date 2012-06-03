@@ -159,8 +159,8 @@ public class GUI {
 		Login login = new Login(loginPanel);
 		loginPanel.setWidget(login);
 		loginPanel.setGlassEnabled(true);
-		loginPanel.setPopupPosition(110, 100);
-		loginPanel.setWidth("340px");
+		loginPanel.setPopupPosition(90, 104);
+		loginPanel.setWidth("250px");
 		loginPanel.show();
 	}
 
