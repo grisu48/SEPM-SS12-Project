@@ -2,6 +2,9 @@ package org.smartsnip.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -20,7 +23,7 @@ public class Login extends Composite {
 	private Label lname = new Label("Username");
 	private TextBox name = new TextBox();
 	private Label lpw = new Label("Password");
-	private PasswordTextBox pw = new PasswordTextBox();
+	private PasswordTextBox ptbPassword = new PasswordTextBox();
 	private Button login;
 	private Button close;
 	private Label lStatus = new Label("");
@@ -36,14 +39,21 @@ public class Login extends Composite {
 		lname = new Label("Username");
 		name = new TextBox();
 		lpw = new Label("Password");
-		pw = new PasswordTextBox();
+		ptbPassword = new PasswordTextBox();
+		ptbPassword.addKeyDownHandler(new KeyDownHandler() {
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if (KeyCodes.KEY_ENTER == event.getNativeKeyCode()) {
+					login();
+				}
+			}
+		});
+		
 		login = new Button("Login");
 		login.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				login.setEnabled(false);
-				Control control = Control.getInstance();
-				control.login(name.getText(), pw.getText(), Login.this);
+				login();
 			}
 
 		});
@@ -60,7 +70,7 @@ public class Login extends Composite {
 		vertPanel.add(lname);
 		vertPanel.add(name);
 		vertPanel.add(lpw);
-		vertPanel.add(pw);
+		vertPanel.add(ptbPassword);
 		buttonPanel.add(login);
 		buttonPanel.add(close);
 
@@ -87,5 +97,11 @@ public class Login extends Composite {
 	 */
 	void loginSuccess() {
 		parent.hide();
+	}
+	
+	void login() {
+		login.setEnabled(false);
+		Control control = Control.getInstance();
+		control.login(name.getText(), ptbPassword.getText(), Login.this);
 	}
 }

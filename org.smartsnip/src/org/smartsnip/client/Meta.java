@@ -4,69 +4,68 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class Meta extends Composite {
 
-	private final VerticalPanel metaVertical;
+	private final VerticalPanel pnlUser;
 	private final HorizontalPanel metaPanel;
-	private final HorizontalPanel metaControl;
 	private final Anchor user;
 	private final Anchor login;
 	private final Anchor register;
 	private final Anchor logout;
 	private Image icon;
-
+	private Control control;
 	
 
 	public Meta() {
 
-		metaVertical = new VerticalPanel();
-
-		metaControl = new HorizontalPanel();
+		control = Control.getInstance();
+		pnlUser = new VerticalPanel();
 		metaPanel = new HorizontalPanel();
+
 		
 
 		icon = new Image("/images/user1.png");
 		icon.setSize("35px", "35px");
 		
 		user = new Anchor(Control.getInstance().getUsername());
+		user.setStyleName("user");
 		user.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Control control = Control.getInstance();
 				control.changeSite('p');
 			}
 
 		});
 
-		login = new Anchor("Login");
+		login = new Anchor(" > Login");
 		login.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Control control = Control.getInstance();
 				control.changeSite('l');
 			}
 
 		});
 
-		register = new Anchor("Register");
+		register = new Anchor(" > Register");
 		register.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Control control = Control.getInstance();
 				control.changeSite('r');
 			}
 
 		});
 
-		logout = new Anchor("Logout");
+		logout = new Anchor(" > Logout");
 		logout.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Control control = Control.getInstance();
 				control.logout();
 			}
 
@@ -74,7 +73,7 @@ public class Meta extends Composite {
 
 		
 
-
+		metaPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		metaPanel.add(icon);
 		metaPanel.add(user);
 		metaPanel.add(login);
@@ -82,10 +81,9 @@ public class Meta extends Composite {
 		metaPanel.add(logout);
 
 
-		metaVertical.add(metaPanel);
-		metaVertical.add(metaControl);
 
-		initWidget(metaVertical);
+
+		initWidget(metaPanel);
 
 		// Give the overall composite a style name.
 		setStyleName("meta");
@@ -94,20 +92,20 @@ public class Meta extends Composite {
 
 	public void update() {
 		
-		user.setText(Control.getInstance().getUsername());
-		Control control = Control.getInstance();
+		user.setText(control.getUsername() + " | " + control.getUserMail());
 		
 		if (control.isLoggedIn()) {
-			icon.setVisible(true);
 			user.setVisible(true);
+			icon.setVisible(true);
 			login.setVisible(false);
 			register.setVisible(false);
 			logout.setVisible(true);
 		} else {
+			user.setVisible(false);
 			icon.setVisible(false);
 			login.setVisible(true);
 			register.setVisible(true);
-			user.setVisible(false);
+			pnlUser.setVisible(false);
 			logout.setVisible(false);
 		}
 		

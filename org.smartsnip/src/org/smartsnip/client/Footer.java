@@ -20,7 +20,7 @@ public class Footer extends Composite {
 	private Label copyright;
 	private Label name1;
 	private Label name2;
-	private Label name3;
+	private Anchor aName3;
 	private Label links;
 	private Label about;
 	private Anchor impressum;
@@ -36,16 +36,16 @@ public class Footer extends Composite {
 		vertPanel2 = new VerticalPanel();
 		vertPanel3 = new VerticalPanel();
 		copyright = new Label("Copyright");
-		copyright.addStyleName("h3");
+		copyright.addStyleName("h4");
 		name1 = new Label("Gerhard Aigner");
 		name2 = new Label("Felix Niederwanger");
-		name3 = new Label("Paul Opitz");
+		aName3 = new Anchor("Paul Opitz", false, "http://perdix.at");
 		links = new Label("Links");
-		links.addStyleName("h3");
+		links.addStyleName("h4");
 		aLink1 = new Anchor("Universität Innsbruck", false ,"http://uibk.ac.at");
 		aLink2 = new Anchor("You can make IT", false ,"http://youcanmakeit.at");
 		about = new Label("About this Website");
-		about.addStyleName("h3");
+		about.addStyleName("h4");
 		impressum = new Anchor("Impressum");
 		impressum.addClickHandler(new ClickHandler() {
 			@Override
@@ -80,7 +80,7 @@ public class Footer extends Composite {
 		vertPanel1.add(copyright);
 		vertPanel1.add(name1);
 		vertPanel1.add(name2);
-		vertPanel1.add(name3);
+		vertPanel1.add(aName3);
 		vertPanel2.add(about);
 		vertPanel2.add(impressum);
 		vertPanel2.add(register);

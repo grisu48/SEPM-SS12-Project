@@ -27,7 +27,7 @@ h1 {
 a:link {text-decoration: none;}
 a:visited {text-decoration: none;color:white;}
 a:active {text-decoration: none;}
-a:hover {text-decoration: underline; color:white;}
+a:hover {text-decoration: none; color:white;}
 
 
 
@@ -130,13 +130,22 @@ min-height:400px;
 }
 
 
-header .gwt-Label, .gwt-Anchor {
+.user {
+	position:relative;
+	left:-10px;
+	font-weight:bolder;
+
+}
+
+header .gwt-Label, .gwt-Anchor, .user {
 	display:block;
 	color:#fffeeb;
 	font-family:"Lato";
 	font-weight:300;
 	margin:3px 20px 3px 20px;
 }
+
+
 
 
 footer .gwt-Label, .gwt-Anchor {
@@ -149,10 +158,16 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 
-
 .h3 {
 	font-family:"Lato";
 	font-size: xx-large;
+	font-weight:300;
+	margin:10px, 0px, 10px, 0px;
+}
+
+.h4 {
+	font-family:"Lato";
+	font-size: x-large;
 	font-weight:300;
 	margin:10px, 0px, 10px, 0px;
 }
