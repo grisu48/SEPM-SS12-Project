@@ -2,6 +2,9 @@ package org.smartsnip.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -28,6 +31,7 @@ public class Register extends Composite {
 	private Button register;
 	private Button close;
 	private Label lStatus;
+	private Label lTitle;
 
 	public Register(final PopupPanel parent) {
 		super();
@@ -48,25 +52,25 @@ public class Register extends Composite {
 		register = new Button("Register");
 		close = new Button("Close");
 		lStatus = new Label("");
+		lTitle = new Label("Smartsnip Registration");
+		lTitle.setStyleName("h3");
+		
+		
 		register.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				String password = pw1.getText();
-				if (password.isEmpty()) {
-					lStatus.setText("You must specify a password");
-					return;
-				}
-				if (!pw2.getText().equals(password)) {
-					lStatus.setText("Passwords did not match (case-sensitive)");
-					return;
-				}
-				
-				Control control = Control.getInstance();
-				register.setEnabled(false);
-				lStatus.setText("Registration in progress ... ");
-				control.register(name.getText(), mail.getText(), password, Register.this);
+				register();
 			}
 		});
+		pw2.addKeyDownHandler(new KeyDownHandler() {
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if (KeyCodes.KEY_ENTER == event.getNativeKeyCode()) {
+					register();
+				}
+			}
+		});
+		
 		close.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -75,6 +79,7 @@ public class Register extends Composite {
 			}
 		});
 
+		vertPanel.add(lTitle);
 		vertPanel.add(lname);
 		vertPanel.add(name);
 		vertPanel.add(lmail);
@@ -110,5 +115,24 @@ public class Register extends Composite {
 	void registerSuccess() {
 		lStatus.setText("Registration complete!");
 		parent.hide();
+	}
+	
+	
+	private void register() {
+		String password = pw1.getText();
+		if (password.isEmpty()) {
+			lStatus.setText("You must specify a password");
+			return;
+		}
+		if (!pw2.getText().equals(password)) {
+			lStatus.setText("Passwords did not match (case-sensitive)");
+			return;
+		}
+		
+		Control control = Control.getInstance();
+		register.setEnabled(false);
+		lStatus.setText("Registration in progress ... ");
+		control.register(name.getText(), mail.getText(), password, Register.this);
+	
 	}
 }

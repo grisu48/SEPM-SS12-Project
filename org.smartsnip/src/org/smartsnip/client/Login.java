@@ -99,7 +99,7 @@ public class Login extends Composite {
 		parent.hide();
 	}
 	
-	void login() {
+	private void login() {
 		login.setEnabled(false);
 		Control control = Control.getInstance();
 		control.login(name.getText(), ptbPassword.getText(), Login.this);

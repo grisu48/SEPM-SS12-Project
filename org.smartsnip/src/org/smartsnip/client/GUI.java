@@ -232,8 +232,8 @@ public class GUI {
 		Register register = new Register(registerPanel);
 		registerPanel.setWidget(register);
 		registerPanel.setGlassEnabled(true);
-		registerPanel.setPopupPosition(110, 100);
-		registerPanel.setWidth("340px");
+		registerPanel.setPopupPosition(90, 104);
+		registerPanel.setWidth("250px");
 		registerPanel.show();
 	}
 

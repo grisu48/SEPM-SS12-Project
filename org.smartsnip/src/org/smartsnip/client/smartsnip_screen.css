@@ -248,10 +248,11 @@ footer .gwt-Label, .gwt-Anchor {
 
 
  .popupContent {
-	border: 1px solid #4a3320;
+	border: 2px solid #e6e6e6;
 	padding: 40px;
 	background-color: #e6e6e6;
-	background-image: url("images/verlauf_grau.png");
+	background-image: url("images/grau.png");
+	//background-repeat:repeat-y;
 	box-shadow:4px 4px 25px #666;
 }
 
