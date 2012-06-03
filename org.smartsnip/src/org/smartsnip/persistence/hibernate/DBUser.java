@@ -13,6 +13,12 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 import org.smartsnip.core.User;
 
 /**
@@ -22,14 +28,17 @@ import org.smartsnip.core.User;
  * 
  */
 @Entity
+@Indexed
 @DynamicInsert
 @Table(name = "User")
 class DBUser {
 	@Id
+	@DocumentId
 	@Column(name = "user_name", length = 20)
 	private String userName;
 
 	@Column(name = "full_name", length = 255)
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	private String fullName;
 
 	@NaturalId

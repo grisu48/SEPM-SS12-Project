@@ -958,7 +958,7 @@ public class SnippetFactory {
 	 *      java.lang.Integer, java.lang.Integer)
 	 */
 	static synchronized List<Snippet> search(String searchString, Integer start,
-			Integer count) throws IOException {// TODO add limits
+			Integer count) throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		List<Snippet> result = new ArrayList<Snippet>();
@@ -980,7 +980,9 @@ public class SnippetFactory {
 		// wrap Lucene query in a org.hibernate.Query
 		org.hibernate.Query query = 
 		    fullTextSession.createFullTextQuery(ftQuery, DBSnippet.class);
-
+		query.setFirstResult(start);
+		query.setFetchSize(count);
+		
 		// execute search and build Snippets
 		DBSnippet entity;
 		Snippet snippet;

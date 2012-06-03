@@ -6,10 +6,14 @@ package org.smartsnip.persistence.hibernate;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.search.FullTextSession;
+import org.hibernate.search.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.smartsnip.core.Notification;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
@@ -441,7 +445,8 @@ public class UserFactory {
 			entity.setUser(user.getUsername());
 			if (password != null && !password.isEmpty()) {
 				entity.setPassword(password);
-				Boolean granted = (Boolean)query.selectSingle(entity, "grantLogin", DBQuery.QUERY_NULLABLE);
+				Boolean granted = (Boolean) query.selectSingle(entity,
+						"grantLogin", DBQuery.QUERY_NULLABLE);
 				if (granted != null) {
 					result = granted;
 				}
@@ -462,7 +467,7 @@ public class UserFactory {
 	 * 
 	 * @param user
 	 * @return true if grantLogin flag is set
-	 * @throws IOException 
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#isLoginGranted(User)
 	 */
 	static boolean isLoginGranted(User user) throws IOException {
@@ -480,7 +485,8 @@ public class UserFactory {
 				throw new IOException("empty username is invalid");
 			}
 			entity.setUser(user.getUsername());
-			Boolean granted = (Boolean)query.selectSingle(entity, "grantLogin", DBQuery.QUERY_NULLABLE);
+			Boolean granted = (Boolean) query.selectSingle(entity,
+					"grantLogin", DBQuery.QUERY_NULLABLE);
 			if (granted != null) {
 				result = granted;
 			}
@@ -504,8 +510,47 @@ public class UserFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#findUser(java.lang.String)
 	 */
 	static List<User> findUser(String realName) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		List<User> result = new ArrayList<User>();
+
+		FullTextSession fullTextSession = Search.getFullTextSession(session);
+		Transaction tx = null;
+		try {
+			tx = fullTextSession.beginTransaction();
+
+			// lucene full text query
+			QueryBuilder builder = fullTextSession.getSearchFactory()
+					.buildQueryBuilder().forEntity(DBUser.class).get();
+			org.apache.lucene.search.Query ftQuery = builder.keyword()
+					.onFields("full_name").matching(realName).createQuery();
+
+			// wrap Lucene query in a org.hibernate.Query
+			org.hibernate.Query query = fullTextSession.createFullTextQuery(
+					ftQuery, DBUser.class);
+
+			// execute search and build Snippets
+			DBUser entity;
+			User user;
+			@SuppressWarnings("unchecked")
+			Iterator<DBUser> iterator = query.iterate();
+			for (; iterator.hasNext();) {
+				entity = iterator.next();
+				user = helper.createUser(entity.getUserName(),
+						entity.getFullName(), entity.getEmail(),
+						entity.getUserState());
+				result.add(user);
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -550,6 +595,7 @@ public class UserFactory {
 					snip.setSnippetId(n.getSnippetId());
 					snip = new DBQuery(session).fromSingle(snip,
 							DBQuery.QUERY_NOT_NULL);
+					SnippetFactory.incrementViewcount(session, snip);
 					SnippetFactory.incrementViewcount(session, snip);
 					
 					snippet = helper.createSnippet(entity.getSnippetId(),
