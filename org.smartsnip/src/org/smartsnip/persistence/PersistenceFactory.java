@@ -158,7 +158,9 @@ public class PersistenceFactory {
 	}
 
 	/**
-	 * close the persistence factory
+	 * close the persistence factory. In this Method some logging is done so it
+	 * is recommended to use it instead of the method
+	 * {@link IPersistence#close()}.
 	 */
 	public static void closeFactory() {
 		Logger log = Logger.getLogger(PersistenceFactory.class);

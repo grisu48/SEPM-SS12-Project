@@ -1064,7 +1064,8 @@ public interface IPersistence {
 	// public int getTagFrequency(Tag tag) throws IOException;
 
 	/**
-	 * close the implementing factory
+	 * close the implementing factory. If some logging is needed use
+	 * {@link PersistenceFactory#closeFactory()} instead.
 	 * 
 	 * @throws IOException
 	 *             on a problem closing the factory
