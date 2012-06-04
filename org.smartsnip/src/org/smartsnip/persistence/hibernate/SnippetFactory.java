@@ -195,7 +195,7 @@ public class SnippetFactory {
 			entity.setLanguage(code.getLanguage());
 			entity.setFile(code.getCode());
 			entity.setVersion(code.getVersion());
-			
+
 			result = (Long) query.write(entity, flags);
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -534,13 +534,15 @@ public class SnippetFactory {
 					.hasNext();) {
 				entity = iterator.next();
 				incrementViewcount(session, entity);
-				
+
 				snippet = helper.createSnippet(entity.getSnippetId(), owner
 						.getUsername(), entity.getHeadline(), entity
 						.getDescription(),
 						CategoryFactory.fetchCategory(session, entity)
 								.getName(), TagFactory.fetchTags(helper,
-								session, entity.getSnippetId()), CommentFactory.fetchCommentIds(session, entity.getSnippetId()),
+								session, entity.getSnippetId()),
+						CommentFactory.fetchCommentIds(session,
+								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
 				snippet.setCode(fetchNewestCode(helper, session, snippet));
@@ -590,7 +592,7 @@ public class SnippetFactory {
 				snipQuery = new DBQuery(session);
 				snip = snipQuery.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
 				incrementViewcount(session, snip);
-				
+
 				snippet = helper.createSnippet(
 						snip.getSnippetId(),
 						snip.getOwner(),
@@ -598,7 +600,9 @@ public class SnippetFactory {
 						snip.getDescription(),
 						CategoryFactory.fetchCategory(session, snip).getName(),
 						TagFactory.fetchTags(helper, session,
-								snip.getSnippetId()), CommentFactory.fetchCommentIds(session, snip.getSnippetId()),
+								snip.getSnippetId()),
+						CommentFactory.fetchCommentIds(session,
+								snip.getSnippetId()),
 						fetchLicense(helper, session, snip).getShortDescr(),
 						snip.getViewcount());
 				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
@@ -657,7 +661,7 @@ public class SnippetFactory {
 				query = new DBQuery(session);
 				snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
 				incrementViewcount(session, snip);
-				
+
 				snippet = helper.createSnippet(snip.getSnippetId(),
 						snip.getOwner(), snip.getHeadline(),
 						snip.getDescription(),
@@ -721,13 +725,15 @@ public class SnippetFactory {
 					.hasNext();) {
 				entity = iterator.next();
 				incrementViewcount(session, entity);
-				
+
 				snippet = helper.createSnippet(entity.getSnippetId(), entity
 						.getOwner(), entity.getHeadline(), entity
 						.getDescription(),
 						CategoryFactory.fetchCategory(session, entity)
 								.getName(), TagFactory.fetchTags(helper,
-								session, entity.getSnippetId()), CommentFactory.fetchCommentIds(session, entity.getSnippetId()),
+								session, entity.getSnippetId()),
+						CommentFactory.fetchCommentIds(session,
+								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
 				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
@@ -767,13 +773,15 @@ public class SnippetFactory {
 			entity.setSnippetId(id);
 			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 			incrementViewcount(session, entity);
-			
+
 			result = helper
 					.createSnippet(entity.getSnippetId(), entity.getOwner(),
 							entity.getHeadline(), entity.getDescription(),
 							CategoryFactory.fetchCategory(session, entity)
 									.getName(), TagFactory.fetchTags(helper,
-									session, entity.getSnippetId()), CommentFactory.fetchCommentIds(session, entity.getSnippetId()),
+									session, entity.getSnippetId()),
+							CommentFactory.fetchCommentIds(session,
+									entity.getSnippetId()),
 							fetchLicense(helper, session, entity)
 									.getShortDescr(), entity.getViewcount());
 			result.setCodeWithoutWriting(fetchNewestCode(helper, session,
@@ -957,53 +965,57 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#search(java.lang.String,
 	 *      java.lang.Integer, java.lang.Integer)
 	 */
-	static synchronized List<Snippet> search(String searchString, Integer start,
-			Integer count) throws IOException {
+	static synchronized List<Snippet> search(String searchString,
+			Integer start, Integer count) throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		List<Snippet> result = new ArrayList<Snippet>();
-		
+
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
 		Transaction tx = null;
 		try {
-		tx = fullTextSession.beginTransaction();
+			tx = fullTextSession.beginTransaction();
 
-		// lucene full text query
-		QueryBuilder builder = fullTextSession.getSearchFactory()
-		    .buildQueryBuilder().forEntity( DBSnippet.class ).get();
-		org.apache.lucene.search.Query ftQuery = builder
-		  .keyword()
-		  .onFields("headline", "description")
-		  .matching(searchString)
-		  .createQuery();
+			// lucene full text query
+			QueryBuilder builder = fullTextSession.getSearchFactory()
+					.buildQueryBuilder().forEntity(DBSnippet.class).get();
+			org.apache.lucene.search.Query ftQuery = builder.keyword()
+					.onFields("headline", "description").matching(searchString)
+					.createQuery();
 
-		// wrap Lucene query in a org.hibernate.Query
-		org.hibernate.Query query = 
-		    fullTextSession.createFullTextQuery(ftQuery, DBSnippet.class);
-		query.setFirstResult(start);
-		query.setFetchSize(count);
-		
-		// execute search and build Snippets
-		DBSnippet entity;
-		Snippet snippet;
-		@SuppressWarnings("unchecked")
-		Iterator<DBSnippet> iterator = query.iterate();
-		for (; iterator.hasNext();) {
-			entity = iterator.next();
-			snippet = helper.createSnippet(entity.getSnippetId(), entity
-					.getOwner(), entity.getHeadline(), entity
-					.getDescription(),
-					CategoryFactory.fetchCategory(session, entity)
-							.getName(), TagFactory.fetchTags(helper,
-							session, entity.getSnippetId()), CommentFactory.fetchCommentIds(session, entity.getSnippetId()),
-					fetchLicense(helper, session, entity).getShortDescr(),
-					entity.getViewcount());
-			snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
-					snippet));
-			result.add(snippet);
-		}
-		  
-		tx.commit();
+			// wrap Lucene query in a org.hibernate.Query
+			org.hibernate.Query query = fullTextSession.createFullTextQuery(
+					ftQuery, DBSnippet.class);
+			if (start != null && start > 0) {
+				query.setFirstResult(start);
+			}
+			if (count != null && count > 0) {
+				query.setFetchSize(count);
+			}
+
+			// execute search and build Snippets
+			DBSnippet entity;
+			Snippet snippet;
+			@SuppressWarnings("unchecked")
+			Iterator<DBSnippet> iterator = query.iterate();
+			for (; iterator.hasNext();) {
+				entity = iterator.next();
+				snippet = helper.createSnippet(entity.getSnippetId(), entity
+						.getOwner(), entity.getHeadline(), entity
+						.getDescription(),
+						CategoryFactory.fetchCategory(session, entity)
+								.getName(), TagFactory.fetchTags(helper,
+								session, entity.getSnippetId()),
+						CommentFactory.fetchCommentIds(session,
+								entity.getSnippetId()),
+						fetchLicense(helper, session, entity).getShortDescr(),
+						entity.getViewcount());
+				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
+						snippet));
+				result.add(snippet);
+			}
+
+			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
 				tx.rollback();
@@ -1112,9 +1124,10 @@ public class SnippetFactory {
 		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 		return entity;
 	}
-	
+
 	/**
 	 * increment the viewcount of a snippet
+	 * 
 	 * @param session
 	 *            the session in which the query is to execute
 	 * @param snippet
