@@ -21,6 +21,7 @@ import javax.persistence.Id;
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.shared.Pair;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -122,6 +123,11 @@ class DBQuery {
 	private List<Pair<String, Object>> selectParameters = new ArrayList<Pair<String, Object>>();
 
 	/**
+	 * logger to produce some debug messages
+	 */
+	private Logger log = Logger.getLogger(DBQuery.class);
+
+	/**
 	 * Query object to build and execute some generic HQL queries.
 	 * 
 	 * @param session
@@ -202,6 +208,7 @@ class DBQuery {
 					"Malformed query: No parametes for upate defined.");
 		builder.append(" ");
 		builder.append(buildWhereClause(QUERY_NOT_EMPTY));
+		log.trace(builder.toString());
 		return builder.toString();
 	}
 
@@ -290,7 +297,7 @@ class DBQuery {
 		for (Pair<Vector<String>, Object> w : this.whereParameters) {
 			result.setParameter(w.first.get(1), w.second);
 		}
-		System.out.println(result);// XXX
+		log.debug(result);
 		return result;
 	}
 
@@ -316,7 +323,7 @@ class DBQuery {
 				result.setParameter(p.first, p.second);
 			}
 		}
-		System.out.println(result);// XXX
+		log.debug(result);
 		return result;
 	}
 
@@ -337,7 +344,7 @@ class DBQuery {
 		} else {
 			builder.append(buildWhereClause(QUERY_EMPTY_VALID));
 		}
-		System.out.println(builder.toString());// XXX
+		log.trace(builder.toString());
 		return builder.toString();
 	}
 
@@ -373,10 +380,7 @@ class DBQuery {
 						&& ((value = m.invoke(targetEntity, (Object[]) null)) != null || forceNull)) {
 					if (value != null
 							&& (hasAnnotationAndField(Id.class, targetEntity,
-									parameter, m))) {// ||
-														// hasAnnotationAndField(EmbeddedId.class,
-														// targetEntity,
-														// parameter, m))) {
+									parameter, m))) {
 						key = this.testAndSetKey(targetEntity, key, value);
 						this.addWhereParameter(parameter + " =", parameter, "",
 								value);
@@ -389,11 +393,8 @@ class DBQuery {
 							&& hasAnnotationAndField(EmbeddedId.class,
 									targetEntity, parameter, m)) {
 						key = this.testAndSetKey(targetEntity, key, value);
-						// this.addWhereParameter(parameter + " =", parameter,
-						// "",
-						// value);//XXX
 						this.getWhereClauseFromEmbeddedId(parameter, key,
-								QUERY_NULLABLE);// FIXME
+								QUERY_NULLABLE);
 
 					} else {
 						this.addParameter(parameter, value);
@@ -403,11 +404,8 @@ class DBQuery {
 				throw new HibernateException(e);
 
 			}
-			// System.err.println("method " + m.getName() + ", parameter "
-			// + parameter);// XXX
 		}
 		this.initialized = true;
-		// System.out.println(this);// XXX
 		return key;
 	}
 
@@ -433,9 +431,8 @@ class DBQuery {
 					|| object.getClass().getDeclaredField(field)
 							.isAnnotationPresent(annotation);
 		} catch (NoSuchFieldException e) {
-			// System.err.println("method " + method.getName() + " of entity "
-			// + object.getClass().getSimpleName() + " failed");// XXX
-			// return false
+			log.trace("method " + method.getName() + " of entity "
+					+ object.getClass().getSimpleName() + " failed", e);
 		}
 		return result;
 	}
@@ -474,9 +471,6 @@ class DBQuery {
 	// }
 	// } catch (NoSuchFieldException e) {
 	// result = null;
-	//
-	// // System.err.println("method " + method.getName() + " of entity "
-	// // + object.getClass().getSimpleName() + " failed");// XXX
 	// }
 	// return result;
 	// }
@@ -518,8 +512,7 @@ class DBQuery {
 				for (Pair<Vector<String>, Object> w : this.whereParameters) {
 					query.setParameter(w.first.get(1), w.second);
 				}
-				// System.err.println(query);// XXX
-				// System.out.println(this);// XXX
+				log.trace(query);
 				value = query.uniqueResult();
 
 				if (value != null) {
@@ -533,6 +526,8 @@ class DBQuery {
 					+ targetEntity.getClass().getSimpleName()
 					+ " must not be null");
 		}
+		log.debug(key);
+		log.trace(this);
 		return key;
 	}
 
@@ -670,7 +665,7 @@ class DBQuery {
 					+ targetEntity.getClass().getSimpleName()
 					+ " must be serializable");
 		}
-		// System.out.println("key: " + key + "(" + value + ")");// XXX
+		log.trace("Key: " + key + "(" + value + ")");
 		return key;
 	}
 
@@ -724,10 +719,6 @@ class DBQuery {
 	 */
 	Serializable insertOrUpdate(Object targetEntity, boolean forceNull) {
 		Serializable key = getParameters(targetEntity, forceNull);
-		// System.err.println("ins/upd key before: " + key);// XXX
-		//
-		// key = getKey(targetEntity, QUERY_NULLABLE);// XXX
-		// System.err.println("ins/upd key: " + key);// XXX
 		if ((key = getKey(targetEntity, QUERY_NULLABLE)) != null) {
 			if (!this.parameters.isEmpty()) {
 				if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
@@ -859,6 +850,7 @@ class DBQuery {
 		for (Pair<Vector<String>, Object> w : this.whereParameters) {
 			result.setParameter(w.first.get(1), w.second);
 		}
+		log.debug(result);
 		return result;
 	}
 
@@ -872,6 +864,7 @@ class DBQuery {
 		StringBuilder builder = new StringBuilder();
 		builder.append("delete ").append(targetEntity).append(" ");
 		builder.append(buildWhereClause(QUERY_NOT_EMPTY));
+		log.trace(builder.toString());
 		return builder.toString();
 	}
 
@@ -926,7 +919,7 @@ class DBQuery {
 	<T> List<T> from(T targetEntity, Integer start, Integer count) {
 		getParameters(targetEntity, QUERY_SKIP_NULL);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
-		if (start != null) {
+		if (start != null && start > 0) {
 			query.setFirstResult(start);
 		}
 		if (count != null && count > 0) {
@@ -993,7 +986,7 @@ class DBQuery {
 	 */
 	<T> Iterator<T> iterate(T targetEntity, Integer start, Integer count) {
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
-		if (start != null) {
+		if (start != null && start > 0) {
 			query.setFirstResult(start);
 		}
 		if (count != null && count > 0) {
@@ -1013,9 +1006,10 @@ class DBQuery {
 	 *            aren't to use as query parameter.
 	 * @param selectString
 	 *            the select part of the HQL query (part before the {@code from}
-	 *            keyword without {@code select}). All parameters used in the string must be added with
-	 *            the method {@link #addSelectParameter(String, Object)} with
-	 *            equal parameter strings declared.
+	 *            keyword without {@code select}). All parameters used in the
+	 *            string must be added with the method
+	 *            {@link #addSelectParameter(String, Object)} with equal
+	 *            parameter strings declared.
 	 * @return a list of results according to the select string
 	 */
 	List<Object> select(Object targetEntity, String selectString) {
@@ -1036,9 +1030,10 @@ class DBQuery {
 	 *            aren't to use as query parameter.
 	 * @param selectString
 	 *            the select part of the HQL query (part before the {@code from}
-	 *            keyword without {@code select}). All parameters used in the string must be added with
-	 *            the method {@link #addSelectParameter(String, Object)} with
-	 *            equal parameter strings declared.
+	 *            keyword without {@code select}). All parameters used in the
+	 *            string must be added with the method
+	 *            {@link #addSelectParameter(String, Object)} with equal
+	 *            parameter strings declared.
 	 * @param start
 	 *            first index to fetch
 	 * @param count
@@ -1050,7 +1045,7 @@ class DBQuery {
 		getParameters(targetEntity, QUERY_SKIP_NULL);
 		Query query = buildSelectQuery(targetEntity, selectString,
 				QUERY_ALL_PARAMETERS);
-		if (start != null) {
+		if (start != null && start > 0) {
 			query.setFirstResult(start);
 		}
 		if (count != null && count > 0) {
@@ -1070,15 +1065,17 @@ class DBQuery {
 	 *            aren't to use as query parameter.
 	 * @param selectString
 	 *            the select part of the HQL query (part before the {@code from}
-	 *            keyword without {@code select}). All parameters used in the string must be added with
-	 *            the method {@link #addSelectParameter(String, Object)} with
-	 *            equal parameter strings declared.
+	 *            keyword without {@code select}). All parameters used in the
+	 *            string must be added with the method
+	 *            {@link #addSelectParameter(String, Object)} with equal
+	 *            parameter strings declared.
 	 * @param notNull
 	 *            If set to {@code true} the query fails on a null result. Use
 	 *            constants {@link #QUERY_NOT_NULL} or {@link #QUERY_NULLABLE}.
 	 * @return an object as result according to the select string
 	 */
-	Object selectSingle(Object targetEntity, String selectString, boolean notNull) {
+	Object selectSingle(Object targetEntity, String selectString,
+			boolean notNull) {
 		getParameters(targetEntity, QUERY_SKIP_NULL);
 		Query query = buildSelectQuery(targetEntity, selectString,
 				QUERY_ALL_PARAMETERS);
@@ -1104,8 +1101,8 @@ class DBQuery {
 	private Query buildSelectQuery(Object targetEntity, String selectString,
 			boolean allParameters) {
 		StringBuilder builder = new StringBuilder("select ");
-		builder.append(selectString).append(" ").append(
-				buildFromQueryString(targetEntity, allParameters));
+		builder.append(selectString).append(" ")
+				.append(buildFromQueryString(targetEntity, allParameters));
 		Query result = this.session.createQuery(builder.toString());
 		for (Pair<String, Object> s : this.selectParameters) {
 			result.setParameter(s.first, s.second);
@@ -1118,7 +1115,7 @@ class DBQuery {
 				result.setParameter(p.first, p.second);
 			}
 		}
-		System.out.println(result);//XXX
+		log.debug(result);
 		return result;
 	}
 
@@ -1144,7 +1141,7 @@ class DBQuery {
 	 */
 	List<Object> customQuery(String queryString, Integer start, Integer count) {
 		Query query = this.session.createQuery(queryString);
-		if (start != null) {
+		if (start != null && start > 0) {
 			query.setFirstResult(start);
 		}
 		if (count != null && count > 0) {
@@ -1178,7 +1175,7 @@ class DBQuery {
 	Iterator<Object> customIterator(String queryString, Integer start,
 			Integer count) {
 		Query query = this.session.createQuery(queryString);
-		if (start != null) {
+		if (start != null && start > 0) {
 			query.setFirstResult(start);
 		}
 		if (count != null && count > 0) {
