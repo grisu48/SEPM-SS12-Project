@@ -25,7 +25,7 @@
 
 <!-- define here the main properties of the logger -->
     <root>
-    <!-- available priority levels: ALL, DEBUG, INFO, WARN, ERROR, FATAL -->
+    <!-- available priority levels: ALL, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF -->
         <priority value ="DEBUG" />
         
     <!-- comment out the following appender you don't need -->
