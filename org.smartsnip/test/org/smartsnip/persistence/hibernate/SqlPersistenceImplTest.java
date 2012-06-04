@@ -16,16 +16,14 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.hibernate.CacheMode;
 import org.hibernate.Session;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.event.service.spi.EventListenerRegistry;
-import org.hibernate.event.spi.EventType;
-import org.hibernate.event.spi.PostInsertEventListener;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
-import org.hibernate.search.event.impl.FullTextIndexEventListener;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -48,16 +46,22 @@ public class SqlPersistenceImplTest {
 	private static IPersistence instance;
 	private static SqlPersistenceHelper helper;
 	private static Validator validator;
-	
+	private Logger log = Logger.getLogger(SqlPersistenceImplTest.class);
+
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {	
+	public static void setUpBeforeClass() throws Exception {
+		// change the log level
+		LogManager.getRootLogger().setLevel(Level.ALL);
+		System.out.println("See log file for detailed debug messages.");
+		System.out.println();
+
 		// get a bean validator instance
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-        
+		validator = factory.getValidator();
+
 		PersistenceFactory.closeFactory();
 		PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_SQL_DB);
 		DBSessionFactory.getInstance("/hibernate.cfg.local_db.xml");
@@ -70,32 +74,30 @@ public class SqlPersistenceImplTest {
 		// Build Index for Hibernate Search with a mass-indexer
 		Session session = DBSessionFactory.open();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
-		fullTextSession
-		 .createIndexer()
-		 .batchSizeToLoadObjects( 25 )
-		 .cacheMode( CacheMode.IGNORE )
-		 .threadsToLoadObjects( 1 ) // 5
-		 .idFetchSize( 150 )
-		 .threadsForSubsequentFetching( 1 ) // 20
-		 .startAndWait();
-		
+		fullTextSession.createIndexer().batchSizeToLoadObjects(25)
+				.cacheMode(CacheMode.IGNORE).threadsToLoadObjects(2) // 5
+				.idFetchSize(150).threadsForSubsequentFetching(2) // 20
+				.startAndWait();
+
 		DBSessionFactory.close(session);
-		
-		SessionFactoryImplementor sfi = (SessionFactoryImplementor) ((SessionImplementor) session).getFactory();
-		EventListenerRegistry service = sfi
-				.getServiceRegistry()
-				.getService( EventListenerRegistry.class );
-		final Iterable<PostInsertEventListener> listeners = service.getEventListenerGroup( EventType.POST_INSERT )
-				.listeners();
-		FullTextIndexEventListener listener = null;
-		System.err.println("Listeners:");
-		for ( PostInsertEventListener candidate : listeners ) {
-			if ( candidate instanceof FullTextIndexEventListener ) {
-				listener = (FullTextIndexEventListener) candidate;
-				System.out.println(listener);
-			}
-		}
-		
+
+		// SessionFactoryImplementor sfi = (SessionFactoryImplementor)
+		// ((SessionImplementor) session).getFactory();
+		// EventListenerRegistry service = sfi
+		// .getServiceRegistry()
+		// .getService( EventListenerRegistry.class );
+		// final Iterable<PostInsertEventListener> listeners =
+		// service.getEventListenerGroup( EventType.POST_INSERT )
+		// .listeners();
+		// FullTextIndexEventListener listener = null;
+		// System.err.println("Listeners:");
+		// for ( PostInsertEventListener candidate : listeners ) {
+		// if ( candidate instanceof FullTextIndexEventListener ) {
+		// listener = (FullTextIndexEventListener) candidate;
+		// System.out.println(listener);
+		// }
+		// }
+
 	}
 
 	/**
@@ -109,11 +111,17 @@ public class SqlPersistenceImplTest {
 	public void testWriteUserUserInt() throws Throwable {
 		User user = helper.createUser("si", "she ra", "sie@bla", null);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
-		
-		Set<ConstraintViolation<User>> constraintViolations =
-	            validator.validate(user);
-		for(Iterator<ConstraintViolation<User>> itr = constraintViolations.iterator(); itr.hasNext();) {
-			System.err.println("Constraint Violation: " + itr.next().getMessage());
+		boolean violatedConstraits = false;
+
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validate(user);
+		for (Iterator<ConstraintViolation<User>> itr = constraintViolations
+				.iterator(); itr.hasNext();) {
+			log.error("Constraint Violation: " + itr.next().getMessage());
+			violatedConstraits = true;
+		}
+		if (violatedConstraits) {
+			fail("Constraint Violations occured! See log file");
 		}
 	}
 
@@ -156,8 +164,9 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testWriteLogin() throws Throwable {
-		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd", User.UserState.validated);
-		instance.writeUser(user, IPersistence.DB_DEFAULT);	
+		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
+				User.UserState.validated);
+		instance.writeUser(user, IPersistence.DB_DEFAULT);
 		instance.writeLogin(user, "blabla", true, IPersistence.DB_DEFAULT);
 	}
 
@@ -244,14 +253,17 @@ public class SqlPersistenceImplTest {
 	public void testWriteNotificationNotificationInt() throws Throwable {
 		User user = helper.createUser("sulu", "su lu", "su@bla", null);
 		Category par = helper.createCategory("bla", "viel bla bla", null);
-		Category cat = helper.createCategory("blabla", "noch mehr bla bla", "bla");
+		Category cat = helper.createCategory("blabla", "noch mehr bla bla",
+				"bla");
 		List<Tag> tags = new ArrayList<Tag>();
 		tags.add(helper.createTag("xxx"));
 		tags.add(helper.createTag("bbb"));
 		tags.add(helper.createTag("new"));
 		tags.add(helper.createTag("ddd"));
 		tags.add(helper.createTag("old"));
-		Snippet snip = helper.createSnippet(7L, user.getUsername(), "more stupid", "something else stupid stuff", cat.getName(), tags, null, null, 0);
+		Snippet snip = helper.createSnippet(7L, user.getUsername(),
+				"more stupid", "something else stupid stuff", cat.getName(),
+				tags, null, null, 0);
 		Code code = helper.createCode(1L, "code", "language", snip, 0);
 		snip.setCodeWithoutWriting(code);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
@@ -260,7 +272,8 @@ public class SqlPersistenceImplTest {
 		instance.writeCategory(cat, IPersistence.DB_DEFAULT);
 		Long snipId = instance.writeSnippet(snip, IPersistence.DB_DEFAULT);
 		snip.id = snipId;
-		Notification notif = helper.createNotification(22L, user, "notif", false, "now", "source", snip);
+		Notification notif = helper.createNotification(22L, user, "notif",
+				false, "now", "source", snip);
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
 		System.out.println("Snippet Id = " + snipId);
 	}
@@ -577,7 +590,7 @@ public class SqlPersistenceImplTest {
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testGetPassword() throws Throwable {
-		try{
+		try {
 			instance.getPassword(null);
 			fail("UnsupportedOperationException expected");
 		} catch (UnsupportedOperationException ignore) {
@@ -593,7 +606,8 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testVerifyPassword() throws Throwable {
-		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd", User.UserState.validated);
+		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
+				User.UserState.validated);
 		assertTrue(instance.verifyPassword(user, "blabla"));
 		assertFalse(instance.verifyPassword(user, "blabaa"));
 	}
@@ -607,7 +621,8 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testIsLoginGranted() throws Throwable {
-		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd", User.UserState.validated);
+		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
+				User.UserState.validated);
 		assertTrue(instance.isLoginGranted(user));
 	}
 
@@ -910,8 +925,10 @@ public class SqlPersistenceImplTest {
 	public void testSearch() throws Throwable {
 		List<Snippet> snippets = instance.search("description", null, null);
 		System.err.println("Search:");
-		for (Snippet s: snippets) {
-			System.out.println("Search result: snippetId = " + s.getHashId() + " Headline: " + s.getName() + " Data: " + s.getDescription());
+		for (Snippet s : snippets) {
+			System.out.println("Search result: snippetId = " + s.getHashId()
+					+ " Headline: " + s.getName() + " Data: "
+					+ s.getDescription());
 		}
 	}
 
@@ -967,5 +984,14 @@ public class SqlPersistenceImplTest {
 		System.out.println("tags count = " + count);
 	}
 
-	
+	/**
+	 * shut down the database after the tests
+	 * 
+	 * @throws Throwable
+	 */
+	@AfterClass
+	public static void shutDownAfterClass() throws Throwable {
+		PersistenceFactory.closeFactory();
+	}
+
 }
