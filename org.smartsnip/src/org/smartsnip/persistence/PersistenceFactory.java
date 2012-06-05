@@ -167,7 +167,7 @@ public class PersistenceFactory {
 		String name = null;
 		try {
 			if (instance != null) {
-				name = instance.toString();
+				name = instance.getClass().getSimpleName();
 				instance.close();
 				log.info("Session Factory " + name + " closed.");
 			}
@@ -175,6 +175,7 @@ public class PersistenceFactory {
 			log.warn("Session Factory " + name + " not closed regulary.", e);
 		} finally {
 			instance = null;
+			persistenceType = PERSIST_UNINITIALIZED;
 		}
 	}
 
