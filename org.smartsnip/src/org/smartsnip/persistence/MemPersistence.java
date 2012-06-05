@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
 import org.smartsnip.core.Comment;
@@ -609,6 +610,12 @@ public class MemPersistence implements IPersistence {
 	public List<Snippet> search(String searchString, Integer min, Integer max,
 			int sorting) throws IOException {
 		checkFail();
+		// FIXME sorting not implemented
+		if (sorting != IPersistence.SORT_UNSORTED) {
+			Logger log = Logger.getLogger(getClass());
+			log.warn(IPersistence.class.getFields().toString());//FIXME
+		}
+
 		/*
 		 * NOTE: Search string is NOT case senstitive
 		 */

@@ -598,12 +598,12 @@ public class SqlPersistenceImpl implements IPersistence {
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String,
-	 *      java.lang.Integer, java.lang.Integer)
+	 *      java.lang.Integer, java.lang.Integer, int)
 	 */
 	@Override
 	public List<Snippet> search(String searchString, Integer start,
-			Integer count) throws IOException {
-		return SnippetFactory.search(searchString, start, count);
+			Integer count, int sorting) throws IOException {
+		return SnippetFactory.search(searchString, start, count, sorting);
 	}
 
 	/**

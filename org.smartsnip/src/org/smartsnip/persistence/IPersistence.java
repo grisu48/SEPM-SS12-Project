@@ -114,22 +114,31 @@ public interface IPersistence {
 	public static final int DB_FORCE_DELETE = 16;
 
 	/**
+	 * Sorting constant for the search. Doesn't sort the results.
+	 * 
+	 * @see #SORT_LATEST
+	 * @see #SORT_MOSTVIEWED
+	 * @see #SORT_BEST_RATED
+	 */
+	public static final int SORT_UNSORTED = 0;
+
+	/**
 	 * Sorting constant for the search. Sorts the searching items by the lastest
 	 * modified date
 	 */
-	public static final int SORT_LATEST = 0;
+	public static final int SORT_LATEST = 1;
 
 	/**
 	 * Sorting constant for the search. Sorts the search results by the view
 	 * count
 	 */
-	public static final int SORT_MOSTVIEWED = 1;
+	public static final int SORT_MOSTVIEWED = 2;
 
 	/**
 	 * Sorting constant for the search. Sorts the search results by the best
 	 * ratings
 	 */
-	public static final int SORT_BEST_RATED = 2;
+	public static final int SORT_BEST_RATED = 3;
 
 	/**
 	 * Persist a single User-dataset.
@@ -606,7 +615,7 @@ public interface IPersistence {
 	 */
 	public void removeTag(Tag tag, int flags) throws IOException;
 
-	// TODO add method:
+	// TODO add method: method to cleanup the database
 	// /**
 	// * Remove all unused tags.
 	// * @param flags
@@ -1026,6 +1035,10 @@ public interface IPersistence {
 	 *            the first index
 	 * @param count
 	 *            the number of entries, null if no upper limit is wanted
+	 * @param sorting
+	 *            the result is sorted by the given order. Available are the
+	 *            sorting constants {@link #SORT_UNSORTED}, {@link #SORT_LATEST}
+	 *            , {@link #SORT_MOSTVIEWED} and {@link #SORT_BEST_RATED}.
 	 * @return a list of snippets which contain the given arguments
 	 * @throws IOException
 	 *             at a problem retrieving the data
@@ -1070,6 +1083,8 @@ public interface IPersistence {
 	public int getTagsCount() throws IOException;
 
 	// XXX needed? getTagFrequency(Tag tag)
+	// FIXME deprecated, item will be fetched with the getters which return a
+	// tag.
 	// /**
 	// * get the number of entries where the tag is used
 	// *

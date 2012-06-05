@@ -278,14 +278,14 @@ public class MemPersistenceTest {
 	@Test
 	public void testSearch() throws IOException {
 		checkInitialisation();
-
+		// FIXME test omits sorting cases
 		List<Snippet> results = Persistence.getInstance().search(
-				testSnippets[0].name, 0, 2);
+				testSnippets[0].name, 0, 2, IPersistence.SORT_UNSORTED);
 		if (results.size() <= 0)
 			fail("Search for snippet #1 did not return any contents");
 
 		results = Persistence.getInstance().search(
-				"THIS_SNIPPET_NAME_MUST_NOT_EXIST", 0, 2);
+				"THIS_SNIPPET_NAME_MUST_NOT_EXIST", 0, 2, IPersistence.SORT_UNSORTED);
 
 		if (results.size() > 0)
 			fail("Search for snippet that not exists returned contents");
