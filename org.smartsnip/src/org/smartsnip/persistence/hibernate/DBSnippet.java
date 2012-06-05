@@ -49,8 +49,7 @@ public class DBSnippet {
 	@Column(name = "description")
 	private String description;
 
-	@GeneratedValue
-	@Column(name = "viewcount", insertable = false, updatable = false)
+	@Column(name = "viewcount")
 	private Integer viewcount;
 
 	@GeneratedValue
