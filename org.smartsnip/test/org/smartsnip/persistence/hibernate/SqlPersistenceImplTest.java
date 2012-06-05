@@ -46,7 +46,7 @@ public class SqlPersistenceImplTest {
 	private static IPersistence instance;
 	private static SqlPersistenceHelper helper;
 	private static Validator validator;
-	private Logger log = Logger.getLogger(SqlPersistenceImplTest.class);
+	private static Logger log = Logger.getLogger(SqlPersistenceImplTest.class);
 
 	/**
 	 * @throws java.lang.Exception
@@ -55,6 +55,8 @@ public class SqlPersistenceImplTest {
 	public static void setUpBeforeClass() throws Exception {
 		// change the log level
 		LogManager.getRootLogger().setLevel(Level.ALL);
+		log.info("SqlPersistence test cases - begin tests");
+		log.info("changed LOG-Level to ALL");
 		System.out.println("See log file for detailed debug messages.");
 		System.out.println();
 
@@ -62,41 +64,53 @@ public class SqlPersistenceImplTest {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 
+		String dbConfig = "/hibernate.cfg.local_db.xml"; // the config file
+
+		log.info("Use local database defined in " + dbConfig);
 		PersistenceFactory.closeFactory();
 		PersistenceFactory.setDefaultType(PersistenceFactory.PERSIST_SQL_DB);
-		DBSessionFactory.getInstance("/hibernate.cfg.local_db.xml");
+		DBSessionFactory.getInstance(dbConfig);
 		instance = PersistenceFactory.getInstance();
 		if (PersistenceFactory.getPersistenceType() != PersistenceFactory.PERSIST_SQL_DB) {
 			throw new InitializationError("persistence type not PERSIST_SQL_DB");
 		}
 		helper = new SqlPersistenceHelper();
 
-		// Build Index for Hibernate Search with a mass-indexer
+		log.trace("Build Index for Hibernate Search with a mass-indexer");
 		Session session = DBSessionFactory.open();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
 		fullTextSession.createIndexer().batchSizeToLoadObjects(25)
-				.cacheMode(CacheMode.IGNORE).threadsToLoadObjects(2) // 5
-				.idFetchSize(150).threadsForSubsequentFetching(2) // 20
+				.cacheMode(CacheMode.IGNORE).threadsToLoadObjects(2)
+				.idFetchSize(150).threadsForSubsequentFetching(2)
 				.startAndWait();
-
 		DBSessionFactory.close(session);
 
-		// SessionFactoryImplementor sfi = (SessionFactoryImplementor)
-		// ((SessionImplementor) session).getFactory();
-		// EventListenerRegistry service = sfi
-		// .getServiceRegistry()
-		// .getService( EventListenerRegistry.class );
-		// final Iterable<PostInsertEventListener> listeners =
-		// service.getEventListenerGroup( EventType.POST_INSERT )
-		// .listeners();
-		// FullTextIndexEventListener listener = null;
-		// System.err.println("Listeners:");
-		// for ( PostInsertEventListener candidate : listeners ) {
-		// if ( candidate instanceof FullTextIndexEventListener ) {
-		// listener = (FullTextIndexEventListener) candidate;
-		// System.out.println(listener);
-		// }
-		// }
+		log.trace("Preparing some persistent test objects");
+		User user = helper.createUser("sulu", "su lu", "su@bla", null);
+		Category par = helper.createCategory("bla", "viel bla bla", null);
+		Category cat = helper.createCategory("blabla", "noch mehr bla bla",
+				"bla");
+		List<Tag> tags = new ArrayList<Tag>();
+		tags.add(helper.createTag("xxx"));
+		tags.add(helper.createTag("bbb"));
+		tags.add(helper.createTag("new"));
+		tags.add(helper.createTag("ddd"));
+		tags.add(helper.createTag("old"));
+		Snippet snip = helper.createSnippet(7L, user.getUsername(),
+				"more stupid", "something else stupid stuff", cat.getName(),
+				tags, null, null, 0);
+		Code code = helper.createCode(1L, "code", "language", snip, 0);
+		snip.setCodeWithoutWriting(code);
+		instance.writeUser(user, IPersistence.DB_DEFAULT);
+		instance.writeTag(tags, IPersistence.DB_DEFAULT);
+		instance.writeCategory(par, IPersistence.DB_DEFAULT);
+		instance.writeCategory(cat, IPersistence.DB_DEFAULT);
+		Long snipId = instance.writeSnippet(snip, IPersistence.DB_DEFAULT);
+		snip.id = snipId;
+		Notification notif = helper.createNotification(22L, user, "notif",
+				false, "now", "source", snip);
+		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
+		System.out.println("Snippet Id = " + snipId);
 
 	}
 
@@ -923,12 +937,18 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testSearch() throws Throwable {
-		List<Snippet> snippets = instance.search("description", null, null);
+		List<Snippet> snippets = instance.search("stupid bla", null, null,
+				IPersistence.SORT_LATEST);
 		System.err.println("Search:");
 		for (Snippet s : snippets) {
 			System.out.println("Search result: snippetId = " + s.getHashId()
 					+ " Headline: " + s.getName() + " Data: "
-					+ s.getDescription());
+					+ s.getDescription() + " Tags: " + s.getTags()
+					+ " Category: " + s.getCategoryName() + " Code: "
+					+ s.getCode().getCode() + " Language: "
+					+ s.getCode().getLanguage() + " License: " + s.getLicense()
+					+ " Viewcount: " + s.getViewcount() + " Rating: "
+					+ s.getAverageRating() + " Owner: " + s.getOwnerUsername());
 		}
 	}
 
