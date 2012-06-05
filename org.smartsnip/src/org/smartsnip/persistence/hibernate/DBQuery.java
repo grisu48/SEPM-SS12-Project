@@ -406,6 +406,8 @@ class DBQuery {
 			}
 		}
 		this.initialized = true;
+		log.trace("initialized = true");
+		log.trace(this);
 		return key;
 	}
 
@@ -781,7 +783,7 @@ class DBQuery {
 		if (key == null) {
 			throw new HibernateException("remove query needs a serializable Id");
 		}
-		// guaranteed: key not null
+		log.assertLog(key != null, "The primary key of " + targetEntity + " must not be null.");
 
 		if (!buildFromQuery(targetEntity, QUERY_WHERE_PARAMETERS_ONLY)
 				.iterate().hasNext()) {
@@ -879,7 +881,7 @@ class DBQuery {
 		if (key == null) {
 			throw new HibernateException("delete query needs a serializable Id");
 		}
-		// guaranteed: key not null
+		log.assertLog(key != null, "The primary key of " + targetEntity + " must not be null.");
 
 		if (buildDeleteQuery(targetEntity).executeUpdate() < 1) {
 			throw new HibernateException("failed to delete entity with key"
@@ -1200,6 +1202,7 @@ class DBQuery {
 		this.whereParameters = new ArrayList<Pair<Vector<String>, Object>>();
 		this.selectParameters = new ArrayList<Pair<String, Object>>();
 		this.initialized = false;
+		log.trace("initialized = false");
 	}
 
 	/**
