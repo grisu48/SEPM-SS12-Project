@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -32,7 +33,8 @@ public class CreateSnippet extends Composite {
 	private final TextBox txtName;
 	private final TextArea txtDescription;
 	private final TextArea txtCode;
-	private final TextBox txtLanguage;
+	private final ListBox lstLanguage;
+
 	private final Label lblStatus;
 
 	private final Button btCreate;
@@ -54,7 +56,8 @@ public class CreateSnippet extends Composite {
 		txtName = new TextBox();
 		txtDescription = new TextArea();
 		txtCode = new TextArea();
-		txtLanguage = new TextBox();
+		lstLanguage = new ListBox();
+		lstLanguage.addItem("Java");
 
 		btCreate = new Button(buttonname);
 		btCreate.addClickHandler(new ClickHandler() {
@@ -91,7 +94,7 @@ public class CreateSnippet extends Composite {
 		pnlControl.add(lblStatus);
 
 		pnlLanguage.add(lblLanguage);
-		pnlLanguage.add(txtLanguage);
+		pnlLanguage.add(lstLanguage);
 
 		pnlRootPanel.add(pnlVertName);
 		pnlRootPanel.add(pnlVertDesc);
@@ -106,8 +109,14 @@ public class CreateSnippet extends Composite {
 	private void createSnippet() {
 		String name = txtName.getText();
 		String desc = txtDescription.getText();
-		String language = txtLanguage.getText();
+		String language;
 		String code = txtCode.getText();
+
+		if (lstLanguage.getSelectedIndex() == -1) {
+			language = "";
+		} else {
+			language = lstLanguage.getItemText(lstLanguage.getSelectedIndex());
+		}
 
 		// TODO Error messages
 		lblStatus.setText("");
