@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -955,23 +956,43 @@ public class SnippetFactory {
 	}
 
 	/**
-	 * Implementation of {@link IPersistence#search(String, Integer, Integer)}
+	 * Implementation of {@link IPersistence#search(String, Integer, Integer, int)}
 	 * 
 	 * @param searchString
 	 * @param start
 	 * @param count
+	 * @param sorting
+	 *            the sorting order: one of the constants
+	 *            {@link IPersistence#SORT_UNSORTED} ,
+	 *            {@link IPersistence#SORT_LATEST} ,
+	 *            {@link IPersistence#SORT_MOSTVIEWED} and
+	 *            {@link IPersistence#SORT_BEST_RATED}.
 	 * @return a list of snippets
 	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#search(java.lang.String,
-	 *      java.lang.Integer, java.lang.Integer)
+	 *      java.lang.Integer, java.lang.Integer, int)
 	 */
 	static synchronized List<Snippet> search(String searchString,
-			Integer start, Integer count) throws IOException {
+			Integer start, Integer count, int sorting) throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		List<Snippet> result = new ArrayList<Snippet>();
 
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
+		switch (sorting){
+		case IPersistence.SORT_LATEST:
+			fullTextSession.createCriteria(DBSnippet.class).addOrder(Order.desc("lastEdited"));
+			break;
+		case IPersistence.SORT_MOSTVIEWED:
+			fullTextSession.createCriteria(DBSnippet.class).addOrder(Order.desc("viewcount"));
+			break;
+		case IPersistence.SORT_BEST_RATED:
+			fullTextSession.createCriteria(DBSnippet.class).addOrder(Order.desc("ratingAverage"));
+			break;
+		default:
+			// case IPersistence.SORT_UNSORTED
+			break;
+		}
 		Transaction tx = null;
 		try {
 			tx = fullTextSession.beginTransaction();
