@@ -12,6 +12,7 @@ import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -24,21 +25,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class GUI {
 
-	static final List<String> TESTTAGS = Arrays.asList("Tag1", "Tag2", "Tag3",
-			"Tag4");
-	static final XCategory CAT = new XCategory("catname", "description",
-			"parent", new ArrayList<String>());
-	static final XComment COM = new XComment("owner", 123,
-			"worst snippet ever", 2, 23, new Date());
-
-	static final List<XComment> commList = Arrays.asList(COM, COM, COM);
-	static final ArrayList<XComment> comList = new ArrayList<XComment>(commList);
-
-	static final XSnippet SNIPPET = new XSnippet("owner", 123, "title",
-			"description", CAT, new ArrayList<String>(TESTTAGS), comList,
-			"code", "codeHTML", "language", "license", 4);
-	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET,
-			SNIPPET, SNIPPET, SNIPPET, SNIPPET);
 
 	// visible in package, Control can modify
 	ResultArea myResultArea = null;
@@ -225,6 +211,7 @@ public class GUI {
 
 	public void showRegisterPopup() {
 
+		Window.scrollTo (0 ,0);
 		PopupPanel registerPanel = new PopupPanel(true);
 
 		registerPanel.setStyleName("Register");
@@ -238,6 +225,8 @@ public class GUI {
 	}
 
 	public void showImpressum() {
+		
+		Window.scrollTo (0 ,0);
 		dataPanel.clear();
 		HTML impressum = new HTML(
 				"<p><br /><strong>Verantwortlich für den Inhalt<br /></strong>Paul Opitz <br />"
@@ -262,6 +251,8 @@ public class GUI {
 	}
 
 	public void showContactForm() {
+		
+		Window.scrollTo (0 ,0);
 		PopupPanel ppnlContact = new PopupPanel(false);
 		ppnlContact.setStyleName("contactForm");
 		ppnlContact.setTitle("Contact");
