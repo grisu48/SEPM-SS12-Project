@@ -72,21 +72,21 @@ public interface IPersistence {
 	 * @see #DB_NO_DELETE
 	 * @see #DB_FORCE_DELETE
 	 */
-	public static int DB_DEFAULT = 0;
+	public static final int DB_DEFAULT = 0;
 
 	/**
 	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
 	 * methods: reject to write if the element already exists in the database.
 	 * This constant overrides {@link #DB_UPDATE_ONLY}.
 	 */
-	public static int DB_NEW_ONLY = 1;
+	public static final int DB_NEW_ONLY = 1;
 
 	/**
 	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
 	 * methods: reject the request if the element to update doesn't exist. This
 	 * constant has no effect if {@link #DB_NEW_ONLY} is set.
 	 */
-	public static int DB_UPDATE_ONLY = 2;
+	public static final int DB_UPDATE_ONLY = 2;
 
 	/**
 	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
@@ -96,7 +96,7 @@ public interface IPersistence {
 	 * database will reject all attempts to insert a null value into a
 	 * not-nullable column, so be careful if using this option.
 	 */
-	public static int DB_FORCE_NULL_VALUES = 4;
+	public static final int DB_FORCE_NULL_VALUES = 4;
 
 	/**
 	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
@@ -104,14 +104,32 @@ public interface IPersistence {
 	 * exclusively effect on queries which remove contents from the database. It
 	 * overrides {@link #DB_FORCE_DELETE}.
 	 */
-	public static int DB_NO_DELETE = 8;
+	public static final int DB_NO_DELETE = 8;
 
 	/**
 	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
 	 * methods: don't delete contents of the database. This constant has
 	 * exclusively effect on queries which remove contents from the database.
 	 */
-	public static int DB_FORCE_DELETE = 16;
+	public static final int DB_FORCE_DELETE = 16;
+
+	/**
+	 * Sorting constant for the search. Sorts the searching items by the lastest
+	 * modified date
+	 */
+	public static final int SORT_LATEST = 0;
+
+	/**
+	 * Sorting constant for the search. Sorts the search results by the view
+	 * count
+	 */
+	public static final int SORT_MOSTVIEWED = 1;
+
+	/**
+	 * Sorting constant for the search. Sorts the search results by the best
+	 * ratings
+	 */
+	public static final int SORT_BEST_RATED = 2;
 
 	/**
 	 * Persist a single User-dataset.
@@ -1013,7 +1031,7 @@ public interface IPersistence {
 	 *             at a problem retrieving the data
 	 */
 	public List<Snippet> search(String searchString, Integer start,
-			Integer count) throws IOException;
+			Integer count, int sorting) throws IOException;
 
 	/**
 	 * get the number of users which are currently in the database

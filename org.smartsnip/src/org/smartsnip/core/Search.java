@@ -230,7 +230,8 @@ public class Search {
 	private List<Snippet> searchDB(String searchString) {
 		try {
 			// TODO Get all items from database
-			return Persistence.instance.search(searchString, 0, -1);
+			// TODO Sorting
+			return Persistence.instance.search(searchString, 0, 20, 0);
 		} catch (IOException e) {
 			System.err.println("IOException during search: " + e.getMessage());
 			e.printStackTrace(System.err);

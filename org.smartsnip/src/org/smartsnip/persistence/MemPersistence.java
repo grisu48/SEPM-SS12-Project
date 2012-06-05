@@ -606,8 +606,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Snippet> search(String searchString, Integer min, Integer max)
-			throws IOException {
+	public List<Snippet> search(String searchString, Integer min, Integer max,
+			int sorting) throws IOException {
 		checkFail();
 		/*
 		 * NOTE: Search string is NOT case senstitive
