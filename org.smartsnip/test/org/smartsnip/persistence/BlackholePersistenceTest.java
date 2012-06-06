@@ -18,7 +18,7 @@ public class BlackholePersistenceTest {
 
 	/**
 	 * Test method for
-	 * {@link org.smartsnip.persistence.BlackholePersistenceImpl#BlackholePersistence()}
+	 * {@link org.smartsnip.persistence.BlackholePersistence#BlackholePersistence()}
 	 * .
 	 * <p>
 	 * This is an example test to the safety of the used singleton pattern. Due
