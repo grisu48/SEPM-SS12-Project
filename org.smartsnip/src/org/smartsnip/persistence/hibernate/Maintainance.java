@@ -9,7 +9,6 @@ import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
-import org.smartsnip.persistence.PersistenceFactory;
 
 /**
  * This class provides maintainance tools to keep the database and it's
