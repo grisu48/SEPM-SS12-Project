@@ -385,6 +385,13 @@ public class Comment {
 	}
 
 	/**
+	 * @return the owner of the comment (User).
+	 */
+	public String getOwnerName() {
+		return this.owner;
+	}
+
+	/**
 	 * @return the owner snippet of this comment
 	 */
 	public Snippet getSnippet() {
