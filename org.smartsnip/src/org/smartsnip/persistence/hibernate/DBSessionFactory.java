@@ -6,6 +6,7 @@ package org.smartsnip.persistence.hibernate;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -63,8 +64,8 @@ public class DBSessionFactory {
 						configuration.getProperties()).buildServiceRegistry();
 				factory = configuration.buildSessionFactory(serviceRegistry);
 			} catch (Throwable ex) {
-				System.err.println("Failed to create sessionFactory object."
-						+ ex);
+				Logger log = Logger.getLogger(DBSessionFactory.class);
+				log.error("Failed to create sessionFactory object.", ex);
 				throw new ExceptionInInitializerError(ex);
 			}
 		}
