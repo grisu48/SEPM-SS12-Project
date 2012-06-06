@@ -9,6 +9,7 @@ import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
+import org.smartsnip.persistence.PersistenceFactory;
 
 /**
  * This class provides maintainance tools to keep the database and it's
@@ -91,5 +92,18 @@ public class Maintainance {
 	 */
 	public static void fullTextMassIndexer() throws InterruptedException {
 		fullTextMassIndexer(25, 2, 150, 1);
+	}
+	
+	/**
+	 * start the indexer on the console
+	 * @param args 
+	 */
+	public static void main(String[] args) {
+		try {
+			fullTextMassIndexer();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		DBSessionFactory.closeFactory();
 	}
 }
