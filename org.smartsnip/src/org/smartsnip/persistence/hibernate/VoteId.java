@@ -7,12 +7,15 @@ package org.smartsnip.persistence.hibernate;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
 /**
+ * Id class for the entity {@link DBVote}
  * @author littlelion
  *
  */
+@Embeddable
 class VoteId implements Serializable {
 
 	/**
@@ -29,6 +32,7 @@ class VoteId implements Serializable {
 	private String userName;
 
 	/**
+	 * Id class
 	 * 
 	 */
 	VoteId() {
