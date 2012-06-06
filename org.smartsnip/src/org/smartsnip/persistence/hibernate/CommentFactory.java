@@ -47,11 +47,11 @@ public class CommentFactory {
 			DBQuery query = new DBQuery(session);
 
 			DBComment entity = new DBComment();
-			// commentId is read-only
+			entity.setCommentId(comment.getHashID()); // commentId is read-only
 			entity.setSnippetId(comment.getSnippetId());
 			entity.setMessage(comment.getMessage());
 			// createdAt is read-only
-			entity.setUserName(comment.getOwner().getUsername());
+			entity.setUserName(comment.getOwnerName());
 			// posVotes is read-only
 			// negVotes is read-only
 
@@ -89,11 +89,11 @@ public class CommentFactory {
 			for (Comment comment : comments) {
 				query = new DBQuery(session);
 				entity = new DBComment();
-				// commentId is read-only
+				entity.setCommentId(comment.getHashID()); // commentId is read-only
 				entity.setSnippetId(comment.getSnippetId());
 				entity.setMessage(comment.getMessage());
 				// createdAt is read-only
-				entity.setUserName(comment.getOwner().getUsername());
+				entity.setUserName(comment.getOwnerName());
 				// posVotes is read-only
 				// negVotes is read-only
 
