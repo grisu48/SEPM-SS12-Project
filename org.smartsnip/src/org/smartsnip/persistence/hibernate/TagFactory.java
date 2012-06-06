@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.smartsnip.core.Snippet;
@@ -278,7 +277,6 @@ public class TagFactory {
 	 */
 	static void updateRelTagSnippet(Session session, Long snippetId,
 			List<Tag> tags, int flags) {
-		System.out.println("pushRelTagSnippet: flags = " + flags);
 		if (tags != null && !tags.isEmpty()) {
 			DBQuery query = new DBQuery(session);
 			DBRelTagSnippet entity = new DBRelTagSnippet();
@@ -290,6 +288,7 @@ public class TagFactory {
 				entity = new DBRelTagSnippet();
 				entity.setTagSnippetId(snippetId, tag.toString());
 				query.write(entity, flags);
+				oldTags.remove(entity);
 			}
 			for (DBRelTagSnippet dbTag: oldTags){
 				query = new DBQuery(session);

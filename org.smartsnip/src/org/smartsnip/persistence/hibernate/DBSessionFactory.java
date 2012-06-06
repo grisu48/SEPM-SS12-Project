@@ -95,12 +95,13 @@ public class DBSessionFactory {
 
 	/**
 	 * close the session factory
+	 * 
 	 * @see org.hibernate.SessionFactory#close()
 	 */
 	public static void closeFactory() {
 		factory.close();
 	}
-	
+
 	/**
 	 * Open a new session. It is recommended to handle a session by one thread.
 	 * 
@@ -115,13 +116,8 @@ public class DBSessionFactory {
 	 * close the given session
 	 * 
 	 * @param session
-	 * @throws IOException
 	 */
-	static void close(Session session) throws IOException {
-		try {
-			session.close();
-		} catch (HibernateException e) {
-			throw new IOException(e);
-		}
+	static void close(Session session) {
+		session.close();
 	}
 }

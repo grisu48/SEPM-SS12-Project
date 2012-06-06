@@ -15,6 +15,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
@@ -40,6 +41,7 @@ public class DBSnippet {
 	@Column(name = "snippet_id", insertable = false, updatable = false)
 	private Long snippetId;
 
+//	@NaturalId // TODO necessary ? useable? bullshit?
 	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	@Column(name = "headline", length = 255)
 	private String headline;

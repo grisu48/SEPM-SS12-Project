@@ -18,7 +18,6 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.smartsnip.core.Category;
-import org.smartsnip.core.Code;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
@@ -75,10 +74,8 @@ public class SnippetFactory {
 			}
 			result = (Long) query.write(entity, flags);
 
-			// allow new tags even if IPersistence.DB_UPDATE_ONLY flag is
-			// present
-			// skip existing tags even if IPersistence.DB_NEW_ONLY flag is
-			// present
+			// allow new tags even on present flag IPersistence.DB_UPDATE_ONLY
+			// skip existing tags even on present flag IPersistence.DB_NEW_ONLY
 			TagFactory
 					.pushTags(
 							session,
@@ -172,93 +169,18 @@ public class SnippetFactory {
 	}
 
 	/**
-	 * Implementation of {@link IPersistence#writeCode(Code, int)}
+	 * Implementation of
+	 * {@link IPersistence#writeLicense(java.lang.String, java.lang.String, int)}
 	 * 
-	 * @param code
+	 * @param shortDescription
+	 * @param fullText
 	 * @param flags
-	 * @return the Id
-	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeCode(org.smartsnip.core.Code,
-	 *      int)
+	 * @throws IOException 
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeLicense(java.lang.String,
+	 *      java.lang.String, int)
 	 */
-	static Long writeCode(Code code, int flags) throws IOException {
-		Session session = DBSessionFactory.open();
-		Long result;
-
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
-
-			DBCode entity = new DBCode();
-			// codeId is read-only
-			entity.setSnippetId(code.getSnippet().getHashId());
-			entity.setLanguage(code.getLanguage());
-			entity.setFile(code.getCode());
-			entity.setVersion(code.getVersion());
-
-			result = (Long) query.write(entity, flags);
-			tx.commit();
-		} catch (RuntimeException e) {
-			if (tx != null)
-				tx.rollback();
-			throw new IOException(e);
-		} finally {
-			DBSessionFactory.close(session);
-		}
-		return result;
-	}
-
-	/**
-	 * Implementation of {@link IPersistence#writeCode(List, int)}
-	 * 
-	 * @param codes
-	 * @param flags
-	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeCode(java.util.List,
-	 *      int)
-	 */
-	static void writeCode(List<Code> codes, int flags) throws IOException {
-		Session session = DBSessionFactory.open();
-
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			DBQuery query;
-
-			DBCode entity;
-
-			for (Code code : codes) {
-				query = new DBQuery(session);
-				entity = new DBCode();
-				// codeId is read-only
-				entity.setSnippetId(code.getHashID());
-				entity.setLanguage(code.getLanguage());
-				entity.setFile(code.getCode());
-				entity.setVersion(code.getVersion());
-
-				query.write(entity, flags);
-			}
-			tx.commit();
-		} catch (RuntimeException e) {
-			if (tx != null)
-				tx.rollback();
-			throw new IOException(e);
-		} finally {
-			DBSessionFactory.close(session);
-		}
-	}
-
-	/**
-	 * Implementation of {@link IPersistence#writeLanguage(String, int)}
-	 * 
-	 * @param language
-	 * @param flags
-	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeLanguage(java.lang.String,
-	 *      int)
-	 */
-	static void writeLanguage(String language, int flags) throws IOException {
+	static void writeLicense(String shortDescription, String fullText,
+			int flags) throws IOException {
 		Session session = DBSessionFactory.open();
 
 		Transaction tx = null;
@@ -266,8 +188,9 @@ public class SnippetFactory {
 			tx = session.beginTransaction();
 			DBQuery query = new DBQuery(session);
 
-			DBLanguage entity = new DBLanguage();
-			entity.setLanguage(language);
+			DBLicense entity = new DBLicense();
+			entity.setShortDescr(shortDescription);
+			entity.setLicenseText(fullText);
 
 			query.write(entity, flags);
 			tx.commit();
@@ -449,15 +372,16 @@ public class SnippetFactory {
 	}
 
 	/**
-	 * Implementation of {@link IPersistence#removeCode(Code, int)}
+	 * Implementation of {@link IPersistence#removeLicense(String, int)}
 	 * 
-	 * @param code
+	 * @param shortDescription
 	 * @param flags
-	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#removeCode(org.smartsnip.core.Code,
+	 * @throws IOException 
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#removeLicense(String,
 	 *      int)
 	 */
-	static void removeCode(Code code, int flags) throws IOException {
+	static void removeLicense(String shortDescription, int flags)
+			throws IOException {
 		Session session = DBSessionFactory.open();
 
 		Transaction tx = null;
@@ -465,39 +389,8 @@ public class SnippetFactory {
 			tx = session.beginTransaction();
 			DBQuery query = new DBQuery(session);
 
-			DBCode entity = new DBCode();
-			entity.setCodeId(code.getHashID());
-
-			query.remove(entity, flags);
-			tx.commit();
-		} catch (RuntimeException e) {
-			if (tx != null)
-				tx.rollback();
-			throw new IOException(e);
-		} finally {
-			DBSessionFactory.close(session);
-		}
-	}
-
-	/**
-	 * Implementation of {@link IPersistence#removeLanguage(String, int)}
-	 * 
-	 * @param language
-	 * @param flags
-	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#removeLanguage(java.lang.String,
-	 *      int)
-	 */
-	static void removeLanguage(String language, int flags) throws IOException {
-		Session session = DBSessionFactory.open();
-
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
-
-			DBLanguage entity = new DBLanguage();
-			entity.setLanguage(language);
+			DBLicense entity = new DBLicense();
+			entity.setShortDescr(shortDescription);
 
 			query.remove(entity, flags);
 			tx.commit();
@@ -546,7 +439,7 @@ public class SnippetFactory {
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
-				snippet.setCode(fetchNewestCode(helper, session, snippet));
+				snippet.setCode(CodeFactory.fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -606,7 +499,7 @@ public class SnippetFactory {
 								snip.getSnippetId()),
 						fetchLicense(helper, session, snip).getShortDescr(),
 						snip.getViewcount());
-				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
+				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
 						snippet));
 				result.add(snippet);
 			}
@@ -671,7 +564,7 @@ public class SnippetFactory {
 						CommentFactory.fetchCommentIds(session, id),
 						fetchLicense(helper, session, snip).getShortDescr(),
 						snip.getViewcount());
-				snippet.setCode(fetchNewestCode(helper, session, snippet));
+				snippet.setCode(CodeFactory.fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -737,7 +630,7 @@ public class SnippetFactory {
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
-				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
+				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
 						snippet));
 				result.add(snippet);
 			}
@@ -785,7 +678,7 @@ public class SnippetFactory {
 									entity.getSnippetId()),
 							fetchLicense(helper, session, entity)
 									.getShortDescr(), entity.getViewcount());
-			result.setCodeWithoutWriting(fetchNewestCode(helper, session,
+			result.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
 					result));
 
 			tx.commit();
@@ -800,37 +693,24 @@ public class SnippetFactory {
 	}
 
 	/**
-	 * Implementation of {@link IPersistence#getCodes(Snippet)}
+	 * Implementation of {@link IPersistence#getLicense(String)}
 	 * 
-	 * @param snippet
-	 * @return a list of code fragments
-	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getCodes(org.smartsnip.core.Snippet)
+	 * @param shortDescription
+	 * @return the license file as string
+	 * @throws IOException 
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getLicense(String)
 	 */
-	static List<Code> getCodes(Snippet snippet) throws IOException {
+	static String getLicense(String shortDescription) throws IOException {
 		Session session = DBSessionFactory.open();
-		SqlPersistenceHelper helper = new SqlPersistenceHelper();
-		List<Code> result = new ArrayList<Code>();
+		DBLicense entity;
 
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
 			DBQuery query = new DBQuery(session);
-			DBCode entity = new DBCode();
-
-			DBSnippet snip = new DBSnippet();
-			snip.setSnippetId(snippet.getHashId());
-			snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
-
-			entity.setSnippetId(snip.getSnippetId());
-
-			for (Iterator<DBCode> iterator = query.iterate(entity); iterator
-					.hasNext();) {
-				entity = iterator.next();
-				result.add(helper.createCode(entity.getCodeId(),
-						entity.getFile(), entity.getLanguage(), snippet,
-						entity.getVersion()));
-			}
+			entity = new DBLicense();
+			entity.setShortDescr(shortDescription);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE);
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -840,41 +720,7 @@ public class SnippetFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return result;
-	}
-
-	/**
-	 * Implementation of {@link IPersistence#getAllLanguages()}
-	 * 
-	 * @return a list of languages
-	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllLanguages()
-	 */
-	static List<String> getAllLanguages() throws IOException {
-		Session session = DBSessionFactory.open();
-		List<String> result = new ArrayList<String>();
-
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
-			DBLanguage entity = new DBLanguage();
-
-			for (Iterator<DBLanguage> iterator = query.iterate(entity); iterator
-					.hasNext();) {
-				entity = iterator.next();
-				result.add(entity.getLanguage());
-			}
-
-			tx.commit();
-		} catch (RuntimeException e) {
-			if (tx != null)
-				tx.rollback();
-			throw new IOException(e);
-		} finally {
-			DBSessionFactory.close(session);
-		}
-		return result;
+		return entity.getLicenseText();
 	}
 
 	/**
@@ -956,7 +802,8 @@ public class SnippetFactory {
 	}
 
 	/**
-	 * Implementation of {@link IPersistence#search(String, Integer, Integer, int)}
+	 * Implementation of
+	 * {@link IPersistence#search(String, Integer, Integer, int)}
 	 * 
 	 * @param searchString
 	 * @param start
@@ -979,15 +826,18 @@ public class SnippetFactory {
 		List<Snippet> result = new ArrayList<Snippet>();
 
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
-		switch (sorting){
+		switch (sorting) {
 		case IPersistence.SORT_LATEST:
-			fullTextSession.createCriteria(DBSnippet.class).addOrder(Order.desc("lastEdited"));
+			fullTextSession.createCriteria(DBSnippet.class).addOrder(
+					Order.desc("lastEdited"));
 			break;
 		case IPersistence.SORT_MOSTVIEWED:
-			fullTextSession.createCriteria(DBSnippet.class).addOrder(Order.desc("viewcount"));
+			fullTextSession.createCriteria(DBSnippet.class).addOrder(
+					Order.desc("viewcount"));
 			break;
 		case IPersistence.SORT_BEST_RATED:
-			fullTextSession.createCriteria(DBSnippet.class).addOrder(Order.desc("ratingAverage"));
+			fullTextSession.createCriteria(DBSnippet.class).addOrder(
+					Order.desc("ratingAverage"));
 			break;
 		default:
 			// case IPersistence.SORT_UNSORTED
@@ -1031,7 +881,7 @@ public class SnippetFactory {
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount());
-				snippet.setCodeWithoutWriting(fetchNewestCode(helper, session,
+				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
 						snippet));
 				result.add(snippet);
 			}
@@ -1074,54 +924,6 @@ public class SnippetFactory {
 			throw new IOException(e);
 		} finally {
 			DBSessionFactory.close(session);
-		}
-		return result;
-	}
-
-	/**
-	 * Helper method to fetch all code fragments from a snippet.
-	 * 
-	 * @param helper
-	 *            the PersisteceHelper object to create the tags
-	 * @param session
-	 *            the session in which the query is to execute
-	 * @param snippet
-	 *            the snippet as source of the code
-	 * @return a list of code fragments
-	 */
-	static List<Code> fetchCode(SqlPersistenceHelper helper, Session session,
-			Snippet snippet) {
-		DBQuery query = new DBQuery(session);
-		DBCode entity = new DBCode();
-		List<Code> result = new ArrayList<Code>();
-		entity.setSnippetId(snippet.getHashId());
-		for (Iterator<DBCode> itr = query.iterate(entity); itr.hasNext();) {
-			entity = itr.next();
-			result.add(helper.createCode(entity.getCodeId(), entity.getFile(),
-					entity.getLanguage(), snippet, entity.getVersion()));
-		}
-		return result;
-	}
-
-	/**
-	 * Helper method to fetch the latest code from a snippet.
-	 * 
-	 * @param helper
-	 *            the PersisteceHelper object to create the tags
-	 * @param session
-	 *            the session in which the query is to execute
-	 * @param snippet
-	 *            the snippet as source of the code
-	 * @return the code fragment with highest version number
-	 */
-	static Code fetchNewestCode(SqlPersistenceHelper helper, Session session,
-			Snippet snippet) {
-		List<Code> codes = fetchCode(helper, session, snippet);
-		Code result = null;
-		for (Code code : codes) {
-			if (result == null || result.getVersion() < code.getVersion()) {
-				result = code;
-			}
 		}
 		return result;
 	}

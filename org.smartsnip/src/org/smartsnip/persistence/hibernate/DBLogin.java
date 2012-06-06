@@ -5,6 +5,8 @@
 package org.smartsnip.persistence.hibernate;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.DynamicInsert;
 import org.smartsnip.persistence.IPersistence;
 
@@ -24,7 +26,7 @@ class DBLogin {
 	private String user;
 
 	@Column(name = "password", length = 255)
-//	@ColumnTransformer(read = "des_decrypt(password, 'key')", write = "des_encrypt(?, 'key')")
+	@ColumnTransformer(read = "des_decrypt(password, 'asdfghjkl')", write = "des_encrypt(?, 'asdfghjkl')")
 	private String password;
 
 	@Column(name = "grant_login")
