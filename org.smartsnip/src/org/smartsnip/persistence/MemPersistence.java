@@ -72,6 +72,8 @@ public class MemPersistence implements IPersistence {
 	private final HashMap<User, List<Snippet>> favorites = new HashMap<User, List<Snippet>>();
 
 	private final HashMap<User, String> passwords = new HashMap<User, String>();
+	
+	private final HashMap<String, String> licenses = new HashMap<String, String>();
 
 	private String toKey(String key) {
 		if (key == null)
@@ -274,6 +276,16 @@ public class MemPersistence implements IPersistence {
 				return;
 
 		allLanguages.add(language);
+	}
+
+
+	@Override
+	public void writeLicense(String shortDescription, String fullText, int mode)
+			throws IOException {
+		checkFail();
+		if (shortDescription == null || fullText == null)
+			return;
+		licenses.put(shortDescription, fullText);
 	}
 
 	@Override
@@ -566,6 +578,17 @@ public class MemPersistence implements IPersistence {
 		return allLanguages;
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getLicense(java.lang.String)
+	 */
+	@Override
+	public String getLicense(String shortDescription) throws IOException {
+		checkFail();
+		if (shortDescription == null)
+			return null;
+		return licenses.get(shortDescription.trim());
+	}
+
 	@Override
 	public List<Pair<User, Integer>> getRatings(Snippet snippet)
 			throws IOException {
@@ -815,6 +838,13 @@ public class MemPersistence implements IPersistence {
 				allLanguages.remove(lang);
 			}
 		}
+	}
+
+	@Override
+	public void removeLicense(String shortDescription, int flags)
+			throws IOException {
+		checkFail();
+		licenses.remove(shortDescription.trim());
 	}
 
 	@Override

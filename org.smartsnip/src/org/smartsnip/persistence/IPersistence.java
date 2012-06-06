@@ -147,7 +147,7 @@ public interface IPersistence {
 	 *            the user to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -160,7 +160,7 @@ public interface IPersistence {
 	 *            the list of users to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -177,7 +177,7 @@ public interface IPersistence {
 	 *            to set for the user
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -197,7 +197,7 @@ public interface IPersistence {
 	 *            set this flag to true if the user should be able to login
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -211,7 +211,7 @@ public interface IPersistence {
 	 *            the snippet to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -225,7 +225,7 @@ public interface IPersistence {
 	 *            the list of snippets to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -239,7 +239,7 @@ public interface IPersistence {
 	 *            the comment to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -253,7 +253,7 @@ public interface IPersistence {
 	 *            the list of comments to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -267,7 +267,7 @@ public interface IPersistence {
 	 *            the tag to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -280,7 +280,7 @@ public interface IPersistence {
 	 *            the list of tags to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -293,7 +293,7 @@ public interface IPersistence {
 	 *            the notification to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -308,7 +308,7 @@ public interface IPersistence {
 	 *            the list of notifications to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -322,7 +322,7 @@ public interface IPersistence {
 	 *            the code to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -336,7 +336,7 @@ public interface IPersistence {
 	 *            the list of code fragments to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -349,7 +349,7 @@ public interface IPersistence {
 	 *            the category to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -363,7 +363,7 @@ public interface IPersistence {
 	 *            the list of categories to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -377,11 +377,27 @@ public interface IPersistence {
 	 *            the language to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
 	public void writeLanguage(String language, int flags) throws IOException;
+
+	/**
+	 * Persist a License.
+	 * 
+	 * @param shortDescription
+	 *            short license content
+	 * @param fullText
+	 *            the license document
+	 * @param flags
+	 *            the constraints for the write access. more than one constraint
+	 *            can be added by a bitwise or connection.
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
+	public void writeLicense(String shortDescription, String fullText, int flags)
+			throws IOException;
 
 	/**
 	 * Persist a rating. This operation updates an existing rating if the user
@@ -398,7 +414,7 @@ public interface IPersistence {
 	 *            the user who rated
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -416,7 +432,7 @@ public interface IPersistence {
 	 *            the snippet to rate for
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -438,7 +454,7 @@ public interface IPersistence {
 	 *            the user who voted
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -458,7 +474,7 @@ public interface IPersistence {
 	 *            the comment to vote for
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @return the actual value of {@code Comment.vote_sum}
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -478,7 +494,7 @@ public interface IPersistence {
 	 *            the comment to vote for
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @return the actual value of Comment.vote_sum
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -497,7 +513,7 @@ public interface IPersistence {
 	 *            the comment to vote for
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -513,7 +529,7 @@ public interface IPersistence {
 	 *            the owner of the favorite list
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection.
+	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -529,7 +545,7 @@ public interface IPersistence {
 	 *            the owner of the favorite list
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a logical or connection. Set
+	 *            can be added by a bitwise or connection. Set
 	 *            {@link #DB_FORCE_DELETE} to delete the entry from database.
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -686,6 +702,20 @@ public interface IPersistence {
 	 *             at a problem committing the data
 	 */
 	public void removeLanguage(String language, int flags) throws IOException;
+
+	/**
+	 * remove the License file from the database
+	 * 
+	 * @param shortDescription
+	 *            the short description matching to the license
+	 * @param flags
+	 *            the constraints for the write access. The default is
+	 *            {@link #DB_FORCE_DELETE}
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
+	public void removeLicense(String shortDescription, int flags)
+			throws IOException;
 
 	/**
 	 * get a user by his nickname
@@ -979,6 +1009,17 @@ public interface IPersistence {
 	 *             at a problem retrieving the data
 	 */
 	public List<String> getAllLanguages() throws IOException;
+
+	/**
+	 * get the license document by it's shortDescription
+	 * 
+	 * @param shortDescription
+	 *            the short description
+	 * @return the full text document
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public String getLicense(String shortDescription) throws IOException;
 
 	/**
 	 * get all ratings belonging to the given snippet

@@ -156,7 +156,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public Long writeCode(Code code, int flags) throws IOException {
-		return SnippetFactory.writeCode(code, flags);
+		return CodeFactory.writeCode(code, flags);
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeCode(List<Code> codes, int flags) throws IOException {
-		SnippetFactory.writeCode(codes, flags);
+		CodeFactory.writeCode(codes, flags);
 	}
 
 	/**
@@ -193,7 +193,17 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void writeLanguage(String language, int flags) throws IOException {
-		SnippetFactory.writeLanguage(language, flags);
+		CodeFactory.writeLanguage(language, flags);
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#writeLicense(java.lang.String,
+	 *      java.lang.String, int)
+	 */
+	@Override
+	public void writeLicense(String shortDescription, String fullText, int flags)
+			throws IOException {
+		SnippetFactory.writeLicense(shortDescription, fullText, flags);
 	}
 
 	/**
@@ -337,7 +347,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeCode(Code code, int flags) throws IOException {
-		SnippetFactory.removeCode(code, flags);
+		CodeFactory.removeCode(code, flags);
 	}
 
 	/**
@@ -355,7 +365,17 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void removeLanguage(String language, int flags) throws IOException {
-		SnippetFactory.removeLanguage(language, flags);
+		CodeFactory.removeLanguage(language, flags);
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#removeLicense(java.lang.String,
+	 *      int)
+	 */
+	@Override
+	public void removeLicense(String shortDescription, int flags)
+			throws IOException {
+		SnippetFactory.removeLicense(shortDescription, flags);
 	}
 
 	/**
@@ -510,7 +530,7 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Code> getCodes(Snippet snippet) throws IOException {
-		return SnippetFactory.getCodes(snippet);
+		return CodeFactory.getCodes(snippet);
 	}
 
 	/**
@@ -559,7 +579,15 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<String> getAllLanguages() throws IOException {
-		return SnippetFactory.getAllLanguages();
+		return CodeFactory.getAllLanguages();
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getLicense(java.lang.String)
+	 */
+	@Override
+	public String getLicense(String shortDescription) throws IOException {
+		return SnippetFactory.getLicense(shortDescription);
 	}
 
 	/**

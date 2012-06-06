@@ -26,7 +26,7 @@ import sun.reflect.Reflection;
 public class BlackholePersistenceImpl implements IPersistence {
 
 	private boolean fail = false;
-	
+
 	private BHPersistenceHelper helper = new BHPersistenceHelper();
 
 	private User staticUser1 = this.helper.createUser("nobody", "blabla",
@@ -41,7 +41,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 * accomplish a singleton pattern. It rejects any attempt to build an
 	 * instance except it is called by the
 	 * {@link PersistenceFactory#getInstance(int)} method.
-	 * @throws IllegalAccessException 
+	 * 
+	 * @throws IllegalAccessException
 	 */
 	protected BlackholePersistenceImpl() throws IllegalAccessException {
 		super();
@@ -85,7 +86,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#writeLogin(org.smartsnip.core.User, java.lang.String, java.lang.Boolean, int)
+	 * @see org.smartsnip.persistence.IPersistence#writeLogin(org.smartsnip.core.User,
+	 *      java.lang.String, java.lang.Boolean, int)
 	 */
 	@Override
 	public void writeLogin(User user, String password, Boolean grantLogin,
@@ -93,7 +95,6 @@ public class BlackholePersistenceImpl implements IPersistence {
 		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
-
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#writeSnippet(org.smartsnip.core.Snippet,
@@ -235,12 +236,23 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#writeLicense(java.lang.String,
+	 *      java.lang.String, int)
+	 */
+	@Override
+	public void writeLicense(String shortDescription, String fullText, int flags)
+			throws IOException {
+		checkFail();
+		// do nothing -> data vanish in the black hole!
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#writeRating(java.lang.Integer,
 	 *      org.smartsnip.core.Snippet, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeRating(Integer rating, Snippet snippet, User user, int flags)
-			throws IOException {
+	public void writeRating(Integer rating, Snippet snippet, User user,
+			int flags) throws IOException {
 		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
@@ -283,7 +295,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void unVote(User user, Comment comment, int flags) throws IOException {
+	public void unVote(User user, Comment comment, int flags)
+			throws IOException {
 		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
@@ -383,9 +396,9 @@ public class BlackholePersistenceImpl implements IPersistence {
 	public List<Snippet> getUserSnippets(User owner) throws IOException {
 		checkFail();
 		List<Snippet> snips = new ArrayList<Snippet>();
-		Snippet snip = this.helper.createSnippet(1L, owner.getUsername(), "The Header",
-				"Some Content", "undefined", new ArrayList<Tag>(),
-				new ArrayList<Long>(), "license free", 0);
+		Snippet snip = this.helper.createSnippet(1L, owner.getUsername(),
+				"The Header", "Some Content", "undefined",
+				new ArrayList<Tag>(), new ArrayList<Long>(), "license free", 0);
 		snips.add(snip);
 		return null;
 	}
@@ -435,12 +448,12 @@ public class BlackholePersistenceImpl implements IPersistence {
 	public List<Comment> getComments(Snippet snippet) throws IOException {
 		checkFail();
 		List<Comment> list = new ArrayList<Comment>();
-		Comment comm1 = this.helper.createComment(staticUser1.getUsername(), snippet.getHashId(),
-				"commented by nobody", 1L, new Date(
-						System.currentTimeMillis() - 86400000), 5, 3);
-		Comment comm2 = this.helper.createComment(staticUser2.getUsername(), snippet.getHashId(),
-				"commented by bin_da", 2L, new Date(
-						System.currentTimeMillis() - 3600000), 1, 0);
+		Comment comm1 = this.helper.createComment(staticUser1.getUsername(),
+				snippet.getHashId(), "commented by nobody", 1L,
+				new Date(System.currentTimeMillis() - 86400000), 5, 3);
+		Comment comm2 = this.helper.createComment(staticUser2.getUsername(),
+				snippet.getHashId(), "commented by bin_da", 2L,
+				new Date(System.currentTimeMillis() - 3600000), 1, 0);
 		list.add(comm1);
 		list.add(comm2);
 		return list;
@@ -470,7 +483,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getAllTags(java.lang.Integer, java.lang.Integer)
+	 * @see org.smartsnip.persistence.IPersistence#getAllTags(java.lang.Integer,
+	 *      java.lang.Integer)
 	 */
 	@Override
 	public List<Tag> getAllTags(Integer start, Integer count)
@@ -581,6 +595,21 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getLicense(java.lang.String)
+	 */
+	@Override
+	public String getLicense(String shortDescription) throws IOException {
+		checkFail();
+		StringBuilder builder = new StringBuilder(1100);
+		String template = "This license text is generated by the BlackholePersistence. " +
+				"It is no valid license and belongs to nothing. ";
+		for (int i = 0; i < 100; ++i) {
+			builder.append(template);
+		}
+		return builder.toString();
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getRatings(org.smartsnip.core.Snippet)
 	 */
 	@Override
@@ -612,8 +641,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String, java.lang.Integer,
-	 *      java.lang.Integer, int)
+	 * @see org.smartsnip.persistence.IPersistence#search(java.lang.String,
+	 *      java.lang.Integer, java.lang.Integer, int)
 	 */
 	@Override
 	public List<Snippet> search(String searchString, Integer start,
@@ -659,15 +688,18 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#unRate(org.smartsnip.core.User, org.smartsnip.core.Snippet, int)
+	 * @see org.smartsnip.persistence.IPersistence#unRate(org.smartsnip.core.User,
+	 *      org.smartsnip.core.Snippet, int)
 	 */
 	@Override
-	public void unRate(User user, Snippet snippet, int flags) throws IOException {
+	public void unRate(User user, Snippet snippet, int flags)
+			throws IOException {
 		checkFail();
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeUser(org.smartsnip.core.User, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeUser(org.smartsnip.core.User,
+	 *      int)
 	 */
 	@Override
 	public void removeUser(User user, int flags) throws IOException {
@@ -675,7 +707,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeLogin(org.smartsnip.core.User, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeLogin(org.smartsnip.core.User,
+	 *      int)
 	 */
 	@Override
 	public void removeLogin(User user, int flags) throws IOException {
@@ -683,7 +716,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeSnippet(org.smartsnip.core.Snippet, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeSnippet(org.smartsnip.core.Snippet,
+	 *      int)
 	 */
 	@Override
 	public void removeSnippet(Snippet snippet, int flags) throws IOException {
@@ -691,7 +725,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeComment(org.smartsnip.core.Comment, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeComment(org.smartsnip.core.Comment,
+	 *      int)
 	 */
 	@Override
 	public void removeComment(Comment comment, int flags) throws IOException {
@@ -699,7 +734,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeTag(org.smartsnip.core.Tag, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeTag(org.smartsnip.core.Tag,
+	 *      int)
 	 */
 	@Override
 	public void removeTag(Tag tag, int flags) throws IOException {
@@ -707,7 +743,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeNotification(org.smartsnip.core.Notification, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeNotification(org.smartsnip.core.Notification,
+	 *      int)
 	 */
 	@Override
 	public void removeNotification(Notification notification, int flags)
@@ -716,7 +753,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeCode(org.smartsnip.core.Code, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeCode(org.smartsnip.core.Code,
+	 *      int)
 	 */
 	@Override
 	public void removeCode(Code code, int flags) throws IOException {
@@ -724,7 +762,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeCategory(org.smartsnip.core.Category, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeCategory(org.smartsnip.core.Category,
+	 *      int)
 	 */
 	@Override
 	public void removeCategory(Category category, int flags) throws IOException {
@@ -732,7 +771,8 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#removeLanguage(java.lang.String, int)
+	 * @see org.smartsnip.persistence.IPersistence#removeLanguage(java.lang.String,
+	 *      int)
 	 */
 	@Override
 	public void removeLanguage(String language, int flags) throws IOException {
@@ -740,7 +780,18 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getVote(org.smartsnip.core.User, org.smartsnip.core.Comment)
+	 * @see org.smartsnip.persistence.IPersistence#removeLicense(java.lang.String,
+	 *      int)
+	 */
+	@Override
+	public void removeLicense(String shortDescription, int flags)
+			throws IOException {
+		checkFail();
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getVote(org.smartsnip.core.User,
+	 *      org.smartsnip.core.Comment)
 	 */
 	@Override
 	public Integer getVote(User user, Comment comment) throws IOException {
@@ -754,9 +805,9 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public Snippet getSnippet(Long id) throws IOException {
 		checkFail();
-		return this.helper.createSnippet(id, this.staticUser1.getUsername(), "The Header",
-				"Some Content", "undefined", new ArrayList<Tag>(),
-				new ArrayList<Long>(), "license free", 0);
+		return this.helper.createSnippet(id, this.staticUser1.getUsername(),
+				"The Header", "Some Content", "undefined",
+				new ArrayList<Tag>(), new ArrayList<Long>(), "license free", 0);
 	}
 
 	@Override
