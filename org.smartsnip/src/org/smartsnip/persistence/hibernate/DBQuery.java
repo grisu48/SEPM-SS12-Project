@@ -746,15 +746,14 @@ class DBQuery {
 	 * @return the Id of the persisted entity
 	 */
 	Serializable write(Object targetEntity, int flags) {
-		if (SqlPersistenceHelper.hasFlag(flags, IPersistence.DB_NEW_ONLY)) {
+		if (hasFlag(flags, IPersistence.DB_NEW_ONLY)) {
 			return this.insert(targetEntity);
-		} else if (SqlPersistenceHelper.hasFlag(flags,
-				IPersistence.DB_UPDATE_ONLY)) {
-			return this.update(targetEntity, SqlPersistenceHelper.hasFlag(
-					flags, IPersistence.DB_FORCE_NULL_VALUES));
+		} else if (hasFlag(flags, IPersistence.DB_UPDATE_ONLY)) {
+			return this.update(targetEntity,
+					hasFlag(flags, IPersistence.DB_FORCE_NULL_VALUES));
 		} else { // IPersistence.DB_DEFAULT case
-			return this.insertOrUpdate(targetEntity, SqlPersistenceHelper
-					.hasFlag(flags, IPersistence.DB_FORCE_NULL_VALUES));
+			return this.insertOrUpdate(targetEntity,
+					hasFlag(flags, IPersistence.DB_FORCE_NULL_VALUES));
 		}
 	}
 
@@ -778,12 +777,12 @@ class DBQuery {
 	 */
 	Serializable remove(Object targetEntity, int flags) {
 		Serializable key = getParameters(targetEntity,
-				SqlPersistenceHelper.hasFlag(flags,
-						IPersistence.DB_FORCE_NULL_VALUES));
+				hasFlag(flags, IPersistence.DB_FORCE_NULL_VALUES));
 		if (key == null) {
 			throw new HibernateException("remove query needs a serializable Id");
 		}
-		log.assertLog(key != null, "The primary key of " + targetEntity + " must not be null.");
+		log.assertLog(key != null, "The primary key of " + targetEntity
+				+ " must not be null.");
 
 		if (!buildFromQuery(targetEntity, QUERY_WHERE_PARAMETERS_ONLY)
 				.iterate().hasNext()) {
@@ -792,9 +791,8 @@ class DBQuery {
 		}
 		// guaranteed: entity exists in database
 
-		if (!SqlPersistenceHelper.hasFlag(flags, IPersistence.DB_FORCE_DELETE)
-				|| SqlPersistenceHelper.hasFlag(flags,
-						IPersistence.DB_NO_DELETE)) {
+		if (!hasFlag(flags, IPersistence.DB_FORCE_DELETE)
+				|| hasFlag(flags, IPersistence.DB_NO_DELETE)) {
 			// all cases except DB_FORCE_DELETE
 
 			Method disable = null;
@@ -806,7 +804,7 @@ class DBQuery {
 				cause = e; // keep exception to pass on in DB_NO_DELETE case
 				// no delete() method available
 			}
-			if (SqlPersistenceHelper.hasFlag(flags, IPersistence.DB_NO_DELETE)) {
+			if (hasFlag(flags, IPersistence.DB_NO_DELETE)) {
 				if (disable == null || cause != null) {
 					throw new HibernateException(
 							"DB_NO_DELETE flag detected but no disable strategy available for "
@@ -881,7 +879,8 @@ class DBQuery {
 		if (key == null) {
 			throw new HibernateException("delete query needs a serializable Id");
 		}
-		log.assertLog(key != null, "The primary key of " + targetEntity + " must not be null.");
+		log.assertLog(key != null, "The primary key of " + targetEntity
+				+ " must not be null.");
 
 		if (buildDeleteQuery(targetEntity).executeUpdate() < 1) {
 			throw new HibernateException("failed to delete entity with key"
@@ -1203,6 +1202,19 @@ class DBQuery {
 		this.selectParameters = new ArrayList<Pair<String, Object>>();
 		this.initialized = false;
 		log.trace("initialized = false");
+	}
+
+	/**
+	 * evaluates the flags of the methods in {@link IPersistence}
+	 * 
+	 * @param flags
+	 *            the value containing some flags
+	 * @param flag
+	 *            the flag to test
+	 * @return true if the flag is present
+	 */
+	public static boolean hasFlag(int flags, int flag) {
+		return (flags & flag) == flag;
 	}
 
 	/**

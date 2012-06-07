@@ -132,17 +132,4 @@ public class PersistenceHelper {
 			String parent) {
 		return new Category(name, description, parent);
 	}
-
-	/**
-	 * evaluates the flags
-	 * 
-	 * @param flags
-	 *            the value containing some flags
-	 * @param flag
-	 *            the flag to test
-	 * @return true if the flag is present
-	 */
-	public static boolean hasFlag(int flags, int flag) {
-		return (flags & flag) == flag;
-	}
 }
