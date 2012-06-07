@@ -129,7 +129,7 @@ CREATE TABLE `RelTagSnippet` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_rel_ts_tag` FOREIGN KEY `fk_rel_ts_tag` (`tag_name`)
     REFERENCES `Tag` (`tag_name`)
-    ON DELETE CASCADE
+    ON DELETE RESTRICT
     ON UPDATE CASCADE
 )
 ENGINE = InnoDB
