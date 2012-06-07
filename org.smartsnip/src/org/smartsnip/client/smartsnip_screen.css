@@ -400,7 +400,28 @@ footer .gwt-Label, .gwt-Anchor {
 	margin-right: 20px;
 }
 
+.txtTag {
+	margin:3px;
+	width:50px;
+	height:20px;
+	font-size:70%;
+}
 
+
+
+
+.add {
+	padding:3px;
+	margin:3px;
+	background-color:#fffeeb;
+	color:#a9c34a;
+	font-size:70%;
+}
+
+.tag {
+	margin:3px;
+	font-size:70%;
+}
 
 
 

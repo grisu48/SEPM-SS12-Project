@@ -1,9 +1,14 @@
 package org.smartsnip.client;
 
+import java.util.ArrayList;
+
 import org.smartsnip.shared.ISnippet;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -22,6 +27,9 @@ public class CreateSnippet extends Composite {
 	private final VerticalPanel pnlRootPanel;
 
 	private final HorizontalPanel pnlControl;
+	private final HorizontalPanel pnlProp;
+	private final HorizontalPanel pnlTags;
+	private final HorizontalPanel pnlAddedTags;
 	private final Label lblTitle;
 	private final Label lblName;
 	private final Label lblDesc;
@@ -31,7 +39,11 @@ public class CreateSnippet extends Composite {
 	private final TextArea txtDescription;
 	private final TextArea txtCode;
 	private final ListBox lstLanguage;
-
+	private final ListBox lstCategory;
+	private final TextBox txtTag;
+	private final Label lblTags;
+	private final Button btnTag;
+	private final ArrayList<String> taglist;
 	private final Label lblStatus;
 
 	private final Button btCreate;
@@ -41,7 +53,12 @@ public class CreateSnippet extends Composite {
 		this.parent = parent;
 
 		pnlRootPanel = new VerticalPanel();
+		pnlProp = new HorizontalPanel();
 		pnlControl = new HorizontalPanel();
+		pnlTags = new HorizontalPanel();
+		pnlAddedTags = new HorizontalPanel();
+		
+		taglist = new ArrayList<String>();
 
 		lblTitle = new Label("Create Snippet");
 		lblTitle.setStyleName("h3");
@@ -55,7 +72,33 @@ public class CreateSnippet extends Composite {
 		txtCode = new TextArea();
 		lstLanguage = new ListBox();
 		lstLanguage.addItem("Java");
+		lstCategory = new ListBox();
+		
+		// XXX For-Schleife, die alle verfügbaren Categories einliest!
+		lstCategory.addItem("Category");
 
+		txtTag = new TextBox();
+		txtTag.setStyleName("txtTag");
+		txtTag.addKeyDownHandler(new KeyDownHandler() {
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if (KeyCodes.KEY_ENTER == event.getNativeKeyCode()) {
+					addTag(txtTag.getText());
+				}
+			}
+		});
+	
+		lblTags = new Label("Add Tags");
+		btnTag = new Button("Add");
+		btnTag.setStyleName("add");
+		btnTag.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+
+				addTag(txtTag.getText());
+			}
+		});
+		
 		btCreate = new Button(buttonname);
 		btCreate.addClickHandler(new ClickHandler() {
 
@@ -86,6 +129,14 @@ public class CreateSnippet extends Composite {
 		pnlControl.add(btCreate);
 		pnlControl.add(btCancel);
 		pnlControl.add(lblStatus);
+		
+		pnlProp.add(lstLanguage);
+		pnlProp.add(lstCategory);
+
+		pnlTags.add(txtTag);
+		pnlTags.add(btnTag);
+		setTags();
+		
 
 		pnlRootPanel.add(lblTitle);
 		pnlRootPanel.add(lblName);
@@ -94,26 +145,38 @@ public class CreateSnippet extends Composite {
 		pnlRootPanel.add(txtDescription);
 		pnlRootPanel.add(lblCode);
 		pnlRootPanel.add(txtCode);
-
-		pnlRootPanel.add(lblCode);
-		pnlRootPanel.add(txtCode);
-		pnlRootPanel.add(lstLanguage);
-
+		
+		
+		pnlRootPanel.add(pnlProp);
+		pnlRootPanel.add(lblTags);
+		pnlRootPanel.add(pnlTags);
+		pnlRootPanel.add(pnlAddedTags);
 		pnlRootPanel.add(pnlControl);
 
 		initWidget(pnlRootPanel);
 	}
+	
+	
+	
 
 	private void createSnippet() {
+
 		String name = txtName.getText();
 		String desc = txtDescription.getText();
 		String language;
 		String code = txtCode.getText();
+		String cat;
 
 		if (lstLanguage.getSelectedIndex() == -1) {
 			language = "";
 		} else {
 			language = lstLanguage.getItemText(lstLanguage.getSelectedIndex());
+		}
+		
+		if (lstCategory.getSelectedIndex() == -1) {
+			cat = "";
+		} else {
+			cat = lstCategory.getItemText(lstCategory.getSelectedIndex());
 		}
 
 		// TODO Error messages
@@ -127,8 +190,8 @@ public class CreateSnippet extends Composite {
 		// TODO Category and Tags
 		btCreate.setEnabled(false);
 		lblStatus.setText("Creating snippet ... ");
-		ISnippet.Util.getInstance().create(name, desc, code, language, null,
-				null, new AsyncCallback<Void>() {
+		ISnippet.Util.getInstance().create(name, desc, code, language, cat,
+				taglist, new AsyncCallback<Void>() {
 
 					@Override
 					public void onSuccess(Void result) {
@@ -148,4 +211,27 @@ public class CreateSnippet extends Composite {
 	private void close() {
 		this.parent.hide();
 	}
+	
+	
+	
+	public void addTag(String tag) {
+		taglist.add(tag);
+		setTags();
+	}
+	
+	public void setTags() {
+		Label lblTag = new Label();
+		for (String i: taglist) {
+			lblTag.setText(i);
+			lblTag.setStyleName("tag");
+			pnlAddedTags.add(lblTag);
+		}
+		
+
+		
+
+	}
+	
+	
+	
 }
