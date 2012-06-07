@@ -30,6 +30,7 @@ public class PersonalField extends Composite {
 		
 		pnlField = new VerticalPanel();
 		lTitle = new Label("Personal Information");
+		lTitle.setStyleName("personalTitle");
 		name = new TextBox();
 		name.setText(control.getUsername());
 		mail = new TextBox();

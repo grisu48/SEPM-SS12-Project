@@ -172,6 +172,14 @@ footer .gwt-Label, .gwt-Anchor {
 	margin:10px, 0px, 10px, 0px;
 }
 
+.personalTitle {
+	font-family:"Lato";
+	font-size: x-large;
+	font-weight:300;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
 .gwt-Image {
 	padding:0px;
 	margin:0px;
