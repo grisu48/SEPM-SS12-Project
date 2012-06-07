@@ -269,11 +269,11 @@ public class GUI {
 		// TODO CSS Style
 		ppnlSnippet.setStyleName("contactForm");
 		ppnlSnippet.setTitle("Create snippet");
-		CreateSnippet newSnippet = new CreateSnippet(ppnlSnippet, "Create snippet");
+		CreateSnippet newSnippet = new CreateSnippet(ppnlSnippet, "Create");
 		ppnlSnippet.setWidget(newSnippet);
 		ppnlSnippet.setGlassEnabled(true);
-		ppnlSnippet.setPopupPosition(110, 100);
-		ppnlSnippet.setWidth("340px");
+		ppnlSnippet.setPopupPosition(90, 104);
+		ppnlSnippet.setWidth("250px");
 		ppnlSnippet.show();
 
 	}

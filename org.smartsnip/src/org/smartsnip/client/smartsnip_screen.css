@@ -244,9 +244,10 @@ footer .gwt-Label, .gwt-Anchor {
 	font-size:150%;
 }
 
-.gwt-TextBox {
+.gwt-TextBox, .gwt-TextArea {
 	padding:10px;
 	margin:10px;
+
 }
 
 .gwt-PasswordTextBox {
@@ -273,7 +274,7 @@ footer .gwt-Label, .gwt-Anchor {
 	width: 100px;
 }
 
-.popupContent .gwt-TextBox, .popupContent .gwt-PasswordTextBox {
+.popupContent .gwt-TextBox, .popupContent .gwt-PasswordTextBox, .popupContent .gwt-TextArea {
 	margin: 0px 0px 0px 0px;
 	width: 193px;
 }
@@ -398,6 +399,8 @@ footer .gwt-Label, .gwt-Anchor {
 	margin-top: 30px;
 	margin-right: 20px;
 }
+
+
 
 
 

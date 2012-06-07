@@ -21,11 +21,8 @@ public class CreateSnippet extends Composite {
 
 	private final VerticalPanel pnlRootPanel;
 
-	private final HorizontalPanel pnlVertName;
-	private final HorizontalPanel pnlVertDesc;
-	private final HorizontalPanel pnlLanguage;
 	private final HorizontalPanel pnlControl;
-
+	private final Label lblTitle;
 	private final Label lblName;
 	private final Label lblDesc;
 	private final Label lblCode;
@@ -44,11 +41,11 @@ public class CreateSnippet extends Composite {
 		this.parent = parent;
 
 		pnlRootPanel = new VerticalPanel();
-		pnlVertName = new HorizontalPanel();
-		pnlVertDesc = new HorizontalPanel();
-		pnlLanguage = new HorizontalPanel();
 		pnlControl = new HorizontalPanel();
 
+		lblTitle = new Label("Create Snippet");
+		lblTitle.setStyleName("h3");
+		
 		lblName = new Label();
 		lblDesc = new Label();
 		lblCode = new Label();
@@ -83,24 +80,25 @@ public class CreateSnippet extends Composite {
 		lblLanguage.setText("Language");
 		lblCode.setText("Snippet's code");
 
-		pnlVertName.add(lblName);
-		pnlVertName.add(txtName);
-
-		pnlVertDesc.add(lblDesc);
-		pnlVertDesc.add(txtDescription);
+	
+		
 
 		pnlControl.add(btCreate);
 		pnlControl.add(btCancel);
 		pnlControl.add(lblStatus);
 
-		pnlLanguage.add(lblLanguage);
-		pnlLanguage.add(lstLanguage);
-
-		pnlRootPanel.add(pnlVertName);
-		pnlRootPanel.add(pnlVertDesc);
+		pnlRootPanel.add(lblTitle);
+		pnlRootPanel.add(lblName);
+		pnlRootPanel.add(txtName);
+		pnlRootPanel.add(lblDesc);
+		pnlRootPanel.add(txtDescription);
 		pnlRootPanel.add(lblCode);
 		pnlRootPanel.add(txtCode);
-		pnlRootPanel.add(pnlLanguage);
+
+		pnlRootPanel.add(lblCode);
+		pnlRootPanel.add(txtCode);
+		pnlRootPanel.add(lstLanguage);
+
 		pnlRootPanel.add(pnlControl);
 
 		initWidget(pnlRootPanel);
