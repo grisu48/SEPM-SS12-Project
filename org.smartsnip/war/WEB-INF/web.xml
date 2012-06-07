@@ -28,8 +28,16 @@
     <url-pattern>/org_smartsnip/snippet</url-pattern>
   </servlet-mapping>
   
-
-
+<servlet>
+    <servlet-name>ServletOfDay</servlet-name>
+    <servlet-class>org.smartsnip.server.SnippetOfDay</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>ServletOfDay</servlet-name>
+    <url-pattern>/snippetofday</url-pattern>
+  </servlet-mapping>
+  
 
 
 
