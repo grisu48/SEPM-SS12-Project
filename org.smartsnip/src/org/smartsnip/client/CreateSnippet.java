@@ -1,8 +1,11 @@
 package org.smartsnip.client;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.smartsnip.shared.ICategory;
 import org.smartsnip.shared.ISnippet;
+import org.smartsnip.shared.XCategory;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -10,6 +13,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -57,12 +61,12 @@ public class CreateSnippet extends Composite {
 		pnlControl = new HorizontalPanel();
 		pnlTags = new HorizontalPanel();
 		pnlAddedTags = new HorizontalPanel();
-		
+
 		taglist = new ArrayList<String>();
 
 		lblTitle = new Label("Create Snippet");
 		lblTitle.setStyleName("h3");
-		
+
 		lblName = new Label();
 		lblDesc = new Label();
 		lblCode = new Label();
@@ -71,10 +75,45 @@ public class CreateSnippet extends Composite {
 		txtDescription = new TextArea();
 		txtCode = new TextArea();
 		lstLanguage = new ListBox();
-		lstLanguage.addItem("Java");
 		lstCategory = new ListBox();
-		
-		// XXX For-Schleife, die alle verfügbaren Categories einliest!
+
+		ISnippet.Util.getInstance().getSupportedLanguages(
+				new AsyncCallback<List<String>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						lblStatus
+								.setText("Error retrieving supported languages");
+					}
+
+					@Override
+					public void onSuccess(List<String> result) {
+						if (result == null)
+							return;
+						for (String lang : result)
+							lstLanguage.addItem(lang);
+					}
+				});
+
+		ICategory.Util.getInstance().getCategories(null,
+				new AsyncCallback<List<XCategory>>() {
+
+					@Override
+					public void onSuccess(List<XCategory> result) {
+						if (result == null)
+							return;
+						for (XCategory category : result) {
+							lstCategory.addItem(category.name);
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Error handling
+						lblStatus.setText("Error fetching categories list");
+					}
+				});
+
 		lstCategory.addItem("Category");
 
 		txtTag = new TextBox();
@@ -87,7 +126,7 @@ public class CreateSnippet extends Composite {
 				}
 			}
 		});
-	
+
 		lblTags = new Label("Add Tags");
 		btnTag = new Button("Add");
 		btnTag.setStyleName("add");
@@ -98,7 +137,7 @@ public class CreateSnippet extends Composite {
 				addTag(txtTag.getText());
 			}
 		});
-		
+
 		btCreate = new Button(buttonname);
 		btCreate.addClickHandler(new ClickHandler() {
 
@@ -123,20 +162,15 @@ public class CreateSnippet extends Composite {
 		lblLanguage.setText("Language");
 		lblCode.setText("Snippet's code");
 
-	
-		
-
 		pnlControl.add(btCreate);
 		pnlControl.add(btCancel);
 		pnlControl.add(lblStatus);
-		
+
 		pnlProp.add(lstLanguage);
 		pnlProp.add(lstCategory);
 
 		pnlTags.add(txtTag);
 		pnlTags.add(btnTag);
-		setTags();
-		
 
 		pnlRootPanel.add(lblTitle);
 		pnlRootPanel.add(lblName);
@@ -145,8 +179,7 @@ public class CreateSnippet extends Composite {
 		pnlRootPanel.add(txtDescription);
 		pnlRootPanel.add(lblCode);
 		pnlRootPanel.add(txtCode);
-		
-		
+
 		pnlRootPanel.add(pnlProp);
 		pnlRootPanel.add(lblTags);
 		pnlRootPanel.add(pnlTags);
@@ -155,9 +188,6 @@ public class CreateSnippet extends Composite {
 
 		initWidget(pnlRootPanel);
 	}
-	
-	
-	
 
 	private void createSnippet() {
 
@@ -172,7 +202,7 @@ public class CreateSnippet extends Composite {
 		} else {
 			language = lstLanguage.getItemText(lstLanguage.getSelectedIndex());
 		}
-		
+
 		if (lstCategory.getSelectedIndex() == -1) {
 			cat = "";
 		} else {
@@ -202,8 +232,11 @@ public class CreateSnippet extends Composite {
 					@Override
 					public void onFailure(Throwable caught) {
 						btCreate.setEnabled(true);
-						lblStatus.setText("Error creating snippet: "
-								+ caught.getMessage());
+						if (caught == null)
+							lblStatus.setText("Error creating snippet");
+						else
+							lblStatus.setText("Error creating snippet: "
+									+ caught.getMessage());
 					}
 				});
 	}
@@ -211,27 +244,29 @@ public class CreateSnippet extends Composite {
 	private void close() {
 		this.parent.hide();
 	}
-	
-	
-	
-	public void addTag(String tag) {
+
+	public void addTag(final String tag) {
+		if (tag == null || tag.isEmpty())
+			return;
+
+		if (taglist.contains(tag))
+			return;
 		taglist.add(tag);
-		setTags();
-	}
-	
-	public void setTags() {
-		Label lblTag = new Label();
-		for (String i: taglist) {
-			lblTag.setText(i);
-			lblTag.setStyleName("tag");
-			pnlAddedTags.add(lblTag);
-		}
-		
 
-		
+		final Anchor anchTag = new Anchor(tag);
+		anchTag.setStyleName("tag");
 
+		// Click on Tag to remove it
+		anchTag.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if (taglist.contains(tag))
+					taglist.remove(tag);
+				pnlAddedTags.remove(anchTag);
+			}
+		});
+		pnlAddedTags.add(anchTag);
 	}
-	
-	
-	
+
 }

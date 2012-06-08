@@ -361,6 +361,7 @@ public class Control implements EntryPoint {
 	}
 
 	public void changeSnippet(XSnippet snip) {
+
 		// XXX
 		// Das veränderte XSnippet soll in die Datenbank geschrieben werden.
 		// ÜBer ISnippet?
