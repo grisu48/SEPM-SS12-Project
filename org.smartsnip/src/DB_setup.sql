@@ -58,9 +58,10 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE `License` (
   `license_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  `short_descr` VARCHAR(255)  DEFAULT NULL,
+  `short_descr` VARCHAR(255)  NOT NULL,
   `license_text` TEXT  DEFAULT NULL,
-  PRIMARY KEY (`license_id`)
+  PRIMARY KEY (`license_id`),
+  CONSTRAINT `lic_short_descr` UNIQUE `lic_short_descr` (`short_descr`)
 )
 ENGINE = InnoDB
 CHARACTER SET utf8 COLLATE utf8_general_ci;
