@@ -1,18 +1,12 @@
 package org.smartsnip.client;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import org.smartsnip.shared.XCategory;
-import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -22,9 +16,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-
 public class GUI {
-
 
 	// visible in package, Control can modify
 	ResultArea myResultArea = null;
@@ -37,7 +29,6 @@ public class GUI {
 	SnipArea mySnipArea = null;
 	PersonalArea myPersonalArea = null;
 	SearchArea mySearchArea = null;
-	
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -74,7 +65,7 @@ public class GUI {
 		// Fill userPanel
 		myMeta = new Meta();
 		userPanel.add(myMeta);
-		
+
 		// Fill searchPanel
 		mySearchArea = new SearchArea();
 		searchPanel.add(mySearchArea);
@@ -211,7 +202,7 @@ public class GUI {
 
 	public void showRegisterPopup() {
 
-		Window.scrollTo (0 ,0);
+		Window.scrollTo(0, 0);
 		PopupPanel registerPanel = new PopupPanel(true);
 
 		registerPanel.setStyleName("Register");
@@ -225,8 +216,8 @@ public class GUI {
 	}
 
 	public void showImpressum() {
-		
-		Window.scrollTo (0 ,0);
+
+		Window.scrollTo(0, 0);
 		dataPanel.clear();
 		HTML impressum = new HTML(
 				"<p><br /><strong>Verantwortlich für den Inhalt<br /></strong>Paul Opitz <br />"
@@ -251,8 +242,8 @@ public class GUI {
 	}
 
 	public void showContactForm() {
-		
-		Window.scrollTo (0 ,0);
+
+		Window.scrollTo(0, 0);
 		PopupPanel ppnlContact = new PopupPanel(false);
 		ppnlContact.setStyleName("contactForm");
 		ppnlContact.setTitle("Contact");
@@ -277,15 +268,45 @@ public class GUI {
 		ppnlSnippet.show();
 
 	}
-	
-
-	
-
-	
 
 	public void startSearch() {
 		mySortArea.update("Searching ... ");
 	}
 
-	
+	/**
+	 * Creates a popup window with a link
+	 * 
+	 * @param convertToLink
+	 *            link to be created
+	 */
+	public void showDownloadPopup(String message, String convertToLink) {
+		if (message == null)
+			message = "";
+		if (convertToLink == null || convertToLink.isEmpty())
+			return;
+
+		final PopupPanel popup = new PopupPanel(true, true);
+		Button close = new Button("<b>Close</b>");
+		Anchor link = new Anchor(convertToLink);
+		link.setHref(convertToLink);
+
+		popup.setTitle("Link ");
+		VerticalPanel vertPanel = new VerticalPanel();
+		Label lname = new Label(message);
+		vertPanel.add(lname);
+		vertPanel.add(close);
+		popup.setWidget(vertPanel);
+		popup.setGlassEnabled(true);
+		popup.setPopupPosition(110, 100);
+		popup.setWidth("340px");
+		popup.show();
+		close.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				popup.hide();
+			}
+		});
+	}
+
 }
