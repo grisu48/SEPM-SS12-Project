@@ -40,7 +40,6 @@ public class DBSnippet {
 	@Column(name = "snippet_id", insertable = false, updatable = false)
 	private Long snippetId;
 
-//	@NaturalId // TODO necessary ? useable? bullshit?
 	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	@Column(name = "headline", length = 255)
 	private String headline;
