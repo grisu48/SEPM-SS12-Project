@@ -32,4 +32,12 @@ public interface ISnippetAsync {
 
 	void addToFavorites(long id, AsyncCallback<Void> callback);
 
+	void edit(XSnippet snippet, AsyncCallback<Void> callback);
+
+	void getSupportedLanguages(AsyncCallback<List<String>> callback);
+
+	void getDownloadSourceTicket(long snippet_id, AsyncCallback<Long> callback);
+
+	void hasDownloadableSource(long snippet_id, AsyncCallback<Boolean> callback);
+
 }

@@ -184,4 +184,43 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	public void create(String name, String desc, String code, String language,
 			String category, List<String> tags) throws NoAccessException,
 			IllegalArgumentException;
+
+	/**
+	 * Edits the given snippet (identified by the hash id) with the new data
+	 * 
+	 * 
+	 * @param snippet
+	 *            Snippet data and hash id of the snippet to be edited
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
+	 * @throws NotFoundException
+	 *             Thrown if the given snippet is not found
+	 */
+	public void edit(XSnippet snippet) throws NoAccessException,
+			NotFoundException, IllegalArgumentException;
+
+	/**
+	 * Retrieves a list of supported languages from the server
+	 * 
+	 * @return List of supported languages
+	 */
+	public List<String> getSupportedLanguages();
+
+	/**
+	 * Checks if there is a downloadable source
+	 * 
+	 * @return true if a downloadable source is found
+	 */
+	public boolean hasDownloadableSource(long snippet_id)
+			throws NotFoundException;
+
+	/**
+	 * Gets a download ticket for the source code.
+	 * 
+	 * @return the ticket id for the source
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
+	 */
+	public long getDownloadSourceTicket(long snippet_id)
+			throws NotFoundException, NoAccessException;
 }

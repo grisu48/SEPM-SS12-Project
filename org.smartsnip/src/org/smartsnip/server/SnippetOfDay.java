@@ -39,7 +39,7 @@ public class SnippetOfDay extends HttpServlet {
 			writer.println("<body>");
 
 			// Get the snippet of the day
-			Snippet snippetOfday = null;
+			Snippet snippetOfday = Snippet.getSnippetOfDay();
 			if (snippetOfday == null) {
 				// Internal server error
 				writer.println("<p><b>Error 500</b></p>");
@@ -50,8 +50,26 @@ public class SnippetOfDay extends HttpServlet {
 			} else {
 				XSnippet result = snippetOfday.toXSnippet();
 
-				// Add meta data
+				// Print Add meta data. Every item has to be added
+				// as a comment for a mobile client and as HTML page item
+				writer.println("<!--TITLE=" + result.title + "-->");
+				writer.println("<p><b>" + result.title + "</b><p>");
 
+				writer.println("<!--OWNER=" + result.owner + "-->");
+				writer.println("<p>Creator: " + result.owner + "<p>");
+
+				writer.println("<!--LANG=" + result.language + "-->");
+				writer.println("<p>Language: " + result.language + "<p>");
+
+				writer.println("<!--DESC=" + result.description + "-->");
+				writer.println("<hr>");
+				writer.println("<p>" + result.description + "<p>");
+				writer.println("<hr>");
+
+				writer.println("<!--CODE=" + result.code + "-->");
+				writer.println("<p>" + result.codeHTML + "<p>");
+
+				writer.println("<hr>");
 			}
 
 			writer.println("</body>");

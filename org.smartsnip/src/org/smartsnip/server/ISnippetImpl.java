@@ -275,4 +275,69 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 					+ " could not be found");
 		return snippet;
 	}
+
+	@Override
+	public void edit(XSnippet snippet) throws NoAccessException,
+			NotFoundException, IllegalArgumentException {
+		if (snippet == null)
+			return;
+
+		Session session = getSession();
+		User user = session.getUser();
+		Snippet origin = Snippet.getSnippet(snippet.hash);
+
+		if (origin == null)
+			throw new NotFoundException();
+		if (!session.getPolicy().canEditSnippet(session, origin))
+			throw new NoAccessException();
+		if (user == null)
+			throw new NoAccessException();
+
+		// Access guaranteed. Edit snippet
+		origin.edit(snippet); // Can throw a IllegalArgumentException
+
+	}
+
+	@Override
+	public List<String> getSupportedLanguages() {
+		// currently we are only supporting Java
+		List<String> result = new ArrayList<String>();
+		result.add("Java");
+		return result;
+	}
+
+	@Override
+	public boolean hasDownloadableSource(long snippet_id)
+			throws NotFoundException {
+		Snippet snippet = Snippet.getSnippet(snippet_id);
+		if (snippet == null)
+			throw new NotFoundException();
+
+		Code code = snippet.getCode();
+		if (code == null)
+			return false;
+		else
+			return snippet.getCode().hasDownloadableSource();
+	}
+
+	@Override
+	public long getDownloadSourceTicket(long snippet_id)
+			throws NotFoundException, NoAccessException {
+		Snippet snippet = Snippet.getSnippet(snippet_id);
+		if (snippet == null)
+			throw new NotFoundException();
+
+		Code code = snippet.getCode();
+		if (code == null)
+			throw new NotFoundException(
+					"Snippet does not contain any source codes");
+
+		if (!code.hasDownloadableSource())
+			throw new NotFoundException(
+					"Snippet does not provide any downloadable source code packets");
+
+		// Creates a new ticket
+		long ticket = SourceDownloader.createTicket(code.code);
+		return ticket;
+	}
 }

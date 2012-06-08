@@ -28,17 +28,35 @@
     <url-pattern>/org_smartsnip/snippet</url-pattern>
   </servlet-mapping>
   
-<servlet>
-    <servlet-name>ServletOfDay</servlet-name>
+   <servlet>
+    <servlet-name>Category</servlet-name>
+    <servlet-class>org.smartsnip.server.ICategoryImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>Category</servlet-name>
+    <url-pattern>/org_smartsnip/category</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>SnippetOfDay</servlet-name>
     <servlet-class>org.smartsnip.server.SnippetOfDay</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>ServletOfDay</servlet-name>
-    <url-pattern>/snippetofday</url-pattern>
+    <servlet-name>SnippetOfDay</servlet-name>
+    <url-pattern>/org_smartsnip/snippetofday</url-pattern>
   </servlet-mapping>
   
-
+  <servlet>
+    <servlet-name>SourceDownloader</servlet-name>
+    <servlet-class>org.smartsnip.server.SourceDownloader</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>SourceDownloader</servlet-name>
+    <url-pattern>/org_smartsnip/downloader</url-pattern>
+  </servlet-mapping>
 
 
 
