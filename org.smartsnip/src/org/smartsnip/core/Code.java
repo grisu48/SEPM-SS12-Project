@@ -14,6 +14,10 @@ public abstract class Code {
 	/** Version of this code object, auto incrementing */
 	private final int version;
 
+	/** If the code has a downloadable source */
+	// TODO Implement downloadable source
+	private final boolean downloadAbleSource = false;
+
 	/** Identifier of this code segment */
 	private long id = 0L;
 
@@ -57,6 +61,8 @@ public abstract class Code {
 			return false;
 		if (obj instanceof Code)
 			return equals((Code) obj);
+
+		// This String equals is used in Snippet.edit
 		if (obj instanceof String)
 			return this.code.equals(obj);
 		return false;
@@ -265,5 +271,23 @@ public abstract class Code {
 	 */
 	public Snippet getSnippet() {
 		return snippet;
+	}
+
+	/**
+	 * @return if there is a downloadable source code
+	 */
+	public boolean hasDownloadableSource() {
+		return downloadAbleSource;
+	}
+
+	/**
+	 * @return the downloadable source or null, if not existing
+	 */
+	public String getDownloadableSource() {
+		if (!hasDownloadableSource())
+			return null;
+
+		// TODO get downloadable source from persistence
+		return "";
 	}
 }

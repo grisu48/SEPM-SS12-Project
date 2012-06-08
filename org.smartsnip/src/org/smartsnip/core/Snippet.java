@@ -524,7 +524,7 @@ public class Snippet {
 		if (snippet == null)
 			return;
 
-		snippet.id = Persistence.instance.writeSnippet(snippet,
+		snippet.id = Persistence.getInstance().writeSnippet(snippet,
 				IPersistence.DB_NEW_ONLY);
 	}
 
@@ -727,5 +727,59 @@ public class Snippet {
 				e.printStackTrace(System.err);
 			}
 		}
+	}
+
+	/**
+	 * @return the snippet of the day
+	 */
+	public static Snippet getSnippetOfDay() {
+		// TODO Implement me
+		return new Snippet("", "", "", 0L, "", "", null, null, 0);
+	}
+
+	/**
+	 * Edits the current snippet to the values, given with the XSnippet object.
+	 * 
+	 * If the hash id does not match, a {@link IllegalArgumentException} is
+	 * thrown If the given user is not found, a {@link IllegalArgumentException}
+	 * is thrown
+	 * 
+	 * @param snippet
+	 *            Data to be edited
+	 * @throws IllegalArgumentException
+	 *             Thrown, if an argument is illegal
+	 */
+	public void edit(XSnippet snippet) throws IllegalArgumentException {
+		/* Check snippet data that must be congruent */
+		if (snippet == null)
+			return;
+		if (snippet.hash != getHashId())
+			throw new IllegalArgumentException("Snippet hash id doesn't match");
+
+		User owner = User.getUser(snippet.owner);
+		if (owner == null)
+			throw new IllegalArgumentException("Illegal owner (not found)");
+		Category category = Category.getCategory(snippet.category.name);
+		if (category == null)
+			throw new IllegalArgumentException("Illegal category: not found");
+
+		// Change code only if needed to!
+		if (!this.code.equals(snippet.code)) {
+			Code newCode = Code
+					.createCode(snippet.code, snippet.language, this);
+
+			// TODO Code history
+
+			this.code = newCode;
+		}
+
+		/* Data is checked - Now set data */
+		this.name = snippet.title;
+		this.category = category.getName();
+		this.description = snippet.description;
+		this.license = snippet.license;
+
+		/* Write out */
+		refreshDB();
 	}
 }

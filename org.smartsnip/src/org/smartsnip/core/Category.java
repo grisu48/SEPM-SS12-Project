@@ -100,11 +100,14 @@ public class Category {
 	public synchronized static List<Category> getCategories() {
 		try {
 			List<Category> result = new ArrayList<Category>();
-			List<Category> categories = Persistence.instance.getAllCategories();
 
-			for (Category category : categories) {
-				result.add(category);
-			}
+			List<Category> categories = Persistence.getInstance()
+					.getAllCategories();
+
+			if (categories != null)
+				for (Category category : categories) {
+					result.add(category);
+				}
 
 			return result;
 
