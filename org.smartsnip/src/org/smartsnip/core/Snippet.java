@@ -71,7 +71,7 @@ public class Snippet {
 	 */
 	Snippet(String owner, String name, String description, Long id,
 			String category, String license, List<Tag> tags,
-			List<Long> comments, int viewcount) {
+			List<Long> comments, int viewcount, Float averageRating) {
 
 		if (owner == null || owner.isEmpty())
 			throw new IllegalArgumentException(
@@ -86,9 +86,10 @@ public class Snippet {
 			tags = new ArrayList<Tag>();
 		if (comments == null)
 			comments = new ArrayList<Long>();
-		if (viewcount < 0) {
+		if (viewcount < 0) 
 			viewcount = 0;
-		}
+		if (averageRating < 0)
+			averageRating = 0F;
 
 		this.owner = owner;
 		this.name = name;
@@ -100,6 +101,7 @@ public class Snippet {
 		this.tags = tags;
 		this.comments = comments;
 		this.viewcount = viewcount;
+		this.averageRating = averageRating;
 	}
 
 	@Override
@@ -145,7 +147,7 @@ public class Snippet {
 			String license, List<Tag> tags) throws IOException {
 
 		Snippet snippet = new Snippet(owner, name, description, null, category,
-				license, tags, null, 0);
+				license, tags, null, 0, 0F);
 		addToDB(snippet);
 		snippet.code = Code.createCode(code, language, snippet);
 
