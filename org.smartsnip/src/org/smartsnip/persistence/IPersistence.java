@@ -47,11 +47,11 @@ public interface IPersistence {
 
 	/**
 	 * <p>
-	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
-	 * methods: use the default conditions. This constant is overridden by all
-	 * other flags, so it isn't necessary to set this flag combined with any
-	 * additional flag. If no deviating behavior is described at the
-	 * corresponding method the default is:
+	 * Constant for the parameter {@code flags} of the writeXxx() and
+	 * removeXxx() methods: use the default conditions. This constant is
+	 * overridden by all other flags, so it isn't necessary to set this flag
+	 * combined with any additional flag. If no deviating behavior is described
+	 * at the corresponding method the default is:
 	 * </p>
 	 * <blockquote>
 	 * <nl>
@@ -75,41 +75,42 @@ public interface IPersistence {
 	public static final int DB_DEFAULT = 0;
 
 	/**
-	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
-	 * methods: reject to write if the element already exists in the database.
-	 * This constant overrides {@link #DB_UPDATE_ONLY}.
+	 * Constant for the parameter {@code flags} of the writeXxx() and
+	 * removeXxx() methods: reject to write if the element already exists in the
+	 * database. This constant overrides {@link #DB_UPDATE_ONLY}.
 	 */
 	public static final int DB_NEW_ONLY = 1;
 
 	/**
-	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
-	 * methods: reject the request if the element to update doesn't exist. This
-	 * constant has no effect if {@link #DB_NEW_ONLY} is set.
+	 * Constant for the parameter {@code flags} of the writeXxx() and
+	 * removeXxx() methods: reject the request if the element to update doesn't
+	 * exist. This constant has no effect if {@link #DB_NEW_ONLY} is set.
 	 */
 	public static final int DB_UPDATE_ONLY = 2;
 
 	/**
-	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
-	 * methods: overwrite existing values in the addressed columns with null
-	 * values if they are null in the corresponding DB-object. This flag only
-	 * has effect to object(s) which are currently present in the database. The
-	 * database will reject all attempts to insert a null value into a
-	 * not-nullable column, so be careful if using this option.
+	 * Constant for the parameter {@code flags} of the writeXxx() and
+	 * removeXxx() methods: overwrite existing values in the addressed columns
+	 * with null values if they are null in the corresponding DB-object. This
+	 * flag only has effect to object(s) which are currently present in the
+	 * database. The database will reject all attempts to insert a null value
+	 * into a not-nullable column, so be careful if using this option.
 	 */
 	public static final int DB_FORCE_NULL_VALUES = 4;
 
 	/**
-	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
-	 * methods: don't delete contents of the database. This constant has
-	 * exclusively effect on queries which remove contents from the database. It
-	 * overrides {@link #DB_FORCE_DELETE}.
+	 * Constant for the parameter {@code flags} of the writeXxx() and
+	 * removeXxx() methods: don't delete contents of the database. This constant
+	 * has exclusively effect on queries which remove contents from the
+	 * database. It overrides {@link #DB_FORCE_DELETE}.
 	 */
 	public static final int DB_NO_DELETE = 8;
 
 	/**
-	 * Constant for the argument 'flags' of the writeXxx() and removeXxx()
-	 * methods: don't delete contents of the database. This constant has
-	 * exclusively effect on queries which remove contents from the database.
+	 * Constant for the parameter {@code flags} of the writeXxx() and
+	 * removeXxx() methods: don't delete contents of the database. This constant
+	 * has exclusively effect on queries which remove contents from the
+	 * database.
 	 */
 	public static final int DB_FORCE_DELETE = 16;
 
@@ -124,19 +125,19 @@ public interface IPersistence {
 
 	/**
 	 * Sorting constant for the search. Sorts the searching items by the lastest
-	 * modified date
+	 * modified date.
 	 */
 	public static final int SORT_LATEST = 1;
 
 	/**
 	 * Sorting constant for the search. Sorts the search results by the view
-	 * count
+	 * count.
 	 */
 	public static final int SORT_MOSTVIEWED = 2;
 
 	/**
 	 * Sorting constant for the search. Sorts the search results by the best
-	 * ratings
+	 * ratings.
 	 */
 	public static final int SORT_BEST_RATED = 3;
 
@@ -211,7 +212,8 @@ public interface IPersistence {
 	 *            the snippet to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a bitwise or connection.
+	 *            can be added by a bitwise or connection. To delete orphaned
+	 *            tags in the same query use the flag {@link #DB_FORCE_DELETE}.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -225,7 +227,8 @@ public interface IPersistence {
 	 *            the list of snippets to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a bitwise or connection.
+	 *            can be added by a bitwise or connection. To delete orphaned
+	 *            tags in the same query use the flag {@link #DB_FORCE_DELETE}.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -423,8 +426,7 @@ public interface IPersistence {
 
 	/**
 	 * Remove a rating. This operation updates an existing rating to '0' in
-	 * {@link #DB_NO_DELETE} flag which is currently the default behavior. In
-	 * {@link #DB_FORCE_DELETE} flag the given database entry is deleted.
+	 * default mode.
 	 * 
 	 * @param user
 	 *            the user who rated
@@ -432,7 +434,10 @@ public interface IPersistence {
 	 *            the snippet to rate for
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a bitwise or connection.
+	 *            can be added by a bitwise or connection. The default is
+	 *            {@link #DB_NO_DELETE} which sets the rating to {@code 0}. To
+	 *            force the removal the rating entry set the
+	 *            {@link #DB_FORCE_DELETE} flag.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -504,8 +509,7 @@ public interface IPersistence {
 
 	/**
 	 * Remove a vote. This operation updates an existing vote to 'none' in
-	 * {@link #DB_NO_DELETE} flag which is currently the default behavior. In
-	 * {@link #DB_FORCE_DELETE} flag the given database entry is deleted.
+	 * default mode.
 	 * 
 	 * @param user
 	 *            the user who voted
@@ -513,7 +517,10 @@ public interface IPersistence {
 	 *            the comment to vote for
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a bitwise or connection.
+	 *            can be added by a bitwise or connection. The default is
+	 *            {@link #DB_NO_DELETE} which sets the vote to 'none'. To force
+	 *            the removal the rating entry set the {@link #DB_FORCE_DELETE}
+	 *            flag.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -555,40 +562,39 @@ public interface IPersistence {
 
 	/**
 	 * remove the User from the database
-	 * <p>
-	 * Due to database constraints, the Password-, Favourite- and
-	 * Notification-entries are removed also.
 	 * 
 	 * @param user
 	 *            the user to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link #DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}. Due to database constraints, the
+	 *            Password-, Favourite- and Notification-entries are removed
+	 *            also.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
 	public void removeUser(User user, int flags) throws IOException;
 
 	/**
-	 * remove the Password from the database
+	 * Remove the Password from the database.
 	 * <p>
 	 * This method removes the ability to login with the given user account. The
-	 * default behavior of this method is to disable the grant_login flag but to
-	 * keep the password entry. If the deletion of the password entry is needed
-	 * set the {@link #DB_FORCE_DELETE} flag.
+	 * default behavior of this method is to disable the {@code grantLogin} flag
+	 * but to keep the password entry.
 	 * 
 	 * @param user
 	 *            the user account to lock
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link #DB_NO_DELETE}
+	 *            {@link #DB_NO_DELETE}. To force the removal the password entry
+	 *            set the {@link #DB_FORCE_DELETE} flag.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
 	public void removeLogin(User user, int flags) throws IOException;
 
 	/**
-	 * remove the Snippet from the database
+	 * Remove the Snippet from the database.
 	 * <p>
 	 * Due to database constraints, all Comment-, Code-, Rating- and
 	 * Vote-entries are removed also.
@@ -596,30 +602,35 @@ public interface IPersistence {
 	 * @param snippet
 	 *            the object to remove
 	 * @param flags
-	 *            the constraints for the write access. The default is
-	 *            {@link #DB_FORCE_DELETE}
+	 *            the constraints for the write access. The default is to delete
+	 *            the snippet with it's comments including the votes, codes,
+	 *            ratings, and the targeting favourites. To delete orphaned tags
+	 *            in the same query use the flag {@link #DB_FORCE_DELETE}.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
 	public void removeSnippet(Snippet snippet, int flags) throws IOException;
 
 	/**
-	 * remove the Comment from the database
+	 * Remove the Comment from the database.
 	 * <p>
 	 * Due to database constraints, all Vote-entrys are removed also.
 	 * 
 	 * @param comment
 	 *            the object to remove
 	 * @param flags
-	 *            the constraints for the write access. The default is
-	 *            {@link #DB_FORCE_DELETE}
+	 *            the constraints for the write access. The default is to delete
+	 *            the comment with it's votes.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
 	public void removeComment(Comment comment, int flags) throws IOException;
 
 	/**
-	 * remove the Tag from the database
+	 * Remove the Tag from the database.
+	 * <p>
+	 * An attempt to delete a {@code Tag} entry used by a {@link Snippet} is
+	 * restricted by database constraints.
 	 * 
 	 * @param tag
 	 *            the tag to remove
@@ -643,7 +654,7 @@ public interface IPersistence {
 	// public void removeUnusedTags(int flags) throws IOException;
 
 	/**
-	 * remove the Notification from the database
+	 * Remove the Notification from the database.
 	 * 
 	 * @param notification
 	 *            the object to remove
@@ -657,20 +668,20 @@ public interface IPersistence {
 			throws IOException;
 
 	/**
-	 * remove the Code from the database
+	 * Remove the Code from the database.
 	 * 
 	 * @param code
 	 *            the object to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link #DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
 	public void removeCode(Code code, int flags) throws IOException;
 
 	/**
-	 * remove the Category from the database
+	 * Remove the Category from the database.
 	 * <p>
 	 * The parent category inherits all subcategories of the deleted category.
 	 * <p>
@@ -681,36 +692,37 @@ public interface IPersistence {
 	 *            the object to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link #DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
 	public void removeCategory(Category category, int flags) throws IOException;
 
 	/**
-	 * remove the Language from the database
+	 * Remove the Language from the database.
 	 * <p>
 	 * An attempt to delete a {@code Language} entry used by a {@link Code} is
-	 * restricted by the database constraints.
+	 * restricted by database constraints.
 	 * 
 	 * @param language
 	 *            the language to remove
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link #DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
 	public void removeLanguage(String language, int flags) throws IOException;
 
 	/**
-	 * remove the License file from the database
+	 * remove the License file from the database. The snippets which refer to
+	 * this object loose their license.
 	 * 
 	 * @param shortDescription
 	 *            the short description matching to the license
 	 * @param flags
 	 *            the constraints for the write access. The default is
-	 *            {@link #DB_FORCE_DELETE}
+	 *            {@link #DB_FORCE_DELETE}.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
