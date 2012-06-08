@@ -86,7 +86,7 @@ public class Snippet {
 			tags = new ArrayList<Tag>();
 		if (comments == null)
 			comments = new ArrayList<Long>();
-		if (viewcount < 0) 
+		if (viewcount < 0)
 			viewcount = 0;
 		if (averageRating < 0)
 			averageRating = 0F;
@@ -736,7 +736,7 @@ public class Snippet {
 	 */
 	public static Snippet getSnippetOfDay() {
 		// TODO Implement me
-		return new Snippet("", "", "", 0L, "", "", null, null, 0);
+		return new Snippet("", "", "", 0L, "", "", null, null, 0, 0F);
 	}
 
 	/**
