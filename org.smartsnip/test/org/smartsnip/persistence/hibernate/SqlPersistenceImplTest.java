@@ -6,6 +6,7 @@ package org.smartsnip.persistence.hibernate;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -20,6 +21,8 @@ import javax.validation.ValidatorFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -34,6 +37,7 @@ import org.smartsnip.core.User;
 import org.smartsnip.core.User.UserState;
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.persistence.PersistenceFactory;
+import org.smartsnip.security.MD5;
 
 /**
  * @author littlelion
@@ -46,7 +50,12 @@ public class SqlPersistenceImplTest {
 	private static Validator validator;
 	private static Logger log = Logger.getLogger(SqlPersistenceImplTest.class);
 
+	private static Snippet test_snip1;
+	private static Snippet test_snip2;
+
 	/**
+	 * set up the database connection before unit tests
+	 * 
 	 * @throws java.lang.Exception
 	 */
 	@BeforeClass
@@ -91,6 +100,13 @@ public class SqlPersistenceImplTest {
 		instance.writeUser(user2, IPersistence.DB_DEFAULT);
 		instance.writeUser(user3, IPersistence.DB_DEFAULT);
 
+		instance.writeLogin(user1, MD5.md5("_test_pass"), true,
+				IPersistence.DB_DEFAULT);
+		instance.writeLogin(user2, MD5.md5("_test_login"), false,
+				IPersistence.DB_DEFAULT);
+		instance.writeLogin(user3, MD5.md5("_test_code"), true,
+				IPersistence.DB_DEFAULT);
+
 		Category par = helper.createCategory("_test_root",
 				"a test category as root", null);
 		Category cat = helper.createCategory("_test_sub",
@@ -115,7 +131,7 @@ public class SqlPersistenceImplTest {
 
 		Snippet snip1 = helper.createSnippet(1L, user1.getUsername(),
 				"_test_snippet_1", "this is a snippet", par.getName(), tags1,
-				null, "_test_license", 0);
+				null, "_test_license", 0, 0F);
 		Long snipId1 = instance.writeSnippet(snip1, IPersistence.DB_DEFAULT);
 		snip1.id = snipId1; // fetch the generated snippet id from the database
 
@@ -123,27 +139,27 @@ public class SqlPersistenceImplTest {
 		tags1.remove(0);
 		tags1.add(helper.createTag("_test_one_more"));
 		tags1.add(helper.createTag("_test_another_one"));
-		
+
 		Snippet snip2 = helper.createSnippet(2L, user1.getUsername(),
 				"_test_snippet_2", "this is another snippet", cat.getName(), tags1,
-				null, "_test_license", 0);
-		Long snipId2 = instance.writeSnippet(snip1, IPersistence.DB_DEFAULT);
+				null, "_test_license", 0, 0F);
+		Long snipId2 = instance.writeSnippet(snip2, IPersistence.DB_DEFAULT);
 		snip2.id = snipId2;
 
 		List<Tag> tags2 = new ArrayList<Tag>();
 		tags2.add(helper.createTag("_test_something"));
 		
-		Snippet snip3 = helper.createSnippet(1L, user1.getUsername(),
-				"_test_snippet_1", "this is a snippet", par.getName(), tags2,
-				null, "_test_license", 0);
-		Long snipId3 = instance.writeSnippet(snip1, IPersistence.DB_DEFAULT);
+		Snippet snip3 = helper.createSnippet(3L, user2.getUsername(),
+				"_test_snippet_3", "this is a third snippet", par.getName(), tags2,
+				null, "_test_license", 0, 0F);
+		Long snipId3 = instance.writeSnippet(snip3, IPersistence.DB_DEFAULT);
 		snip3.id = snipId3;
 
 		StringBuilder builder = new StringBuilder("/* test code in java */\n");
 		builder.append("public class Test {\n\tpublic static void main() {\n");
 		builder.append("\tfor(int i = 0; i < 10; ++i) ");
 		builder.append("{\n\t\tSystem.out.println(\"Number = \" + i);\n\t}\n}\n");
-		
+
 		List<Code> codes = new ArrayList<Code>();
 		codes.add(helper.createCode(1L, "/* test code incomplete */\n", "_test_java", snip1, 1));
 		codes.add(helper.createCode(2L, builder.toString(), "_test_java", snip1, 2));
@@ -154,7 +170,7 @@ public class SqlPersistenceImplTest {
 		Notification notif = helper.createNotification(1L, user1, "a test notification",
 				false, "now", "source is unknown", snip1);
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
-		
+
 		List<Comment> comments = new ArrayList<Comment>();
 		comments.add(helper.createComment(user2.getUsername(), snipId1, "first comment to user1's snippet", 1L, new Date(), 0, 0));
 		comments.add(helper.createComment(user3.getUsername(), snipId1, "second comment to user1's snippet", 2L, new Date(), 0, 0));
@@ -177,15 +193,18 @@ public class SqlPersistenceImplTest {
 		instance.votePositive(user1, comm2, IPersistence.DB_DEFAULT);
 		instance.votePositive(user2, comm2, IPersistence.DB_DEFAULT);
 		instance.votePositive(user3, comm2, IPersistence.DB_DEFAULT);
+		
+		test_snip1 = snip1;
+		test_snip2 = snip2;
 	}
 
 	/**
-	 * tear down the database after the tests
+	 * tear down the database connection after unit tests
 	 * 
-	 * @throws Throwable
+	 * @throws java.lang.Exception
 	 */
 	@AfterClass
-	public static void tearDownAfterClass() throws Throwable {
+	public static void tearDownAfterClass() throws Exception {
 		PersistenceFactory.closeFactory();
 	}
 
@@ -198,8 +217,27 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testWriteUserUserInt() throws Throwable {
-		User user = helper.createUser("si", "she ra", "sie@bla", null);
+		User user = helper.createUser("_test_somebody", "the test user", "sbd@test.org", UserState.validated);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
+		
+		Session session = DBSessionFactory.open();
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBUser entity = new DBUser();
+			entity.setUserName("_test_somebody");
+
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+
 		boolean violatedConstraits = false;
 
 		Set<ConstraintViolation<User>> constraintViolations = validator
@@ -221,7 +259,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testWriteUserListOfUserInt() throws Throwable {
 		List<User> users = new ArrayList<User>();
 		users.add(helper.createUser("sick", "sick guy", "sick@guy.org", null));
@@ -239,7 +277,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testWritePassword() throws Throwable {
 		// deprecated
 	}
@@ -251,7 +289,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testWriteLogin() throws Throwable {
 		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
 				User.UserState.validated);
@@ -338,7 +376,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testWriteNotificationNotificationInt() throws Throwable {
 		User user = helper.createUser("sulu", "su lu", "su@bla", null);
 		Category par = helper.createCategory("bla", "viel bla bla", null);
@@ -352,7 +390,7 @@ public class SqlPersistenceImplTest {
 		tags.add(helper.createTag("old"));
 		Snippet snip = helper.createSnippet(7L, user.getUsername(),
 				"more stupid", "something else stupid stuff", cat.getName(),
-				tags, null, null, 0);
+				tags, null, null, 0, 0F);
 		Code code = helper.createCode(1L, "code", "language", snip, 0);
 		snip.setCodeWithoutWriting(code);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
@@ -663,7 +701,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetUserByEmail() throws Throwable {
 		User user = instance.getUserByEmail("sie@bla");
 		System.out.println(user.getUsername());
@@ -677,7 +715,7 @@ public class SqlPersistenceImplTest {
 	 * @throws Throwable
 	 */
 	@SuppressWarnings("deprecation")
-	@Ignore
+	@Test
 	public void testGetPassword() throws Throwable {
 		try {
 			instance.getPassword(null);
@@ -693,7 +731,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testVerifyPassword() throws Throwable {
 		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
 				User.UserState.validated);
@@ -708,7 +746,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testIsLoginGranted() throws Throwable {
 		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
 				User.UserState.validated);
@@ -782,9 +820,10 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetSnippetsCategoryIntegerInteger() throws Throwable {
-		List<Snippet> snips = instance.getSnippets(null, null, null);
+		Category cat = helper.createCategory("_test_sub", "a test category", null);
+		List<Snippet> snips = instance.getSnippets(cat, null, null);
 		int i = 0;
 		for (Snippet s : snips) {
 			System.out.println(s);
@@ -848,7 +887,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetAllTags() throws Throwable {
 		List<Tag> tags = instance.getAllTags(null, null);
 		int i = 0;
@@ -878,9 +917,13 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetCodes() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		List<Code> cod = instance.getCodes(test_snip1);
+		for (Code c: cod) {
+		System.err.println("Code: " + c.getHashID() + " Version = " + c.getVersion() 
+				+ " Data: " + c.getCode());
+		}
 	}
 
 	/**
@@ -1010,9 +1053,9 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testSearch() throws Throwable {
-		List<Snippet> snippets = instance.search("stupid bla", null, null,
+		List<Snippet> snippets = instance.search("third _test_snippet_1", null, null,
 				IPersistence.SORT_LATEST);
 		System.err.println("Search:");
 		for (Snippet s : snippets) {
@@ -1034,7 +1077,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetUserCount() throws Throwable {
 		int count = instance.getUserCount();
 		System.out.println("user count = " + count);
@@ -1047,7 +1090,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetCategoryCount() throws Throwable {
 		int count = instance.getCategoryCount();
 		System.out.println("category count = " + count);
@@ -1060,7 +1103,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetSnippetsCount() throws Throwable {
 		int count = instance.getSnippetsCount();
 		System.out.println("snippets count = " + count);
@@ -1073,7 +1116,7 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetTagsCount() throws Throwable {
 		int count = instance.getTagsCount();
 		System.out.println("tags count = " + count);
