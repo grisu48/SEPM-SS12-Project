@@ -91,4 +91,13 @@ public class Rating extends Composite {
 	public void setRatingHandler(RatingHandler handler) {
 		this.handler = handler;
 	}
+
+	@Override
+	public void setStyleName(String name) {
+
+		anchNull.setStyleName(name);
+		for (Anchor anchRating : anchRatings) {
+			anchRating.setStyleName(name);
+		}
+	}
 }

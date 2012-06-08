@@ -25,9 +25,9 @@ h1 {
 }
 
 a:link {text-decoration: none;}
-a:visited {text-decoration: none;color:white;}
+a:visited {text-decoration: none;color:red;}
 a:active {text-decoration: none;}
-a:hover {text-decoration: none; color:white;}
+a:hover {text-decoration: none; color:blue;}
 
 
 
@@ -82,6 +82,11 @@ height:150px;
 	color:#fffeeb;
 }
 
+#toollink {
+	color:black;
+	font-syle:normal;
+	
+}
 
 #user {
 margin:10px;

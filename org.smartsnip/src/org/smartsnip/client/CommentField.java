@@ -31,6 +31,7 @@ public class CommentField extends Composite {
 	private final Anchor anchRatePositive;
 	private final Anchor anchRateNegative;
 	private final Anchor anchUnvote;
+	private final Anchor anchEdit;
 
 	public CommentField(final XComment myComment) {
 		this.comment = myComment;
@@ -44,9 +45,14 @@ public class CommentField extends Composite {
 		lblRating = new Label(getRatingString(myComment.positiveVotes,
 				myComment.negativeVotes));
 
+		anchRatePositive = new Anchor("Rate positive");
+		anchRateNegative = new Anchor("Rate negative");
+		anchUnvote = new Anchor("Unvote");
+		anchEdit = new Anchor("Edit");
+
 		horToolbar = new HorizontalPanel();
 
-		anchRatePositive = new Anchor("Rate positive");
+		anchRatePositive.setStyleName("toollink");
 		anchRatePositive.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -58,7 +64,7 @@ public class CommentField extends Composite {
 							@Override
 							public void onSuccess(Void result) {
 								enableRatingLinks(true);
-								updateRatings();
+								update();
 							}
 
 							@Override
@@ -68,7 +74,7 @@ public class CommentField extends Composite {
 						});
 			}
 		});
-		anchRateNegative = new Anchor("Rate negative");
+		anchRateNegative.setStyleName("toollink");
 		anchRateNegative.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -80,7 +86,7 @@ public class CommentField extends Composite {
 							@Override
 							public void onSuccess(Void result) {
 								enableRatingLinks(true);
-								updateRatings();
+								update();
 							}
 
 							@Override
@@ -91,7 +97,7 @@ public class CommentField extends Composite {
 			}
 		});
 
-		anchUnvote = new Anchor("Unvote");
+		anchUnvote.setStyleName("toollink");
 		anchUnvote.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -103,7 +109,7 @@ public class CommentField extends Composite {
 							@Override
 							public void onSuccess(Void result) {
 								enableRatingLinks(true);
-								updateRatings();
+								update();
 							}
 
 							@Override
@@ -126,6 +132,42 @@ public class CommentField extends Composite {
 					public void onFailure(Throwable caught) {
 						// Something went wrong
 						// TODO: Error handling??
+					}
+				});
+		anchEdit.setVisible(false);
+		anchEdit.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				// TODO Implement me
+				Control.myGUI.showErrorPopup("Not yet implemented");
+			}
+		});
+
+		IComment.Util.getInstance().canEdit(comment.id,
+				new AsyncCallback<Boolean>() {
+
+					@Override
+					public void onSuccess(Boolean result) {
+						anchEdit.setVisible(result);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// Ignore
+					}
+				});
+		IComment.Util.getInstance().canRate(comment.id,
+				new AsyncCallback<Boolean>() {
+
+					@Override
+					public void onSuccess(Boolean result) {
+						enableRatingLinks(result);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// Ignore
 					}
 				});
 
@@ -156,6 +198,9 @@ public class CommentField extends Composite {
 	 * @return the string that should be displayed
 	 */
 	private String getRatingString(int positiveVotes, int negativeVotes) {
+		if (positiveVotes == 0 && negativeVotes == 0)
+			return "No votes";
+
 		StringBuffer buffer = new StringBuffer("");
 
 		if (positiveVotes > 0) {
@@ -204,26 +249,41 @@ public class CommentField extends Composite {
 	}
 
 	public void update() {
-		// TODO Implement me
-	}
-
-	private void updateRatings() {
-		// TODO Implement me
-
-		enableRatingLinks(false);
-		IComment.Util.getInstance().canComment(comment.id,
-				new AsyncCallback<Boolean>() {
+		IComment.Util.getInstance().getComment(comment.id,
+				new AsyncCallback<XComment>() {
 
 					@Override
-					public void onSuccess(Boolean result) {
-						enableRatingLinks(true);
+					public void onSuccess(XComment result) {
+						if (result == null)
+							return;
+						if (result.id != comment.id)
+							return;
+
+						comment.message = result.message;
+						comment.negativeVotes = result.negativeVotes;
+						comment.owner = result.owner;
+						comment.positiveVotes = result.positiveVotes;
+						comment.snippet = result.snippet;
+						comment.time = result.time;
+
+						updateComponents();
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						// Something went wrong
-						// TODO: Error handling??
+						// Ignore
 					}
 				});
 	}
+
+	/**
+	 * Updates all components according to the values set in comment
+	 */
+	private void updateComponents() {
+		lblOwner.setText(comment.owner);
+		lblDate.setText(getTimeString(comment.time));
+		lblRating.setText(getRatingString(comment.positiveVotes,
+				comment.negativeVotes));
+	}
+
 }

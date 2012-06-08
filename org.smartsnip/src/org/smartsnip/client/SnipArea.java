@@ -33,12 +33,15 @@ public class SnipArea extends Composite {
 	private final Label license;
 
 	private final Anchor anchViewFull;
-	private final Anchor anchEdit;
 	private final Anchor anchDownload;
 	private final Rating rating;
+	private final Label lblAverageRating;
 
 	private final HTMLPanel snipFull;
+
 	private final Button btnFav;
+	private final Button btnEdit;
+	private final Button btnDelete;
 
 	SnipArea(final XSnippet mySnip) {
 
@@ -54,29 +57,68 @@ public class SnipArea extends Composite {
 		license = new Label(mySnip.license);
 		snipFull = new HTMLPanel(mySnip.codeHTML);
 		anchViewFull = new Anchor("View full code");
-		anchEdit = new Anchor("Edit snippet");
 		anchDownload = new Anchor("Download source");
 		rating = new Rating(5);
+		btnFav = new Button("Add to Favourites");
+		btnEdit = new Button("Edit");
+		btnDelete = new Button("Delete");
+		lblAverageRating = new Label("Rating: " + snippet.rating);
 
 		properties.setWidget(0, 0, title);
 		properties.setWidget(1, 0, description);
 		properties.setWidget(2, 0, language);
 		properties.setWidget(3, 0, license);
 		properties.setWidget(0, 1, anchViewFull);
-		properties.setWidget(1, 1, anchEdit);
-		properties.setWidget(2, 1, anchDownload);
-		properties.setWidget(3, 1, rating);
+		properties.setWidget(1, 1, anchDownload);
+		properties.setWidget(2, 1, rating);
+		properties.setWidget(3, 1, lblAverageRating);
 
-		btnFav = new Button("Add to Favourites");
 		btnFav.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Control control = Control.getInstance();
-				control.toFav(mySnip.hash);
 				btnFav.setEnabled(false);
+				btnFav.setText("Adding to favorites ... ");
+
+				ISnippet.Util.getInstance().addToFavorites(snippet.hash,
+						new AsyncCallback<Void>() {
+
+							@Override
+							public void onSuccess(Void result) {
+								snippet.isFavorite = true;
+								updateFavortiteStatus();
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								Control.myGUI.showErrorPopup(
+										"Error adding snippet to favorites",
+										caught);
+								btnFav.setEnabled(true);
+							}
+						});
 			}
 		});
 
+		btnEdit.setVisible(false);
+		btnEdit.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		btnDelete.setVisible(false);
+		btnDelete.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		rating.setStyleName("toollink");
 		rating.setRatingHandler(new Rating.RatingHandler() {
 
 			@Override
@@ -89,6 +131,7 @@ public class SnipArea extends Composite {
 				Control.getInstance().rateSnippet(rate, snippet.hash);
 			}
 		});
+		anchViewFull.setStyleName("toollink");
 		anchViewFull.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -97,16 +140,8 @@ public class SnipArea extends Composite {
 				Control.myGUI.showTestPopup(snippet.code);
 			}
 		});
-		anchEdit.addClickHandler(new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
-				Control.myGUI
-						.showErrorPopup("This has not been implemented yet!");
-
-			}
-		});
+		anchDownload.setStyleName("toollink");
 		anchDownload.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -143,7 +178,7 @@ public class SnipArea extends Composite {
 											caught);
 							}
 
-							/* Converts the donwload ticket into a link */
+							/* Converts the download ticket into a link */
 							private String convertToLink(long id) {
 
 								String result = GWT.getHostPageBaseURL();
@@ -183,6 +218,22 @@ public class SnipArea extends Composite {
 					}
 				});
 
+		ISnippet.Util.getInstance().canEdit(snippet.hash,
+				new AsyncCallback<Boolean>() {
+
+					@Override
+					public void onSuccess(Boolean result) {
+						btnEdit.setVisible(result);
+						btnDelete.setVisible(result);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// Something went wrong ...
+						// TODO: Error handling ...
+					}
+				});
+
 		vertPanel.add(properties);
 		vertPanel.add(scrPanel);
 		vertPanel.add(horPanel);
@@ -192,10 +243,74 @@ public class SnipArea extends Composite {
 		initWidget(vertPanel);
 		// Give the overall composite a style name.
 		setStyleName("snipArea");
+
+		updateFavortiteStatus();
 	}
 
+	/**
+	 * Reloads the snippet and updates the component
+	 */
 	public void update() {
-		// if necessary
+		ISnippet.Util.getInstance().getSnippet(snippet.hash,
+				new AsyncCallback<XSnippet>() {
+
+					@Override
+					public void onSuccess(XSnippet result) {
+						if (result == null)
+							return;
+						if (result.hash != snippet.hash)
+							return;
+
+						// Copy properties
+						snippet.title = result.title;
+						snippet.description = result.description;
+						snippet.code = result.code;
+						snippet.category = result.category;
+						snippet.codeHTML = result.codeHTML;
+						snippet.isFavorite = result.isFavorite;
+						snippet.language = result.language;
+						snippet.license = result.license;
+						snippet.owner = result.owner;
+						snippet.viewcount = result.viewcount;
+						snippet.comments = result.comments;
+						snippet.tags = result.tags;
+						snippet.rating = result.rating;
+
+						updateComponents();
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// Ignore it
+					}
+				});
+	}
+
+	/**
+	 * Updates all components
+	 */
+	private void updateComponents() {
+		updateFavortiteStatus();
+		title.setText(snippet.title);
+		description.setText(snippet.description);
+		language.setText(snippet.language);
+		license.setText(snippet.license);
+		lblAverageRating.setText("Rating: " + snippet.rating);
+
+		// TODO Update snipFull
+	}
+
+	/**
+	 * Updates the behaviour depending on favourites status
+	 */
+	private void updateFavortiteStatus() {
+		if (snippet.isFavorite) {
+			btnFav.setEnabled(false);
+			btnFav.setText("Favorited");
+		} else {
+			btnFav.setEnabled(true);
+			btnFav.setText("Add to favorites");
+		}
 	}
 
 }
