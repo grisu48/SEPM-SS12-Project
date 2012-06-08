@@ -19,12 +19,13 @@ import org.smartsnip.core.User.UserState;
 
 /**
  * @author littlelion
- *
+ * 
  */
 public class BHPersistenceHelper extends PersistenceHelper {
 
 	/**
 	 * Creates a helper object
+	 * 
 	 * @see PersistenceHelper
 	 */
 	BHPersistenceHelper() {
@@ -33,15 +34,19 @@ public class BHPersistenceHelper extends PersistenceHelper {
 	}
 
 	/**
-	 * @see org.smartsnip.core.PersistenceHelper#createSnippet(java.lang.Long, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List, java.util.List, java.lang.String, int)
+	 * @see org.smartsnip.core.PersistenceHelper#createSnippet(java.lang.Long,
+	 *      java.lang.String, java.lang.String, java.lang.String,
+	 *      java.lang.String, java.util.List, java.util.List, java.lang.String,
+	 *      int, java.lang.Float)
 	 */
 	@Override
 	protected Snippet createSnippet(Long id, String owner, String name,
 			String description, String category, List<Tag> tags,
-			List<Long> comments, String license, int viewcount) {
+			List<Long> comments, String license, int viewcount,
+			Float ratingAverage) {
 		// Auto-generated method stub
-		return super.createSnippet(id, owner, name, description, category, tags,
-				comments, license, viewcount);
+		return super.createSnippet(id, owner, name, description, category,
+				tags, comments, license, viewcount, ratingAverage);
 	}
 
 	/**
@@ -54,29 +59,35 @@ public class BHPersistenceHelper extends PersistenceHelper {
 	}
 
 	/**
-	 * @see org.smartsnip.core.PersistenceHelper#createNotification(java.lang.Long, org.smartsnip.core.User, java.lang.String, java.lang.Boolean, java.lang.String, java.lang.String, org.smartsnip.core.Snippet)
+	 * @see org.smartsnip.core.PersistenceHelper#createNotification(java.lang.Long,
+	 *      org.smartsnip.core.User, java.lang.String, java.lang.Boolean,
+	 *      java.lang.String, java.lang.String, org.smartsnip.core.Snippet)
 	 */
 	@Override
 	protected Notification createNotification(Long id, User owner,
 			String message, Boolean read, String time, String source,
 			Snippet target) {
 		// Auto-generated method stub
-		return super.createNotification(id, owner, message, read, time, source, target);
+		return super.createNotification(id, owner, message, read, time, source,
+				target);
 	}
 
 	/**
-	 * @see org.smartsnip.core.PersistenceHelper#createComment(java.lang.String, java.lang.Long, java.lang.String, java.lang.Long, java.util.Date, int, int)
+	 * @see org.smartsnip.core.PersistenceHelper#createComment(java.lang.String,
+	 *      java.lang.Long, java.lang.String, java.lang.Long, java.util.Date,
+	 *      int, int)
 	 */
 	@Override
 	protected Comment createComment(String owner, Long snippetId,
 			String message, Long id, Date time, int posVotes, int negVotes) {
 		// Auto-generated method stub
-		return super.createComment(owner, snippetId, message, id, time, posVotes,
-				negVotes);
+		return super.createComment(owner, snippetId, message, id, time,
+				posVotes, negVotes);
 	}
 
 	/**
-	 * @see org.smartsnip.core.PersistenceHelper#createCode(java.lang.Long, java.lang.String, java.lang.String, org.smartsnip.core.Snippet, int)
+	 * @see org.smartsnip.core.PersistenceHelper#createCode(java.lang.Long,
+	 *      java.lang.String, java.lang.String, org.smartsnip.core.Snippet, int)
 	 */
 	@Override
 	protected Code createCode(Long id, String code, String language,
@@ -86,7 +97,9 @@ public class BHPersistenceHelper extends PersistenceHelper {
 	}
 
 	/**
-	 * @see org.smartsnip.core.PersistenceHelper#createUser(java.lang.String, java.lang.String, java.lang.String, org.smartsnip.core.User.UserState)
+	 * @see org.smartsnip.core.PersistenceHelper#createUser(java.lang.String,
+	 *      java.lang.String, java.lang.String,
+	 *      org.smartsnip.core.User.UserState)
 	 */
 	@Override
 	protected User createUser(String username, String realName, String email,
@@ -96,7 +109,8 @@ public class BHPersistenceHelper extends PersistenceHelper {
 	}
 
 	/**
-	 * @see org.smartsnip.core.PersistenceHelper#createCategory(java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.smartsnip.core.PersistenceHelper#createCategory(java.lang.String,
+	 *      java.lang.String, java.lang.String)
 	 */
 	@Override
 	protected Category createCategory(String name, String description,

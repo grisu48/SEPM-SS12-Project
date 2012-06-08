@@ -1,14 +1,22 @@
-/* MySQL database file
+/* 
+ * MySQL database file
  * 
  * 20.04.2012
  * Gerhard Aigner
  * 
- * This file contains the statements to set up the TABLEs used by
- * the Smartsnip - Snippet Community.
- * 
- * 
+ * This file contains the databased schema for the Smartsnip - Snippet Community.
+ * Use it to set up the tabels and triggers. The database itself must be created 
+ * previusly.
  */
 
+/*
+ * assure the delimiter is set to the default
+ */
+DELIMITER ;
+
+/*
+ * set up the tables
+ */
 CREATE TABLE `User` (
   `user_name` VARCHAR(20)  NOT NULL,
   `full_name` VARCHAR(255)  DEFAULT NULL,
@@ -58,9 +66,10 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE `License` (
   `license_id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-  `short_descr` VARCHAR(255)  DEFAULT NULL,
+  `short_descr` VARCHAR(255)  NOT NULL,
   `license_text` TEXT  DEFAULT NULL,
-  PRIMARY KEY (`license_id`)
+  PRIMARY KEY (`license_id`),
+  CONSTRAINT `lic_short_descr` UNIQUE `lic_short_descr` (`short_descr`)
 )
 ENGINE = InnoDB
 CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -129,7 +138,7 @@ CREATE TABLE `RelTagSnippet` (
     ON UPDATE CASCADE,
   CONSTRAINT `fk_rel_ts_tag` FOREIGN KEY `fk_rel_ts_tag` (`tag_name`)
     REFERENCES `Tag` (`tag_name`)
-    ON DELETE CASCADE
+    ON DELETE RESTRICT
     ON UPDATE CASCADE
 )
 ENGINE = InnoDB
@@ -279,7 +288,7 @@ CREATE TABLE `Vote` (
 ENGINE = InnoDB
 CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-/* alternating delimiter for multi-statement operations */
+/* set an alternative delimiter for multi-statement operations */
 DELIMITER $
 
 /*
@@ -291,11 +300,11 @@ CREATE TRIGGER `insert_rating_trigger`
   FOR EACH ROW
     BEGIN
 	    DECLARE average FLOAT DEFAULT 0;
-	    SET average = (SELECT SUM(rating_value)/COUNT(*) FROM `Rating` rat 
-	      WHERE rat.snippet_id = NEW.snippet_id 
-	      AND rat.rating_value != 0);
-	    UPDATE `Snippet` snip set snip.rating_average = average 
-	      WHERE snip.snippet_id = NEW.snippet_id;
+	    SET average = (SELECT SUM(`rating_value`)/COUNT(*) FROM `Rating` rat 
+	      WHERE `rat.snippet_id` = `NEW.snippet_id` 
+	      AND `rat.rating_value` != 0);
+	    UPDATE `Snippet` snip SET `snip.rating_average` = average 
+	      WHERE `snip.snippet_id` = `NEW.snippet_id`;
     END; 
 $
 
@@ -305,19 +314,19 @@ CREATE TRIGGER `update_rating_trigger`
   FOR EACH ROW
     BEGIN
 	    DECLARE average FLOAT DEFAULT 0;
-	    SET average = (SELECT SUM(rating_value)/COUNT(*) FROM `Rating` rat 
-	      WHERE rat.snippet_id = NEW.snippet_id 
-	      AND rat.rating_value != 0);
-	    UPDATE `Snippet` snip set snip.rating_average = average 
-	      WHERE snip.snippet_id = NEW.snippet_id;
+	    SET average = (SELECT SUM(`rating_value`)/COUNT(*) FROM `Rating` rat 
+	      WHERE `rat.snippet_id` = `NEW.snippet_id` 
+	      AND `rat.rating_value` != 0);
+	    UPDATE `Snippet` snip SET `snip.rating_average` = average 
+	      WHERE `snip.snippet_id` = `NEW.snippet_id`;
 
-	      IF NEW.snippet_id != OLD.snippet_id
+	      IF `NEW.snippet_id` != `OLD.snippet_id`
 	      THEN
-	        SET average = (SELECT SUM(rating_value)/COUNT(*) FROM `Rating` rat 
-	          WHERE rat.snippet_id = OLD.snippet_id 
-	          AND rat.rating_value != 0);
-	        UPDATE `Snippet` snip set snip.rating_average = average 
-	          WHERE snip.snippet_id = OLD.snippet_id;	      
+	        SET average = (SELECT SUM(`rating_value`)/COUNT(*) FROM `Rating` rat 
+	          WHERE `rat.snippet_id` = `OLD.snippet_id` 
+	          AND `rat.rating_value` != 0);
+	        UPDATE `Snippet` snip SET `snip.rating_average` = average 
+	          WHERE `snip.snippet_id` = `OLD.snippet_id`;	      
 	      END IF;
     END; 
 $
@@ -328,11 +337,11 @@ CREATE TRIGGER `delete_rating_trigger`
   FOR EACH ROW
     BEGIN
 	    DECLARE average FLOAT DEFAULT 0;
-	    SET average = (SELECT SUM(rating_value)/COUNT(*) FROM `Rating` rat 
-	      WHERE rat.snippet_id = OLD.snippet_id 
-	      AND rat.rating_value != 0);
-	    UPDATE `Snippet` snip set snip.rating_average = average 
-	      WHERE snip.snippet_id = OLD.snippet_id;
+	    SET average = (SELECT SUM(`rating_value`)/COUNT(*) FROM `Rating` rat 
+	      WHERE `rat.snippet_id` = `OLD.snippet_id` 
+	      AND `rat.rating_value` != 0);
+	    UPDATE `Snippet` snip SET `snip.rating_average` = average 
+	      WHERE `snip.snippet_id` = `OLD.snippet_id`;
     END; 
 $
 
@@ -348,13 +357,13 @@ CREATE TRIGGER `insert_vote_trigger`
 	    DECLARE pos INTEGER DEFAULT 0;
 	    DECLARE neg INTEGER DEFAULT 0;
 	    SET pos = (SELECT COUNT(*) FROM `Vote` vot 
-	      WHERE vot.comment_id = NEW.comment_id 
-	      AND vot.vote = "positive");
+	      WHERE `vot.comment_id` = `NEW.comment_id` 
+	      AND `vot.vote` = "positive");
 	    SET neg = (SELECT COUNT(*) FROM `Vote` vot 
-	      WHERE vot.comment_id = NEW.comment_id 
-	      AND vot.vote = "negative");
-	    UPDATE `Comment` comm set comm.pos_votes_sum = pos, comm.neg_votes_sum = neg
-	      WHERE comm.comment_id = NEW.comment_id;
+	      WHERE `vot.comment_id` = `NEW.comment_id` 
+	      AND `vot.vote` = "negative");
+	    UPDATE `Comment` comm SET `comm.pos_votes_sum` = pos, `comm.neg_votes_sum` = neg
+	      WHERE `comm.comment_id` = `NEW.comment_id`;
     END; 
 $
 
@@ -366,24 +375,24 @@ CREATE TRIGGER `update_vote_trigger`
 	    DECLARE pos INTEGER DEFAULT 0;
 	    DECLARE neg INTEGER DEFAULT 0;
 	    SET pos = (SELECT COUNT(*) FROM `Vote` vot 
-	      WHERE vot.comment_id = NEW.comment_id 
-	      AND vot.vote = "positive");
+	      WHERE `vot.comment_id` = `NEW.comment_id` 
+	      AND `vot.vote` = "positive");
 	    SET neg = (SELECT COUNT(*) FROM `Vote` vot 
-	      WHERE vot.comment_id = NEW.comment_id 
-	      AND vot.vote = "negative");
-	    UPDATE `Comment` comm set comm.pos_votes_sum = pos, comm.neg_votes_sum = neg
-	      WHERE comm.comment_id = NEW.comment_id;
+	      WHERE `vot.comment_id` = `NEW.comment_id` 
+	      AND `vot.vote` = "negative");
+	    UPDATE `Comment` comm SET `comm.pos_votes_sum` = pos, `comm.neg_votes_sum` = neg
+	      WHERE `comm.comment_id` = `NEW.comment_id`;
 
-	      IF NEW.comment_id != OLD.comment_id
+	      IF `NEW.comment_id` != `OLD.comment_id`
 	    THEN
 	    SET pos = (SELECT COUNT(*) FROM `Vote` vot 
-	      WHERE vot.comment_id = OLD.comment_id 
-	      AND vot.vote = "positive");
+	      WHERE `vot.comment_id` = `OLD.comment_id` 
+	      AND `vot.vote` = "positive");
 	    SET neg = (SELECT COUNT(*) FROM `Vote` vot 
-	      WHERE vot.comment_id = OLD.comment_id 
-	      AND vot.vote = "negative");
-	    UPDATE `Comment` comm set comm.pos_votes_sum = pos, comm.neg_votes_sum = neg
-	      WHERE comm.comment_id = OLD.comment_id;
+	      WHERE `vot.comment_id` = `OLD.comment_id` 
+	      AND `vot.vote` = "negative");
+	    UPDATE `Comment` comm SET `comm.pos_votes_sum` = pos, `comm.neg_votes_sum` = neg
+	      WHERE `comm.comment_id` = `OLD.comment_id`;
 	    END IF;
     END; 
 $
@@ -396,13 +405,13 @@ CREATE TRIGGER `delete_vote_trigger`
 	    DECLARE pos INTEGER DEFAULT 0;
 	    DECLARE neg INTEGER DEFAULT 0;
 	    SET pos = (SELECT COUNT(*) FROM `Vote` vot 
-	      WHERE vot.comment_id = OLD.comment_id 
-	      AND vot.vote = "positive");
+	      WHERE `vot.comment_id` = `OLD.comment_id` 
+	      AND `vot.vote` = "positive");
 	    SET neg = (SELECT COUNT(*) FROM `Vote` vot 
-	      WHERE vot.comment_id = OLD.comment_id 
-	      AND vot.vote = "negative");
-	    UPDATE `Comment` comm set comm.pos_votes_sum = pos, comm.neg_votes_sum = neg
-	      WHERE comm.comment_id = OLD.comment_id;
+	      WHERE `vot.comment_id` = `OLD.comment_id` 
+	      AND `vot.vote` = "negative");
+	    UPDATE `Comment` comm SET `comm.pos_votes_sum` = pos, `comm.neg_votes_sum` = neg
+	      WHERE `comm.comment_id` = `OLD.comment_id`;
     END; 
 $
 
@@ -416,9 +425,9 @@ CREATE TRIGGER `insert_tag_trigger`
     BEGIN
 	    DECLARE frequency INTEGER DEFAULT 0;
 	    SET frequency = (SELECT COUNT(*) FROM `RelTagSnippet` rel 
-	      WHERE rel.tag_name = NEW.tag_name);
-	    UPDATE `Tag` tag set tag.usage_freq = frequency 
-	    WHERE tag.tag_name = NEW.tag_name;
+	      WHERE `rel.tag_name` = `NEW.tag_name`);
+	    UPDATE `Tag` tag SET `tag.usage_freq` = frequency 
+	    WHERE `tag.tag_name` = `NEW.tag_name`;
     END; 
 $
 
@@ -429,16 +438,16 @@ CREATE TRIGGER `update_tag_trigger`
     BEGIN
 	    DECLARE frequency INTEGER DEFAULT 0;
 	    SET frequency = (SELECT COUNT(*) FROM `RelTagSnippet` rel 
-	      WHERE rel.tag_name = NEW.tag_name);
-	    UPDATE `Tag` tag set tag.usage_freq = frequency 
-	    WHERE tag.tag_name = NEW.tag_name;
+	      WHERE `rel.tag_name` = `NEW.tag_name`);
+	    UPDATE `Tag` tag SET `tag.usage_freq` = frequency 
+	    WHERE `tag.tag_name` = `NEW.tag_name`;
 
-	    IF NEW.tag_name != OLD.tag_name
+	    IF `NEW.tag_name` != `OLD.tag_name`
 	    THEN
 	      SET frequency = (SELECT COUNT(*) FROM `RelTagSnippet` rel 
-	        WHERE rel.tag_name = OLD.tag_name);
-	      UPDATE `Tag` tag set tag.usage_freq = frequency 
-	      WHERE tag.tag_name = OLD.tag_name;
+	        WHERE `rel.tag_name` = `OLD.tag_name`);
+	      UPDATE `Tag` tag SET `tag.usage_freq` = frequency 
+	      WHERE `tag.tag_name` = `OLD.tag_name`;
 	    END IF;
     END; 
 $
@@ -450,11 +459,26 @@ CREATE TRIGGER `delete_tag_trigger`
     BEGIN
 	    DECLARE frequency INTEGER DEFAULT 0;
 	    SET frequency = (SELECT COUNT(*) FROM `RelTagSnippet` rel 
-	      WHERE rel.tag_name = OLD.tag_name);
-	    UPDATE `Tag` tag set tag.usage_freq = frequency 
-	    WHERE tag.tag_name = OLD.tag_name;
+	      WHERE `rel.tag_name` = `OLD.tag_name`);
+	    UPDATE `Tag` tag SET `tag.usage_freq` = frequency 
+	    WHERE `tag.tag_name` = `OLD.tag_name`;
     END; 
 $
 
-DELIMITER ;
+/* 
+ * trigger to keep the tree of categories in a consistent state
+ */
+CREATE TRIGGER `move_child_cat_trigger`
+  BEFORE DELETE
+  ON `Category`
+  FOR EACH ROW
+    BEGIN
+	    UPDATE `Category` cat SET `cat.parent_id` = `OLD.parent_id`
+	    WHERE `cat.parent_id` = `OLD.snippet_id`;
+    END;
+$
 
+/*
+ * reset the delimiter to it's default
+ */
+DELIMITER ;

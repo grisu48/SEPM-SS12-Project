@@ -74,6 +74,7 @@ public class SnippetFactory {
 			}
 			result = (Long) query.write(entity, flags);
 
+			// TODO delete unused tags on flag DB_FORCE_DELETE
 			// allow new tags even on present flag IPersistence.DB_UPDATE_ONLY
 			// skip existing tags even on present flag IPersistence.DB_NEW_ONLY
 			TagFactory
@@ -141,6 +142,7 @@ public class SnippetFactory {
 
 				snippetId = (Long) query.write(entity, flags);
 
+				// TODO delete unused tags on flag DB_FORCE_DELETE
 				// allow new tags even if IPersistence.DB_UPDATE_ONLY flag is
 				// present
 				// skip existing tags even if IPersistence.DB_NEW_ONLY flag is
@@ -360,6 +362,7 @@ public class SnippetFactory {
 			DBSnippet entity = new DBSnippet();
 			entity.setSnippetId(snippet.getHashId());
 
+			// TODO delete unused tags on flag DB_FORCE_DELETE
 			query.remove(entity, flags);
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -427,7 +430,6 @@ public class SnippetFactory {
 			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
 					.hasNext();) {
 				entity = iterator.next();
-				incrementViewcount(session, entity);
 
 				snippet = helper.createSnippet(entity.getSnippetId(), owner
 						.getUsername(), entity.getHeadline(), entity
@@ -438,7 +440,7 @@ public class SnippetFactory {
 						CommentFactory.fetchCommentIds(session,
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
-						entity.getViewcount());
+						entity.getViewcount(), entity.getRatingAverage());
 				snippet.setCode(CodeFactory.fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
@@ -485,7 +487,6 @@ public class SnippetFactory {
 				snip.setSnippetId(entity.getFavouriteId().getSnippetId());
 				snipQuery = new DBQuery(session);
 				snip = snipQuery.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
-				incrementViewcount(session, snip);
 
 				snippet = helper.createSnippet(
 						snip.getSnippetId(),
@@ -498,7 +499,7 @@ public class SnippetFactory {
 						CommentFactory.fetchCommentIds(session,
 								snip.getSnippetId()),
 						fetchLicense(helper, session, snip).getShortDescr(),
-						snip.getViewcount());
+						snip.getViewcount(), snip.getRatingAverage());
 				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
 						snippet));
 				result.add(snippet);
@@ -554,7 +555,6 @@ public class SnippetFactory {
 				snip.setSnippetId(id);
 				query = new DBQuery(session);
 				snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
-				incrementViewcount(session, snip);
 
 				snippet = helper.createSnippet(snip.getSnippetId(),
 						snip.getOwner(), snip.getHeadline(),
@@ -563,7 +563,7 @@ public class SnippetFactory {
 						TagFactory.fetchTags(helper, session, id),
 						CommentFactory.fetchCommentIds(session, id),
 						fetchLicense(helper, session, snip).getShortDescr(),
-						snip.getViewcount());
+						snip.getViewcount(), snip.getRatingAverage());
 				snippet.setCode(CodeFactory.fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
@@ -618,7 +618,6 @@ public class SnippetFactory {
 			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
 					.hasNext();) {
 				entity = iterator.next();
-				incrementViewcount(session, entity);
 
 				snippet = helper.createSnippet(entity.getSnippetId(), entity
 						.getOwner(), entity.getHeadline(), entity
@@ -629,7 +628,7 @@ public class SnippetFactory {
 						CommentFactory.fetchCommentIds(session,
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
-						entity.getViewcount());
+						entity.getViewcount(), entity.getRatingAverage());
 				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
 						snippet));
 				result.add(snippet);
@@ -666,7 +665,6 @@ public class SnippetFactory {
 			DBSnippet entity = new DBSnippet();
 			entity.setSnippetId(id);
 			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
-			incrementViewcount(session, entity);
 
 			result = helper
 					.createSnippet(entity.getSnippetId(), entity.getOwner(),
@@ -677,7 +675,7 @@ public class SnippetFactory {
 							CommentFactory.fetchCommentIds(session,
 									entity.getSnippetId()),
 							fetchLicense(helper, session, entity)
-									.getShortDescr(), entity.getViewcount());
+									.getShortDescr(), entity.getViewcount(), entity.getRatingAverage());
 			result.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
 					result));
 
@@ -880,9 +878,9 @@ public class SnippetFactory {
 						CommentFactory.fetchCommentIds(session,
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
-						entity.getViewcount());
-				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
-						snippet));
+						entity.getViewcount(), entity.getRatingAverage());
+				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(
+						helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -946,21 +944,5 @@ public class SnippetFactory {
 		entity.setLicenseId(snippet.getLicenseId());
 		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 		return entity;
-	}
-
-	/**
-	 * increment the viewcount of a snippet
-	 * 
-	 * @param session
-	 *            the session in which the query is to execute
-	 * @param snippet
-	 *            the snippet as source of the viewcount
-	 */
-	static void incrementViewcount(Session session, DBSnippet snippet) {
-		DBQuery query = new DBQuery(session);
-		DBSnippet entity = new DBSnippet();
-		entity.setSnippetId(snippet.getSnippetId());
-		entity.setViewcount(snippet.getViewcount() + 1);
-		query.update(entity, DBQuery.QUERY_SKIP_NULL);
 	}
 }

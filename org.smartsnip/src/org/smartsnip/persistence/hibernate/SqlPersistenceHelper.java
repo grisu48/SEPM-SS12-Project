@@ -35,15 +35,15 @@ public class SqlPersistenceHelper extends PersistenceHelper {
 	 * @see org.smartsnip.core.PersistenceHelper#createSnippet(java.lang.Long,
 	 *      java.lang.String, java.lang.String, java.lang.String,
 	 *      java.lang.String, java.util.List, java.util.List, java.lang.String,
-	 *      int)
+	 *      int, java.lang.Float)
 	 */
 	@Override
 	protected Snippet createSnippet(Long id, String owner, String name,
 			String description, String category, List<Tag> tags,
-			List<Long> comments, String license, int viewcount) {
+			List<Long> comments, String license, int viewcount, Float ratingAverage) {
 		// Auto-generated method stub
 		return super.createSnippet(id, owner, name, description, category,
-				tags, comments, license, viewcount);
+				tags, comments, license, viewcount, ratingAverage);
 	}
 
 	/**

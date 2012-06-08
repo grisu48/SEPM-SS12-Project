@@ -46,6 +46,9 @@ public class SqlPersistenceTest {
 	private static Validator validator;
 	private static Logger log = Logger.getLogger(SqlPersistenceImplTest.class);
 
+	private static Snippet test_snip1;
+	private static Snippet test_snip2;
+
 	/**
 	 * set up the database connection before unit tests
 	 * 
@@ -124,7 +127,7 @@ public class SqlPersistenceTest {
 
 		Snippet snip1 = helper.createSnippet(1L, user1.getUsername(),
 				"_test_snippet_1", "this is a snippet", par.getName(), tags1,
-				null, "_test_license", 0);
+				null, "_test_license", 0, 0F);
 		Long snipId1 = instance.writeSnippet(snip1, IPersistence.DB_DEFAULT);
 		snip1.id = snipId1; // fetch the generated snippet id from the database
 
@@ -134,17 +137,17 @@ public class SqlPersistenceTest {
 		tags1.add(helper.createTag("_test_another_one"));
 
 		Snippet snip2 = helper.createSnippet(2L, user1.getUsername(),
-				"_test_snippet_2", "this is another snippet", cat.getName(),
-				tags1, null, "_test_license", 0);
+				"_test_snippet_2", "this is another snippet", cat.getName(), tags1,
+				null, "_test_license", 0, 0F);
 		Long snipId2 = instance.writeSnippet(snip2, IPersistence.DB_DEFAULT);
 		snip2.id = snipId2;
 
 		List<Tag> tags2 = new ArrayList<Tag>();
 		tags2.add(helper.createTag("_test_something"));
-
-		Snippet snip3 = helper.createSnippet(3L, user1.getUsername(),
-				"_test_snippet_3", "this is a third snippet", par.getName(),
-				tags2, null, "_test_license", 0);
+		
+		Snippet snip3 = helper.createSnippet(3L, user2.getUsername(),
+				"_test_snippet_3", "this is a third snippet", par.getName(), tags2,
+				null, "_test_license", 0, 0F);
 		Long snipId3 = instance.writeSnippet(snip3, IPersistence.DB_DEFAULT);
 		snip3.id = snipId3;
 
@@ -154,34 +157,23 @@ public class SqlPersistenceTest {
 		builder.append("{\n\t\tSystem.out.println(\"Number = \" + i);\n\t}\n}\n");
 
 		List<Code> codes = new ArrayList<Code>();
-		codes.add(helper.createCode(1L, "/* test code incomplete */\n",
-				"_test_java", snip1, 1));
-		codes.add(helper.createCode(2L, builder.toString(), "_test_java",
-				snip1, 2));
-		codes.add(helper.createCode(3L, "/* test code to snippet 2 */",
-				"_test_java", snip2, 0));
-		codes.add(helper.createCode(4L, "/* test code to snippet 3 */",
-				"_test_java", snip3, 7));
+		codes.add(helper.createCode(1L, "/* test code incomplete */\n", "_test_java", snip1, 1));
+		codes.add(helper.createCode(2L, builder.toString(), "_test_java", snip1, 2));
+		codes.add(helper.createCode(3L, "/* test code to snippet 2 */", "_test_java", snip2, 0));
+		codes.add(helper.createCode(4L, "/* test code to snippet 3 */", "_test_java", snip3, 7));
 		instance.writeCode(codes, IPersistence.DB_DEFAULT);
-
-		Notification notif = helper
-				.createNotification(1L, user1, "a test notification", false,
-						"now", "source is unknown", snip1);
+		
+		Notification notif = helper.createNotification(1L, user1, "a test notification",
+				false, "now", "source is unknown", snip1);
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
 
 		List<Comment> comments = new ArrayList<Comment>();
-		comments.add(helper.createComment(user2.getUsername(), snipId1,
-				"first comment to user1's snippet", 1L, new Date(), 0, 0));
-		comments.add(helper.createComment(user3.getUsername(), snipId1,
-				"second comment to user1's snippet", 2L, new Date(), 0, 0));
-		comments.add(helper.createComment(user1.getUsername(), snipId2,
-				"third comment to user1's snippet", 3L, new Date(), 0, 0));
-		comments.add(helper.createComment(user1.getUsername(), snipId3,
-				"fourth comment to user2's snippet", 4L, new Date(), 0, 0));
-		Comment comm1 = helper.createComment(user2.getUsername(), snipId2,
-				"some comments with no message", 5L, new Date(), 0, 0);
-		Comment comm2 = helper.createComment(user3.getUsername(), snipId2,
-				"one more comment with no message", 6L, new Date(), 0, 0);
+		comments.add(helper.createComment(user2.getUsername(), snipId1, "first comment to user1's snippet", 1L, new Date(), 0, 0));
+		comments.add(helper.createComment(user3.getUsername(), snipId1, "second comment to user1's snippet", 2L, new Date(), 0, 0));
+		comments.add(helper.createComment(user1.getUsername(), snipId2, "third comment to user1's snippet", 3L, new Date(), 0, 0));
+		comments.add(helper.createComment(user1.getUsername(), snipId3, "fourth comment to user2's snippet", 4L, new Date(), 0, 0));
+		Comment comm1 = helper.createComment(user2.getUsername(), snipId2, "some comments with no message", 5L, new Date(), 0, 0);
+		Comment comm2 = helper.createComment(user3.getUsername(), snipId2, "one more comment with no message", 6L, new Date(), 0, 0);
 		comments.add(comm1);
 		comments.add(comm2);
 		instance.writeComment(comments, IPersistence.DB_DEFAULT);
@@ -197,6 +189,9 @@ public class SqlPersistenceTest {
 		instance.votePositive(user1, comm2, IPersistence.DB_DEFAULT);
 		instance.votePositive(user2, comm2, IPersistence.DB_DEFAULT);
 		instance.votePositive(user3, comm2, IPersistence.DB_DEFAULT);
+		
+		test_snip1 = snip1;
+		test_snip2 = snip2;
 	}
 
 	/**
