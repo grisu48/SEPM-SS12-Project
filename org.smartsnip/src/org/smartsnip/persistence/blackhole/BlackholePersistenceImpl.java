@@ -398,7 +398,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 		List<Snippet> snips = new ArrayList<Snippet>();
 		Snippet snip = this.helper.createSnippet(1L, owner.getUsername(),
 				"The Header", "Some Content", "undefined",
-				new ArrayList<Tag>(), new ArrayList<Long>(), "license free", 0);
+				new ArrayList<Tag>(), new ArrayList<Long>(), "license free", 0, 0F);
 		snips.add(snip);
 		return null;
 	}
@@ -807,7 +807,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 		checkFail();
 		return this.helper.createSnippet(id, this.staticUser1.getUsername(),
 				"The Header", "Some Content", "undefined",
-				new ArrayList<Tag>(), new ArrayList<Long>(), "license free", 0);
+				new ArrayList<Tag>(), new ArrayList<Long>(), "license free", 0, 0F);
 	}
 
 	@Override

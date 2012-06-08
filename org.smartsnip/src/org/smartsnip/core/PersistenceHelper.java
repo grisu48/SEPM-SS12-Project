@@ -35,13 +35,14 @@ public class PersistenceHelper {
 	 * @param comments
 	 * @param license
 	 * @param viewcount
+	 * @param ratingAverage 
 	 * @return an initialized Snippet object
 	 */
 	protected Snippet createSnippet(Long id, String owner, String name,
 			String description, String category, List<Tag> tags,
-			List<Long> comments, String license, int viewcount) {
+			List<Long> comments, String license, int viewcount, Float ratingAverage) {
 		return new Snippet(owner, name, description, id,
-				category, license, tags, comments, viewcount);
+				category, license, tags, comments, viewcount, ratingAverage);
 	}
 
 	/**
