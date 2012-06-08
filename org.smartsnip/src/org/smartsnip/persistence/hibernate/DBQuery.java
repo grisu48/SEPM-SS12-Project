@@ -98,14 +98,14 @@ class DBQuery {
 	 * {@code flags}. If set to this constant the method fails if a null result
 	 * would return. This constant overrides {@link #QUERY_NULLABLE}.
 	 */
-	static final int QUERY_NOT_NULL = 1;
+	static final int QUERY_NOT_NULL = 512;
 
 	/**
 	 * Constant for the methods which provide the {@code int} parameter
 	 * {@code flags}. If set to this constant the method fails if a null result
 	 * would return.
 	 */
-	static final int QUERY_UNIQUE_RESULT = 2;
+	static final int QUERY_UNIQUE_RESULT = 1024;
 
 	/**
 	 * the session which owns this query
@@ -381,7 +381,7 @@ class DBQuery {
 	}
 
 	/**
-	 * Extract parameters from the entity.
+	 * Extract parameters from the entity and add them to the parameter lists.
 	 * 
 	 * @param targetEntity
 	 * @param forceNull
@@ -405,30 +405,35 @@ class DBQuery {
 		Method[] methods = targetEntity.getClass().getDeclaredMethods();
 		String parameter;
 		Serializable key = null;
+		boolean hasNaturalId = false;
 		Object value;
 		for (Method m : methods) {
 			try {
 				if ((parameter = getColumnName(targetEntity, m)) != null
 						&& ((value = m.invoke(targetEntity, (Object[]) null)) != null || forceNull)) {
-					if (value != null
-							&& (hasAnnotationAndField(Id.class, targetEntity,
-									parameter, m))) {
-						key = this.testAndSetKey(targetEntity, key, value);
-						this.addWhereParameter(parameter + " =", parameter, "",
-								value);
-					} else if (value != null
-							&& hasAnnotationAndField(NaturalId.class,
-									targetEntity, parameter, m)) {
-						this.addWhereParameter(parameter + " =", parameter, "",
-								value);
-					} else if (value != null
-							&& hasAnnotationAndField(EmbeddedId.class,
-									targetEntity, parameter, m)) {
-						key = this.testAndSetKey(targetEntity, key, value);
-						this.getWhereClauseFromEmbeddedId(parameter, key,
-								QUERY_NULLABLE);
-
-					} else {
+					// Id, NatuarlId or EmbeddedId cannot be forced to null
+					if (hasAnnotationAndField(Id.class, targetEntity,
+							parameter, m)) {
+						if (value != null) { // Id not null
+							key = this.testAndSetKey(targetEntity, key, value);
+							this.addWhereParameter(parameter + " =", parameter,
+									"", value);
+						}
+					} else if (hasAnnotationAndField(NaturalId.class,
+							targetEntity, parameter, m)) {
+						if (value != null) { // NaturalId not null
+							this.addWhereParameter(parameter + " =", parameter,
+									"", value);
+							hasNaturalId = true;
+						}
+					} else if (hasAnnotationAndField(EmbeddedId.class,
+							targetEntity, parameter, m)) {
+						if (value != null) { // EmbeddedId not null
+							key = this.testAndSetKey(targetEntity, key, value);
+							this.getWhereClauseFromEmbeddedId(parameter, key,
+									QUERY_NULLABLE);
+						}
+					} else { // value is no Id, NatuarlId or EmbeddedId
 						this.addParameter(parameter, value);
 					}
 				}
@@ -438,6 +443,9 @@ class DBQuery {
 			}
 		}
 		this.initialized = true;
+		if (key == null && hasNaturalId) {
+			key = getKey(targetEntity, QUERY_UNIQUE_RESULT);
+		}
 		log.trace("initialized = true");
 		log.trace(this);
 		return key;
@@ -739,6 +747,11 @@ class DBQuery {
 	 * @return the primary key (Id) of the entity
 	 */
 	Serializable insert(Object targetEntity) {
+		if (this.initialized) {
+			throw new IllegalStateException(
+					"Malformed query caused by multible initialization.");
+		}
+		this.initialized = true;
 		return this.session.save(targetEntity);
 	}
 
@@ -766,7 +779,7 @@ class DBQuery {
 				}
 			}
 		} else {
-			key = insert(targetEntity);
+			key = this.session.save(targetEntity);
 
 		}
 		return key;
@@ -1232,22 +1245,66 @@ class DBQuery {
 	 *            max. number of results to fetch
 	 * @return a list of entities
 	 */
-	List<?> customQuery(String queryString, Integer start, Integer count) {
-		if (!this.initialized) {
-			throw new HibernateException(
-					"The query of customQuery() is not initialized.");
+	List<?> customQueryRead(String queryString, Integer start, Integer count) {
+		if (this.initialized) {
+			throw new IllegalStateException(
+					"Malformed query caused by multible initialization.");
 		}
-		Query query = this.session.createQuery(queryString);
+		this.initialize();
+		Query query = buildCustomQuery(queryString);
 		if (start != null && start > 0) {
 			query.setFirstResult(start);
 		}
 		if (count != null && count > 0) {
 			query.setFetchSize(count);
 		}
+		return query.list();
+	}
+
+	/**
+	 * Perform a query with a custom HQL query string. The parameters must be
+	 * set with {@link #addParameter(String, Object)} before calling this method
+	 * . Call {@link #initialize()} after adding the parameters.
+	 * 
+	 * @param queryString
+	 *            must be a valid HQL query. The parameters in the
+	 *            parameters-list must be equal to the parameters in the query
+	 *            string.
+	 * @return the number of modified rows.
+	 */
+	int customQueryWrite(String queryString) {
+		if (this.initialized) {
+			throw new IllegalStateException(
+					"Malformed query caused by multible initialization.");
+		}
+		this.initialize();
+		Query query = buildCustomQuery(queryString);
+		return query.executeUpdate();
+	}
+
+	/**
+	 * Build a custom query.
+	 * <p>
+	 * Add all necessary parameters with the method
+	 * {@link #addParameter(String, Object)} and than call {@link #initialize()}
+	 * .
+	 * 
+	 * @param queryString
+	 *            must be a valid HQL query. The parameters in the
+	 *            parameters-list must be equal to the parameters in the query
+	 *            string.
+	 * @return the query ready to perform
+	 */
+	Query buildCustomQuery(String queryString) {
+		if (!this.initialized) {
+			throw new HibernateException(
+					"The query of customQuery() is not initialized.");
+		}
+		Query query = this.session.createQuery(queryString);
 		for (Pair<String, Object> p : this.parameters) {
 			query.setParameter(p.first, p.second);
 		}
-		return query.list();
+		return query;
 	}
 
 	/**
@@ -1267,19 +1324,17 @@ class DBQuery {
 	 * @return a list of entities of type {@code <T>}
 	 */
 	Iterator<?> customIterator(String queryString, Integer start, Integer count) {
-		if (!this.initialized) {
-			throw new HibernateException(
-					"The query of customIterator() is not initialized.");
+		if (this.initialized) {
+			throw new IllegalStateException(
+					"Malformed query caused by multible initialization.");
 		}
-		Query query = this.session.createQuery(queryString);
+		this.initialize();
+		Query query = buildCustomQuery(queryString);
 		if (start != null && start > 0) {
 			query.setFirstResult(start);
 		}
 		if (count != null && count > 0) {
 			query.setFetchSize(count);
-		}
-		for (Pair<String, Object> p : this.parameters) {
-			query.setParameter(p.first, p.second);
 		}
 		return query.iterate();
 	}
@@ -1297,20 +1352,24 @@ class DBQuery {
 	}
 
 	/**
-	 * Initialize this query manually. Do this only if it is explicitly required
-	 * by a method of the {@code DBQuery} class e. g.
-	 * {@link #customQuery(String, Integer, Integer)} or
+	 * Initialize this query. This method is invoked by some methods of the
+	 * {@code DBQuery} class e. g.
+	 * {@link #customQueryRead(String, Integer, Integer)},
+	 * {@link #customQueryWrite(String)} or
 	 * {@link #customIterator(String, Integer, Integer)}.
 	 * <p>
-	 * This method provides only minimal plausibility tests, so you should know
-	 * what you do if you use this method.
+	 * This method provides only minimal plausibility tests, so this
+	 * initialization is not a guarantee for a valid query.
 	 * 
 	 * @throws HibernateException
 	 *             if the plausibility tests fail
 	 */
 	void initialize() {
 		if (this.parameters == null || this.parameters.isEmpty()) {
-			throw new HibernateException("Error initializing query.");
+			HibernateException e = new HibernateException(
+					"Error initializing query.");
+			log.warn("Initialization falied.", e);
+			throw e;
 		}
 		this.initialized = true;
 	}

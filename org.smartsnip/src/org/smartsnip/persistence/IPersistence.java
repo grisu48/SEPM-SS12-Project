@@ -352,7 +352,9 @@ public interface IPersistence {
 	 *            the category to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a bitwise or connection.
+	 *            can be added by a bitwise or connection. To make a category
+	 *            parent it is necessary to set the
+	 *            {@link #DB_FORCE_NULL_VALUES} flag.
 	 * @return the id
 	 * @throws IOException
 	 *             at a problem committing the data
@@ -366,7 +368,9 @@ public interface IPersistence {
 	 *            the list of categories to write
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a bitwise or connection.
+	 *            can be added by a bitwise or connection. To make a category
+	 *            parent it is necessary to set the
+	 *            {@link #DB_FORCE_NULL_VALUES} flag.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */

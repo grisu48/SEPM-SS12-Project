@@ -50,17 +50,17 @@ public class CategoryFactory {
 			DBCategory entity = new DBCategory();
 			// categoryId is read-only
 
-			if (category.getParentName() != null) {// FIXME not tested
+			if (category.getParentName() != null) {
 				parent = new DBCategory();
 				parentQuery = new DBQuery(session);
 				parent.setName(category.getParentName());
 				parent = parentQuery.fromSingle(parent, DBQuery.QUERY_NOT_NULL);
 				entity.setParentId(parent.getCategoryId());
-			} else {// FIXME
-				entity.setParentId(null);// FIXME
-			}// FIXME
+			} else {
+				entity.setParentId(null);
+			}
 
-			entity.setName(category.getName());
+			entity.setName(category.getName()); // is NaturalId
 			entity.setDescription(category.getDescription());
 
 			result = (Long) query.write(entity, flags);
@@ -101,13 +101,18 @@ public class CategoryFactory {
 				entity = new DBCategory();
 				// categoryId is read-only
 
-				parent = new DBCategory();
-				parentQuery = new DBQuery(session);
-				parent.setName(category.getParentName());
-				parent = parentQuery.fromSingle(parent, DBQuery.QUERY_NOT_NULL);
-				entity.setParentId(parent.getCategoryId());
+				if (category.getParentName() != null) {
+					parent = new DBCategory();
+					parentQuery = new DBQuery(session);
+					parent.setName(category.getParentName());
+					parent = parentQuery.fromSingle(parent,
+							DBQuery.QUERY_NOT_NULL);
+					entity.setParentId(parent.getCategoryId());
+				} else {
+					entity.setParentId(null);
+				}
 
-				entity.setName(category.getName());
+				entity.setName(category.getName()); // is NaturalId
 				entity.setDescription(category.getDescription());
 
 				query.write(entity, flags);
@@ -142,6 +147,18 @@ public class CategoryFactory {
 			DBCategory entity = new DBCategory();
 			entity.setName(category.getName());
 
+			// connect the parent with the children
+			DBCategory cat = query.fromSingle(entity,
+					DBQuery.QUERY_UNIQUE_RESULT);
+			if (cat != null) {
+				query.reset();
+				query.addParameter("categoryId", cat.getCategoryId());
+				query.addParameter("parentId", cat.getParentId());
+				query.customQueryWrite("update DBCategory set parentId = :parentId where parentId = :categoryId");
+			}
+
+			// remove the category
+			query.reset();
 			query.remove(entity, flags);
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -265,8 +282,9 @@ public class CategoryFactory {
 			entity.setName(name);
 			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 
-			result = helper.createCategory(entity.getName(), entity.getDescription(),
-				fetchParentFlatend(helper, session, entity).getName());
+			result = helper.createCategory(entity.getName(),
+					entity.getDescription(),
+					fetchParentFlatend(helper, session, entity).getName());
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -343,6 +361,7 @@ public class CategoryFactory {
 			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 			Long id = entity.getCategoryId();
 
+			query.reset(); // new query
 			entity = new DBCategory();
 			entity.setParentId(id);
 			for (Iterator<DBCategory> iterator = query.iterate(entity); iterator
