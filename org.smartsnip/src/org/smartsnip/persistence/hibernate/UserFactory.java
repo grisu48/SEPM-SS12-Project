@@ -595,9 +595,7 @@ public class UserFactory {
 					snip.setSnippetId(n.getSnippetId());
 					snip = new DBQuery(session).fromSingle(snip,
 							DBQuery.QUERY_NOT_NULL);
-					SnippetFactory.incrementViewcount(session, snip);
-					SnippetFactory.incrementViewcount(session, snip);
-					
+
 					snippet = helper.createSnippet(entity.getSnippetId(),
 							entity.getUserName(), snip.getHeadline(), snip
 									.getDescription(), CategoryFactory
@@ -607,7 +605,8 @@ public class UserFactory {
 									.fetchCommentIds(session,
 											snip.getSnippetId()),
 							SnippetFactory.fetchLicense(helper, session, snip)
-									.getShortDescr(), snip.getViewcount());
+									.getShortDescr(), snip.getViewcount(), snip
+									.getRatingAverage());
 					snippet.setCode(CodeFactory.fetchNewestCode(helper,
 							session, snippet));
 				} else {

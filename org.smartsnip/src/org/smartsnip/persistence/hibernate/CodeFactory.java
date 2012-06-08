@@ -88,7 +88,7 @@ public class CodeFactory {
 				query = new DBQuery(session);
 				entity = new DBCode();
 				entity.setCodeId(code.getHashID()); // codeId is read-only
-				entity.setSnippetId(code.getHashID());
+				entity.setSnippetId(code.getSnippet().getHashId());
 				entity.setLanguage(code.getLanguage());
 				entity.setFile(code.getCode());
 				entity.setVersion(code.getVersion());
@@ -214,22 +214,25 @@ public class CodeFactory {
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
-			DBCode entity = new DBCode();
+//			DBQuery query = new DBQuery(session);
+//			DBCode entity = new DBCode();
+//
+//			//XXX delete this
+//			DBSnippet snip = new DBSnippet();
+//			snip.setSnippetId(snippet.getHashId());
+//			snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
 
-			DBSnippet snip = new DBSnippet();
-			snip.setSnippetId(snippet.getHashId());
-			snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
-
-			entity.setSnippetId(snip.getSnippetId());
-
-			for (Iterator<DBCode> iterator = query.iterate(entity); iterator
-					.hasNext();) {
-				entity = iterator.next();
-				result.add(helper.createCode(entity.getCodeId(),
-						entity.getFile(), entity.getLanguage(), snippet,
-						entity.getVersion()));
-			}
+			result = fetchCode(helper, session, snippet);
+			
+//			entity.setSnippetId(snippet.getHashId());
+//
+//			for (Iterator<DBCode> iterator = query.iterate(entity); iterator
+//					.hasNext();) {
+//				entity = iterator.next();
+//				result.add(helper.createCode(entity.getCodeId(),
+//						entity.getFile(), entity.getLanguage(), snippet,
+//						entity.getVersion()));
+//			}
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -293,6 +296,7 @@ public class CodeFactory {
 		DBCode entity = new DBCode();
 		List<Code> result = new ArrayList<Code>();
 		entity.setSnippetId(snippet.getHashId());
+		System.err.println("entity: " + entity.getSnippetId());
 		for (Iterator<DBCode> itr = query.iterate(entity); itr.hasNext();) {
 			entity = itr.next();
 			result.add(helper.createCode(entity.getCodeId(), entity.getFile(),
@@ -320,11 +324,15 @@ public class CodeFactory {
 		DBCode entity = new DBCode();
 		entity.setSnippetId(snippet.getHashId());
 		entity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE);
-		return helper.createCode(entity.getCodeId(), entity.getFile(),
-				entity.getLanguage(), snippet, entity.getVersion());
+		Code result = null;
+		if (entity != null) {
+			result = helper.createCode(entity.getCodeId(), entity.getFile(),
+					entity.getLanguage(), snippet, entity.getVersion());
+		}
+		return result;
 	}
 
-	// XXX backup to delete when alternative methot works
+	// XXX backup to delete when alternative method works
 	// static Code fetchNewestCode(SqlPersistenceHelper helper, Session session,
 	// Snippet snippet) {
 	// List<Code> codes = fetchCode(helper, session, snippet);

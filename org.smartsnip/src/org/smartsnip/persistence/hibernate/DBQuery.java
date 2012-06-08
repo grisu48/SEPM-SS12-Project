@@ -23,6 +23,7 @@ import org.smartsnip.shared.Pair;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.annotations.NaturalId;
@@ -70,25 +71,42 @@ class DBQuery {
 	 * Constant for the methods which provide the boolean parameter "forceNull".
 	 * If set to this constant the method writes null values into the database.
 	 */
-	static final boolean QUERY_FORCE_NULL = true;
+	static final boolean QUERY_FORCE_NULL_VALUES = true;
 
 	/**
 	 * Constant for the methods which provide the boolean parameter "forceNull".
 	 * If set to this constant the method skips all null values in the query.
 	 */
-	static final boolean QUERY_SKIP_NULL = false;
+	static final boolean QUERY_SKIP_NULL_VALUES = false;
 
 	/**
-	 * Constant for the methods which provide the boolean parameter "notNull".
-	 * If set to this constant the method fails if a null result would return.
+	 * Constant for the methods which provide the {@code int} parameter
+	 * {@code flags}. If set to this constant the method may return a null
+	 * result. This constant is the default. It is overridden by the constant
+	 * {@link #QUERY_NOT_NULL}.
+	 * <p>
+	 * The values of the flags may change in future revisions, so to insert a
+	 * hardcoded integer value instead of using this constant is discouraged.
+	 * 
+	 * @see #QUERY_NOT_NULL
+	 * @see #QUERY_UNIQUE_RESULT
 	 */
-	static final boolean QUERY_NOT_NULL = true;
+	static final int QUERY_NULLABLE = 0;
 
 	/**
-	 * Constant for the methods which provide the boolean parameter "notNull".
-	 * If set to this constant the method may return a null result.
+	 * Constant for the methods which provide the {@code int} parameter
+	 * {@code flags}. If set to this constant the method fails if a null result
+	 * would return. This constant overrides {@link #QUERY_NULLABLE}.
 	 */
-	static final boolean QUERY_NULLABLE = false;
+	static final int QUERY_NOT_NULL = 1;
+
+	/**
+	 * Constant for the methods which provide the {@code int} parameter
+	 * {@code flags}. If set to this constant the method fails if a null result
+	 * would return.
+	 */
+	static final int QUERY_UNIQUE_RESULT = 2;
+
 	/**
 	 * the session which owns this query
 	 */
@@ -146,7 +164,7 @@ class DBQuery {
 	}
 
 	/**
-	 * add a parameter to the HQL query
+	 * Add a parameter to the HQL query.
 	 * 
 	 * @param parameter
 	 * @param value
@@ -156,7 +174,7 @@ class DBQuery {
 	}
 
 	/**
-	 * add a parameter to the HQL select clause
+	 * Add a parameter to the HQL select clause.
 	 * 
 	 * @param parameter
 	 * @param value
@@ -166,7 +184,7 @@ class DBQuery {
 	}
 
 	/**
-	 * add a parameter to the HQL where clause
+	 * Add a parameter to the HQL where clause.
 	 * 
 	 * @param before
 	 *            part before the parameter
@@ -187,7 +205,7 @@ class DBQuery {
 	}
 
 	/**
-	 * concatenate the parameters to a HQL update query
+	 * Concatenate the parameters to a HQL update query.
 	 * 
 	 * @param targetEntity
 	 * @return the update query string
@@ -213,7 +231,7 @@ class DBQuery {
 	}
 
 	/**
-	 * concatenate the where parameters to a HQL where clause
+	 * Concatenate the where parameters to a HQL where clause.
 	 * 
 	 * @param notEmpty
 	 *            If set to {@code true} an empty where clause is rejected. Use
@@ -245,8 +263,8 @@ class DBQuery {
 	}
 
 	/**
-	 * concatenate the where parameters including the list of parameters to a
-	 * HQL where clause
+	 * Concatenate the where parameters including the list of parameters to a
+	 * HQL where clause.
 	 * 
 	 * @param notEmpty
 	 *            If set to {@code true} an empty where clause is rejected. Use
@@ -283,12 +301,17 @@ class DBQuery {
 	}
 
 	/**
-	 * build a HQL update query
+	 * Build a HQL update query.
 	 * 
 	 * @param targetEntity
 	 * @return the update query defined by parameters and where clauses
 	 */
 	private Query buildUpdateQuery(Object targetEntity) {
+		if (!this.initialized) {
+			throw new HibernateException("The query of target "
+					+ targetEntity.getClass().getSimpleName()
+					+ " is not initialized.");
+		}
 		Query result = this.session.createQuery(this
 				.buildUpdateQueryString(targetEntity.getClass().getName()));
 		for (Pair<String, Object> p : this.parameters) {
@@ -302,7 +325,7 @@ class DBQuery {
 	}
 
 	/**
-	 * build a HQL from query
+	 * Build a HQL from query.
 	 * 
 	 * @param targetEntity
 	 * @param allParameters
@@ -313,6 +336,11 @@ class DBQuery {
 	 * @return the update query defined by parameters and where clauses
 	 */
 	private Query buildFromQuery(Object targetEntity, boolean allParameters) {
+		if (!this.initialized) {
+			throw new HibernateException("The query of target "
+					+ targetEntity.getClass().getSimpleName()
+					+ " is not initialized.");
+		}
 		Query result = this.session.createQuery(buildFromQueryString(
 				targetEntity, allParameters));
 		for (Pair<Vector<String>, Object> w : this.whereParameters) {
@@ -332,6 +360,10 @@ class DBQuery {
 	 * 
 	 * @param targetEntity
 	 * @param allParameters
+	 *            If set to {@code true} all parameters including them which
+	 *            aren't declared as where parameter are considered. Use
+	 *            constant {@link #QUERY_ALL_PARAMETERS} or
+	 *            {@link #QUERY_WHERE_PARAMETERS_ONLY}.
 	 * @return the from query string
 	 */
 	private String buildFromQueryString(Object targetEntity,
@@ -349,13 +381,13 @@ class DBQuery {
 	}
 
 	/**
-	 * extract parameters from the entity
+	 * Extract parameters from the entity.
 	 * 
 	 * @param targetEntity
 	 * @param forceNull
 	 *            If {@code true} null values are written into the parameters
-	 *            list. Use constants {@link #QUERY_FORCE_NULL} or
-	 *            {@link #QUERY_SKIP_NULL}.
+	 *            list. Use constants {@link #QUERY_FORCE_NULL_VALUES} or
+	 *            {@link #QUERY_SKIP_NULL_VALUES}.
 	 * @return the primary key (Id). If the Id is no instance of
 	 *         {@code Serializable} or the Id coldn't be fetched {@code null} is
 	 *         returned.
@@ -479,16 +511,18 @@ class DBQuery {
 
 	/**
 	 * Search for a {@code Serializable} primary key of an entity fetched from
-	 * the database. This method fails with a {@link NullPointerException} if
-	 * the key results to null.
+	 * the database.
 	 * 
 	 * @param targetEntity
-	 * @param notNull
-	 *            If set to {@code true} the query fails on a null result. Use
-	 *            constants {@link #QUERY_NOT_NULL} or {@link #QUERY_NULLABLE}.
+	 * @param flags
+	 *            If set to {@code true} the query fails on a null result. This
+	 *            method fails with a {@link NullPointerException} if the key
+	 *            results to null and the flag {@link #QUERY_NOT_NULL} is set.
+	 *            The constant {@link #QUERY_UNIQUE_RESULT} is the default for
+	 *            this method.
 	 * @return the primary key (Id).
 	 */
-	private Serializable getKey(Object targetEntity, boolean notNull) {
+	private Serializable getKey(Object targetEntity, int flags) {
 		if (!this.initialized) {
 			throw new HibernateException("The query of target "
 					+ targetEntity.getClass().getSimpleName()
@@ -523,7 +557,7 @@ class DBQuery {
 			}
 
 		}
-		if (key == null && notNull) {
+		if (key == null && hasFlag(flags, QUERY_NOT_NULL)) {
 			throw new NullPointerException("The primary key of entity "
 					+ targetEntity.getClass().getSimpleName()
 					+ " must not be null");
@@ -607,15 +641,16 @@ class DBQuery {
 	 *            the name of the embedded id
 	 * @param embeddedId
 	 *            the embedded id as {@link Serializable} object
-	 * @param notNull
+	 * @param flags
 	 *            If set to {@code true} the query fails on a null result. Use
 	 *            constants {@link #QUERY_NOT_NULL} or {@link #QUERY_NULLABLE}.
+	 *            The constant {@link #QUERY_UNIQUE_RESULT} is ignored.
 	 * @throws NullPointerException
 	 *             if a field contains null.
 	 * @see #getParameters(Object, boolean)
 	 */
 	private void getWhereClauseFromEmbeddedId(String idString,
-			Serializable embeddedId, boolean notNull) {
+			Serializable embeddedId, int flags) {
 		if (!embeddedId.getClass().isAnnotationPresent(Embeddable.class)) {
 			throw new HibernateException("Embedded Id of class "
 					+ embeddedId.getClass().getSimpleName()
@@ -630,7 +665,7 @@ class DBQuery {
 					if ((value = m.invoke(embeddedId, (Object[]) null)) != null) {
 						this.addWhereParameter(idString + "." + parameter
 								+ " =", parameter, "", value);
-					} else if (notNull) {
+					} else if (hasFlag(flags, QUERY_NOT_NULL)) {
 						throw new NullPointerException(
 								"Forbidden null value in embedded id "
 										+ idString + " detected.");
@@ -672,7 +707,7 @@ class DBQuery {
 	}
 
 	/**
-	 * perform an update query
+	 * Perform an update query.
 	 * 
 	 * @param targetEntity
 	 *            the entity to update
@@ -680,7 +715,8 @@ class DBQuery {
 	 *            set {@code true} if null values are to write into the
 	 *            database. Any attempt to write null into a column declared as
 	 *            not null will be rejected. Use constants
-	 *            {@link #QUERY_FORCE_NULL} or {@link #QUERY_SKIP_NULL}.
+	 *            {@link #QUERY_FORCE_NULL_VALUES} or
+	 *            {@link #QUERY_SKIP_NULL_VALUES}.
 	 * @return the primary key (Id) of the entity
 	 */
 	Serializable update(Object targetEntity, boolean forceNull) {
@@ -696,7 +732,7 @@ class DBQuery {
 	}
 
 	/**
-	 * perform an insert query
+	 * Perform an insert query.
 	 * 
 	 * @param targetEntity
 	 *            the entity to update
@@ -707,7 +743,7 @@ class DBQuery {
 	}
 
 	/**
-	 * perform an insert query if the given entity is not persisted in the
+	 * Perform an insert query if the given entity is not persisted in the
 	 * database, update the existing entity otherwise.
 	 * 
 	 * @param targetEntity
@@ -716,7 +752,8 @@ class DBQuery {
 	 *            set {@code true} if null values are to write into the
 	 *            database. Any attempt to write null into a column declared as
 	 *            not null will be rejected. Use constants
-	 *            {@link #QUERY_FORCE_NULL} or {@link #QUERY_SKIP_NULL}.
+	 *            {@link #QUERY_FORCE_NULL_VALUES} or
+	 *            {@link #QUERY_SKIP_NULL_VALUES}.
 	 * @return the primary key (Id) of the entity
 	 */
 	Serializable insertOrUpdate(Object targetEntity, boolean forceNull) {
@@ -736,7 +773,7 @@ class DBQuery {
 	}
 
 	/**
-	 * write the entity to the DB.
+	 * Write the entity to the DB.
 	 * 
 	 * @param targetEntity
 	 *            the entity to write
@@ -839,12 +876,17 @@ class DBQuery {
 	}
 
 	/**
-	 * build a HQL delete query
+	 * Build a HQL delete query.
 	 * 
 	 * @param targetEntity
 	 * @return the delete query defined by the where clauses
 	 */
 	private Query buildDeleteQuery(Object targetEntity) {
+		if (!this.initialized) {
+			throw new HibernateException("The query of target "
+					+ targetEntity.getClass().getSimpleName()
+					+ " is not initialized.");
+		}
 		Query result = this.session.createQuery(this
 				.buildDeleteQueryString(targetEntity.getClass().getName()));
 		for (Pair<Vector<String>, Object> w : this.whereParameters) {
@@ -855,7 +897,7 @@ class DBQuery {
 	}
 
 	/**
-	 * concatenate the where-parameters to a HQL delete query
+	 * Concatenate the where-parameters to a HQL delete query.
 	 * 
 	 * @param targetEntity
 	 * @return the delete query
@@ -869,13 +911,13 @@ class DBQuery {
 	}
 
 	/**
-	 * perform a delete query
+	 * Perform a delete query.
 	 * 
 	 * @param targetEntity
 	 *            the entity to delete
 	 */
 	void delete(Object targetEntity) {
-		Serializable key = getParameters(targetEntity, QUERY_SKIP_NULL);
+		Serializable key = getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
 		if (key == null) {
 			throw new HibernateException("delete query needs a serializable Id");
 		}
@@ -889,7 +931,7 @@ class DBQuery {
 	}
 
 	/**
-	 * perform a from query
+	 * Perform a from query.
 	 * 
 	 * @param targetEntity
 	 *            The entity to fetch as prototype. Set all fields to null which
@@ -897,7 +939,7 @@ class DBQuery {
 	 * @return a list of entities of type {@code <T>}
 	 */
 	<T> List<T> from(T targetEntity) {
-		getParameters(targetEntity, QUERY_SKIP_NULL);
+		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
 		@SuppressWarnings("unchecked")
 		// query.list() returns a list of equal type to targetEntity
@@ -906,7 +948,7 @@ class DBQuery {
 	}
 
 	/**
-	 * perform a from query
+	 * Perform a from query.
 	 * 
 	 * @param targetEntity
 	 *            The entity to fetch as prototype. Set all fields to null which
@@ -918,7 +960,7 @@ class DBQuery {
 	 * @return a list of entities of type {@code <T>}
 	 */
 	<T> List<T> from(T targetEntity, Integer start, Integer count) {
-		getParameters(targetEntity, QUERY_SKIP_NULL);
+		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
 		if (start != null && start > 0) {
 			query.setFirstResult(start);
@@ -933,32 +975,70 @@ class DBQuery {
 	}
 
 	/**
-	 * perform a from query
+	 * Perform a from query.
 	 * 
 	 * @param targetEntity
 	 *            The entity to fetch as prototype. Set all fields to null which
 	 *            aren't to use as query parameter.
-	 * @param notNull
+	 * @param flags
 	 *            If set to {@code true} the query fails on a null result. Use
-	 *            constants {@link #QUERY_NOT_NULL} or {@link #QUERY_NULLABLE}.
+	 *            the constants {@link #QUERY_NOT_NULL}, {@link #QUERY_NULLABLE}
+	 *            and {@link #QUERY_UNIQUE_RESULT}. Use a bitwise or to set
+	 *            multiple flags.
 	 * @return a single entity of type {@code <T>}
+	 * @throws NullPointerException
+	 *             if the query results to null and the {@link #QUERY_NOT_NULL}
+	 *             flag is set.
+	 * @throws NonUniqueResultException
+	 *             if the underlying SQL-query returns a non unique result and
+	 *             the {@link #QUERY_UNIQUE_RESULT} flag is set.
 	 */
-	<T> T fromSingle(T targetEntity, boolean notNull) {
-		getParameters(targetEntity, QUERY_SKIP_NULL);
+	@SuppressWarnings("unchecked")
+	// unchecked: singleQuery(...) returns an object of equal type to
+	// targetEntity
+	<T> T fromSingle(T targetEntity, int flags) {
+		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
-		query.setFetchSize(1);
-		@SuppressWarnings("unchecked")
-		// query.list() returns a list of equal type to targetEntity
-		List<T> values = query.list();
-		T result = null;
-		if (!values.isEmpty() || notNull) {
-			result = values.get(0);
+		return (T) singleQuery(query, flags);
+	}
+
+	/**
+	 * Perform a query which returns a single object.
+	 * 
+	 * @param query
+	 *            a ready to perform query
+	 * @param flags
+	 *            If set to {@code true} the query fails on a null result. Use
+	 *            the constants {@link #QUERY_NOT_NULL}, {@link #QUERY_NULLABLE}
+	 *            and {@link #QUERY_UNIQUE_RESULT}. Use a bitwise or to set
+	 *            multiple flags.
+	 * @return a single object according to the query result
+	 * @throws NullPointerException
+	 *             if the query results to null and the {@link #QUERY_NOT_NULL}
+	 *             flag is set.
+	 * @throws NonUniqueResultException
+	 *             if the underlying SQL-query returns a non unique result and
+	 *             the {@link #QUERY_UNIQUE_RESULT} flag is set.
+	 */
+	private Object singleQuery(Query query, int flags) {
+		Object result = null;
+		if (hasFlag(flags, QUERY_UNIQUE_RESULT)) {
+			result = query.uniqueResult();
+		} else {
+			query.setFetchSize(1);
+			List<?> values = query.list();
+			if (!values.isEmpty()) {
+				result = values.get(0);
+			}
+		}
+		if (result == null && hasFlag(flags, QUERY_NOT_NULL)) {
+			throw new NullPointerException("Query result is null.");
 		}
 		return result;
 	}
 
 	/**
-	 * perform a from query
+	 * Perform a from query.
 	 * 
 	 * @param targetEntity
 	 *            The entity to fetch as prototype. Set all fields to null which
@@ -966,6 +1046,7 @@ class DBQuery {
 	 * @return an iterator of type {@code <T>}
 	 */
 	<T> Iterator<T> iterate(T targetEntity) {
+		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
 		@SuppressWarnings("unchecked")
 		// query.iterate() returns an iterator of equal type to targetEntity
@@ -974,7 +1055,7 @@ class DBQuery {
 	}
 
 	/**
-	 * perform a from query
+	 * Perform a from query.
 	 * 
 	 * @param targetEntity
 	 *            The entity to fetch as prototype. Set all fields to null which
@@ -986,6 +1067,7 @@ class DBQuery {
 	 * @return an iterator of type {@code <T>}
 	 */
 	<T> Iterator<T> iterate(T targetEntity, Integer start, Integer count) {
+		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
 		if (start != null && start > 0) {
 			query.setFirstResult(start);
@@ -1000,7 +1082,7 @@ class DBQuery {
 	}
 
 	/**
-	 * perform a select query
+	 * Perform a select query.
 	 * 
 	 * @param targetEntity
 	 *            The entity to fetch as prototype. Set all fields to null which
@@ -1013,18 +1095,15 @@ class DBQuery {
 	 *            parameter strings declared.
 	 * @return a list of results according to the select string
 	 */
-	List<Object> select(Object targetEntity, String selectString) {
-		getParameters(targetEntity, QUERY_SKIP_NULL);
+	List<?> select(Object targetEntity, String selectString) {
+		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
 		Query query = buildSelectQuery(targetEntity, selectString,
 				QUERY_ALL_PARAMETERS);
-		@SuppressWarnings("unchecked")
-		// query.list() returns a list of a subtype of Object
-		List<Object> result = query.list();
-		return result;
+		return query.list();
 	}
 
 	/**
-	 * perform a select query
+	 * Perform a select query.
 	 * 
 	 * @param targetEntity
 	 *            The entity to fetch as prototype. Set all fields to null which
@@ -1041,9 +1120,9 @@ class DBQuery {
 	 *            max. number of results to fetch
 	 * @return a list of results according to the select string
 	 */
-	List<Object> select(Object targetEntity, String selectString,
-			Integer start, Integer count) {
-		getParameters(targetEntity, QUERY_SKIP_NULL);
+	List<?> select(Object targetEntity, String selectString, Integer start,
+			Integer count) {
+		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
 		Query query = buildSelectQuery(targetEntity, selectString,
 				QUERY_ALL_PARAMETERS);
 		if (start != null && start > 0) {
@@ -1052,14 +1131,11 @@ class DBQuery {
 		if (count != null && count > 0) {
 			query.setFetchSize(count);
 		}
-		@SuppressWarnings("unchecked")
-		// query.list() returns a list of a subtype of Object
-		List<Object> result = query.list();
-		return result;
+		return query.list();
 	}
 
 	/**
-	 * perform a select query
+	 * Perform a select query.
 	 * 
 	 * @param targetEntity
 	 *            The entity to fetch as prototype. Set all fields to null which
@@ -1070,37 +1146,53 @@ class DBQuery {
 	 *            string must be added with the method
 	 *            {@link #addSelectParameter(String, Object)} with equal
 	 *            parameter strings declared.
-	 * @param notNull
+	 * @param flags
 	 *            If set to {@code true} the query fails on a null result. Use
-	 *            constants {@link #QUERY_NOT_NULL} or {@link #QUERY_NULLABLE}.
+	 *            the constants {@link #QUERY_NOT_NULL}, {@link #QUERY_NULLABLE}
+	 *            and {@link #QUERY_UNIQUE_RESULT}. Use a bitwise or to set
+	 *            multiple flags.
 	 * @return an object as result according to the select string
+	 * @throws NullPointerException
+	 *             if the query results to null and the {@link #QUERY_NOT_NULL}
+	 *             flag is set.
+	 * @throws NonUniqueResultException
+	 *             if the underlying SQL-query returns a non unique result and
+	 *             the {@link #QUERY_UNIQUE_RESULT} flag is set. if the
+	 *             underlying SQL-query returns a non unique result.
 	 */
-	Object selectSingle(Object targetEntity, String selectString,
-			boolean notNull) {
-		getParameters(targetEntity, QUERY_SKIP_NULL);
+	Object selectSingle(Object targetEntity, String selectString, int flags) {
+		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
 		Query query = buildSelectQuery(targetEntity, selectString,
 				QUERY_ALL_PARAMETERS);
-		query.setFetchSize(1);
-		@SuppressWarnings("unchecked")
-		// query.list() returns a list of a subtype of Object
-		List<Object> values = query.list();
-		Object result = null;
-		if (!values.isEmpty() || notNull) {
-			result = values.get(0);
-		}
-		return result;
+		return singleQuery(query, flags);
 	}
 
 	/**
-	 * Build a HQL select query
+	 * Build a HQL select query.
 	 * 
 	 * @param targetEntity
+	 *            The entity to fetch as prototype. Set all fields to null which
+	 *            aren't to use as query parameter.
 	 * @param selectString
+	 *            the select part of the HQL query (part before the {@code from}
+	 *            keyword without {@code select}). All parameters used in the
+	 *            string must be added with the method
+	 *            {@link #addSelectParameter(String, Object)} with equal
+	 *            parameter strings declared.
 	 * @param allParameters
+	 *            If set to {@code true} all parameters including them which
+	 *            aren't declared as where parameter are considered. Use
+	 *            constant {@link #QUERY_ALL_PARAMETERS} or
+	 *            {@link #QUERY_WHERE_PARAMETERS_ONLY}.
 	 * @return the select query
 	 */
 	private Query buildSelectQuery(Object targetEntity, String selectString,
 			boolean allParameters) {
+		if (!this.initialized) {
+			throw new HibernateException("The query of target "
+					+ targetEntity.getClass().getSimpleName()
+					+ " is not initialized.");
+		}
 		StringBuilder builder = new StringBuilder("select ");
 		builder.append(selectString).append(" ")
 				.append(buildFromQueryString(targetEntity, allParameters));
@@ -1126,8 +1218,8 @@ class DBQuery {
 
 	/**
 	 * Perform a query with a custom HQL query string. The parameters must be
-	 * set with {@link #addParameter(String, Object) before calling this method}
-	 * .
+	 * set with {@link #addParameter(String, Object)} before calling this method
+	 * . Call {@link #initialize()} after adding the parameters.
 	 * 
 	 * @param queryString
 	 *            must be a valid HQL query. The parameters in the
@@ -1140,7 +1232,11 @@ class DBQuery {
 	 *            max. number of results to fetch
 	 * @return a list of entities
 	 */
-	List<Object> customQuery(String queryString, Integer start, Integer count) {
+	List<?> customQuery(String queryString, Integer start, Integer count) {
+		if (!this.initialized) {
+			throw new HibernateException(
+					"The query of customQuery() is not initialized.");
+		}
 		Query query = this.session.createQuery(queryString);
 		if (start != null && start > 0) {
 			query.setFirstResult(start);
@@ -1151,16 +1247,13 @@ class DBQuery {
 		for (Pair<String, Object> p : this.parameters) {
 			query.setParameter(p.first, p.second);
 		}
-		@SuppressWarnings("unchecked")
-		// query.list() returns a list according to the given query string
-		List<Object> result = query.list();
-		return result;
+		return query.list();
 	}
 
 	/**
 	 * Perform a query with a custom HQL query string. The parameters must be
-	 * set with {@link #addParameter(String, Object) before calling this method}
-	 * .
+	 * set with {@link #addParameter(String, Object)} before calling this method
+	 * . Call {@link #initialize()} after adding the parameters.
 	 * 
 	 * @param queryString
 	 *            must be a valid HQL query. The parameters in the
@@ -1173,8 +1266,11 @@ class DBQuery {
 	 *            max. number of results to fetch
 	 * @return a list of entities of type {@code <T>}
 	 */
-	Iterator<Object> customIterator(String queryString, Integer start,
-			Integer count) {
+	Iterator<?> customIterator(String queryString, Integer start, Integer count) {
+		if (!this.initialized) {
+			throw new HibernateException(
+					"The query of customIterator() is not initialized.");
+		}
 		Query query = this.session.createQuery(queryString);
 		if (start != null && start > 0) {
 			query.setFirstResult(start);
@@ -1185,15 +1281,11 @@ class DBQuery {
 		for (Pair<String, Object> p : this.parameters) {
 			query.setParameter(p.first, p.second);
 		}
-		@SuppressWarnings("unchecked")
-		// query.iterator() returns an iterator according to the given query
-		// string
-		Iterator<Object> result = query.iterate();
-		return result;
+		return query.iterate();
 	}
 
 	/**
-	 * reset this query. All parameters are cleared and the initialized state is
+	 * Reset this query. All parameters are cleared and the initialized state is
 	 * set to {@code false}.
 	 */
 	void reset() {
@@ -1205,13 +1297,33 @@ class DBQuery {
 	}
 
 	/**
-	 * evaluates the flags of the methods in {@link IPersistence}
+	 * Initialize this query manually. Do this only if it is explicitly required
+	 * by a method of the {@code DBQuery} class e. g.
+	 * {@link #customQuery(String, Integer, Integer)} or
+	 * {@link #customIterator(String, Integer, Integer)}.
+	 * <p>
+	 * This method provides only minimal plausibility tests, so you should know
+	 * what you do if you use this method.
+	 * 
+	 * @throws HibernateException
+	 *             if the plausibility tests fail
+	 */
+	void initialize() {
+		if (this.parameters == null || this.parameters.isEmpty()) {
+			throw new HibernateException("Error initializing query.");
+		}
+		this.initialized = true;
+	}
+
+	/**
+	 * This helper method tests the {@code flags} parameter the methods in e. g.
+	 * {@link IPersistence} on the presence of the given flag.
 	 * 
 	 * @param flags
-	 *            the value containing some flags
+	 *            the parameter to test on the flag
 	 * @param flag
 	 *            the flag to test
-	 * @return true if the flag is present
+	 * @return true if the flag is present in the {@code flags} parameter
 	 */
 	public static boolean hasFlag(int flags, int flag) {
 		return (flags & flag) == flag;
@@ -1236,5 +1348,4 @@ class DBQuery {
 		builder.append("]");
 		return builder.toString();
 	}
-
 }
