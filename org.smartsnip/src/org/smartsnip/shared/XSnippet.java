@@ -17,10 +17,12 @@ public class XSnippet implements IsSerializable {
 	public String language;
 	public String license;
 	public int viewcount;
+	public boolean isFavorite;
+	public int rating;
 
 	/** Used by GWT */
 	private XSnippet() {
-		//this("", 0, "", "", null, null, null, "", "", "", "", 0);
+		// this("", 0, "", "", null, null, null, "", "", "", "", 0);
 	}
 
 	public XSnippet(String owner, long hash, String title, String description,
@@ -39,5 +41,25 @@ public class XSnippet implements IsSerializable {
 		this.language = language;
 		this.license = license;
 		this.viewcount = viewcount;
+		this.isFavorite = false;
+	}
+
+	public XSnippet(String owner, long hash, String title, String description,
+			XCategory category, ArrayList<String> tags,
+			ArrayList<XComment> comments, String code, String codeHTML,
+			String language, String license, int viewcount, boolean isFavorite) {
+		this.owner = owner;
+		this.hash = hash;
+		this.title = title;
+		this.description = description;
+		this.category = category;
+		this.tags = tags;
+		this.comments = comments;
+		this.code = code;
+		this.codeHTML = codeHTML;
+		this.language = language;
+		this.license = license;
+		this.viewcount = viewcount;
+		this.isFavorite = isFavorite;
 	}
 }

@@ -29,6 +29,20 @@ public interface IComment extends RemoteService, IsSerializable {
 	}
 
 	/**
+	 * Gets a single comment defined by it's ID.
+	 * 
+	 * @param commentID
+	 *            ID of the comment to get
+	 * @return The comment
+	 * @throws NotFoundException
+	 *             Thrown, if the given id did not return a comment
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
+	 */
+	public XComment getComment(long commentID) throws NotFoundException,
+			NoAccessException;
+
+	/**
 	 * Gets the comments from a snippet. If the snippet does not exists, the
 	 * result is null
 	 * 
@@ -109,9 +123,25 @@ public interface IComment extends RemoteService, IsSerializable {
 	public void delete(long commentID) throws NoAccessException;
 
 	/**
-	 * Checks if the current session/user can comment on a comment
+	 * Checks if the current session/user can comment on a snippet
 	 * 
-	 * @return
+	 * @return true if commenting is possible, false if commenting is denied by
+	 *         the server
 	 */
-	public boolean canComment(long commentID) throws NotFoundException;
+	public boolean canComment(long snippetID) throws NotFoundException;
+
+	/**
+	 * Checks if the current session/user can rate a comment
+	 * 
+	 * @return true if rating is possible, false if rating is denied by the
+	 *         server
+	 */
+	public boolean canRate(long commentID) throws NotFoundException;
+
+	/**
+	 * Checks if the current session/user can edit a comment
+	 * 
+	 * @return true if it is possible, false if denied by the server
+	 */
+	public boolean canEdit(long commentID) throws NotFoundException;
 }

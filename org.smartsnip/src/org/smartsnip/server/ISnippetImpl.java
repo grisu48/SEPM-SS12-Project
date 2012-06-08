@@ -57,7 +57,19 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 			return null;
 
 		snippet.increaseViewCounter();
-		return snippet.toXSnippet();
+		XSnippet result = snippet.toXSnippet();
+
+		// Check if favorite
+		User user = getSession().getUser();
+		if (user == null) {
+			// Guest session.
+			// TODO Implement guest session favorites
+		} else {
+			result.isFavorite = user.getFavoriteSnippets().contains(snippet);
+		}
+		result.rating = (int) snippet.getAverageRating();
+
+		return result;
 	}
 
 	@Override
@@ -340,5 +352,22 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 		// Creates a new ticket
 		long ticket = SourceDownloader.createTicket(code.code);
 		return ticket;
+	}
+
+	@Override
+	public boolean canEdit(long snippet_id) throws NotFoundException {
+		Session session = getSession();
+		Snippet snippet = Snippet.getSnippet(snippet_id);
+		if (snippet == null)
+			throw new NotFoundException();
+
+		if (!session.getPolicy().canEditSnippet(session, snippet))
+			return false;
+		User user = session.getUser();
+		if (user == null)
+			return false;
+
+		return true;
+
 	}
 }

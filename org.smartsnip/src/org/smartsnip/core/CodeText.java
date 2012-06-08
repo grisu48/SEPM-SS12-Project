@@ -34,15 +34,7 @@ public class CodeText extends Code {
 
 	@Override
 	public String getFormattedHTML() {
-		StringBuffer result = new StringBuffer();
-		String[] lines = code.split("\n");
-
-		for (String line : lines) {
-			result.append("<p>");
-			result.append(line);
-			result.append("</p>");
-		}
-		return result.toString();
+		return HTMLFormatter.formatCode(this);
 	}
 
 	@Override

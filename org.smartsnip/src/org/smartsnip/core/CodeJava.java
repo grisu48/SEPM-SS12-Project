@@ -25,13 +25,12 @@ public class CodeJava extends Code {
 
 	@Override
 	public String getFormattedHTML() {
-		// TODO Auto-generated method stub
-		return "";
+		return HTMLFormatter.formatCodeJava(this);
 	}
 
 	@Override
 	protected String formatCode(String code) {
-		// TODO Auto-generated method stub
+		// do nothing here
 		return code;
 	}
 

@@ -223,4 +223,15 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 */
 	public long getDownloadSourceTicket(long snippet_id)
 			throws NotFoundException, NoAccessException;
+
+	/**
+	 * Checks if the current session/user can edit a given snippet
+	 * 
+	 * @param snippet_id
+	 *            Hash id of the snippet to be edited
+	 * @return true if possible, false if the edit process is denied
+	 * @throws NotFoundException
+	 *             Thrown if the given snippet id is not found
+	 */
+	public boolean canEdit(long snippet_id) throws NotFoundException;
 }

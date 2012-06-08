@@ -40,4 +40,6 @@ public interface ISnippetAsync {
 
 	void hasDownloadableSource(long snippet_id, AsyncCallback<Boolean> callback);
 
+	void canEdit(long snippet_id, AsyncCallback<Boolean> callback);
+
 }

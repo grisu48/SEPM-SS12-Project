@@ -19,6 +19,12 @@ public interface ICommentAsync {
 
 	void delete(long commentID, AsyncCallback<Void> callback);
 
-	void canComment(long commentID, AsyncCallback<Boolean> callback);
+	void canComment(long snippetID, AsyncCallback<Boolean> callback);
+
+	void canRate(long commentID, AsyncCallback<Boolean> callback);
+
+	void canEdit(long commentID, AsyncCallback<Boolean> callback);
+
+	void getComment(long commentID, AsyncCallback<XComment> callback);
 
 }

@@ -109,13 +109,31 @@ public class ICommentImpl extends SessionServlet implements IComment {
 	}
 
 	@Override
-	public boolean canComment(long commentID) throws NotFoundException {
+	public boolean canComment(long snippetID) throws NotFoundException {
+		Session session = getSession();
+		Snippet snippet = Snippet.getSnippet(snippetID);
+		if (snippet == null)
+			throw new NotFoundException();
+		if (!session.getPolicy().canComment(session))
+			return false;
+
+		User user = session.getUser();
+		if (user == null)
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public boolean canRate(long commentID) throws NotFoundException {
 		Comment comment = Comment.getComment(commentID);
 		if (comment == null)
 			throw new NotFoundException();
 
 		Session session = getSession();
-		Snippet snippet = Snippet.getSnippet(comment.snippet);
+		Snippet snippet = Snippet.getSnippet(comment.getSnippetId());
+		if (snippet == null)
+			throw new NotFoundException();
 		if (!session.getPolicy().canRateSnippet(session, snippet))
 			return false;
 
@@ -124,6 +142,33 @@ public class ICommentImpl extends SessionServlet implements IComment {
 			return false;
 
 		return true;
+	}
+
+	@Override
+	public boolean canEdit(long commentID) throws NotFoundException {
+		Comment comment = Comment.getComment(commentID);
+		if (comment == null)
+			throw new NotFoundException();
+
+		Session session = getSession();
+		if (!session.getPolicy().canEditComment(session, comment))
+			return false;
+
+		User user = session.getUser();
+		if (user == null)
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public XComment getComment(long commentID) throws NotFoundException,
+			NoAccessException {
+		Comment comment = Comment.getComment(commentID);
+		if (comment == null)
+			throw new NotFoundException();
+
+		return comment.toXComment();
 	}
 
 }

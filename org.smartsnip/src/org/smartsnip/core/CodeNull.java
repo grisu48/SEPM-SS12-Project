@@ -15,7 +15,7 @@ public class CodeNull extends Code {
 
 	@Override
 	public String getFormattedHTML() {
-		return "<p> </p>";
+		return HTMLFormatter.formatCode(this);
 	}
 
 	@Override
