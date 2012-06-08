@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -21,6 +20,8 @@ import javax.validation.ValidatorFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.hibernate.FlushMode;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.AfterClass;
@@ -60,6 +61,7 @@ public class SqlPersistenceImplTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		System.out.println(MD5.md5("bullshit"));
 		// change the log level
 		LogManager.getRootLogger().setLevel(Level.ALL);
 		log.info("SqlPersistence test cases - begin tests");
@@ -111,7 +113,7 @@ public class SqlPersistenceImplTest {
 				"a test category as root", null);
 		Category cat = helper.createCategory("_test_sub",
 				"another test category", "_test_root");
-		instance.writeCategory(par, IPersistence.DB_DEFAULT);
+		instance.writeCategory(par, IPersistence.DB_FORCE_NULL_VALUES);
 		instance.writeCategory(cat, IPersistence.DB_DEFAULT);
 
 		instance.writeLanguage("_test_java", IPersistence.DB_DEFAULT);
@@ -141,17 +143,17 @@ public class SqlPersistenceImplTest {
 		tags1.add(helper.createTag("_test_another_one"));
 
 		Snippet snip2 = helper.createSnippet(2L, user1.getUsername(),
-				"_test_snippet_2", "this is another snippet", cat.getName(), tags1,
-				null, "_test_license", 0, 0F);
+				"_test_snippet_2", "this is another snippet", cat.getName(),
+				tags1, null, "_test_license", 0, 0F);
 		Long snipId2 = instance.writeSnippet(snip2, IPersistence.DB_DEFAULT);
 		snip2.id = snipId2;
 
 		List<Tag> tags2 = new ArrayList<Tag>();
 		tags2.add(helper.createTag("_test_something"));
-		
+
 		Snippet snip3 = helper.createSnippet(3L, user2.getUsername(),
-				"_test_snippet_3", "this is a third snippet", par.getName(), tags2,
-				null, "_test_license", 0, 0F);
+				"_test_snippet_3", "this is a third snippet", par.getName(),
+				tags2, null, "_test_license", 0, 0F);
 		Long snipId3 = instance.writeSnippet(snip3, IPersistence.DB_DEFAULT);
 		snip3.id = snipId3;
 
@@ -161,39 +163,50 @@ public class SqlPersistenceImplTest {
 		builder.append("{\n\t\tSystem.out.println(\"Number = \" + i);\n\t}\n}\n");
 
 		List<Code> codes = new ArrayList<Code>();
-		codes.add(helper.createCode(1L, "/* test code incomplete */\n", "_test_java", snip1, 1));
-		codes.add(helper.createCode(2L, builder.toString(), "_test_java", snip1, 2));
-		codes.add(helper.createCode(3L, "/* test code to snippet 2 */", "_test_java", snip2, 0));
-		codes.add(helper.createCode(4L, "/* test code to snippet 3 */", "_test_java", snip3, 7));
+		codes.add(helper.createCode(1L, "/* test code incomplete */\n",
+				"_test_java", snip1, 1));
+		codes.add(helper.createCode(2L, builder.toString(), "_test_java",
+				snip1, 2));
+		codes.add(helper.createCode(3L, "/* test code to snippet 2 */",
+				"_test_java", snip2, 0));
+		codes.add(helper.createCode(4L, "/* test code to snippet 3 */",
+				"_test_java", snip3, 7));
 		instance.writeCode(codes, IPersistence.DB_DEFAULT);
-		
-		Notification notif = helper.createNotification(1L, user1, "a test notification",
-				false, "now", "source is unknown", snip1);
+
+		Notification notif = helper
+				.createNotification(1L, user1, "a test notification", false,
+						"now", "source is unknown", snip1);
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
 
 		List<Comment> comments = new ArrayList<Comment>();
-		comments.add(helper.createComment(user2.getUsername(), snipId1, "first comment to user1's snippet", 1L, new Date(), 0, 0));
-		comments.add(helper.createComment(user3.getUsername(), snipId1, "second comment to user1's snippet", 2L, new Date(), 0, 0));
-		comments.add(helper.createComment(user1.getUsername(), snipId2, "third comment to user1's snippet", 3L, new Date(), 0, 0));
-		comments.add(helper.createComment(user1.getUsername(), snipId3, "fourth comment to user2's snippet", 4L, new Date(), 0, 0));
-		Comment comm1 = helper.createComment(user2.getUsername(), snipId2, "some comments with no message", 5L, new Date(), 0, 0);
-		Comment comm2 = helper.createComment(user3.getUsername(), snipId2, "one more comment with no message", 6L, new Date(), 0, 0);
+		comments.add(helper.createComment(user2.getUsername(), snipId1,
+				"first comment to user1's snippet", 1L, new Date(), 0, 0));
+		comments.add(helper.createComment(user3.getUsername(), snipId1,
+				"second comment to user1's snippet", 2L, new Date(), 0, 0));
+		comments.add(helper.createComment(user1.getUsername(), snipId2,
+				"third comment to user1's snippet", 3L, new Date(), 0, 0));
+		comments.add(helper.createComment(user1.getUsername(), snipId3,
+				"fourth comment to user2's snippet", 4L, new Date(), 0, 0));
+		Comment comm1 = helper.createComment(user2.getUsername(), snipId2,
+				"some comments with no message", 5L, new Date(), 0, 0);
+		Comment comm2 = helper.createComment(user3.getUsername(), snipId2,
+				"one more comment with no message", 6L, new Date(), 0, 0);
 		comments.add(comm1);
 		comments.add(comm2);
 		instance.writeComment(comments, IPersistence.DB_DEFAULT);
-		
+
 		instance.addFavourite(snip3, user1, IPersistence.DB_DEFAULT);
 
 		instance.writeRating(3, snip2, user3, IPersistence.DB_DEFAULT);
 		instance.writeRating(1, snip2, user1, IPersistence.DB_DEFAULT);
-		
+
 		instance.votePositive(user1, comm1, IPersistence.DB_DEFAULT);
 		instance.voteNegative(user2, comm1, IPersistence.DB_DEFAULT);
 		instance.voteNegative(user3, comm1, IPersistence.DB_DEFAULT);
 		instance.votePositive(user1, comm2, IPersistence.DB_DEFAULT);
 		instance.votePositive(user2, comm2, IPersistence.DB_DEFAULT);
 		instance.votePositive(user3, comm2, IPersistence.DB_DEFAULT);
-		
+
 		test_snip1 = snip1;
 		test_snip2 = snip2;
 	}
@@ -217,9 +230,10 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testWriteUserUserInt() throws Throwable {
-		User user = helper.createUser("_test_somebody", "the test user", "sbd@test.org", UserState.validated);
+		User user = helper.createUser("_test_somebody", "the test user",
+				"sbd@test.org", UserState.validated);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
-		
+
 		Session session = DBSessionFactory.open();
 		Transaction tx = null;
 		try {
@@ -238,8 +252,8 @@ public class SqlPersistenceImplTest {
 			DBSessionFactory.close(session);
 		}
 
+		// test on constraint-violations
 		boolean violatedConstraits = false;
-
 		Set<ConstraintViolation<User>> constraintViolations = validator
 				.validate(user);
 		for (Iterator<ConstraintViolation<User>> itr = constraintViolations
@@ -443,30 +457,6 @@ public class SqlPersistenceImplTest {
 
 	/**
 	 * Test method for
-	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeCategory(org.smartsnip.core.Category, int)}
-	 * .
-	 * 
-	 * @throws Throwable
-	 */
-	@Ignore
-	public void testWriteCategoryCategoryInt() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
-	}
-
-	/**
-	 * Test method for
-	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeCategory(java.util.List, int)}
-	 * .
-	 * 
-	 * @throws Throwable
-	 */
-	@Ignore
-	public void testWriteCategoryListOfCategoryInt() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
-	}
-
-	/**
-	 * Test method for
 	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeLanguage(java.lang.String, int)}
 	 * .
 	 * 
@@ -664,9 +654,105 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
-	public void testRemoveCategory() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+	@Test
+	@SuppressWarnings("unchecked")
+	public void testWriteAndRemoveCategory() throws Throwable {
+		Category midCat = helper.createCategory("_test_middle",
+				"intermedate categorty", "_test_parent");
+		List<Category> testCat = new ArrayList<Category>();
+		testCat.add(helper.createCategory("_test_parent", "parent categorty",
+				null));
+		testCat.add(midCat);
+		testCat.add(helper.createCategory("_test_child", "child categorty",
+				"_test_middle"));
+		instance.writeCategory(testCat, IPersistence.DB_FORCE_NULL_VALUES);
+
+		Session session = null;
+		List<DBCategory> entities;
+		DBQuery query;
+		try {
+			session = DBSessionFactory.open();
+			query = new DBQuery(session);
+			query.addParameter("name1", "_test_parent");
+			query.addParameter("name2", "_test_middle");
+			query.addParameter("name3", "_test_child");
+			query.initialize();
+			Query hibQuery = query
+					.buildCustomQuery("from DBCategory where name = :name1 or name = :name2 or name = :name3");
+			entities = hibQuery.list();
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		assertTrue("3 objects expected, but there are " + entities.size(),
+				entities.size() == 3);
+		for (DBCategory ca : entities) {
+			if (ca.getName() == "_test_parent") {
+				assertNull("parent of _test_parent mus be null.",
+						ca.getParentId());
+			}
+		}
+		// test on constraint-violations
+		boolean violatedConstraits = false;
+		for (DBCategory c : entities) {
+			Set<ConstraintViolation<DBCategory>> constraintViolations = validator
+					.validate(c);
+			for (Iterator<ConstraintViolation<DBCategory>> itr = constraintViolations
+					.iterator(); itr.hasNext();) {
+				log.error("Constraint Violation: " + itr.next().getMessage());
+				violatedConstraits = true;
+			}
+		}
+		if (violatedConstraits) {
+			fail("Constraint Violations occured! See log file");
+		}
+
+		// remove middle Category
+		instance.removeCategory(midCat, IPersistence.DB_DEFAULT);
+
+		String str[] = { "_test_parent", "_test_middle", "_test_child" };
+		entities = new ArrayList<DBCategory>();
+		try {
+			session = DBSessionFactory.open();
+			query = new DBQuery(session);
+			query.addParameter("name1", "_test_parent");
+			query.addParameter("name2", "_test_middle");
+			query.addParameter("name3", "_test_child");
+			query.initialize();
+			Query hibQuery = query
+					.buildCustomQuery("from DBCategory where name = :name1 or name = :name2 or name = :name3");
+			entities = hibQuery.list();
+		} finally {
+			DBSessionFactory.close(session);
+		}
+
+		assertTrue("2 objects expected, but there are " + entities.size(),
+				entities.size() == 2);
+
+		// test on constraint-violations
+		violatedConstraits = false;
+		for (DBCategory c : entities) {
+			Set<ConstraintViolation<DBCategory>> constraintViolations = validator
+					.validate(c);
+			for (Iterator<ConstraintViolation<DBCategory>> itr = constraintViolations
+					.iterator(); itr.hasNext();) {
+				log.error("Constraint Violation: " + itr.next().getMessage());
+				violatedConstraits = true;
+			}
+		}
+		if (violatedConstraits) {
+			fail("Constraint Violations occured! See log file");
+		}
+		DBCategory p = null;
+		DBCategory c = null;
+		for (DBCategory ca : entities) {
+			if (ca.getName().equals("_test_parent")) {
+				p = ca;
+			} else if (ca.getName().equals("_test_child")) {
+				c = ca;
+			}
+		}
+		System.err.println("Categories: p: " + p + ", " + c);
+		assertEquals(p.getCategoryId(), c.getParentId());
 	}
 
 	/**
@@ -736,7 +822,30 @@ public class SqlPersistenceImplTest {
 		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
 				User.UserState.validated);
 		assertTrue(instance.verifyPassword(user, "blabla"));
+		assertFalse(instance.verifyPassword(user, " blabla"));
+		assertFalse(instance.verifyPassword(user, "blabla "));
 		assertFalse(instance.verifyPassword(user, "blabaa"));
+
+		Session session = DBSessionFactory.open();
+		DBQuery query = new DBQuery(session);
+		DBLogin entity = new DBLogin();
+		entity.setUser("pwdTester");
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+				| DBQuery.QUERY_UNIQUE_RESULT);
+		assertEquals(entity.getPassword(), "blabla");
+
+		// test on constraint-violations
+		boolean violatedConstraits = false;
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validate(user);
+		for (Iterator<ConstraintViolation<User>> itr = constraintViolations
+				.iterator(); itr.hasNext();) {
+			log.error("Constraint Violation: " + itr.next().getMessage());
+			violatedConstraits = true;
+		}
+		if (violatedConstraits) {
+			fail("Constraint Violations occured! See log file");
+		}
 	}
 
 	/**
@@ -822,7 +931,8 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testGetSnippetsCategoryIntegerInteger() throws Throwable {
-		Category cat = helper.createCategory("_test_sub", "a test category", null);
+		Category cat = helper.createCategory("_test_sub", "a test category",
+				null);
 		List<Snippet> snips = instance.getSnippets(cat, null, null);
 		int i = 0;
 		for (Snippet s : snips) {
@@ -920,9 +1030,9 @@ public class SqlPersistenceImplTest {
 	@Test
 	public void testGetCodes() throws Throwable {
 		List<Code> cod = instance.getCodes(test_snip1);
-		for (Code c: cod) {
-		System.err.println("Code: " + c.getHashID() + " Version = " + c.getVersion() 
-				+ " Data: " + c.getCode());
+		for (Code c : cod) {
+			System.err.println("Code: " + c.getHashID() + " Version = "
+					+ c.getVersion() + " Data: " + c.getCode());
 		}
 	}
 
@@ -1055,8 +1165,8 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testSearch() throws Throwable {
-		List<Snippet> snippets = instance.search("third _test_snippet_1", null, null,
-				IPersistence.SORT_LATEST);
+		List<Snippet> snippets = instance.search("third _test_snippet_1", null,
+				null, IPersistence.SORT_LATEST);
 		System.err.println("Search:");
 		for (Snippet s : snippets) {
 			System.out.println("Search result: snippetId = " + s.getHashId()
