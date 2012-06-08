@@ -29,6 +29,19 @@
   </servlet-mapping>
   
    <servlet>
+    <servlet-name>Comment</servlet-name>
+    <servlet-class>org.smartsnip.server.ICommentImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>Comment</servlet-name>
+    <url-pattern>/org_smartsnip/comment</url-pattern>
+  </servlet-mapping>
+  
+  
+  ICommentImpl
+  
+   <servlet>
     <servlet-name>Category</servlet-name>
     <servlet-class>org.smartsnip.server.ICategoryImpl</servlet-class>
   </servlet>
@@ -48,6 +61,11 @@
     <url-pattern>/org_smartsnip/snippetofday</url-pattern>
   </servlet-mapping>
   
+  <servlet-mapping>
+    <servlet-name>SnippetOfDay</servlet-name>
+    <url-pattern>/snippetofday</url-pattern>
+  </servlet-mapping>
+  
   <servlet>
     <servlet-name>SourceDownloader</servlet-name>
     <servlet-class>org.smartsnip.server.SourceDownloader</servlet-class>
@@ -58,7 +76,10 @@
     <url-pattern>/org_smartsnip/downloader</url-pattern>
   </servlet-mapping>
 
-
+  <servlet-mapping>
+    <servlet-name>SourceDownloader</servlet-name>
+    <url-pattern>/downloader</url-pattern>
+  </servlet-mapping>
 
 
 

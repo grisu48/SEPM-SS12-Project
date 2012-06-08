@@ -736,7 +736,7 @@ public class Snippet {
 	 */
 	public static Snippet getSnippetOfDay() {
 		// TODO Implement me
-		return new Snippet("", "", "", 0L, "", "", null, null, 0, 0F);
+		return null;
 	}
 
 	/**

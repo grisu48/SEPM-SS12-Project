@@ -76,6 +76,20 @@ public class SnippetOfDay extends HttpServlet {
 		} catch (IOException e) {
 			// Ignore exception
 			writer = null;
+			return;
+		} catch (Exception e) {
+			writer.println("<head>");
+			writer.println("<title>org.smartsnip - Code downloader</title>");
+			writer.println("</head>");
+
+			writer.println("<body>");
+			writer.println("<h1>500 - Server error</h1>");
+			writer.println("<p>There was an unhandled exception on the server:</p>");
+			writer.println("<p>" + e.getClass().getName() + ": <b>"
+					+ e.getMessage() + "</b></p>");
+			e.printStackTrace(writer);
+			writer.println("</body>");
+			resp.setStatus(500);
 		} finally {
 			if (writer != null) {
 				writer.flush();

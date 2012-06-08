@@ -8,6 +8,7 @@ import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.IComment;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XComment;
 
 public class ICommentImpl extends SessionServlet implements IComment {
@@ -16,7 +17,8 @@ public class ICommentImpl extends SessionServlet implements IComment {
 	private static final long serialVersionUID = 5843093547608960627L;
 
 	@Override
-	public List<XComment> getComments(long snippethash, int start, int count) throws NoAccessException {
+	public List<XComment> getComments(long snippethash, int start, int count)
+			throws NoAccessException {
 		Snippet snippet = Snippet.getSnippet(snippethash);
 		if (snippet == null)
 			return null;
@@ -76,7 +78,8 @@ public class ICommentImpl extends SessionServlet implements IComment {
 	}
 
 	@Override
-	public void edit(long commentID, String newMessage) throws NoAccessException {
+	public void edit(long commentID, String newMessage)
+			throws NoAccessException {
 		Session session = getSession();
 		Comment comment = Comment.getComment(commentID);
 		if (comment == null)
@@ -103,6 +106,24 @@ public class ICommentImpl extends SessionServlet implements IComment {
 			throw new NoAccessException();
 
 		comment.delete();
+	}
+
+	@Override
+	public boolean canComment(long commentID) throws NotFoundException {
+		Comment comment = Comment.getComment(commentID);
+		if (comment == null)
+			throw new NotFoundException();
+
+		Session session = getSession();
+		Snippet snippet = Snippet.getSnippet(comment.snippet);
+		if (!session.getPolicy().canRateSnippet(session, snippet))
+			return false;
+
+		User user = session.getUser();
+		if (user == null)
+			return false;
+
+		return true;
 	}
 
 }

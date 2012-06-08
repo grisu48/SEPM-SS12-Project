@@ -11,14 +11,16 @@ public class XComment implements IsSerializable {
 	public int positiveVotes;
 	public int negativeVotes;
 	public Date time;
+	public long id;
 
 	private XComment() {
 
 	}
 
-	public XComment(String owner, long snippet, String message,
+	public XComment(String owner, long id, long snippet, String message,
 			int positiveVotes, int negativeVotes, Date time) {
 		this.owner = owner;
+		this.id = id;
 		this.snippet = snippet;
 		this.message = message;
 		this.positiveVotes = positiveVotes;

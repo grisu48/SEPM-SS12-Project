@@ -150,6 +150,7 @@ public class SourceDownloader extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		PrintWriter writer = null;
+		Ticket ticket = null;
 
 		try {
 			writer = resp.getWriter();
@@ -157,7 +158,7 @@ public class SourceDownloader extends HttpServlet {
 			long ticketid = extractTicketId(req); // Throws
 													// IllegalArgumentException
 													// if invalid
-			Ticket ticket;
+
 			synchronized (tickets) {
 				if (!tickets.containsKey(ticketid))
 					throw new IllegalArgumentException("Ticket id not found");
@@ -170,12 +171,11 @@ public class SourceDownloader extends HttpServlet {
 			writer.print(ticket.code);
 			writer.flush();
 
-			// If this has been reached, the ticket can be invalidated
-			ticket.delete();
-
 		} catch (IOException e) {
 			// Ignore it - Maybe the stream is closed by other side while
 			// downloading
+			writer = null;
+			return;
 		} catch (IllegalArgumentException e) {
 			// Illegal ticket
 			writer.println("<head>");
@@ -190,12 +190,29 @@ public class SourceDownloader extends HttpServlet {
 			writer.println("<p>Re-check the download link and try again.</p>");
 			writer.println("<p>It's also possible that your ticket has expired</p>");
 			writer.println("</body>");
+			return;
+		} catch (Exception e) {
+			writer.println("<head>");
+			writer.println("<title>org.smartsnip - Code downloader</title>");
+			writer.println("</head>");
+
+			writer.println("<body>");
+			writer.println("<h1>500 - Server error</h1>");
+			writer.println("<p>There was an unhandled exception on the server:</p>");
+			writer.println("<p>" + e.getClass().getName() + ": <b>"
+					+ e.getMessage() + "</b></p>");
+			e.printStackTrace(writer);
+			writer.println("</body>");
+			resp.setStatus(500);
 		} finally {
 			if (writer != null) {
 				writer.flush();
 				writer.close();
 			}
 		}
+
+		// Ticket downloaded successfully
+		ticket.delete();
 	}
 
 	/**

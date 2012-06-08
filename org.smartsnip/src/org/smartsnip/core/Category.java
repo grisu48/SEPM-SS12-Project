@@ -388,9 +388,10 @@ public class Category {
 		XCategory result = null;
 		List<String> childs = new ArrayList<String>();
 		List<Category> subTree = getSubCategories();
-		for (Category root : subTree) {
-			childs.add(root.name);
-		}
+		if (subTree != null)
+			for (Category root : subTree) {
+				childs.add(root.name);
+			}
 
 		if (isRoot()) {
 			result = new XCategory(name, description, null, childs);

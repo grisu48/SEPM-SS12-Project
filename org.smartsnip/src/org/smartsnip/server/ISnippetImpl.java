@@ -56,6 +56,7 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 		if (snippet == null)
 			return null;
 
+		snippet.increaseViewCounter();
 		return snippet.toXSnippet();
 	}
 

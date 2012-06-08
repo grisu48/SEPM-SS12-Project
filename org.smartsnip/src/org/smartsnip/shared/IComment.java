@@ -46,7 +46,8 @@ public interface IComment extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown, if there is an access denial on the server
 	 */
-	public List<XComment> getComments(long snippethash, int start, int count) throws NoAccessException;
+	public List<XComment> getComments(long snippethash, int start, int count)
+			throws NoAccessException;
 
 	/**
 	 * Votes positive for a comment given by it's id If the comment has not been
@@ -93,7 +94,8 @@ public interface IComment extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             If an access denial happens on the server
 	 */
-	public void edit(long commentID, String newMessage) throws NoAccessException;
+	public void edit(long commentID, String newMessage)
+			throws NoAccessException;
 
 	/**
 	 * Deletes a comment, identified by its hash id. If the comment is not
@@ -105,4 +107,11 @@ public interface IComment extends RemoteService, IsSerializable {
 	 *             Thrown, if a access denial was thrown on the server
 	 */
 	public void delete(long commentID) throws NoAccessException;
+
+	/**
+	 * Checks if the current session/user can comment on a comment
+	 * 
+	 * @return
+	 */
+	public boolean canComment(long commentID) throws NotFoundException;
 }
