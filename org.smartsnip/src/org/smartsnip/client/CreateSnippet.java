@@ -100,10 +100,13 @@ public class CreateSnippet extends Composite {
 
 					@Override
 					public void onSuccess(List<XCategory> result) {
-						if (result == null)
-							return;
+						if (result == null) { 
+							return; 
+						}
+							
 						for (XCategory category : result) {
 							lstCategory.addItem(category.name);
+							lstCategory.addItem("Category");
 						}
 					}
 
@@ -115,6 +118,7 @@ public class CreateSnippet extends Composite {
 				});
 
 		lstCategory.addItem("Category");
+		
 
 		txtTag = new TextBox();
 		txtTag.setStyleName("txtTag");
