@@ -694,13 +694,13 @@ public class SnippetFactory {
 	}
 
 	/**
-	 * Implementation of {@link IPersistence#getRandomSnippet(Long)}
+	 * Implementation of {@link IPersistence#getRandomSnippet(double)}
 	 * 
 	 * @param random
 	 *            a normalized random number (0 <= random <= 1)
 	 * @return a snippet
 	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getRandomSnippet(java.lang.Long)
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getRandomSnippet(double)
 	 */
 	static Snippet getRandomSnippet(double random) throws IOException {
 		Session session = DBSessionFactory.open();
