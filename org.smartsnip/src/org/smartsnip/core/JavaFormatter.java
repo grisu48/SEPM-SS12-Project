@@ -30,6 +30,10 @@ public class JavaFormatter extends HTMLFormatter {
 		result = new StringBuffer();
 		result.append("<code>");
 
+		// remove html tag marker
+		code = code.replace("<", "&lt;");
+		code = code.replace(">", "&gt;");
+		
 		// Format keywords
 		for (String keyword : keywords) {
 			code = code.replace(keyword, "<b>" + keyword + "</b>");
