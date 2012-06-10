@@ -40,6 +40,11 @@ public class Snippet {
 	/** Averaged rating as cached value. */
 	private transient Float averageRating = null;
 
+	/** The snippet of the day */
+	private transient static Snippet snippetOfDay = null;
+	/** Time when the last time the snippet has been refreshed */
+	private transient static long snippetOfDayRefreshTime = 0;
+
 	/**
 	 * DB constructor must initialise all fields.
 	 * 
@@ -734,9 +739,25 @@ public class Snippet {
 	/**
 	 * @return the snippet of the day
 	 */
-	public static Snippet getSnippetOfDay() {
-		// TODO Implement me
-		return null;
+	public synchronized static Snippet getSnippetOfDay() {
+		if (snippetOfDay != null) {
+			// Check if it is fresh
+			long delay = System.currentTimeMillis() - snippetOfDayRefreshTime;
+			if (delay < 1000 * 60 * 60 * 24)
+				return snippetOfDay;
+		}
+
+		try {
+			snippetOfDay = Persistence.getInstance().getRandomSnippet(
+					Math.random());
+			snippetOfDayRefreshTime = System.currentTimeMillis();
+		} catch (IOException e) {
+			System.err.println("IOException fetching randomized snippet: "
+					+ e.getMessage());
+			e.printStackTrace(System.err);
+		}
+
+		return snippetOfDay;
 	}
 
 	/**
