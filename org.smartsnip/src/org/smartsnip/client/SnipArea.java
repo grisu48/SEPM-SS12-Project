@@ -27,6 +27,7 @@ public class SnipArea extends Composite {
 	private final HorizontalPanel horPanel;
 	private final ScrollPanel scrPanel;
 	private final Grid properties;
+	private final Grid anchorGrid;
 	private final Label title;
 	private final Label description;
 	private final Label language;
@@ -50,11 +51,17 @@ public class SnipArea extends Composite {
 		vertPanel = new VerticalPanel();
 		horPanel = new HorizontalPanel();
 		scrPanel = new ScrollPanel();
-		properties = new Grid(4, 2);
-		title = new Label("titel");
+		anchorGrid = new Grid(3, 1);
+		properties = new Grid(2,5);
+		properties.setStyleName("properties");
+		title = new Label(mySnip.title);
+		title.setStyleName("txt");
 		description = new Label(mySnip.description);
+		description.setStyleName("txt");
 		language = new Label(mySnip.language);
+		language.setStyleName("txt");
 		license = new Label(mySnip.license);
+		license.setStyleName("txt");
 		snipFull = new HTMLPanel(mySnip.codeHTML);
 		anchViewFull = new Anchor("View full code");
 		anchDownload = new Anchor("Download source");
@@ -62,16 +69,28 @@ public class SnipArea extends Composite {
 		btnFav = new Button("Add to Favourites");
 		btnEdit = new Button("Edit");
 		btnDelete = new Button("Delete");
-		lblAverageRating = new Label("Rating: " + snippet.rating);
+		lblAverageRating = new Label("" + snippet.rating);
+		lblAverageRating.setStyleName("txt");
 
-		properties.setWidget(0, 0, title);
-		properties.setWidget(1, 0, description);
-		properties.setWidget(2, 0, language);
-		properties.setWidget(3, 0, license);
-		properties.setWidget(0, 1, anchViewFull);
-		properties.setWidget(1, 1, anchDownload);
-		properties.setWidget(2, 1, rating);
-		properties.setWidget(3, 1, lblAverageRating);
+		
+
+		
+		anchorGrid.setWidget(0, 0, anchViewFull);
+		anchorGrid.setWidget(1, 0, anchDownload);
+		anchorGrid.setWidget(2, 0, rating);
+		
+		
+		properties.setWidget(0, 0, new Label("Title"));
+		properties.setWidget(1, 0, title);
+		properties.setWidget(0, 1, new Label("Description"));
+		properties.setWidget(1, 1, description);
+		properties.setWidget(0, 2, new Label("Language"));
+		properties.setWidget(1, 2, language);
+		properties.setWidget(0, 3, new Label("License"));
+		properties.setWidget(1, 3, license);
+		properties.setWidget(0, 4, new Label("Average Rating"));
+		properties.setWidget(1, 4, lblAverageRating);
+	
 
 		btnFav.addClickHandler(new ClickHandler() {
 			@Override
@@ -234,11 +253,18 @@ public class SnipArea extends Composite {
 					}
 				});
 
+		horPanel.add(btnFav);
+		horPanel.add(btnDelete);
+		horPanel.add(btnEdit);
+		horPanel.add(anchorGrid);
+		
+		scrPanel.add(snipFull);
+		
 		vertPanel.add(properties);
 		vertPanel.add(scrPanel);
 		vertPanel.add(horPanel);
-		scrPanel.add(snipFull);
-		horPanel.add(btnFav);
+		
+		
 
 		initWidget(vertPanel);
 		// Give the overall composite a style name.

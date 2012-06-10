@@ -38,10 +38,6 @@ public class ShortSnipCell extends AbstractCell<XSnippet> {
 		sb.appendHtmlConstant("<tr><td>");
 		sb.appendHtmlConstant(snip.license);
 		sb.appendHtmlConstant("</td></tr>");
-		// Add code
-		sb.appendHtmlConstant("<tr><td>");
-		sb.appendHtmlConstant(snip.codeHTML);
-		sb.appendHtmlConstant("</td></tr>");
 
 		sb.appendHtmlConstant("</table>");
 		// Add space

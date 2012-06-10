@@ -465,3 +465,24 @@ background-color: #A9C34A;
 color: white;
 height: 80px;
 }
+
+.properties {
+	margin-bottom: 20px;
+}
+
+.properties td {
+	
+	padding-left:5px;
+	padding-right:5px;
+	
+}
+
+.properties .txt {
+	font-family:Arial;
+	margin-left:3px;
+}
+
+.properties .gwt-Label {
+	font-family:"Lato";
+	font-weight:700;
+}
