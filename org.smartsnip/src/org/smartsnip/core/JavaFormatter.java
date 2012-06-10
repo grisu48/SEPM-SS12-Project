@@ -31,6 +31,7 @@ public class JavaFormatter extends HTMLFormatter {
 		result.append("<code>");
 
 		// remove html tag marker
+		code = code.replace("&", "&amp;");
 		code = code.replace("<", "&lt;");
 		code = code.replace(">", "&gt;");
 		
