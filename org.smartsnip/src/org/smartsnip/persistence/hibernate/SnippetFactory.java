@@ -703,35 +703,39 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getRandomSnippet(double)
 	 */
 	static Snippet getRandomSnippet(double random) throws IOException {
+		if (random < 0 || random > 1) {
+			throw new IOException(
+					"Random Query failed: the random number must be of the interval [0, 1], but is: "
+							+ random);
+		}
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
-		Snippet result;
+		Snippet result = null;
 
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
 			DBQuery query = new DBQuery(session);
 			DBSnippet entity = new DBSnippet();
-			query.addParameter("random", random);
-			entity = (DBSnippet) query
-					.customSingleQueryRead(
-							"from DBSnippet where snippetId >= "
-									+ "(select floor(max(snippetId)) * :random from DBSnippet)",
-							DBQuery.QUERY_NOT_NULL);
-
-			result = helper
-					.createSnippet(entity.getSnippetId(), entity.getOwner(),
-							entity.getHeadline(), entity.getDescription(),
-							CategoryFactory.fetchCategory(session, entity)
-									.getName(), TagFactory.fetchTags(helper,
-									session, entity.getSnippetId()),
-							CommentFactory.fetchCommentIds(session,
-									entity.getSnippetId()),
-							fetchLicense(helper, session, entity)
-									.getShortDescr(), entity.getViewcount(),
-							entity.getRatingAverage());
-			result.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper,
-					session, result));
+			double offset = (query.count(entity).doubleValue() - 0.5) * random;
+			query.reset();
+			List<DBSnippet> snips = query.from(entity,
+					new Double(offset).intValue(), 1);
+			if (snips != null && !snips.isEmpty()) {
+				entity = snips.get(0);
+				result = helper.createSnippet(entity.getSnippetId(), entity
+						.getOwner(), entity.getHeadline(), entity
+						.getDescription(),
+						CategoryFactory.fetchCategory(session, entity)
+								.getName(), TagFactory.fetchTags(helper,
+								session, entity.getSnippetId()),
+						CommentFactory.fetchCommentIds(session,
+								entity.getSnippetId()),
+						fetchLicense(helper, session, entity).getShortDescr(),
+						entity.getViewcount(), entity.getRatingAverage());
+				result.setCodeWithoutWriting(CodeFactory.fetchNewestCode(
+						helper, session, result));
+			}
 
 			tx.commit();
 		} catch (RuntimeException e) {

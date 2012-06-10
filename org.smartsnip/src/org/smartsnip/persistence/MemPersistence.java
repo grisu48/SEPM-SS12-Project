@@ -870,7 +870,7 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public Snippet getRandomSnippet(double random) throws IOException {
 		Snippet result = null;
-		int target = (int)((double)this.allSnippets.size() * random);
+		int target = new Double(new Long(this.allSnippets.size()).doubleValue() * random).intValue();
 		for (Iterator<Snippet> itr = this.allSnippets.values().iterator();itr.hasNext() && target > 0; --target) {
 			result = itr.next();
 		}

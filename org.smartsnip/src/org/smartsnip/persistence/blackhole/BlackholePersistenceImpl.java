@@ -814,8 +814,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 
 	@Override
 	public Snippet getRandomSnippet(double random) throws IOException {
-		return this.helper.createSnippet(new Long(
-				(int) ((double) 2000 * random)),
+		return this.helper.createSnippet(new Double(2000D * random).longValue(),
 				this.staticUser1.getUsername(), "The Header", "Some Content",
 				"undefined", new ArrayList<Tag>(), new ArrayList<Long>(),
 				"license free", 0, 0F);

@@ -61,7 +61,6 @@ public class SqlPersistenceImplTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		System.out.println(MD5.md5("bullshit"));
 		// change the log level
 		LogManager.getRootLogger().setLevel(Level.ALL);
 		log.info("SqlPersistence test cases - begin tests");
@@ -949,9 +948,17 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetSnippet() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		Snippet snip = instance.getRandomSnippet(0);
+		Snippet snip2 = instance.getRandomSnippet(0.345);
+		Snippet snip3 = instance.getRandomSnippet(0.99999999999);
+		Snippet snip4 = instance.getRandomSnippet(1);
+		System.out.println(snip);
+		System.out.println(snip2);
+		System.out.println(snip3);
+		System.out.println(snip4);
+		
 	}
 
 	/**
