@@ -39,8 +39,6 @@
   </servlet-mapping>
   
   
-  ICommentImpl
-  
    <servlet>
     <servlet-name>Category</servlet-name>
     <servlet-class>org.smartsnip.server.ICategoryImpl</servlet-class>

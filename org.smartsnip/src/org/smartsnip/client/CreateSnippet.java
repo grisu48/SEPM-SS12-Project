@@ -168,7 +168,7 @@ public class CreateSnippet extends Composite {
 
 		pnlControl.add(btCreate);
 		pnlControl.add(btCancel);
-		pnlControl.add(lblStatus);
+	
 
 		pnlProp.add(lstLanguage);
 		pnlProp.add(lstCategory);
@@ -189,6 +189,7 @@ public class CreateSnippet extends Composite {
 		pnlRootPanel.add(pnlTags);
 		pnlRootPanel.add(pnlAddedTags);
 		pnlRootPanel.add(pnlControl);
+		pnlRootPanel.add(lblStatus);
 
 		initWidget(pnlRootPanel);
 	}
