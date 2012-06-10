@@ -177,12 +177,12 @@ public class SnippetFactory {
 	 * @param shortDescription
 	 * @param fullText
 	 * @param flags
-	 * @throws IOException 
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeLicense(java.lang.String,
 	 *      java.lang.String, int)
 	 */
-	static void writeLicense(String shortDescription, String fullText,
-			int flags) throws IOException {
+	static void writeLicense(String shortDescription, String fullText, int flags)
+			throws IOException {
 		Session session = DBSessionFactory.open();
 
 		Transaction tx = null;
@@ -379,7 +379,7 @@ public class SnippetFactory {
 	 * 
 	 * @param shortDescription
 	 * @param flags
-	 * @throws IOException 
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#removeLicense(String,
 	 *      int)
 	 */
@@ -441,7 +441,8 @@ public class SnippetFactory {
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount(), entity.getRatingAverage());
-				snippet.setCode(CodeFactory.fetchNewestCode(helper, session, snippet));
+				snippet.setCode(CodeFactory.fetchNewestCode(helper, session,
+						snippet));
 				result.add(snippet);
 			}
 
@@ -500,8 +501,8 @@ public class SnippetFactory {
 								snip.getSnippetId()),
 						fetchLicense(helper, session, snip).getShortDescr(),
 						snip.getViewcount(), snip.getRatingAverage());
-				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
-						snippet));
+				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(
+						helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -564,7 +565,8 @@ public class SnippetFactory {
 						CommentFactory.fetchCommentIds(session, id),
 						fetchLicense(helper, session, snip).getShortDescr(),
 						snip.getViewcount(), snip.getRatingAverage());
-				snippet.setCode(CodeFactory.fetchNewestCode(helper, session, snippet));
+				snippet.setCode(CodeFactory.fetchNewestCode(helper, session,
+						snippet));
 				result.add(snippet);
 			}
 
@@ -629,8 +631,8 @@ public class SnippetFactory {
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount(), entity.getRatingAverage());
-				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
-						snippet));
+				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(
+						helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -675,9 +677,61 @@ public class SnippetFactory {
 							CommentFactory.fetchCommentIds(session,
 									entity.getSnippetId()),
 							fetchLicense(helper, session, entity)
-									.getShortDescr(), entity.getViewcount(), entity.getRatingAverage());
-			result.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper, session,
-					result));
+									.getShortDescr(), entity.getViewcount(),
+							entity.getRatingAverage());
+			result.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper,
+					session, result));
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
+	}
+
+	/**
+	 * Implementation of {@link IPersistence#getRandomSnippet(Long)}
+	 * 
+	 * @param random
+	 *            a normalized random number (0 <= random <= 1)
+	 * @return a snippet
+	 * @throws IOException
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getRandomSnippet(java.lang.Long)
+	 */
+	static Snippet getRandomSnippet(double random) throws IOException {
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		Snippet result;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBSnippet entity = new DBSnippet();
+			query.addParameter("random", random);
+			entity = (DBSnippet) query
+					.customSingleQueryRead(
+							"from DBSnippet where snippetId >= "
+									+ "(select floor(max(snippetId)) * :random from DBSnippet)",
+							DBQuery.QUERY_NOT_NULL);
+
+			result = helper
+					.createSnippet(entity.getSnippetId(), entity.getOwner(),
+							entity.getHeadline(), entity.getDescription(),
+							CategoryFactory.fetchCategory(session, entity)
+									.getName(), TagFactory.fetchTags(helper,
+									session, entity.getSnippetId()),
+							CommentFactory.fetchCommentIds(session,
+									entity.getSnippetId()),
+							fetchLicense(helper, session, entity)
+									.getShortDescr(), entity.getViewcount(),
+							entity.getRatingAverage());
+			result.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper,
+					session, result));
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -695,7 +749,7 @@ public class SnippetFactory {
 	 * 
 	 * @param shortDescription
 	 * @return the license file as string
-	 * @throws IOException 
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getLicense(String)
 	 */
 	static String getLicense(String shortDescription) throws IOException {

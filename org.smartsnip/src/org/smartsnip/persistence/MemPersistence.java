@@ -868,6 +868,16 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
+	public Snippet getRandomSnippet(double random) throws IOException {
+		Snippet result = null;
+		int target = (int)((double)this.allSnippets.size() * random);
+		for (Iterator<Snippet> itr = this.allSnippets.values().iterator();itr.hasNext() && target > 0; --target) {
+			result = itr.next();
+		}
+		return result;
+	}
+	
+	@Override
 	public void removeUser(User user, int mode) throws IOException {
 		checkFail();
 		if (user == null)

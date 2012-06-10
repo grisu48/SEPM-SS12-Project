@@ -835,15 +835,26 @@ public interface IPersistence {
 	public List<Snippet> getFavorited(User user) throws IOException;
 
 	/**
-	 * get the snippet with the given tag or null, if not existing
+	 * get the snippet with the given id or null, if not existing
 	 * 
 	 * @param id
-	 *            hash id of the snippet
+	 *            id of the snippet
 	 * @return the snippet with the given tag or null, if not existing
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
 	public Snippet getSnippet(Long id) throws IOException;
+
+	/**
+	 * get a random snippet
+	 * 
+	 * @param random
+	 *            a normalized random number (0 <= random <= 1)
+	 * @return the snippet with the given tag or null, if not existing
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public Snippet getRandomSnippet(double random) throws IOException;
 
 	/**
 	 * get all snippets which contain all of the given tags in their tag-list

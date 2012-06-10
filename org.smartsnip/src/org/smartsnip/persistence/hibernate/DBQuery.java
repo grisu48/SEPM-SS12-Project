@@ -1262,6 +1262,39 @@ class DBQuery {
 	}
 
 	/**
+	 * Perform a query with a custom HQL query string. This query returns a
+	 * single result. The parameters must be set with
+	 * {@link #addParameter(String, Object)} before calling this method . Call
+	 * {@link #initialize()} after adding the parameters.
+	 * 
+	 * @param queryString
+	 *            must be a valid HQL query. The parameters in the
+	 *            parameters-list must be equal to the parameters in the query
+	 *            string.
+	 * @param flags
+	 *            If set to {@code true} the query fails on a null result. Use
+	 *            the constants {@link #QUERY_NOT_NULL}, {@link #QUERY_NULLABLE}
+	 *            and {@link #QUERY_UNIQUE_RESULT}. Use a bitwise or to set
+	 *            multiple flags.
+	 * @return a single entity
+	 * @throws NullPointerException
+	 *             if the query results to null and the {@link #QUERY_NOT_NULL}
+	 *             flag is set.
+	 * @throws NonUniqueResultException
+	 *             if the underlying SQL-query returns a non unique result and
+	 *             the {@link #QUERY_UNIQUE_RESULT} flag is set.
+	 */
+	Object customSingleQueryRead(String queryString, int flags) {
+		if (this.initialized) {
+			throw new IllegalStateException(
+					"Malformed query caused by multible initialization.");
+		}
+		this.initialize();
+		Query query = buildCustomQuery(queryString);
+		return singleQuery(query, flags);
+	}
+
+	/**
 	 * Perform a query with a custom HQL query string. The parameters must be
 	 * set with {@link #addParameter(String, Object)} before calling this method
 	 * . Call {@link #initialize()} after adding the parameters.

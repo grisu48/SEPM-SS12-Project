@@ -482,6 +482,14 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getRandomSnippet(double)
+	 */
+	@Override
+	public Snippet getRandomSnippet(double random) throws IOException {
+		return SnippetFactory.getRandomSnippet(random);
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getComment(java.lang.Long)
 	 */
 	@Override
@@ -666,6 +674,9 @@ public class SqlPersistenceImpl implements IPersistence {
 		return TagFactory.getTagsCount();
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#close()
+	 */
 	@Override
 	public void close() throws IOException {
 		try {
