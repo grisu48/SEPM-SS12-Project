@@ -1043,9 +1043,12 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetAllCategories() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		List<Category> cat = instance.getAllCategories();
+		for(Category c: cat) {
+			System.out.println("Category: " + c.getName() + " Parent: " + c.getParentName());
+		}
 	}
 
 	/**

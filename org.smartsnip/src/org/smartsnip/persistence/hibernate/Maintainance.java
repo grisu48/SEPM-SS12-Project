@@ -57,7 +57,7 @@ public class Maintainance {
 	public static void fullTextMassIndexer(int batchSizeToLoadObjects,
 			int threadsToLoadObjects, int idFetchSize,
 			int threadsForSubsequentFetching) throws InterruptedException {
-		log.info("Build Index for Hibernate Search with a mass-indexer");
+		log.info("Build Index for Hibernate Search with the full-text mass-indexer");
 		Session session = DBSessionFactory.open();
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
 		fullTextSession.createIndexer()
@@ -67,6 +67,7 @@ public class Maintainance {
 				.idFetchSize(idFetchSize)
 				.threadsForSubsequentFetching(threadsForSubsequentFetching)
 				.startAndWait();
+		log.info("Indexer fullTextMassIndexer exits now.");
 		DBSessionFactory.close(session);
 	}
 
@@ -91,18 +92,5 @@ public class Maintainance {
 	 */
 	public static void fullTextMassIndexer() throws InterruptedException {
 		fullTextMassIndexer(25, 2, 150, 1);
-	}
-	
-	/**
-	 * start the indexer on the console
-	 * @param args 
-	 */
-	public static void main(String[] args) {
-		try {
-			fullTextMassIndexer();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		DBSessionFactory.closeFactory();
 	}
 }

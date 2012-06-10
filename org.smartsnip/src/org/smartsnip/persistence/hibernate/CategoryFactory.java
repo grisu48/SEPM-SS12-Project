@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -187,28 +189,24 @@ public class CategoryFactory {
 			tx = session.beginTransaction();
 			DBQuery query = new DBQuery(session);
 			DBCategory entity = new DBCategory();
+			Long parent;
+			String parentName;
 
-			List<Pair<Pair<Long, Long>, Category>> cat = new ArrayList<Pair<Pair<Long, Long>, Category>>();
+			Map<Long, DBCategory> categoryMap = new TreeMap<Long, DBCategory>();
 			for (Iterator<DBCategory> iterator = query.iterate(entity); iterator
 					.hasNext();) {
 				entity = iterator.next();
-				cat.add(new Pair<Pair<Long, Long>, Category>(
-						new Pair<Long, Long>(entity.getCategoryId(), entity
-								.getParentId()),
-						helper.createCategory(entity.getName(),
-								entity.getDescription(), null)));
+				categoryMap.put(entity.getCategoryId(), entity);
 			}
-			for (Pair<Pair<Long, Long>, Category> c : cat) {
-				if (c.first.second != null) { // parentId != null
-					for (Pair<Pair<Long, Long>, Category> p : cat) {
-						if (p.first.first == c.first.second) {
-							c.second.setParent(p.second);
-						}
-					}
+			for(Map.Entry<Long, DBCategory> entry: categoryMap.entrySet()) {
+				if((parent = entry.getValue().getParentId()) != null) {
+					parentName = categoryMap.get(parent).getName();
+				} else {
+					parentName = null;
 				}
-				result.add(c.second);
+				result.add(helper.createCategory(entry.getValue().getName(),
+								entry.getValue().getDescription(), parentName));				
 			}
-
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
