@@ -82,11 +82,7 @@ height:150px;
 	color:#fffeeb;
 }
 
-#toollink {
-	color:black;
-	font-syle:normal;
-	
-}
+
 
 #user {
 margin:10px;
@@ -105,12 +101,11 @@ float:right;
 }
 
 #data {
+padding-top:20px;
 background-color:white;
 padding-left:80px;
 padding-right:80px;
 padding-bottom:20px;
-
-
 min-width:700px;
 min-height:400px;
 }
@@ -302,7 +297,7 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 .snipArea {
-	width: 800px;
+	width: 600px;
 	margin: 10px;
 	padding: 0px;
 }
@@ -436,4 +431,37 @@ a.tag:visited {}
 a.tag:active {}
 a.tag:hover {color:red}
 
+a.toollink:link {
+	margin:3px;
+	font-size:70%;
+	text-decoration: none;
+	color:black;
+}
+a.toollink:visited {}
+a.toollink:active {}
+a.toollink:hover {color:blue}
 
+
+.commentField {
+	margin:7px;
+	padding:2px;
+	border-top-style:solid;
+	border-color:#e6e6e6;
+	border-width:1px;
+}
+
+.commentArea .gwt-TextArea {
+width: 243px;
+margin-top: 10px;
+margin-bottom: 10px;
+height: 60px;
+}
+
+.commentArea .gwt-Button {
+padding: 10px;
+margin: 10px;
+background-image: none;
+background-color: #A9C34A;
+color: white;
+height: 80px;
+}

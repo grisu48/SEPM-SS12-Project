@@ -49,6 +49,8 @@ public class CommentField extends Composite {
 		anchRateNegative = new Anchor("Rate negative");
 		anchUnvote = new Anchor("Unvote");
 		anchEdit = new Anchor("Edit");
+		anchUnvote.setStyleName("toollink");
+		anchEdit.setStyleName("toollink");
 
 		horToolbar = new HorizontalPanel();
 

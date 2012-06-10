@@ -44,7 +44,8 @@ public class ShortSnipCell extends AbstractCell<XSnippet> {
 		sb.appendHtmlConstant("</td></tr>");
 
 		sb.appendHtmlConstant("</table>");
-
+		// Add space
+		sb.appendHtmlConstant("<br />");
 	}
 
 }
