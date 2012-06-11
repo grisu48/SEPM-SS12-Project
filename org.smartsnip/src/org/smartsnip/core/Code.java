@@ -290,4 +290,12 @@ public abstract class Code {
 		// TODO get downloadable source from persistence
 		return "";
 	}
+
+	/**
+	 * Adds a source code file to this code segment
+	 */
+	public void applySourceCode(String filename) throws IOException {
+		// TODO Auto-generated method stub
+
+	}
 }

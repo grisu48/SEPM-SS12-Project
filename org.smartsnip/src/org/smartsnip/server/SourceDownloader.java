@@ -1,6 +1,11 @@
 package org.smartsnip.server;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,9 +14,16 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.smartsnip.core.Snippet;
+import org.smartsnip.core.User;
+import org.smartsnip.shared.ISession;
+import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.NotFoundException;
 
 public class SourceDownloader extends HttpServlet {
 
@@ -19,6 +31,15 @@ public class SourceDownloader extends HttpServlet {
 	private static final TimerTask expirationTask;
 	/** Timer for checking if tickets are expired */
 	private static final Timer expirationTimer;
+
+	/** Associated session for this servlet call */
+	private Session session = null;
+
+	/** Snippet request argument header */
+	public static final String SNIPPET_REQUEST = "snip_id";
+
+	/** Max file size */
+	public static final long maxFileBytes = 1024 * 1024 * 25;
 
 	static {
 		expirationTimer = new Timer(true);
@@ -236,5 +257,217 @@ public class SourceDownloader extends HttpServlet {
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("Ticket id is invalid", e);
 		}
+	}
+
+	/**
+	 * Gets a cookie from the HTTP servlet session.
+	 * 
+	 * If the name is null or enmpty, null is returned.
+	 * 
+	 * @param name
+	 *            name of the cookie
+	 * @return the stored cookie, or null if not existing. Returns also null, if
+	 *         the given name is null or empty
+	 */
+	protected Cookie getCookie(String name, HttpServletRequest request) {
+		if (name == null || name.isEmpty())
+			return null;
+
+		if (request == null) {
+			System.err.println("getThreadLocalRequest() delivered NULL");
+			return null;
+		}
+
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals(name))
+					return cookie;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the session for this servlet object
+	 * 
+	 * @return the session for this revlet object
+	 */
+	protected final Session getSession(HttpServletRequest request) {
+		if (session != null)
+			return session;
+
+		synchronized (this) {
+			/*
+			 * Thread-Saftey: This call MUST be executed once again in the
+			 * synchronized block!!
+			 */
+			if (session != null)
+				return session;
+
+			Cookie cookie = getCookie(ISession.cookie_Session_ID, request);
+
+			if (cookie == null)
+				return null;
+			else {
+				String sid = cookie.getValue();
+				if (sid == null) {
+					session = Session.getStaticGuestSession();
+				} else {
+					session = Session.getSession(sid);
+				}
+			}
+
+			// Does a activity on the running session
+			session.doActivity();
+			return session;
+		}
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+		// Post occurs, if a user wants to upload a new source code
+
+		PrintWriter writer = null;
+		try {
+			writer = resp.getWriter();
+
+			Session session = getSession(req);
+			User user = session.getUser();
+			if (session == null || user == null)
+				throw new NoAccessException();
+
+			// Get the snippet associated to the download link
+			Snippet snippet = null;
+			{
+				long snipID;
+				String snippet_id = req.getParameter(SNIPPET_REQUEST);
+				if (snippet_id == null || snippet_id.isEmpty())
+					throw new IllegalArgumentException(
+							"Snippet id not definied");
+				try {
+					snipID = Long.parseLong(snippet_id);
+				} catch (NumberFormatException e) {
+					throw new IllegalArgumentException(
+							"Snippet ID not a valid number", e);
+				}
+				snippet = Snippet.getSnippet(snipID);
+				if (snippet == null)
+					throw new IllegalArgumentException("Snippet not found",
+							new NotFoundException());
+
+			}
+
+			// Check if the current session is privileged to edit the snippet
+			if (!session.getPolicy().canEditSnippet(session, snippet))
+				throw new NoAccessException(
+						"Not privileged to edit the snippet");
+
+			String filename = getNewTempFile(snippet);
+			File file = new File(filename);
+
+			// Response header
+			writer.println("<head>");
+			writer.println("<title>Smartsnip.org - Snippet uploader</title>");
+			writer.println("</head>");
+
+			writer.println("<body>");
+			writer.println("<p><b>Uploading file to snippet <i>"
+					+ snippet.getName() + "</i> ... </b></p>");
+
+			long receivedBytes = 0;
+			try {
+				if (file.exists())
+					file.delete();
+
+				OutputStream output = new BufferedOutputStream(
+						new FileOutputStream(file, false));
+				InputStream input = req.getInputStream();
+				byte[] buffer = new byte[1024];
+				int len = 0;
+
+				do {
+					len = input.read(buffer);
+					if (len <= 0)
+						break;
+					receivedBytes += len;
+					if (receivedBytes > maxFileBytes)
+						break;
+
+					// Write
+					output.write(buffer);
+				} while (true);
+
+				output.flush();
+				input.close();
+				output.close();
+
+			} catch (IOException e) {
+				// File system IOException
+
+				if (receivedBytes > 0)
+					writer.println("<p>An <b>IOExcepton</b> occured after "
+							+ receivedBytes + " bytes of data</p>");
+
+				// Handle as normal IOException
+				throw e;
+			}
+
+			// Check if quota has exceeded
+			if (receivedBytes > maxFileBytes) {
+				writer.println("<p> Max. file quota (" + maxFileBytes
+						+ " bytes) exceeded. Upload cancelled </p>");
+			} else {
+				// Export to user
+				snippet.getCode().applySourceCode(file.getAbsolutePath());
+
+				// Result
+				writer.println("<p>File uploaded successfully</p>");
+			}
+
+			writer.println("</body>");
+			file.delete();
+
+		} catch (IOException e) {
+			if (writer != null) {
+				writer.println("<hr>");
+				writer.println("<p> IOException: " + e.getMessage() + "</p>");
+				writer.print("<p>");
+				e.printStackTrace(writer);
+				writer.println("</p>");
+			}
+		} catch (NoAccessException e) {
+			// Access denied
+			writer.println("Access denial");
+			if (e.getMessage() != null)
+				writer.println(e.getMessage());
+
+		} catch (IllegalArgumentException e) {
+			// An argument is not valid
+			writer.println("Illegal argument: " + e.getMessage());
+		} finally {
+			if (writer != null) {
+				writer.flush();
+				writer.close();
+			}
+		}
+	}
+
+	/**
+	 * Creates a temp file for a given snippet
+	 * 
+	 * @param snippet
+	 *            the temp file is created for
+	 * @return the temp filename
+	 */
+	private String getNewTempFile(Snippet snippet) {
+		String filename = "snippet_temp_" + snippet.getHashId();
+		int index = 0;
+		File file;
+		do {
+			file = new File(filename + (index++) + ".tmp");
+		} while (file.exists());
+
+		return file.getAbsolutePath();
 	}
 }

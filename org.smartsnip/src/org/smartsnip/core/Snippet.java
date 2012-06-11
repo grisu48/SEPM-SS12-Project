@@ -810,4 +810,25 @@ public class Snippet {
 		/* Write out */
 		refreshDB();
 	}
+
+	/**
+	 * 
+	 * @return get the source code filename of the snippet, or null if no source
+	 *         is attached to the snippet
+	 */
+	public String getSourceFilename() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Creates a new source code filename for the snippet. The snippet is after
+	 * this call associated to the new source code filename. A file is not
+	 * created, that has to be done outside this method
+	 * 
+	 * @return the filename of the new file
+	 */
+	public String createNewSourceFilename() {
+		return "snippet_source_file_" + getHashId();
+	}
 }
