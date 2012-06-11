@@ -4,6 +4,7 @@
  */
 package org.smartsnip.persistence;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -344,6 +345,20 @@ public interface IPersistence {
 	 *             at a problem committing the data
 	 */
 	public void writeCode(List<Code> codes, int flags) throws IOException;
+
+	/**
+	 * Persist a file with the source code. The code with the given
+	 * {@code codeId} must exist in the database.
+	 * 
+	 * @param codeId the Id
+	 * @param file the file to persist
+	 * @param flags
+	 *            the constraints for the write access. more than one constraint
+	 *            can be added by a bitwise or connection.
+	 * @throws IOException
+	 *             at a problem committing the data
+	 */
+	public void writeCodeFile(Long codeId, File file, int flags) throws IOException;
 
 	/**
 	 * Persist a single Category-dataset.
@@ -835,6 +850,24 @@ public interface IPersistence {
 	public List<Snippet> getFavorited(User user) throws IOException;
 
 	/**
+	 * get all snippets
+	 * 
+	 * @param start
+	 *            the starting index of the results set, null or 0 for start at
+	 *            the first index
+	 * @param count
+	 *            the number of entries, null if no upper limit is wanted
+	 * @param sorting
+	 *            the result is sorted by the given order. Available are the
+	 *            sorting constants {@link #SORT_UNSORTED}, {@link #SORT_LATEST}
+	 *            , {@link #SORT_MOSTVIEWED} and {@link #SORT_BEST_RATED}.
+	 * @return all snippets of the given range
+	 * @throws IOException
+	 */
+	public List<Snippet> getAllSnippets(int start, int count, int sorting)
+			throws IOException;
+
+	/**
 	 * get the snippet with the given id or null, if not existing
 	 * 
 	 * @param id
@@ -968,6 +1001,17 @@ public interface IPersistence {
 	 *             at a problem retrieving the data
 	 */
 	public List<Code> getCodes(Snippet snippet) throws IOException;
+
+	/**
+	 * get a file with the source code
+	 * 
+	 * @param codeId
+	 *            the id
+	 * @return the file
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public File getCodeFile(Long codeId) throws IOException;
 
 	/**
 	 * get all categories
@@ -1172,7 +1216,4 @@ public interface IPersistence {
 	 *             on a problem closing the factory
 	 */
 	void close() throws IOException;
-
-	public List<Snippet> getAllSnippets(int start, int count)
-			throws IOException;
 }
