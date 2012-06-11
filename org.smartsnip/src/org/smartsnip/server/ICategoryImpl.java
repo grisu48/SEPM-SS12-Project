@@ -11,7 +11,7 @@ import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XCategory;
 import org.smartsnip.shared.XSnippet;
 
-public class ICategoryImpl extends SessionServlet implements ICategory {
+public class ICategoryImpl extends GWTSessionServlet implements ICategory {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = -314215751195418750L;

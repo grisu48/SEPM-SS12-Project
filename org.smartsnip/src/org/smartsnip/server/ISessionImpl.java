@@ -20,7 +20,7 @@ import org.smartsnip.shared.XUser;
  * session and the client
  * 
  */
-public class ISessionImpl extends SessionServlet implements ISession {
+public class ISessionImpl extends GWTSessionServlet implements ISession {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = 51299L;

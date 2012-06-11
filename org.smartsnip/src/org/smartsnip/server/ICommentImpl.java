@@ -11,7 +11,7 @@ import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XComment;
 
-public class ICommentImpl extends SessionServlet implements IComment {
+public class ICommentImpl extends GWTSessionServlet implements IComment {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = 5843093547608960627L;

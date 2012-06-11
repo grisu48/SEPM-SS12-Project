@@ -18,7 +18,7 @@ import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.rpc.client.impl.RemoteException;
 
-public class ISnippetImpl extends SessionServlet implements ISnippet {
+public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = -1493947420774219096L;

@@ -9,7 +9,7 @@ import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XSnippet;
 
-public class IUserImpl extends SessionServlet implements IUser {
+public class IUserImpl extends GWTSessionServlet implements IUser {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = 1235424507650742693L;
