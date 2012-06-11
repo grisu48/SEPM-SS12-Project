@@ -14,6 +14,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.smartsnip.core.Code;
+import org.smartsnip.core.File;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.persistence.IPersistence;
 
@@ -103,6 +104,20 @@ public class CodeFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
+	}
+
+	
+	/**
+	 * Implementation of {@link IPersistence#writeCodeFile}
+	 * 
+	 * @param language
+	 * @param flags
+	 * @throws IOException
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeCodeFile(Long, File, int)
+	 */
+	static void writeCodeFile(Long codeId, File file, int flags) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**
@@ -245,6 +260,11 @@ public class CodeFactory {
 		return result;
 	}
 
+	public static File getCodeFile(Long codeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/**
 	 * Implementation of {@link IPersistence#getAllLanguages()}
 	 * 
@@ -331,6 +351,8 @@ public class CodeFactory {
 		}
 		return result;
 	}
+
+
 
 	// XXX backup to delete when alternative method works
 	// static Code fetchNewestCode(SqlPersistenceHelper helper, Session session,

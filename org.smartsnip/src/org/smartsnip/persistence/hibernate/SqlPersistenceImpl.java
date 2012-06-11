@@ -169,6 +169,15 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#writeCodeFile(java.lang.Long, org.smartsnip.core.File, int)
+	 */
+	@Override
+	public void writeCodeFile(Long codeId, File file, int flags)
+			throws IOException {
+		CodeFactory.writeCodeFile(codeId, file, flags);
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#writeCategory(org.smartsnip.core.Category,
 	 *      int)
 	 */
@@ -482,6 +491,15 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getAllSnippets(java.lang.Integer, java.lang.Integer, int)
+	 */
+	@Override
+	public List<Snippet> getAllSnippets(Integer start, Integer count, int sorting)
+			throws IOException {
+		return SnippetFactory.getAllSnippets(start, count, sorting);
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getRandomSnippet(double)
 	 */
 	@Override
@@ -539,6 +557,14 @@ public class SqlPersistenceImpl implements IPersistence {
 	@Override
 	public List<Code> getCodes(Snippet snippet) throws IOException {
 		return CodeFactory.getCodes(snippet);
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getCodeFile(java.lang.Long)
+	 */
+	@Override
+	public File getCodeFile(Long codeId) throws IOException {
+		return CodeFactory.getCodeFile(codeId);
 	}
 
 	/**

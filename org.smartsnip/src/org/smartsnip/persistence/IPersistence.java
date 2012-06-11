@@ -4,13 +4,13 @@
  */
 package org.smartsnip.persistence;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
 import org.smartsnip.core.Comment;
+import org.smartsnip.core.File;
 import org.smartsnip.core.Notification;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
@@ -1193,20 +1193,6 @@ public interface IPersistence {
 	 *             at a problem retrieving the data
 	 */
 	public int getTagsCount() throws IOException;
-
-	// XXX needed? getTagFrequency(Tag tag)
-	// FIXME deprecated, item will be fetched with the getters which return a
-	// tag.
-	// /**
-	// * get the number of entries where the tag is used
-	// *
-	// * @param tag
-	// * @return the number the tag is used. 0 if the tag is unused or doesn't
-	// * exist.
-	// * @throws IOException
-	// * at a problem retrieving the data
-	// */
-	// public int getTagFrequency(Tag tag) throws IOException;
 
 	/**
 	 * close the implementing factory. If some logging is needed use

@@ -273,26 +273,38 @@ public class TagFactory {
 	 *            a list of tags
 	 * @param flags
 	 *            the flags of the write query. Details see
-	 *            {@link IPersistence#DB_DEFAULT}.
+	 *            {@link IPersistence#DB_DEFAULT}. If the
+	 *            {@link IPersistence#DB_FORCE_DELETE} flag is set the unused
+	 *            Tag entries will be deleted.
 	 */
 	static void updateRelTagSnippet(Session session, Long snippetId,
 			List<Tag> tags, int flags) {
 		if (tags != null && !tags.isEmpty()) {
 			DBQuery query = new DBQuery(session);
 			DBRelTagSnippet entity = new DBRelTagSnippet();
+			DBTag oldTag = new DBTag();
 			entity.setTagSnippetId(snippetId, null);
 			List<DBRelTagSnippet> oldTags = query.from(entity);
 
 			for (Tag tag : tags) {
-				query = new DBQuery(session);
+				query.reset();
 				entity = new DBRelTagSnippet();
 				entity.setTagSnippetId(snippetId, tag.toString());
 				query.write(entity, flags);
 				oldTags.remove(entity);
 			}
-			for (DBRelTagSnippet dbTag: oldTags){
-				query = new DBQuery(session);
+			for (DBRelTagSnippet dbTag : oldTags) {
+				query.reset();
 				query.remove(dbTag, flags);
+				// remove unused tags on demand
+				if (DBQuery.hasFlag(flags, IPersistence.DB_FORCE_DELETE)) {
+					oldTag.setName(dbTag.getTagSnippetId().getTagName());
+					query.reset();
+					if (query.fromSingle(oldTag, flags).getUsageFrequence() == 0) {
+						query.reset();
+						query.remove(oldTag, flags);
+					}
+				}
 			}
 		}
 	}
