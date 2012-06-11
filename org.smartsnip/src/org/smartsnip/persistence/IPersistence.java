@@ -864,7 +864,7 @@ public interface IPersistence {
 	 * @return all snippets of the given range
 	 * @throws IOException
 	 */
-	public List<Snippet> getAllSnippets(int start, int count, int sorting)
+	public List<Snippet> getAllSnippets(Integer start, Integer count, int sorting)
 			throws IOException;
 
 	/**
