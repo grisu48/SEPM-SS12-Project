@@ -2,6 +2,7 @@ package org.smartsnip.core;
 
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.persistence.MemPersistence;
 import org.smartsnip.persistence.PersistenceFactory;
@@ -56,14 +57,14 @@ public class Persistence {
 	@Deprecated
 	public synchronized static void initialize(boolean memOnly,
 			boolean createTestObjects) throws IllegalAccessException {
+			Logger log = Logger.getLogger(Persistence.class);
 		if (instance != null)
 			throw new IllegalStateException(
 					"Persistence layer already initialised.");
 
 		// TODO
 		if (memOnly) {
-			System.out
-					.println("WARNING: Persistence is running in memory-only mode!");
+			log.warn("Persistence is running in memory-only mode!");
 
 			PersistenceFactory
 					.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
@@ -74,7 +75,10 @@ public class Persistence {
 			try {
 				instance = PersistenceFactory.getInstance();
 			} catch (IllegalAccessException e) {
+				log.warn("Started in failback mode: "
+						+ "Persistence is running in memory-only mode!", e);
 				// Fail-safe method. Use memory persistance layer
+				PersistenceFactory.closeFactory();
 				PersistenceFactory
 						.setDefaultType(PersistenceFactory.PERSIST_MEMORY_VOLATILE);
 				instance = PersistenceFactory.getInstance();
@@ -82,7 +86,7 @@ public class Persistence {
 			}
 
 		}
-
+		log.debug("Add some silly objects.");
 		if (createTestObjects)
 			addSomeSillyObjects();
 	}
@@ -119,8 +123,7 @@ public class Persistence {
 	 * Clean shutdown
 	 */
 	public static void close() {
-		// TODO Auto-generated method stub
-
+		PersistenceFactory.closeFactory();
 	}
 
 	/** Adds some silly objects for testing */
