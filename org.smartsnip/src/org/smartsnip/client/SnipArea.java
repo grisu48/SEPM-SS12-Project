@@ -33,7 +33,7 @@ public class SnipArea extends Composite {
 	private final Label language;
 	private final Label license;
 
-	private final Anchor anchViewFull;
+	private final Anchor anchUpload;
 	private final Anchor anchDownload;
 	private final Rating rating;
 	private final Label lblAverageRating;
@@ -52,7 +52,7 @@ public class SnipArea extends Composite {
 		horPanel = new HorizontalPanel();
 		scrPanel = new ScrollPanel();
 		anchorGrid = new Grid(3, 1);
-		properties = new Grid(2,5);
+		properties = new Grid(2, 5);
 		properties.setStyleName("properties");
 		title = new Label(mySnip.title);
 		title.setStyleName("txt");
@@ -63,7 +63,7 @@ public class SnipArea extends Composite {
 		license = new Label(mySnip.license);
 		license.setStyleName("txt");
 		snipFull = new HTMLPanel(mySnip.codeHTML);
-		anchViewFull = new Anchor("View full code");
+		anchUpload = new Anchor("Upload source");
 		anchDownload = new Anchor("Download source");
 		rating = new Rating(5);
 		btnFav = new Button("Add to Favourites");
@@ -72,14 +72,10 @@ public class SnipArea extends Composite {
 		lblAverageRating = new Label("" + snippet.rating);
 		lblAverageRating.setStyleName("txt");
 
-		
-
-		
-		anchorGrid.setWidget(0, 0, anchViewFull);
+		anchorGrid.setWidget(0, 0, anchUpload);
 		anchorGrid.setWidget(1, 0, anchDownload);
 		anchorGrid.setWidget(2, 0, rating);
-		
-		
+
 		properties.setWidget(0, 0, new Label("Title"));
 		properties.setWidget(1, 0, title);
 		properties.setWidget(0, 1, new Label("Description"));
@@ -90,7 +86,6 @@ public class SnipArea extends Composite {
 		properties.setWidget(1, 3, license);
 		properties.setWidget(0, 4, new Label("Average Rating"));
 		properties.setWidget(1, 4, lblAverageRating);
-	
 
 		btnFav.addClickHandler(new ClickHandler() {
 			@Override
@@ -147,16 +142,33 @@ public class SnipArea extends Composite {
 
 			@Override
 			public void rate(int rate) {
-				Control.getInstance().rateSnippet(rate, snippet.hash);
+				rating.setEnabled(false);
+
+				ISnippet.Util.getInstance().rateSnippet(snippet.hash, rate,
+						new AsyncCallback<Void>() {
+
+							@Override
+							public void onSuccess(Void result) {
+								rating.setEnabled(true);
+								update();
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								rating.setEnabled(false);
+								Control.myGUI.showErrorPopup("Rating failed",
+										caught);
+							}
+						});
 			}
 		});
-		anchViewFull.setStyleName("toollink");
-		anchViewFull.addClickHandler(new ClickHandler() {
+		anchUpload.setVisible(false);
+		anchUpload.setStyleName("toollink");
+		anchUpload.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO improve code viewer
-				Control.myGUI.showTestPopup(snippet.code);
+				// TODO upload source code
 			}
 		});
 
@@ -244,6 +256,7 @@ public class SnipArea extends Composite {
 					public void onSuccess(Boolean result) {
 						btnEdit.setVisible(result);
 						btnDelete.setVisible(result);
+						anchUpload.setVisible(result);
 					}
 
 					@Override
@@ -257,14 +270,12 @@ public class SnipArea extends Composite {
 		horPanel.add(btnDelete);
 		horPanel.add(btnEdit);
 		horPanel.add(anchorGrid);
-		
+
 		scrPanel.add(snipFull);
-		
+
 		vertPanel.add(properties);
 		vertPanel.add(scrPanel);
 		vertPanel.add(horPanel);
-		
-		
 
 		initWidget(vertPanel);
 		// Give the overall composite a style name.

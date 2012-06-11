@@ -600,10 +600,15 @@ public class Snippet {
 		Category objCategory = this.getCategory();
 		if (objCategory != null)
 			category = objCategory.toXCategory();
-		return new XSnippet(owner, id, this.getName(), description, category,
-				new ArrayList<String>(getStringTags()), commentList,
+		XSnippet result = new XSnippet(owner, id, this.getName(), description,
+				category, new ArrayList<String>(getStringTags()), commentList,
 				code.getCode(), code.getFormattedHTML(), code.getLanguage(),
 				license, viewcount);
+
+		// Add custom variables
+		result.rating = 3; // TODO Add current user rating
+
+		return result;
 	}
 
 	/**

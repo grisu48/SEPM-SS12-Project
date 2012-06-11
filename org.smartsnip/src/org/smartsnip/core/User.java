@@ -392,16 +392,14 @@ public class User {
 	 * @return a list of the snippets created by the user
 	 */
 	public List<Snippet> getMySnippets() {
-		// TODO: Implement me
-		return new ArrayList<Snippet>();
-	}
-
-	/**
-	 * @return a list of the hash codes of the snippets, created by the user
-	 */
-	List<Integer> getMySnippetsHash() {
-		// TODO: Implement me
-		return new ArrayList<Integer>();
+		try {
+			return Persistence.getInstance().getUserSnippets(this);
+		} catch (IOException e) {
+			System.err.println("IOException during getMySnippets("
+					+ this.getUsername() + "): " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 
 	/**

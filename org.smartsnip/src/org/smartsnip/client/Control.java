@@ -318,24 +318,6 @@ public class Control implements EntryPoint {
 		});
 	}
 
-	public void rateSnippet(int rate, long hash) {
-		ISnippetAsync snippetProxy = ISnippet.Util.getInstance();
-
-		snippetProxy.rateSnippet(hash, rate, new AsyncCallback<Void>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				myGUI.showErrorPopup("Rating failed", caught);
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				System.out.println("Snippet rated successfully");
-				myGUI.mySnipArea.update();
-			}
-		});
-	}
-
 	public void toFav(long hash) {
 		ISnippetAsync snippetProxy = ISnippet.Util.getInstance();
 

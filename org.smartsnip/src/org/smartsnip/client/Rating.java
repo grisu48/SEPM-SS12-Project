@@ -100,4 +100,10 @@ public class Rating extends Composite {
 			anchRating.setStyleName(name);
 		}
 	}
+
+	public void setEnabled(boolean enabled) {
+		anchNull.setEnabled(enabled);
+		for (Anchor anchRating : anchRatings)
+			anchRating.setEnabled(enabled);
+	}
 }
