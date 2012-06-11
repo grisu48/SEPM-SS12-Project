@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.shared.XSearch;
 
 public class Search {
@@ -17,13 +18,10 @@ public class Search {
 	 * Total results according to the search string. This list is cached, and
 	 * then the filtering tags and categories are applied to it
 	 */
-	private final List<Snippet> totalResults;
+	private List<Snippet> totalResults;
 
-	/** Start index for the calls to the DB */
-	private int start;
-
-	/** Number of items to get from the DB per call */
-	private final int requestItemCount = 25;
+	/** Current sorting */
+	private int sorting;
 
 	/**
 	 * Filtered results. If null, they need to be re-filtered. This occurs if a
@@ -56,8 +54,6 @@ public class Search {
 	 */
 	public synchronized List<Snippet> getResults(XSearch.SearchSorting sorting,
 			int start, int count) {
-		if (filterResults == null)
-			applyFilter();
 
 		switch (sorting) {
 		case time:
@@ -71,6 +67,8 @@ public class Search {
 			break;
 		}
 
+		if (filterResults == null)
+			applyFilter();
 		List<Snippet> result = new ArrayList<Snippet>(count);
 		int maxSize = filterResults.size() - 1;
 		for (int i = 0; i < count; i++) {
@@ -109,21 +107,28 @@ public class Search {
 	 * Sorts filterResults by time
 	 */
 	private void sortByTime() {
-		// TODO Implement me!
+		setSorting(IPersistence.SORT_LATEST);
 	}
 
 	/**
 	 * Sorts filterResults by highest ratings
 	 */
 	private void sortByHightestRating() {
-
+		setSorting(IPersistence.SORT_BEST_RATED);
 	}
 
 	/**
 	 * Sorts filterResults by highest view counts
 	 */
 	private void sortByViewCount() {
+		setSorting(IPersistence.SORT_MOSTVIEWED);
+	}
 
+	/**
+	 * Do not sort
+	 */
+	private void sortUnsorted() {
+		setSorting(IPersistence.SORT_UNSORTED);
 	}
 
 	/**
@@ -227,11 +232,12 @@ public class Search {
 	private List<Snippet> searchDB(String searchString) {
 		try {
 			if (searchString == null || searchString.isEmpty()) {
-				// Get all snippets
-				return Persistence.getInstance().getAllSnippets(0, 20);
+				return Persistence.getInstance().getAllSnippets(null, null,
+						sorting);
 
 			} else
-				return Persistence.instance.search(searchString, 0, 20, 0);
+				return Persistence.instance.search(searchString, null, null,
+						sorting);
 		} catch (IOException e) {
 			System.err.println("IOException during search: " + e.getMessage());
 			e.printStackTrace(System.err);
@@ -283,5 +289,48 @@ public class Search {
 		}
 
 		return result;
+	}
+
+	/**
+	 * 
+	 * @return a list of all categories that match the given search criteria
+	 */
+	public List<String> getAllCategoriesMatchingSearchString() {
+		if (filterResults == null)
+			applyFilter();
+
+		List<String> result = new ArrayList<String>();
+		for (Snippet snippet : filterResults) {
+			Category category = snippet.getCategory();
+			if (category != null && !result.contains(category.getName()))
+				result.add(category.getName());
+		}
+
+		return result;
+	}
+
+	/**
+	 * Sets the sorting method for this search
+	 * 
+	 * @param sorting
+	 *            Sorting method can be any of the {@link IPersistence}-sorting
+	 *            constants
+	 */
+	public void setSorting(int sorting) {
+		if (this.sorting == sorting)
+			return;
+
+		synchronized (this) {
+			this.sorting = sorting;
+			refetchResults();
+		}
+		filterResults = null;
+	}
+
+	/**
+	 * Re-fetches all results from the database
+	 */
+	private synchronized void refetchResults() {
+		totalResults = searchDB(searchString);
 	}
 }
