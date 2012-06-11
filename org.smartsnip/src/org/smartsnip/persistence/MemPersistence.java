@@ -72,7 +72,7 @@ public class MemPersistence implements IPersistence {
 	private final HashMap<User, List<Snippet>> favorites = new HashMap<User, List<Snippet>>();
 
 	private final HashMap<User, String> passwords = new HashMap<User, String>();
-	
+
 	private final HashMap<String, String> licenses = new HashMap<String, String>();
 
 	private String toKey(String key) {
@@ -277,7 +277,6 @@ public class MemPersistence implements IPersistence {
 
 		allLanguages.add(language);
 	}
-
 
 	@Override
 	public void writeLicense(String shortDescription, String fullText, int mode)
@@ -636,7 +635,7 @@ public class MemPersistence implements IPersistence {
 		// FIXME sorting not implemented
 		if (sorting != IPersistence.SORT_UNSORTED) {
 			Logger log = Logger.getLogger(getClass());
-			log.warn(IPersistence.class.getFields().toString());//FIXME
+			log.warn(IPersistence.class.getFields().toString());// FIXME
 		}
 
 		/*
@@ -870,13 +869,15 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public Snippet getRandomSnippet(double random) throws IOException {
 		Snippet result = null;
-		int target = new Double(new Long(this.allSnippets.size()).doubleValue() * random).intValue();
-		for (Iterator<Snippet> itr = this.allSnippets.values().iterator();itr.hasNext() && target > 0; --target) {
+		int target = new Double(new Long(this.allSnippets.size()).doubleValue()
+				* random).intValue();
+		for (Iterator<Snippet> itr = this.allSnippets.values().iterator(); itr
+				.hasNext() && target > 0; --target) {
 			result = itr.next();
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void removeUser(User user, int mode) throws IOException {
 		checkFail();
@@ -1013,5 +1014,12 @@ public class MemPersistence implements IPersistence {
 		if (fail) {
 			throw new IOException("MemPersistence closed.");
 		}
+	}
+
+	@Override
+	public List<Snippet> getAllSnippets(int start, int count)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return new ArrayList<Snippet>();
 	}
 }

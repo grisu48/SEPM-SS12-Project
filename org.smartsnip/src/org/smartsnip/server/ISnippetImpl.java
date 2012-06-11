@@ -370,4 +370,12 @@ public class ISnippetImpl extends SessionServlet implements ISnippet {
 		return true;
 
 	}
+
+	@Override
+	public XSnippet getSnippetOfDay() {
+		Snippet snippetofDay = Snippet.getSnippetOfDay();
+		if (snippetofDay == null)
+			return null;
+		return snippetofDay.toXSnippet();
+	}
 }

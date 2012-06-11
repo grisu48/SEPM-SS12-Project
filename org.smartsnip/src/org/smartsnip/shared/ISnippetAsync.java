@@ -42,4 +42,6 @@ public interface ISnippetAsync {
 
 	void canEdit(long snippet_id, AsyncCallback<Boolean> callback);
 
+	void getSnippetOfDay(AsyncCallback<XSnippet> callback);
+
 }

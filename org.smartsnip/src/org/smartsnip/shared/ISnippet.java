@@ -69,6 +69,13 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	public XSnippet getSnippet(long snippet);
 
 	/**
+	 * Gets the snippet of the day
+	 * 
+	 * @return the snippet of the day
+	 */
+	public XSnippet getSnippetOfDay();
+
+	/**
 	 * Deletes a snippet from the server. The snippet is identified by it's id.
 	 * 
 	 * @throws NoAccessException

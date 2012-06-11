@@ -1172,4 +1172,7 @@ public interface IPersistence {
 	 *             on a problem closing the factory
 	 */
 	void close() throws IOException;
+
+	public List<Snippet> getAllSnippets(int start, int count)
+			throws IOException;
 }

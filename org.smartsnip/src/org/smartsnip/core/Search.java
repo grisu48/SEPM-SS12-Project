@@ -33,7 +33,8 @@ public class Search {
 
 	private Search(String searchString) {
 		if (searchString == null)
-			throw new NullPointerException();
+			searchString = "";
+
 		this.searchString = searchString;
 		this.totalResults = searchDB(searchString);
 	}
@@ -46,10 +47,6 @@ public class Search {
 	 * @return
 	 */
 	public static Search createSearch(String searchString) {
-		if (searchString == null || searchString.length() == 0)
-			return null;
-
-		// TODO: Build a search string cache.
 		Search result = new Search(searchString);
 		return result;
 	}
@@ -229,9 +226,12 @@ public class Search {
 	 */
 	private List<Snippet> searchDB(String searchString) {
 		try {
-			// TODO Get all items from database
-			// TODO Sorting
-			return Persistence.instance.search(searchString, 0, 20, 0);
+			if (searchString == null || searchString.isEmpty()) {
+				// Get all snippets
+				return Persistence.getInstance().getAllSnippets(0, 20);
+
+			} else
+				return Persistence.instance.search(searchString, 0, 20, 0);
 		} catch (IOException e) {
 			System.err.println("IOException during search: " + e.getMessage());
 			e.printStackTrace(System.err);
