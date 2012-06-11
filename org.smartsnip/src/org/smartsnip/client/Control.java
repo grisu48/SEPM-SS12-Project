@@ -6,6 +6,7 @@ import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.ISessionAsync;
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.ISnippetAsync;
+import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XSearch;
@@ -379,33 +380,25 @@ public class Control implements EntryPoint {
 
 	public void setPassword(String pw1, String pw2) {
 		if (pw1.equals(pw2)) {
-			// XXX
-			// tausche das alte Password mit dem neuen und liefere true, wenn
-			// alles in Ordnung ist
-			myGUI.myPersonalArea.update(true);
+
+			IUser.Util.getInstance().setPassword(pw1,
+					new AsyncCallback<Void>() {
+
+						@Override
+						public void onSuccess(Void result) {
+							myGUI.myPersonalArea.update(true);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							myGUI.myPersonalArea.update(false);
+						}
+					});
+
 		} else {
 			myGUI.myPersonalArea.update(false);
 		}
 
-	}
-
-	public List<XSnippet> getOwn() {
-		// XXX
-
-		// Hätte gern:
-		// Eine XSNippetliste mit allen Snippets von diesem User
-		// Wenn keine vorhanden, bitte leere Liste, nicht null
-
-		return null;
-	}
-
-	public List<XSnippet> getFav() {
-		// XXX
-		// Hätte gern:
-		// Eine XSNippetliste mit allen Snippets, die dieser User als Favourit
-		// gespeichert hat.
-		// Wenn keine vorhanden, bitte leere Liste, nicht null
-		return null;
 	}
 
 }

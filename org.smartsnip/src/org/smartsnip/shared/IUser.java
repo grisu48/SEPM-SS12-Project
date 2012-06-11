@@ -45,19 +45,23 @@ public interface IUser extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the login process fails
 	 */
-	public boolean login(String username, String password) throws NoAccessException;
+	public boolean login(String username, String password)
+			throws NoAccessException;
 
 	/**
 	 * Logs the session out
 	 */
 	public void logout();
 
-	public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
+	public void setEmail(String newAddress) throws NoAccessException,
+			IllegalArgumentException;
 
 	public void setRealName(String newName) throws NoAccessException;
 
 	public List<XSnippet> getSnippets() throws NoAccessException;
 
 	public List<XSnippet> getFavorites() throws NoAccessException;
+
+	public void setPassword(String pw1) throws NoAccessException;
 
 }

@@ -2,20 +2,20 @@ package org.smartsnip.client;
 
 import java.util.List;
 
+import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.XSnippet;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
-
 public class PersonalArea extends Composite {
 
-	private HorizontalPanel horPanel;
-	private PersonalField myPersonalField;
-	private ResultArea raOwn;
-	private ResultArea raFav;
-	
-	
+	private final HorizontalPanel horPanel;
+	private final PersonalField myPersonalField;
+	private final ResultArea raOwn;
+	private final ResultArea raFav;
+
 	public PersonalArea() {
 
 		horPanel = new HorizontalPanel();
@@ -24,10 +24,7 @@ public class PersonalArea extends Composite {
 		raOwn.setWidth("400px");
 		raFav = new ResultArea();
 		raFav.setWidth("400px");
-		
-		raOwn.update(getOwn());
-		raFav.update(getFav());
-	
+
 		horPanel.add(myPersonalField);
 		horPanel.add(raOwn);
 		horPanel.add(raFav);
@@ -36,20 +33,47 @@ public class PersonalArea extends Composite {
 		// Give the overall composite a style name.
 		setStyleName("personalArea");
 
-	}
-	
-	public void update(boolean worked) {
-		myPersonalField.update(worked);
-	}
-	
-	private List<XSnippet> getOwn() {
-		Control control = Control.getInstance();
-		return control.getOwn();
-		
-	}
-	
-	private List<XSnippet> getFav() {
-		return null;
+		updateSnippets();
+
 	}
 
+	public void update(boolean worked) {
+		myPersonalField.update(worked);
+		updateSnippets();
+	}
+
+	private void updateSnippets() {
+		IUser.Util.getInstance().getFavorites(
+				new AsyncCallback<List<XSnippet>>() {
+
+					@Override
+					public void onSuccess(List<XSnippet> result) {
+						if (result == null)
+							return;
+						raFav.update(result);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+		IUser.Util.getInstance().getSnippets(
+				new AsyncCallback<List<XSnippet>>() {
+
+					@Override
+					public void onSuccess(List<XSnippet> result) {
+						if (result == null)
+							return;
+						raOwn.update(result);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+	}
 }

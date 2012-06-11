@@ -26,7 +26,8 @@ public class IUserImpl extends SessionServlet implements IUser {
 	}
 
 	@Override
-	public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException {
+	public void setEmail(String newAddress) throws NoAccessException,
+			IllegalArgumentException {
 		Session session = getSession();
 
 		if (!session.getPolicy().canEditUserData(session, user))
@@ -45,7 +46,8 @@ public class IUserImpl extends SessionServlet implements IUser {
 	}
 
 	@Override
-	public boolean login(String username, String password) throws NoAccessException {
+	public boolean login(String username, String password)
+			throws NoAccessException {
 		Session session = getSession();
 
 		if (session.isLoggedIn())
@@ -92,5 +94,11 @@ public class IUserImpl extends SessionServlet implements IUser {
 		}
 
 		return result;
+	}
+
+	@Override
+	public void setPassword(String pw1) throws NoAccessException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Implement me");
 	}
 }

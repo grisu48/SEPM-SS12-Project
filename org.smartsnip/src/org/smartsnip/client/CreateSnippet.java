@@ -100,10 +100,10 @@ public class CreateSnippet extends Composite {
 
 					@Override
 					public void onSuccess(List<XCategory> result) {
-						if (result == null) { 
-							return; 
+						if (result == null) {
+							return;
 						}
-							
+
 						for (XCategory category : result) {
 							lstCategory.addItem(category.name);
 							lstCategory.addItem("Category");
@@ -118,7 +118,6 @@ public class CreateSnippet extends Composite {
 				});
 
 		lstCategory.addItem("Category");
-		
 
 		txtTag = new TextBox();
 		txtTag.setStyleName("txtTag");
@@ -139,6 +138,7 @@ public class CreateSnippet extends Composite {
 			public void onClick(ClickEvent event) {
 
 				addTag(txtTag.getText());
+				txtTag.setText("");
 			}
 		});
 
@@ -168,7 +168,6 @@ public class CreateSnippet extends Composite {
 
 		pnlControl.add(btCreate);
 		pnlControl.add(btCancel);
-	
 
 		pnlProp.add(lstLanguage);
 		pnlProp.add(lstCategory);
