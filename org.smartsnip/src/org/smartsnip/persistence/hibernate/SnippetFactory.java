@@ -875,8 +875,8 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#search(java.lang.String,
 	 *      java.lang.Integer, java.lang.Integer, int)
 	 */
-	static synchronized List<Snippet> search(String searchString,
-			Integer start, Integer count, int sorting) throws IOException {
+	static List<Snippet> search(String searchString, Integer start,
+			Integer count, int sorting) throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		List<Snippet> result = new ArrayList<Snippet>();

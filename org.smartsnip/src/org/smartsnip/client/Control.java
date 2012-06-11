@@ -362,11 +362,19 @@ public class Control implements EntryPoint {
 
 	public void changeSnippet(XSnippet snip) {
 
-		// XXX
-		// Das veränderte XSnippet soll in die Datenbank geschrieben werden.
-		// ÜBer ISnippet?
-		// Ist dies geschehen -> mySnipArea.update();
+		ISnippet.Util.getInstance().edit(snip, new AsyncCallback<Void>() {
 
+			@Override
+			public void onSuccess(Void result) {
+				Control.myGUI.mySnipArea.update();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
 	public void setPassword(String pw1, String pw2) {
