@@ -270,6 +270,7 @@ public class GUI {
 	}
 
 	public void startSearch() {
+		showSearchPage();
 		mySortArea.update("Searching ... ");
 	}
 

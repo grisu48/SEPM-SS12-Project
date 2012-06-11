@@ -12,7 +12,16 @@ public class Rating extends Composite {
 	private final Anchor anchNull;
 	private final Anchor[] anchRatings;
 
-	private RatingHandler handler = null;
+	private RatingHandler handler = new RatingHandler() {
+
+		@Override
+		public void unrate() {
+		}
+
+		@Override
+		public void rate(int rate) {
+		}
+	};
 
 	/**
 	 * General class acting as click handler for all anchors
@@ -28,9 +37,6 @@ public class Rating extends Composite {
 
 		@Override
 		public void onClick(ClickEvent event) {
-			if (handler == null)
-				return;
-
 			if (rate == 0)
 				handler.unrate();
 			else
