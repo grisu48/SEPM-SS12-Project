@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
 import org.smartsnip.core.Comment;
+import org.smartsnip.core.File;
 import org.smartsnip.core.Notification;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
@@ -1017,9 +1018,22 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Snippet> getAllSnippets(int start, int count)
+	public void writeCodeFile(Long codeId, File file, int flags)
 			throws IOException {
 		// TODO Auto-generated method stub
-		return new ArrayList<Snippet>();
+		
+	}
+
+	@Override
+	public List<Snippet> getAllSnippets(Integer start, Integer count,
+			int sorting) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public File getCodeFile(Long codeId) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -21,7 +21,7 @@ CREATE TABLE `User` (
   `user_name` VARCHAR(20)  NOT NULL,
   `full_name` VARCHAR(255)  DEFAULT NULL,
   `email` VARCHAR(255)  NOT NULL,
-  `user_state` ENUM("unvalidated", "validated")  NOT NULL DEFAULT "unvalidated",
+  `user_state` ENUM("unvalidated", "validated", "deleted", "moderator", "administrator")  NOT NULL DEFAULT "unvalidated",
   PRIMARY KEY (`user_name`),
   CONSTRAINT `u_usr_eml` UNIQUE `u_usr_eml` (`email`)
 )
@@ -201,6 +201,8 @@ CREATE TABLE `Code` (
   `snippet_id` INTEGER UNSIGNED NOT NULL,
   `language` VARCHAR(50) NOT NULL,
   `file` TEXT  DEFAULT NULL,
+  `file_name` VARCHAR(255) DEFAULT NULL,
+  `file_content` MEDIUMBLOB DEFAULT NULL,
   `version` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   PRIMARY KEY (`code_id`),
   CONSTRAINT `fk_code_snippet` FOREIGN KEY `fk_code_snippet` (`snippet_id`)

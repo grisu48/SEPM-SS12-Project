@@ -840,4 +840,24 @@ public class BlackholePersistenceImpl implements IPersistence {
 			throw new IOException("MemPersistence closed.");
 		}
 	}
+
+	@Override
+	public void writeCodeFile(Long codeId, File file, int flags)
+			throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Snippet> getAllSnippets(Integer start, Integer count,
+			int sorting) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public File getCodeFile(Long codeId) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

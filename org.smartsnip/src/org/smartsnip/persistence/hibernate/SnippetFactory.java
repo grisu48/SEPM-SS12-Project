@@ -74,7 +74,6 @@ public class SnippetFactory {
 			}
 			result = (Long) query.write(entity, flags);
 
-			// TODO delete unused tags on flag DB_FORCE_DELETE
 			// allow new tags even on present flag IPersistence.DB_UPDATE_ONLY
 			// skip existing tags even on present flag IPersistence.DB_NEW_ONLY
 			TagFactory
@@ -142,7 +141,6 @@ public class SnippetFactory {
 
 				snippetId = (Long) query.write(entity, flags);
 
-				// TODO delete unused tags on flag DB_FORCE_DELETE
 				// allow new tags even if IPersistence.DB_UPDATE_ONLY flag is
 				// present
 				// skip existing tags even if IPersistence.DB_NEW_ONLY flag is
@@ -362,8 +360,35 @@ public class SnippetFactory {
 			DBSnippet entity = new DBSnippet();
 			entity.setSnippetId(snippet.getHashId());
 
-			// TODO delete unused tags on flag DB_FORCE_DELETE
+			// delete unused tags on flag DB_FORCE_DELETE
+			// step 1: fetch possible candidates
+			List<String> tagNames = null;
+			if (DBQuery.hasFlag(flags, IPersistence.DB_FORCE_DELETE)) {
+				tagNames = new ArrayList<String>();
+				DBRelTagSnippet tagRef = new DBRelTagSnippet();
+				tagRef.setTagSnippetId(snippet.getHashId(), null);
+				for (Iterator<DBRelTagSnippet> itr = query.iterate(tagRef); itr
+						.hasNext();) {
+					tagNames.add(itr.next().getTagSnippetId().getTagName());
+				}
+				query.reset();
+			}
+
+			// delete the snippet. Code, ratings, comments, votes and
+			// relationships to the tags
+			// are removed through DB constraints automatically
 			query.remove(entity, flags);
+
+			// delete unused tags on flag DB_FORCE_DELETE
+			// step 2: remove orphaned tags from DB
+			if (DBQuery.hasFlag(flags, IPersistence.DB_FORCE_DELETE)) {
+				DBTag tag = new DBTag();
+				for (String name: tagNames) {
+					tag.setName(name);
+					query.reset();
+					query.remove(tag, flags);
+				}
+			}
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -694,6 +719,69 @@ public class SnippetFactory {
 	}
 
 	/**
+	 * Implementation of
+	 * {@link IPersistence#getAllSnippets(Integer, Integer, int)}
+	 * 
+	 * @param start
+	 * @param count
+	 * @param sorting
+	 * @return all snippets of the given range
+	 * @throws IOException
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllSnippets(Integer,
+	 *      Integer, int)
+	 */
+	public static List<Snippet> getAllSnippets(Integer start, Integer count,
+			int sorting) throws IOException {
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		int initialSize = 10;
+		if (count != null && count > 0) {
+			initialSize = count;
+		}
+		List<Snippet> result = new ArrayList<Snippet>(initialSize);
+
+		// set the sorting order
+		createSortingCriteria(DBSnippet.class, sorting, session);
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+
+			DBQuery query = new DBQuery(session);
+			DBSnippet entity = new DBSnippet();
+			Snippet snippet;
+
+			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
+					.hasNext();) {
+				entity = iterator.next();
+
+				snippet = helper.createSnippet(entity.getSnippetId(), entity
+						.getOwner(), entity.getHeadline(), entity
+						.getDescription(),
+						CategoryFactory.fetchCategory(session, entity)
+								.getName(), TagFactory.fetchTags(helper,
+								session, entity.getSnippetId()),
+						CommentFactory.fetchCommentIds(session,
+								entity.getSnippetId()),
+						fetchLicense(helper, session, entity).getShortDescr(),
+						entity.getViewcount(), entity.getRatingAverage());
+				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(
+						helper, session, snippet));
+				result.add(snippet);
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
+	}
+
+	/**
 	 * Implementation of {@link IPersistence#getRandomSnippet(double)}
 	 * 
 	 * @param random
@@ -882,23 +970,9 @@ public class SnippetFactory {
 		List<Snippet> result = new ArrayList<Snippet>();
 
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
-		switch (sorting) {
-		case IPersistence.SORT_LATEST:
-			fullTextSession.createCriteria(DBSnippet.class).addOrder(
-					Order.desc("lastEdited"));
-			break;
-		case IPersistence.SORT_MOSTVIEWED:
-			fullTextSession.createCriteria(DBSnippet.class).addOrder(
-					Order.desc("viewcount"));
-			break;
-		case IPersistence.SORT_BEST_RATED:
-			fullTextSession.createCriteria(DBSnippet.class).addOrder(
-					Order.desc("ratingAverage"));
-			break;
-		default:
-			// case IPersistence.SORT_UNSORTED
-			break;
-		}
+		// set the sorting order
+		createSortingCriteria(DBSnippet.class, sorting, fullTextSession);
+
 		Transaction tx = null;
 		try {
 			tx = fullTextSession.beginTransaction();
@@ -1002,5 +1076,33 @@ public class SnippetFactory {
 		entity.setLicenseId(snippet.getLicenseId());
 		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
 		return entity;
+	}
+
+	/**
+	 * Helper method to define the sorting order of a DB-query.
+	 * 
+	 * @param clazz
+	 *            the entity class which is the criteria for
+	 * @param sorting
+	 *            the sorting type
+	 * @param session
+	 *            the session which builds the query
+	 */
+	private static void createSortingCriteria(Class<?> clazz, int sorting,
+			Session session) {
+		switch (sorting) {
+		case IPersistence.SORT_LATEST:
+			session.createCriteria(clazz).addOrder(Order.desc("lastEdited"));
+			break;
+		case IPersistence.SORT_MOSTVIEWED:
+			session.createCriteria(clazz).addOrder(Order.desc("viewcount"));
+			break;
+		case IPersistence.SORT_BEST_RATED:
+			session.createCriteria(clazz).addOrder(Order.desc("ratingAverage"));
+			break;
+		default:
+			// case IPersistence.SORT_UNSORTED
+			break;
+		}
 	}
 }

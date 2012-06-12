@@ -39,7 +39,7 @@ public class User {
 	 * 
 	 */
 	public enum UserState {
-		unvalidated, validated, deleted
+		unvalidated, validated, deleted, moderator, administrator
 	}
 
 	/**
