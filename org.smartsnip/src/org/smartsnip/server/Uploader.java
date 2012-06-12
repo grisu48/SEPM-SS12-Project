@@ -11,11 +11,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 
 public class Uploader extends SessionServlet {
 
-	private final static String UPLOAD_DIRECTORY = "/home/phoenix/temp/uploader";
+	private final static String UPLOAD_DIRECTORY = System.getProperty("user.home");
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -29,9 +33,15 @@ public class Uploader extends SessionServlet {
 		try {
 			writer = resp.getWriter();
 
-			writer.println("<h1>Uploader</h1>");
-			writer.println("<p> No contents here yet </p>");
-			writer.println("<p> Go away. Now. </p>");
+			writer.println("<h1>Code Uploader</h1>");
+			Session session = getSession(req);
+			if (!session.isLoggedIn()) {
+				writer.println("<p> This is the source uploader servlet. You must log in, to get access to this service </p>");
+				writer.println("<p> Return to the <a href=\"index.html\">main page</a> and log in. </p>");
+				writer.println("<hr>");
+				writer.println("<p>This servlet should just be accessed by a POST request</p>");
+				return;
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace(writer);
@@ -42,8 +52,7 @@ public class Uploader extends SessionServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		// process only multipart requests
 		if (ServletFileUpload.isMultipartContent(req)) {
@@ -59,8 +68,7 @@ public class Uploader extends SessionServlet {
 				List<FileItem> items = upload.parseRequest(req);
 				for (FileItem item : items) {
 					// process only file upload - discard other form item types
-					if (item.isFormField())
-						continue;
+					if (item.isFormField()) continue;
 
 					String fileName = item.getName();
 					// get only the file name not whole path
@@ -72,18 +80,14 @@ public class Uploader extends SessionServlet {
 					if (uploadedFile.createNewFile()) {
 						item.write(uploadedFile);
 						resp.setStatus(HttpServletResponse.SC_CREATED);
-						resp.getWriter().print(
-								"The file was created successfully.");
+						resp.getWriter().print("The file was created successfully.");
 						resp.flushBuffer();
 					} else
-						throw new IOException(
-								"The file already exists in repository.");
+						throw new IOException("The file already exists in repository.");
 				}
 			} catch (Exception e) {
-				resp.sendError(
-						HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"An error occurred while creating the file : "
-								+ e.getMessage());
+				resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						"An error occurred while creating the file : " + e.getMessage());
 			}
 
 		} else {
@@ -123,16 +127,14 @@ public class Uploader extends SessionServlet {
 	 * }
 	 */
 
-	private void fetchFile(InputStream input, OutputStream output)
-			throws IOException {
+	private void fetchFile(InputStream input, OutputStream output) throws IOException {
 		try {
 			byte[] buffer = new byte[2048];
 			int len = 0;
 
 			do {
 				len = input.read(buffer);
-				if (len <= 0)
-					break;
+				if (len <= 0) break;
 
 				output.write(buffer, 0, len);
 			} while (true);
