@@ -59,6 +59,11 @@ public class Control implements EntryPoint {
 		return instance;
 	}
 
+	/**
+	 * The main method, which is loaded on start or refresh
+	 * 
+	 * 
+	 */
 	@Override
 	public void onModuleLoad() {
 		proxySession.getSessionCookie(new AsyncCallback<String>() {
@@ -109,6 +114,13 @@ public class Control implements EntryPoint {
 		return "session.getCookie()";
 	}
 
+	/**
+	 * Changes the Smartsnip-Site
+	 * 
+	 * @param char
+	 * 		A char which indicates which change should be done
+	 * 
+	 */
 	public void changeSite(char c) {
 		switch (c) {
 		case 'i':
@@ -139,10 +151,27 @@ public class Control implements EntryPoint {
 		}
 	}
 
+	/**
+	 * Change to show one snippet
+	 * 
+	 * @param XSnippet
+	 * 		The Snippet which should be shown
+	 * 
+	 */
 	public void changeToSnipPage(XSnippet snip) {
 		myGUI.showSnipPage(snip);
 	}
 
+	
+	/**
+	 * Calls a login on the server
+	 * 
+	 * @param String
+	 * 		the username
+	 * @param String
+	 * 		the password
+	 * 
+	 */
 	public void login(final String user, final String pw, final Login login) {
 
 		try {
@@ -174,6 +203,18 @@ public class Control implements EntryPoint {
 		}
 	}
 
+	
+	/**
+	 * Calls a registration on the server
+	 * 
+	 * @param String
+	 * 		the username
+	 * @param String
+	 * 		the mailadress
+	 * @param String
+	 * 		the password
+	 * 
+	 */
 	public void register(final String user, final String mail, final String pw,
 			final Register register) {
 		if (user.isEmpty() || mail.isEmpty() || pw.isEmpty())
@@ -198,6 +239,24 @@ public class Control implements EntryPoint {
 				});
 	}
 
+	
+	/**
+	 * Calls a search on the Server
+	 * 
+	 * @param String
+	 * 		the search word
+	 * @param List<String>
+	 * 		the tags which are wanted
+	 * @param List<String>
+	 * 		the categories which wanted
+	 * @param XSearch.SearchSorting
+	 * 		the sorting parameter
+	 * @param int
+	 * 		the starting number of the uses results
+	 * @param int
+	 * 		the count of the results
+	 * 
+	 */
 	public void search(String searchString, List<String> tags,
 			List<String> categories, XSearch.SearchSorting sorting, int start,
 			int count, final SearchArea searchArea) {
@@ -220,18 +279,41 @@ public class Control implements EntryPoint {
 				});
 	}
 
+	/**
+	 * Gets the local username
+	 *
+	 * @return String
+	 * 			the username
+	 */
 	public String getUsername() {
 		return user.username;
 	}
 
+	/**
+	 * Gets the local usermail
+	 *
+	 * @return String
+	 * 			email adress
+	 */
 	public String getUserMail() {
 		return user.email;
 	}
 
+	/**
+	 * Gets the login status
+	 *
+	 * @return boolean
+	 * 			login status
+	 */
 	public boolean isLoggedIn() {
 		return loggedIn;
 	}
 
+	
+	/**
+	 * Updates the local variables with the information on the server
+	 *
+	 */
 	public void refresh() {
 
 		proxySession.isLoggedIn(new AsyncCallback<Boolean>() {
@@ -278,6 +360,11 @@ public class Control implements EntryPoint {
 		// TODO Write me!
 	}
 
+	
+	/**
+	 * Send a logout request to the server
+	 *
+	 */
 	public void logout() {
 		proxySession.logout(new AsyncCallback<Void>() {
 
@@ -296,6 +383,14 @@ public class Control implements EntryPoint {
 
 	}
 
+	/**
+	 * writes a comment to the server
+	 *
+	 * @param String
+	 * 			the comment
+	 * @param long
+	 * 			the hash of the current snippet
+	 */
 	public void writeComment(String comment, long hash) {
 		if (comment == null || comment.isEmpty())
 			return;
@@ -324,6 +419,13 @@ public class Control implements EntryPoint {
 		});
 	}
 
+	
+	/**
+	 * adds a snippet to the favorite list of a user
+	 *
+	 * @param long
+	 * 			the hash of the current snippet
+	 */
 	public void toFav(long hash) {
 		ISnippetAsync snippetProxy = ISnippet.Util.getInstance();
 
@@ -349,6 +451,14 @@ public class Control implements EntryPoint {
 		});
 	}
 
+	
+	/**
+	 * changes a snippet (with server call)
+	 *
+	 * @param XSnippet
+	 * 			a snippet
+
+	 */
 	public void changeSnippet(XSnippet snip) {
 
 		ISnippet.Util.getInstance().edit(snip, new AsyncCallback<Void>() {
@@ -366,6 +476,15 @@ public class Control implements EntryPoint {
 		});
 	}
 
+	
+	/**
+	 * writes a new password on the server
+	 *
+	 * @param String
+	 * 			new Password
+	 * @param String
+	 * 			new Password
+	 */
 	public void setPassword(String pw1, String pw2) {
 		if (pw1.equals(pw2)) {
 
