@@ -37,5 +37,6 @@
         <archive path="/org.smartsnip/war/WEB-INF/lib/validation-api-1.0.0.GA.jar"/>
         <archive path="/org.smartsnip/war/WEB-INF/lib/ehcache-core-2.5.2.jar"/>
         <archive path="/org.smartsnip/war/WEB-INF/lib/commons-cli-1.2.jar"/>
+        <archive path="/org.smartsnip/war/WEB-INF/lib/commons-fileupload-1.2.2.jar"/>
     </library>
 </eclipse-userlibraries>
