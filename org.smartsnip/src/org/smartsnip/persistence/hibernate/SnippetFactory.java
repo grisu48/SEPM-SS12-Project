@@ -731,7 +731,7 @@ public class SnippetFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllSnippets(Integer,
 	 *      Integer, int)
 	 */
-	public static List<Snippet> getAllSnippets(Integer start, Integer count,
+	static List<Snippet> getAllSnippets(Integer start, Integer count,
 			int sorting) throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
