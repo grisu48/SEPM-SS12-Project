@@ -314,20 +314,23 @@ footer .gwt-Label, .gwt-Anchor {
 }
 
 
-.sortArea {
+.statusArea {
 	margin:20px;
 	width: 600px;
-	border-style:solid;
-	border-color:#a9c34a;
-	border-width:1px;
 }
 
-.sortArea .gwt-Label {
+
+.statusArea td + td {
+  text-align:right;
+}
+
+.statusArea .gwt-Label {
 	
 }
 
-.sortArea .gwt-ListBox {
-	
+.statusArea .gwt-ListBox {
+	margin:0px;
+	width:150px;
 }
 
 
@@ -486,3 +489,4 @@ height: 80px;
 	font-family:"Lato";
 	font-weight:700;
 }
+

@@ -3,21 +3,20 @@ package org.smartsnip.client;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
-public class SortArea extends Composite {
+public class StatusArea extends Composite {
 
-	private final HorizontalPanel pnlBasis;
+	private final DockPanel pnlBasis;
 	private final Label lblStatus;
-	private final Label lblSort;
 	private final ListBox lbSelectSort;
 
-	public SortArea() {
-		pnlBasis = new HorizontalPanel();
+	public StatusArea() {
+		pnlBasis = new DockPanel();
+		//pnlBasis.setWidth("400px");
 		lblStatus = new Label("Dummy-Text");
-		lblSort = new Label("Sorting:");
 
 		lbSelectSort = new ListBox();
 		lbSelectSort.addItem("Latest Snippets");
@@ -38,13 +37,12 @@ public class SortArea extends Composite {
 			}
 		});
 
-		pnlBasis.add(lblStatus);
-		pnlBasis.add(lblSort);
-		pnlBasis.add(lbSelectSort);
+		pnlBasis.add(lblStatus, DockPanel.WEST);
+		pnlBasis.add(lbSelectSort, DockPanel.EAST);
 
 		initWidget(pnlBasis);
 		// Give the overall composite a style name.
-		setStyleName("sortArea");
+		setStyleName("statusArea");
 	}
 
 	public void update(String status) {

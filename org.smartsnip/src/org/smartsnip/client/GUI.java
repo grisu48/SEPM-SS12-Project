@@ -28,7 +28,7 @@ public class GUI {
 
 	// visible in package, Control can modify
 	ResultArea myResultArea = null;
-	SortArea mySortArea = null;
+	StatusArea mySortArea = null;
 	CatArea myCatArea = null;
 	TagArea myTagArea = null;
 	CommentArea myCommentArea = null;
@@ -115,7 +115,7 @@ public class GUI {
 		dataPanel.clear();
 
 		myResultArea = new ResultArea();
-		mySortArea = new SortArea();
+		mySortArea = new StatusArea();
 		myCatArea = new CatArea();
 		myTagArea = new TagArea();
 
