@@ -189,7 +189,7 @@ footer .gwt-Label, .gwt-Anchor {
 	width:350px;
 	height:30px;
 	padding:10px;
-	margin: 20px 0px 0px 350px;
+	margin: 20px 0px 0px 145px;
 	font-size:150%;
 }
 
@@ -237,7 +237,7 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 
-.searchButton, .createButton {
+.searchButton, .createButton, .snippetOfDayButton {
 	
 	padding:13px;
 	margin: 20px 0px 0px 20px;

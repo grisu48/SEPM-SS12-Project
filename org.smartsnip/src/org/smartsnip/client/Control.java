@@ -507,5 +507,27 @@ public class Control implements EntryPoint {
 		}
 
 	}
+	
+	/**
+	 * shows the snippet of the day
+	 * 
+	 */
+	public void showSnippetOfDay() {
+		ISnippet.Util.getInstance().getSnippetOfDay(new AsyncCallback<XSnippet>() {
 
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(XSnippet result) {
+				changeToSnipPage(result);
+			}
+
+	
+		});
+
+	}
 }

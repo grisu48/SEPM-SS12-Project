@@ -17,6 +17,7 @@ public class SearchArea extends Composite {
 
 	private final HorizontalPanel horPanel;
 	private final SuggestBox searchSnippet;
+	private final Button btSnippetOfDay;
 	private final Button searchButton;
 	private final Button btCreateSnippet;
 	private final Control control;
@@ -46,6 +47,16 @@ public class SearchArea extends Composite {
 			}
 		});
 
+		btSnippetOfDay = new Button("Snippet of the Day");
+		btSnippetOfDay.addStyleName("snippetOfDayButton");
+		btSnippetOfDay.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				control.showSnippetOfDay();
+			}
+		});
+
+		
 		searchButton = new Button("Search Snippet");
 		searchButton.addStyleName("searchButton");
 		searchButton.addClickHandler(new ClickHandler() {
@@ -67,9 +78,9 @@ public class SearchArea extends Composite {
 			}
 		});
 
-
 		horPanel.add(searchSnippet);
 		horPanel.add(searchButton);
+		horPanel.add(btSnippetOfDay);
 		horPanel.add(btCreateSnippet);
 
 		initWidget(horPanel);
