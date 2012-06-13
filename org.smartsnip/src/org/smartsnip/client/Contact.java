@@ -17,6 +17,7 @@ public class Contact extends Composite {
 
 	private HorizontalPanel buttonPanel = new HorizontalPanel();
 	private VerticalPanel vertPanel;
+	private Label lTitle;
 	private Label lMail;
 	private TextBox tbMail;
 	private Label lMessage;
@@ -30,6 +31,8 @@ public class Contact extends Composite {
 		this.parent = parent;
 
 		vertPanel = new VerticalPanel();
+		lTitle = new Label("Contact");
+		lTitle.setStyleName("h3");
 		lMail = new Label("E-Mail");
 		tbMail = new TextBox();
 		lMessage = new Label("Your Message");
@@ -52,6 +55,7 @@ public class Contact extends Composite {
 			}
 		});
 
+		vertPanel.add(lTitle);
 		vertPanel.add(lMail);
 		vertPanel.add(tbMail);
 		vertPanel.add(lMessage);

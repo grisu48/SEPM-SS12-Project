@@ -250,14 +250,13 @@ public class GUI {
 		Contact contact = new Contact(ppnlContact);
 		ppnlContact.setWidget(contact);
 		ppnlContact.setGlassEnabled(true);
-		ppnlContact.setPopupPosition(110, 100);
-		ppnlContact.setWidth("340px");
+		ppnlContact.setPopupPosition(90, 104);
+		ppnlContact.setWidth("250px");
 		ppnlContact.show();
 	}
 
 	public void showCreateSnippetForm() {
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
-		// TODO CSS Style
 		ppnlSnippet.setStyleName("contactForm");
 		ppnlSnippet.setTitle("Create snippet");
 		CreateSnippet newSnippet = new CreateSnippet(ppnlSnippet, "Create");
