@@ -127,6 +127,7 @@ public class SearchArea extends Composite {
 		searchDuration = System.currentTimeMillis() - searchDuration;
 		searchDuration = searchDuration / 10;
 		double time = searchDuration / 100.0D;
+		time = Math.round(time*100)/100.0;
 		status = result.totalresults + " results in " + time + " ms";
 		return status;
 	}
