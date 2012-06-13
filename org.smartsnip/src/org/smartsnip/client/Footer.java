@@ -93,12 +93,14 @@ public class Footer extends Composite {
 		vertPanel2.add(impressum);
 		vertPanel2.add(register);
 		vertPanel2.add(aContact);
-		vertPanel2.add(aSource);
-		vertPanel2.add(aAndroid);
+		
 		vertPanel3.add(links);
+		
 		vertPanel3.add(aSnippet);
-		vertPanel3.add(aLink1);
-		vertPanel3.add(aLink2);
+		vertPanel3.add(aSource);
+		vertPanel3.add(aAndroid);
+		//vertPanel3.add(aLink1);
+		//vertPanel3.add(aLink2);
 		footerGrid.setWidget(0,0,vertPanel1);
 		footerGrid.setWidget(0,1,vertPanel2);
 		footerGrid.setWidget(0,2,vertPanel3);

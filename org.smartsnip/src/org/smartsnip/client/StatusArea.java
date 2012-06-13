@@ -16,7 +16,7 @@ public class StatusArea extends Composite {
 	public StatusArea() {
 		pnlBasis = new DockPanel();
 		//pnlBasis.setWidth("400px");
-		lblStatus = new Label("Dummy-Text");
+		lblStatus = new Label("");
 
 		lbSelectSort = new ListBox();
 		lbSelectSort.addItem("Latest Snippets");
