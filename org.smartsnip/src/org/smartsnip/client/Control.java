@@ -117,8 +117,7 @@ public class Control implements EntryPoint {
 	/**
 	 * Changes the Smartsnip-Site
 	 * 
-	 * @param char
-	 * 		A char which indicates which change should be done
+	 * @param char A char which indicates which change should be done
 	 * 
 	 */
 	public void changeSite(char c) {
@@ -127,8 +126,9 @@ public class Control implements EntryPoint {
 			myGUI.showImpressum();
 			break;
 		case 'u':
-			myGUI.showUpload();
-			break;	
+			// TODO Remove this
+			System.out.println("THIS SOLD BE REMOVED");
+			break;
 		case 'l':
 			myGUI.showLoginPopup();
 			break;
@@ -146,7 +146,7 @@ public class Control implements EntryPoint {
 			break;
 		case 'm':
 			myGUI.showModPage();
-			break;	
+			break;
 		default:
 		}
 	}
@@ -155,21 +155,20 @@ public class Control implements EntryPoint {
 	 * Change to show one snippet
 	 * 
 	 * @param XSnippet
-	 * 		The Snippet which should be shown
+	 *            The Snippet which should be shown
 	 * 
 	 */
 	public void changeToSnipPage(XSnippet snip) {
 		myGUI.showSnipPage(snip);
 	}
 
-	
 	/**
 	 * Calls a login on the server
 	 * 
 	 * @param String
-	 * 		the username
+	 *            the username
 	 * @param String
-	 * 		the password
+	 *            the password
 	 * 
 	 */
 	public void login(final String user, final String pw, final Login login) {
@@ -203,16 +202,15 @@ public class Control implements EntryPoint {
 		}
 	}
 
-	
 	/**
 	 * Calls a registration on the server
 	 * 
 	 * @param String
-	 * 		the username
+	 *            the username
 	 * @param String
-	 * 		the mailadress
+	 *            the mailadress
 	 * @param String
-	 * 		the password
+	 *            the password
 	 * 
 	 */
 	public void register(final String user, final String mail, final String pw,
@@ -239,22 +237,19 @@ public class Control implements EntryPoint {
 				});
 	}
 
-	
 	/**
 	 * Calls a search on the Server
 	 * 
 	 * @param String
-	 * 		the search word
-	 * @param List<String>
-	 * 		the tags which are wanted
-	 * @param List<String>
-	 * 		the categories which wanted
-	 * @param XSearch.SearchSorting
-	 * 		the sorting parameter
-	 * @param int
-	 * 		the starting number of the uses results
-	 * @param int
-	 * 		the count of the results
+	 *            the search word
+	 * @param List
+	 *            <String> the tags which are wanted
+	 * @param List
+	 *            <String> the categories which wanted
+	 * @param XSearch
+	 *            .SearchSorting the sorting parameter
+	 * @param int the starting number of the uses results
+	 * @param int the count of the results
 	 * 
 	 */
 	public void search(String searchString, List<String> tags,
@@ -281,9 +276,8 @@ public class Control implements EntryPoint {
 
 	/**
 	 * Gets the local username
-	 *
-	 * @return String
-	 * 			the username
+	 * 
+	 * @return String the username
 	 */
 	public String getUsername() {
 		return user.username;
@@ -291,9 +285,8 @@ public class Control implements EntryPoint {
 
 	/**
 	 * Gets the local usermail
-	 *
-	 * @return String
-	 * 			email adress
+	 * 
+	 * @return String email adress
 	 */
 	public String getUserMail() {
 		return user.email;
@@ -301,18 +294,16 @@ public class Control implements EntryPoint {
 
 	/**
 	 * Gets the login status
-	 *
-	 * @return boolean
-	 * 			login status
+	 * 
+	 * @return boolean login status
 	 */
 	public boolean isLoggedIn() {
 		return loggedIn;
 	}
 
-	
 	/**
 	 * Updates the local variables with the information on the server
-	 *
+	 * 
 	 */
 	public void refresh() {
 
@@ -360,10 +351,9 @@ public class Control implements EntryPoint {
 		// TODO Write me!
 	}
 
-	
 	/**
 	 * Send a logout request to the server
-	 *
+	 * 
 	 */
 	public void logout() {
 		proxySession.logout(new AsyncCallback<Void>() {
@@ -385,11 +375,10 @@ public class Control implements EntryPoint {
 
 	/**
 	 * writes a comment to the server
-	 *
+	 * 
 	 * @param String
-	 * 			the comment
-	 * @param long
-	 * 			the hash of the current snippet
+	 *            the comment
+	 * @param long the hash of the current snippet
 	 */
 	public void writeComment(String comment, long hash) {
 		if (comment == null || comment.isEmpty())
@@ -419,12 +408,10 @@ public class Control implements EntryPoint {
 		});
 	}
 
-	
 	/**
 	 * adds a snippet to the favorite list of a user
-	 *
-	 * @param long
-	 * 			the hash of the current snippet
+	 * 
+	 * @param long the hash of the current snippet
 	 */
 	public void toFav(long hash) {
 		ISnippetAsync snippetProxy = ISnippet.Util.getInstance();
@@ -451,13 +438,11 @@ public class Control implements EntryPoint {
 		});
 	}
 
-	
 	/**
 	 * changes a snippet (with server call)
-	 *
+	 * 
 	 * @param XSnippet
-	 * 			a snippet
-
+	 *            a snippet
 	 */
 	public void changeSnippet(XSnippet snip) {
 
@@ -476,14 +461,13 @@ public class Control implements EntryPoint {
 		});
 	}
 
-	
 	/**
 	 * writes a new password on the server
-	 *
+	 * 
 	 * @param String
-	 * 			new Password
+	 *            new Password
 	 * @param String
-	 * 			new Password
+	 *            new Password
 	 */
 	public void setPassword(String pw1, String pw2) {
 		if (pw1.equals(pw2)) {
@@ -507,27 +491,27 @@ public class Control implements EntryPoint {
 		}
 
 	}
-	
+
 	/**
 	 * shows the snippet of the day
 	 * 
 	 */
 	public void showSnippetOfDay() {
-		ISnippet.Util.getInstance().getSnippetOfDay(new AsyncCallback<XSnippet>() {
+		ISnippet.Util.getInstance().getSnippetOfDay(
+				new AsyncCallback<XSnippet>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
 
-			@Override
-			public void onSuccess(XSnippet result) {
-				changeToSnipPage(result);
-			}
+					}
 
-	
-		});
+					@Override
+					public void onSuccess(XSnippet result) {
+						changeToSnipPage(result);
+					}
+
+				});
 
 	}
 }

@@ -42,7 +42,7 @@ public class PersonalArea extends Composite {
 		updateSnippets();
 	}
 
-	private void updateSnippets() {
+	public void updateSnippets() {
 		IUser.Util.getInstance().getFavorites(
 				new AsyncCallback<List<XSnippet>>() {
 

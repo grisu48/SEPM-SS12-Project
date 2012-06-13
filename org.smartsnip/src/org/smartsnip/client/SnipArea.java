@@ -168,7 +168,7 @@ public class SnipArea extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO upload source code
+				Control.myGUI.showUploadSnippet(snippet.hash);
 			}
 		});
 

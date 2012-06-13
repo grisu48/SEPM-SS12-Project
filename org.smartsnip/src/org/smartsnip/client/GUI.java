@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-
 /**
  * The GUI
  * 
@@ -48,8 +47,6 @@ public class GUI {
 	// Create footerPanel
 	SimplePanel footerPanel = new SimplePanel();
 
-	
-	
 	/**
 	 * Start the GUI
 	 * 
@@ -75,7 +72,6 @@ public class GUI {
 
 	}
 
-	
 	/**
 	 * Preparing the basics widgets for the GUI
 	 * 
@@ -147,7 +143,6 @@ public class GUI {
 		dataPanel.add(myCommentArea);
 	}
 
-	
 	/**
 	 * shows the Personal page
 	 * 
@@ -158,10 +153,9 @@ public class GUI {
 		VerticalPanel vertPanel = new VerticalPanel();
 		dataPanel.add(myPersonalArea);
 		dataPanel.add(vertPanel);
-
+		myPersonalArea.updateSnippets();
 	}
 
-	
 	/**
 	 * shows the login popup
 	 * 
@@ -183,7 +177,7 @@ public class GUI {
 	 * shows a test popup
 	 * 
 	 * @param String
-	 * 		the titlee of the popup
+	 *            the titlee of the popup
 	 * 
 	 */
 	public void showTestPopup(String test) {
@@ -212,8 +206,9 @@ public class GUI {
 
 	/**
 	 * shows a error popup
+	 * 
 	 * @param String
-	 * 		the error message
+	 *            the error message
 	 * 
 	 */
 	public void showErrorPopup(String message) {
@@ -246,9 +241,9 @@ public class GUI {
 	 * shows a error popup
 	 * 
 	 * @param String
-	 * 			the error message
+	 *            the error message
 	 * @param Throwable
-	 * 			the error
+	 *            the error
 	 * 
 	 */
 	public void showErrorPopup(String message, Throwable cause) {
@@ -260,8 +255,6 @@ public class GUI {
 		showErrorPopup(message);
 	}
 
-	
-	
 	/**
 	 * shows the register popup
 	 * 
@@ -282,7 +275,6 @@ public class GUI {
 		registerPanel.show();
 	}
 
-	
 	/**
 	 * shows the impressum
 	 * 
@@ -303,14 +295,13 @@ public class GUI {
 		dataPanel.add(impressum);
 	}
 
-	
 	/**
 	 * updates the search page
 	 * 
 	 * @param XSearch
-	 * 			the search result
+	 *            the search result
 	 * @param String
-	 * 			the current search status
+	 *            the current search status
 	 * 
 	 * 
 	 */
@@ -325,7 +316,6 @@ public class GUI {
 		}
 	}
 
-	
 	/**
 	 * shows the contact form
 	 * 
@@ -345,7 +335,6 @@ public class GUI {
 		ppnlContact.show();
 	}
 
-	
 	/**
 	 * shows the create snippet popup
 	 * 
@@ -364,7 +353,6 @@ public class GUI {
 
 	}
 
-	
 	/**
 	 * starts the search
 	 * 
@@ -379,7 +367,7 @@ public class GUI {
 	 * Creates a popup window with a link
 	 * 
 	 * @param String
-	 * 			the download message
+	 *            the download message
 	 * @param convertToLink
 	 *            link to be created
 	 */
@@ -424,25 +412,26 @@ public class GUI {
 		dataPanel.add(myModeratorArea);
 	}
 
-	
 	/**
 	 * shows upload window
 	 * 
-	 * 
+	 * @param snippetID
+	 *            Hash ID of the snippet the uploaded file belongs to
 	 */
-	public void showUpload() {
-		
+	public void showUploadSnippet(long snippetID) {
+
 		Window.scrollTo(0, 0);
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
 		ppnlSnippet.setStyleName("uploadForm");
 		ppnlSnippet.setTitle("Upload Snippet");
-		Upload myUpload = new Upload(ppnlSnippet, "Upload");
+		Upload myUpload = new Upload(ppnlSnippet, "Upload", "snip_id="
+				+ snippetID);
 		ppnlSnippet.setWidget(myUpload);
 		ppnlSnippet.setGlassEnabled(true);
 		ppnlSnippet.setPopupPosition(90, 104);
 		ppnlSnippet.setWidth("250px");
 		ppnlSnippet.show();
-		
+
 	}
 
 }
