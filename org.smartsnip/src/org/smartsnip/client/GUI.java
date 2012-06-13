@@ -27,7 +27,7 @@ public class GUI {
 
 	// visible in package, Control can modify
 	ResultArea myResultArea = null;
-	StatusArea mySortArea = null;
+	StatusArea myStatusArea = null;
 	CatArea myCatArea = null;
 	TagArea myTagArea = null;
 	CommentArea myCommentArea = null;
@@ -111,7 +111,7 @@ public class GUI {
 		dataPanel.clear();
 
 		myResultArea = new ResultArea();
-		mySortArea = new StatusArea();
+		myStatusArea = new StatusArea();
 		myCatArea = new CatArea();
 		myTagArea = new TagArea();
 
@@ -121,7 +121,7 @@ public class GUI {
 		VerticalPanel rightPanel = new VerticalPanel();
 		rightPanel.setStyleName("rightPanel");
 
-		leftPanel.add(mySortArea);
+		leftPanel.add(myStatusArea);
 		leftPanel.add(myResultArea);
 		rightPanel.add(myCatArea);
 		rightPanel.add(myTagArea);
@@ -308,11 +308,12 @@ public class GUI {
 	public void updateSearchPage(XSearch result, String status) {
 		showSearchPage();
 
-		mySortArea.update(status);
+		myStatusArea.update(status);
 		if (result != null) {
 			myResultArea.update(result.snippets);
 			myCatArea.update(result.categories);
 			myTagArea.update(result.tagsAppearingInSearchString);
+			mySearchArea.update();
 		}
 	}
 
@@ -360,7 +361,7 @@ public class GUI {
 	 */
 	public void startSearch() {
 		showSearchPage();
-		mySortArea.update("Searching ... ");
+		myStatusArea.update("Searching ... ");
 	}
 
 	/**

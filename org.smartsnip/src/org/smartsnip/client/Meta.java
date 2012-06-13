@@ -4,7 +4,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -19,6 +18,7 @@ public class Meta extends Composite {
 	private final Anchor login;
 	private final Anchor register;
 	private final Anchor logout;
+	private final Anchor mod;
 	private Image icon;
 	private Control control;
 	
@@ -44,6 +44,16 @@ public class Meta extends Composite {
 
 		});
 
+		mod = new Anchor("Moderate");
+		mod.setStyleName("mod");
+		mod.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				control.changeSite('m');
+			}
+
+		});
+		
 		login = new Anchor(" > Login");
 		login.addClickHandler(new ClickHandler() {
 			@Override
@@ -78,7 +88,9 @@ public class Meta extends Composite {
 		metaPanel.add(user);
 		metaPanel.add(login);
 		metaPanel.add(register);
+		metaPanel.add(mod);
 		metaPanel.add(logout);
+		
 
 
 
@@ -100,6 +112,7 @@ public class Meta extends Composite {
 			login.setVisible(false);
 			register.setVisible(false);
 			logout.setVisible(true);
+			mod.setVisible(true);
 		} else {
 			user.setVisible(false);
 			icon.setVisible(false);
@@ -107,6 +120,7 @@ public class Meta extends Composite {
 			register.setVisible(true);
 			pnlUser.setVisible(false);
 			logout.setVisible(false);
+			mod.setVisible(false);
 		}
 		
 

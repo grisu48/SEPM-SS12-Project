@@ -270,6 +270,7 @@ public class Control implements EntryPoint {
 					public void onSuccess(XSearch result) {
 						String status = searchArea.searchDone(result);
 						myGUI.updateSearchPage(result, status);
+						
 					}
 				});
 	}

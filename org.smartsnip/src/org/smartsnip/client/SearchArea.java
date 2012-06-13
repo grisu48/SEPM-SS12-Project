@@ -1,5 +1,10 @@
 package org.smartsnip.client;
 
+
+
+
+
+
 import org.smartsnip.shared.XSearch;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -91,6 +96,7 @@ public class SearchArea extends Composite {
 	}
 
 	public void fireSearch() {
+		searchButton.setEnabled(false);
 		Control control = Control.getInstance();
 		searchDuration = System.currentTimeMillis();
 		control.search(searchSnippet.getText(), null, null,
@@ -103,7 +109,7 @@ public class SearchArea extends Composite {
 		} else {
 			btCreateSnippet.setVisible(false);
 		}
-
+		searchButton.setEnabled(true);
 	}
 
 	/**
@@ -126,9 +132,12 @@ public class SearchArea extends Composite {
 	String searchDone(XSearch result) {
 		searchDuration = System.currentTimeMillis() - searchDuration;
 		searchDuration = searchDuration / 10;
-		double time = searchDuration / 100.0D;
-		time = Math.round(time*100)/100.0;
+		int time = (int) Math.floor(searchDuration);
+		
+		
 		status = result.totalresults + " results in " + time + " ms";
+		//status = "test";
+		System.out.println(status);
 		return status;
 	}
 
