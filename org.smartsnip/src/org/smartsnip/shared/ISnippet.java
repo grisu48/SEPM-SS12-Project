@@ -188,7 +188,7 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws IllegalArgumentException
 	 *             Thrown if at least one argument is invalid
 	 */
-	public void create(String name, String desc, String code, String language,
+	public void create(String name, String desc, String code, String language, String license,
 			String category, List<String> tags) throws NoAccessException,
 			IllegalArgumentException;
 

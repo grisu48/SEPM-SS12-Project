@@ -195,7 +195,7 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 	}
 
 	@Override
-	public void create(String name, String desc, String code, String language,
+	public void create(String name, String desc, String code, String language, String license,
 			String category, List<String> tags) throws NoAccessException,
 			IllegalArgumentException {
 
@@ -209,6 +209,9 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 			throw new IllegalArgumentException(
 					"New snippet code cannot be empty");
 		if (language == null || language.isEmpty())
+			throw new IllegalArgumentException(
+					"New snippet language cannot be empty");
+		if (license == null || license.isEmpty())
 			throw new IllegalArgumentException(
 					"New snippet language cannot be empty");
 
@@ -235,7 +238,7 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 
 		try {
 			Snippet result = Snippet.createSnippet(owner.getUsername(), name,
-					desc, category, code, language, "", tagList);
+					desc, category, code, language, license, tagList);
 
 			if (result == null)
 				throw new RuntimeException("Unknown error");

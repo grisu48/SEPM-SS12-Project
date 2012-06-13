@@ -44,6 +44,7 @@ public class CreateSnippet extends Composite {
 	private final TextArea txtCode;
 	private final ListBox lstLanguage;
 	private final ListBox lstCategory;
+	private final ListBox lstLicense;
 	private final TextBox txtTag;
 	private final Label lblTags;
 	private final Button btnTag;
@@ -76,6 +77,9 @@ public class CreateSnippet extends Composite {
 		txtCode = new TextArea();
 		lstLanguage = new ListBox();
 		lstCategory = new ListBox();
+		lstLicense = new ListBox();
+		lstLicense.addItem("CC");
+		lstLicense.addItem("GPL");
 
 		ISnippet.Util.getInstance().getSupportedLanguages(
 				new AsyncCallback<List<String>>() {
@@ -171,6 +175,7 @@ public class CreateSnippet extends Composite {
 
 		pnlProp.add(lstLanguage);
 		pnlProp.add(lstCategory);
+		pnlProp.add(lstLicense);
 
 		pnlTags.add(txtTag);
 		pnlTags.add(btnTag);
@@ -200,6 +205,13 @@ public class CreateSnippet extends Composite {
 		String language;
 		String code = txtCode.getText();
 		String cat;
+		String license;
+		
+		if (lstLicense.getSelectedIndex() == -1) {
+			license = "";
+		} else {
+			license = lstLicense.getItemText(lstLicense.getSelectedIndex());
+		}
 
 		if (lstLanguage.getSelectedIndex() == -1) {
 			language = "";
@@ -224,7 +236,7 @@ public class CreateSnippet extends Composite {
 		// TODO Category and Tags
 		btCreate.setEnabled(false);
 		lblStatus.setText("Creating snippet ... ");
-		ISnippet.Util.getInstance().create(name, desc, code, language, cat,
+		ISnippet.Util.getInstance().create(name, desc, code, language, license, cat,
 				taglist, new AsyncCallback<Void>() {
 
 					@Override
