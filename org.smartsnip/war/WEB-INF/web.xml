@@ -81,7 +81,7 @@
 
 <servlet>
     <servlet-name>Uploader</servlet-name>
-    <servlet-class>org.smartsnip.server.SourceDownloader</servlet-class>
+    <servlet-class>org.smartsnip.server.Uploader</servlet-class>
   </servlet>
   
   <servlet-mapping>

@@ -424,7 +424,7 @@ public class GUI {
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
 		ppnlSnippet.setStyleName("uploadForm");
 		ppnlSnippet.setTitle("Upload Snippet");
-		Upload myUpload = new Upload(ppnlSnippet, "Upload", "snip_id="
+		Upload myUpload = new Upload(ppnlSnippet, "upload", "snip_id="
 				+ snippetID);
 		ppnlSnippet.setWidget(myUpload);
 		ppnlSnippet.setGlassEnabled(true);

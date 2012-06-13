@@ -70,6 +70,7 @@ public class Uploader extends SessionServlet {
 
 			// Parse the request
 			try {
+				@SuppressWarnings("unchecked")
 				List<FileItem> items = upload.parseRequest(req);
 				for (FileItem item : items) {
 					// process only file upload - discard other form item types
@@ -89,6 +90,8 @@ public class Uploader extends SessionServlet {
 						resp.getWriter().print(
 								"The file was created successfully.");
 						resp.flushBuffer();
+						System.out
+								.println("File \"" + fileName + "\" received");
 					} else
 						throw new IOException(
 								"The file already exists in repository.");
