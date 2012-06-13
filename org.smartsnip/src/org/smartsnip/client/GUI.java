@@ -316,4 +316,19 @@ public class GUI {
 		dataPanel.add(myModeratorArea);
 	}
 
+	public void showUpload() {
+		
+		Window.scrollTo(0, 0);
+		PopupPanel ppnlSnippet = new PopupPanel(true, true);
+		ppnlSnippet.setStyleName("uploadForm");
+		ppnlSnippet.setTitle("Upload Snippet");
+		Upload myUpload = new Upload(ppnlSnippet, "Upload");
+		ppnlSnippet.setWidget(myUpload);
+		ppnlSnippet.setGlassEnabled(true);
+		ppnlSnippet.setPopupPosition(90, 104);
+		ppnlSnippet.setWidth("250px");
+		ppnlSnippet.show();
+		
+	}
+
 }

@@ -114,6 +114,9 @@ public class Control implements EntryPoint {
 		case 'i':
 			myGUI.showImpressum();
 			break;
+		case 'u':
+			myGUI.showUpload();
+			break;	
 		case 'l':
 			myGUI.showLoginPopup();
 			break;
