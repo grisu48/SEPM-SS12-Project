@@ -253,7 +253,7 @@ public class Session {
 	public synchronized boolean isLoggedInUser(User user) {
 		if (user == null)
 			return this.user == null;
-		return user == this.user;
+		return user.equals(this.user);
 	}
 
 	/**

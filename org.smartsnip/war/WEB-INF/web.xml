@@ -79,7 +79,20 @@
     <url-pattern>/downloader</url-pattern>
   </servlet-mapping>
 
+<servlet>
+    <servlet-name>Uploader</servlet-name>
+    <servlet-class>org.smartsnip.server.SourceDownloader</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>Uploader</servlet-name>
+    <url-pattern>/org_smartsnip/upload</url-pattern>
+  </servlet-mapping>
 
+  <servlet-mapping>
+    <servlet-name>Uploader</servlet-name>
+    <url-pattern>/upload</url-pattern>
+  </servlet-mapping>
 
 
 
