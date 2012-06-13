@@ -28,6 +28,8 @@ public class Footer extends Composite {
 	private Anchor aContact;
 	private Anchor aLink1;
 	private Anchor aLink2;
+	private Anchor aSource;
+	private Anchor aAndroid;
 	
 	
 	public Footer() {
@@ -40,6 +42,8 @@ public class Footer extends Composite {
 		name1 = new Label("Gerhard Aigner");
 		name2 = new Label("Felix Niederwanger");
 		aName3 = new Anchor("Paul Opitz", false, "http://perdix.at");
+		aSource = new Anchor("Download Source Code", false, "");
+		aAndroid = new Anchor("Download Android Client", false, "");
 		links = new Label("Links");
 		links.addStyleName("h4");
 		aLink1 = new Anchor("Universität Innsbruck", false ,"http://uibk.ac.at");
@@ -85,6 +89,8 @@ public class Footer extends Composite {
 		vertPanel2.add(impressum);
 		vertPanel2.add(register);
 		vertPanel2.add(aContact);
+		vertPanel2.add(aSource);
+		vertPanel2.add(aAndroid);
 		vertPanel3.add(links);
 		vertPanel3.add(aLink1);
 		vertPanel3.add(aLink2);
