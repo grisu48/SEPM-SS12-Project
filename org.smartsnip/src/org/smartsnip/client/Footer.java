@@ -2,6 +2,7 @@ package org.smartsnip.client;
 
 
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
@@ -30,6 +31,7 @@ public class Footer extends Composite {
 	private Anchor aLink2;
 	private Anchor aSource;
 	private Anchor aAndroid;
+	private Anchor aSnippet;
 	
 	
 	public Footer() {
@@ -44,6 +46,8 @@ public class Footer extends Composite {
 		aName3 = new Anchor("Paul Opitz", false, "http://perdix.at");
 		aSource = new Anchor("Download Source Code", false, "");
 		aAndroid = new Anchor("Download Android Client", false, "");
+		aSnippet = new Anchor("Mobile Snipped of the Day");
+		aSnippet.setHref(GWT.getHostPageBaseURL() + "snippetofday");
 		links = new Label("Links");
 		links.addStyleName("h4");
 		aLink1 = new Anchor("Universität Innsbruck", false ,"http://uibk.ac.at");
@@ -92,6 +96,7 @@ public class Footer extends Composite {
 		vertPanel2.add(aSource);
 		vertPanel2.add(aAndroid);
 		vertPanel3.add(links);
+		vertPanel3.add(aSnippet);
 		vertPanel3.add(aLink1);
 		vertPanel3.add(aLink2);
 		footerGrid.setWidget(0,0,vertPanel1);

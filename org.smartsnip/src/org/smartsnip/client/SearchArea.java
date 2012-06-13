@@ -2,13 +2,11 @@ package org.smartsnip.client;
 
 import org.smartsnip.shared.XSearch;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -21,7 +19,6 @@ public class SearchArea extends Composite {
 	private final SuggestBox searchSnippet;
 	private final Button searchButton;
 	private final Button btCreateSnippet;
-	private final Anchor anchSnippetOfDay;
 	private final Control control;
 	private String status;
 
@@ -70,13 +67,10 @@ public class SearchArea extends Composite {
 			}
 		});
 
-		anchSnippetOfDay = new Anchor("Snippet of the day");
-		anchSnippetOfDay.setHref(GWT.getHostPageBaseURL() + "snippetofday");
 
 		horPanel.add(searchSnippet);
 		horPanel.add(searchButton);
 		horPanel.add(btCreateSnippet);
-		horPanel.add(anchSnippetOfDay);
 
 		initWidget(horPanel);
 		// Give the overall composite a style name.
