@@ -16,7 +16,6 @@ import org.hibernate.Transaction;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.persistence.IPersistence;
-import org.smartsnip.shared.Pair;
 
 /**
  * @author littlelion

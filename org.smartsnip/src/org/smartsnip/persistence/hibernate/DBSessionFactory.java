@@ -44,6 +44,7 @@ public class DBSessionFactory {
 				// add entity classes
 				configuration.addAnnotatedClass(DBCategory.class);
 				configuration.addAnnotatedClass(DBCode.class);
+				configuration.addAnnotatedClass(DBCodeFile.class);
 				configuration.addAnnotatedClass(DBComment.class);
 				configuration.addAnnotatedClass(DBFavourite.class);
 				configuration.addAnnotatedClass(DBLanguage.class);

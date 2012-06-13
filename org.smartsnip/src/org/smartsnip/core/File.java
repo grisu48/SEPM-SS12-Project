@@ -20,7 +20,7 @@ public class File {
 	 * @param name
 	 *            the filename
 	 */
-	public File(Byte[] content, String name) {
+	File(Byte[] content, String name) {
 		super();
 		this.content = content;
 		this.name = name;
@@ -53,14 +53,14 @@ public class File {
 	/**
 	 * @param content the content to set
 	 */
-	public final void setContent(Byte[] content) {
+	void setContent(Byte[] content) {
 		this.content = content;
 	}
 
 	/**
 	 * @param name the name to set
 	 */
-	public final void setName(String name) {
+	void setName(String name) {
 		this.name = name;
 	}
 }

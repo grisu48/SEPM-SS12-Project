@@ -14,6 +14,8 @@ import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.persistence.PersistenceFactory;
 import org.smartsnip.shared.Pair;
 
+import com.google.gwt.user.client.Random;
+
 import sun.reflect.Reflection;
 
 /**
@@ -812,12 +814,58 @@ public class BlackholePersistenceImpl implements IPersistence {
 				0F);
 	}
 
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getRandomSnippet(double)
+	 */
 	@Override
 	public Snippet getRandomSnippet(double random) throws IOException {
-		return this.helper.createSnippet(new Double(2000D * random).longValue(),
+		checkFail();
+		return this.helper.createSnippet(
+				new Double(2000D * random).longValue(),
 				this.staticUser1.getUsername(), "The Header", "Some Content",
 				"undefined", new ArrayList<Tag>(), new ArrayList<Long>(),
 				"license free", 0, 0F);
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#writeCodeFile(java.lang.Long,
+	 *      org.smartsnip.core.File, int)
+	 */
+	@Override
+	public void writeCodeFile(Long codeId, File file, int flags)
+			throws IOException {
+		checkFail();
+		// do nothing -> data vanish in the black hole!
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getAllSnippets(java.lang.Integer,
+	 *      java.lang.Integer, int)
+	 */
+	@Override
+	public List<Snippet> getAllSnippets(Integer start, Integer count,
+			int sorting) throws IOException {
+		checkFail();
+		List<Snippet> result = new ArrayList<Snippet>(1000);
+		for (long i = 0L; i < 1000L; ++i) {
+			result.add(getSnippet(i));
+		}
+		return result;
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getCodeFile(java.lang.Long)
+	 */
+	@Override
+	public File getCodeFile(Long codeId) throws IOException {
+		checkFail();
+		Byte[] content = new Byte[10000];
+		Byte data;
+		for (int i = 0; i < content.length; ++i) {
+			data = new Integer(Random.nextInt(255) - 128).byteValue();
+			content[i] = data;
+		}
+		return helper.createCodeFile("testfile.bin", content);
 	}
 
 	/**
@@ -825,7 +873,6 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public void close() throws IOException {
-		checkFail();
 		this.fail = true;
 	}
 
@@ -839,25 +886,5 @@ public class BlackholePersistenceImpl implements IPersistence {
 		if (fail) {
 			throw new IOException("MemPersistence closed.");
 		}
-	}
-
-	@Override
-	public void writeCodeFile(Long codeId, File file, int flags)
-			throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<Snippet> getAllSnippets(Integer start, Integer count,
-			int sorting) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public File getCodeFile(Long codeId) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

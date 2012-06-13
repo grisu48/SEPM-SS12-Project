@@ -76,6 +76,8 @@ public class MemPersistence implements IPersistence {
 
 	private final HashMap<String, String> licenses = new HashMap<String, String>();
 
+	private final HashMap<Long, File> codeFiles = new HashMap<Long, File>();
+
 	private String toKey(String key) {
 		if (key == null)
 			return "";
@@ -224,6 +226,7 @@ public class MemPersistence implements IPersistence {
 		HashMap<Integer, Code> codes = allCodes.get(snippet);
 		if (codes == null) {
 			codes = new HashMap<Integer, Code>();
+			codes.put(key, code);
 			allCodes.put(snippet, codes);
 		} else
 			codes.put(key, code);
@@ -869,6 +872,7 @@ public class MemPersistence implements IPersistence {
 
 	@Override
 	public Snippet getRandomSnippet(double random) throws IOException {
+		checkFail();
 		Snippet result = null;
 		int target = new Double(new Long(this.allSnippets.size()).doubleValue()
 				* random).intValue();
@@ -1000,14 +1004,62 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void writeCodeFile(Long codeId, File file, int flags)
+			throws IOException {
 		checkFail();
+		boolean found = false;
+		for (HashMap<Integer, Code> codes : this.allCodes.values()) {
+			if (codes != null
+					&& codes.containsKey(new Integer(codeId.intValue()))) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			throw new IOException("Code with id " + codeId + " not found.");
+		}
+		this.codeFiles.put(codeId, file);
+	}
+
+	@Override
+	public List<Snippet> getAllSnippets(Integer start, Integer count,
+			int sorting) throws IOException {
+		checkFail();
+		int min = 0;
+		int max = 0;
+		if (start != null && start > 0)
+			min = start;
+		if (count != null && count > 0)
+			max = min + count;
+		
+		List<Snippet> result = new ArrayList<Snippet>();
+		int i = 0;
+		for (Snippet snip : this.allSnippets.values()) {
+			if (i >= min) {
+				result.add(snip);
+				if (i > max)
+					break;
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public File getCodeFile(Long codeId) throws IOException {
+		checkFail();
+		if (codeId == null)
+			return null;
+		return this.codeFiles.get(codeId);
+	}
+
+	@Override
+	public void close() throws IOException {
 		this.fail = true;
 	}
 
 	/**
 	 * checks if MemPersistence had been closed. Every call to a closed
-	 * MemPersistence will fail.
+	 * MemPersistence will fail with an {@link IOException}.
 	 * 
 	 * @throws IOException
 	 */
@@ -1015,25 +1067,5 @@ public class MemPersistence implements IPersistence {
 		if (fail) {
 			throw new IOException("MemPersistence closed.");
 		}
-	}
-
-	@Override
-	public void writeCodeFile(Long codeId, File file, int flags)
-			throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<Snippet> getAllSnippets(Integer start, Integer count,
-			int sorting) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public File getCodeFile(Long codeId) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

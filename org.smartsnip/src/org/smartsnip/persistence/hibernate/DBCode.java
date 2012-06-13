@@ -44,9 +44,9 @@ public class DBCode {
 
 	@Lob
 	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
-	@Column(name = "file")
+	@Column(name = "file", columnDefinition="TEXT")
 	private String file;
-
+	
 	@Column(name = "version")
 	private Integer version;
 

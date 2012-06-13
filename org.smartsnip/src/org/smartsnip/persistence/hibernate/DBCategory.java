@@ -48,7 +48,7 @@ public class DBCategory {
 
 	@Lob
 	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
-	@Column(name = "description")
+	@Column(name = "description", columnDefinition="TEXT")
 	private String description;
 
 	/**

@@ -607,9 +607,9 @@ public class UserFactory {
 							SnippetFactory.fetchLicense(helper, session, snip)
 									.getShortDescr(), snip.getViewcount(), snip
 									.getRatingAverage());
-					snippet.setCode(CodeFactory.fetchNewestCode(helper,
-							session, snippet));
-				} else {
+					helper.setCodeOfSnippet(snippet,
+							CodeFactory.fetchNewestCode(helper, session, snippet));
+					} else {
 					snippet = null;
 				}
 				result.add(helper.createNotification(

@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
+import org.hibernate.search.SearchException;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Snippet;
@@ -383,7 +385,7 @@ public class SnippetFactory {
 			// step 2: remove orphaned tags from DB
 			if (DBQuery.hasFlag(flags, IPersistence.DB_FORCE_DELETE)) {
 				DBTag tag = new DBTag();
-				for (String name: tagNames) {
+				for (String name : tagNames) {
 					tag.setName(name);
 					query.reset();
 					query.remove(tag, flags);
@@ -466,8 +468,8 @@ public class SnippetFactory {
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount(), entity.getRatingAverage());
-				snippet.setCode(CodeFactory.fetchNewestCode(helper, session,
-						snippet));
+				helper.setCodeOfSnippet(snippet,
+						CodeFactory.fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -526,8 +528,8 @@ public class SnippetFactory {
 								snip.getSnippetId()),
 						fetchLicense(helper, session, snip).getShortDescr(),
 						snip.getViewcount(), snip.getRatingAverage());
-				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(
-						helper, session, snippet));
+				helper.setCodeOfSnippet(snippet,
+						CodeFactory.fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -590,8 +592,8 @@ public class SnippetFactory {
 						CommentFactory.fetchCommentIds(session, id),
 						fetchLicense(helper, session, snip).getShortDescr(),
 						snip.getViewcount(), snip.getRatingAverage());
-				snippet.setCode(CodeFactory.fetchNewestCode(helper, session,
-						snippet));
+				helper.setCodeOfSnippet(snippet,
+						CodeFactory.fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -656,8 +658,8 @@ public class SnippetFactory {
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount(), entity.getRatingAverage());
-				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(
-						helper, session, snippet));
+				helper.setCodeOfSnippet(snippet,
+						CodeFactory.fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -704,9 +706,8 @@ public class SnippetFactory {
 							fetchLicense(helper, session, entity)
 									.getShortDescr(), entity.getViewcount(),
 							entity.getRatingAverage());
-			result.setCodeWithoutWriting(CodeFactory.fetchNewestCode(helper,
-					session, result));
-
+			helper.setCodeOfSnippet(result,
+					CodeFactory.fetchNewestCode(helper, session, result));
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -765,8 +766,8 @@ public class SnippetFactory {
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount(), entity.getRatingAverage());
-				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(
-						helper, session, snippet));
+				helper.setCodeOfSnippet(snippet,
+						CodeFactory.fetchNewestCode(helper, session, snippet));
 				result.add(snippet);
 			}
 
@@ -821,8 +822,8 @@ public class SnippetFactory {
 								entity.getSnippetId()),
 						fetchLicense(helper, session, entity).getShortDescr(),
 						entity.getViewcount(), entity.getRatingAverage());
-				result.setCodeWithoutWriting(CodeFactory.fetchNewestCode(
-						helper, session, result));
+				helper.setCodeOfSnippet(result,
+						CodeFactory.fetchNewestCode(helper, session, result));
 			}
 
 			tx.commit();
@@ -975,47 +976,56 @@ public class SnippetFactory {
 
 		Transaction tx = null;
 		try {
-			tx = fullTextSession.beginTransaction();
+			tx = fullTextSession.beginTransaction(); //TODO include tags, categories
 
 			// lucene full text query
 			QueryBuilder builder = fullTextSession.getSearchFactory()
 					.buildQueryBuilder().forEntity(DBSnippet.class).get();
-			org.apache.lucene.search.Query ftQuery = builder.keyword()
-					.onFields("headline", "description").matching(searchString)
-					.createQuery();
-
-			// wrap Lucene query in a org.hibernate.Query
-			org.hibernate.Query query = fullTextSession.createFullTextQuery(
-					ftQuery, DBSnippet.class);
-			if (start != null && start > 0) {
-				query.setFirstResult(start);
+			org.apache.lucene.search.Query ftQuery = null;
+			try {
+				ftQuery = builder.keyword().onFields("headline", "description")
+						.matching(searchString).createQuery();
+			} catch (SearchException se) {
+				Logger log = Logger.getLogger(SnippetFactory.class);
+				log.trace("Search with no results: " + searchString, se);
 			}
-			if (count != null && count > 0) {
-				query.setFetchSize(count);
-			}
+			
+			if (ftQuery != null) {
+				// wrap Lucene query in a org.hibernate.Query
+				org.hibernate.Query query = fullTextSession
+						.createFullTextQuery(ftQuery, DBSnippet.class);
+				if (start != null && start > 0) {
+					query.setFirstResult(start);
+				}
+				if (count != null && count > 0) {
+					query.setFetchSize(count);
+				}
+				System.err.println(query);
+				System.err.println(query.getQueryString());
 
-			// execute search and build Snippets
-			DBSnippet entity;
-			Snippet snippet;
-			@SuppressWarnings("unchecked")
-			Iterator<DBSnippet> iterator = query.iterate();
-			for (; iterator.hasNext();) {
-				entity = iterator.next();
-				snippet = helper.createSnippet(entity.getSnippetId(), entity
-						.getOwner(), entity.getHeadline(), entity
-						.getDescription(),
-						CategoryFactory.fetchCategory(session, entity)
-								.getName(), TagFactory.fetchTags(helper,
-								session, entity.getSnippetId()),
-						CommentFactory.fetchCommentIds(session,
-								entity.getSnippetId()),
-						fetchLicense(helper, session, entity).getShortDescr(),
-						entity.getViewcount(), entity.getRatingAverage());
-				snippet.setCodeWithoutWriting(CodeFactory.fetchNewestCode(
-						helper, session, snippet));
-				result.add(snippet);
+				// execute search and build Snippets
+				DBSnippet entity;
+				Snippet snippet;
+				@SuppressWarnings("unchecked")
+				Iterator<DBSnippet> iterator = query.iterate();
+				for (; iterator.hasNext();) {
+					entity = iterator.next();
+					snippet = helper.createSnippet(entity.getSnippetId(),
+							entity.getOwner(), entity.getHeadline(), entity
+									.getDescription(), CategoryFactory
+									.fetchCategory(session, entity).getName(),
+							TagFactory.fetchTags(helper, session,
+									entity.getSnippetId()), CommentFactory
+									.fetchCommentIds(session,
+											entity.getSnippetId()),
+							fetchLicense(helper, session, entity)
+									.getShortDescr(), entity.getViewcount(),
+							entity.getRatingAverage());
+					helper.setCodeOfSnippet(snippet, CodeFactory
+							.fetchNewestCode(helper, session, snippet));
+					result.add(snippet);
+				}
 			}
-
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)

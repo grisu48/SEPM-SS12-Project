@@ -24,7 +24,7 @@ public class PersistenceHelper {
 	}
 
 	/**
-	 * Factory method for the persistence layer
+	 * Factory method for the persistence layer.
 	 * 
 	 * @param id
 	 * @param owner
@@ -35,14 +35,27 @@ public class PersistenceHelper {
 	 * @param comments
 	 * @param license
 	 * @param viewcount
-	 * @param ratingAverage 
+	 * @param ratingAverage
 	 * @return an initialized Snippet object
 	 */
 	protected Snippet createSnippet(Long id, String owner, String name,
 			String description, String category, List<Tag> tags,
-			List<Long> comments, String license, int viewcount, Float ratingAverage) {
-		return new Snippet(owner, name, description, id,
-				category, license, tags, comments, viewcount, ratingAverage);
+			List<Long> comments, String license, int viewcount,
+			Float ratingAverage) {
+		return new Snippet(owner, name, description, id, category, license,
+				tags, comments, viewcount, ratingAverage);
+	}
+
+	/**
+	 * Helper method for the persistence layer to set the Code object after
+	 * creating a snippet within the initialization process.
+	 * 
+	 * @param snippet the target snippet
+	 * @param code the code to set
+	 */
+	@SuppressWarnings("deprecation")
+	protected void setCodeOfSnippet(Snippet snippet, Code code) {
+		snippet.setCodeWithoutWriting(code);
 	}
 
 	/**
@@ -87,8 +100,8 @@ public class PersistenceHelper {
 	 */
 	protected Comment createComment(String owner, Long snippetId,
 			String message, Long id, Date time, int posVotes, int negVotes) {
-		return new Comment(owner, snippetId, message,
-				id, time, posVotes, negVotes);
+		return new Comment(owner, snippetId, message, id, time, posVotes,
+				negVotes);
 	}
 
 	/**
@@ -104,6 +117,17 @@ public class PersistenceHelper {
 	protected Code createCode(Long id, String code, String language,
 			Snippet snippet, int version) {
 		return Code.createCodeDB(code, language, snippet, id, version);
+	}
+
+	/**
+	 * Factory Method for the persistence layer
+	 * 
+	 * @param name
+	 * @param content
+	 * @return an initialized File object
+	 */
+	protected File createCodeFile(String name, Byte[] content) {
+		return new File(content, name);
 	}
 
 	/**

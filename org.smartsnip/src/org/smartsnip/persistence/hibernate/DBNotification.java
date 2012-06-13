@@ -40,7 +40,7 @@ public class DBNotification {
 	private Boolean viewed;
 
 	@Lob
-	@Column(name = "message")
+	@Column(name = "message", columnDefinition="TEXT")
 	private String message;
 
 	@Column(name = "origin", length = 255)

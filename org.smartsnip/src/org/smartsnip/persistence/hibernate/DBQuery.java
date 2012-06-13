@@ -42,14 +42,14 @@ class DBQuery {
 	 * If set to this constant the method fails if the result is an empty query
 	 * string.
 	 */
-	private static final boolean QUERY_NOT_EMPTY = true;
+	private static final int QUERY_NOT_EMPTY = 2048;
 
 	/**
 	 * Constant for the methods which provide the boolean parameter "notEmpty".
 	 * If set to this constant the method returns successful, even though the
 	 * result is an empty query string.
 	 */
-	private static final boolean QUERY_EMPTY_VALID = false;
+	private static final int QUERY_EMPTY_VALID = 0;
 
 	/**
 	 * Constant for the methods which provide the boolean parameter
@@ -57,7 +57,7 @@ class DBQuery {
 	 * contains a where clause with all parameters including the parameters
 	 * which aren't declared in the list of where parameters.
 	 */
-	private static final boolean QUERY_ALL_PARAMETERS = true;
+	private static final int QUERY_ALL_PARAMETERS = 4096;
 
 	/**
 	 * Constant for the methods which provide the boolean parameter
@@ -65,25 +65,15 @@ class DBQuery {
 	 * contains a where clause only with the parameters declared in the list of
 	 * where parameters.
 	 */
-	private static final boolean QUERY_WHERE_PARAMETERS_ONLY = false;
-
-	/**
-	 * Constant for the methods which provide the boolean parameter "forceNull".
-	 * If set to this constant the method writes null values into the database.
-	 */
-	static final boolean QUERY_FORCE_NULL_VALUES = true;
-
-	/**
-	 * Constant for the methods which provide the boolean parameter "forceNull".
-	 * If set to this constant the method skips all null values in the query.
-	 */
-	static final boolean QUERY_SKIP_NULL_VALUES = false;
+	private static final int QUERY_WHERE_PARAMETERS_ONLY = 0;
 
 	/**
 	 * Constant for the methods which provide the {@code int} parameter
 	 * {@code flags}. If set to this constant the method may return a null
 	 * result. This constant is the default. It is overridden by the constant
-	 * {@link #QUERY_NOT_NULL}.
+	 * {@link #QUERY_NOT_NULL}. It doesn't interfere with constants of the
+	 * {@link IPersistence} interface, so it is not necessary to sort out them.
+	 * If combined with them it evaluates to {@link IPersistence#DB_DEFAULT}.
 	 * <p>
 	 * The values of the flags may change in future revisions, so to insert a
 	 * hardcoded integer value instead of using this constant is discouraged.
@@ -96,14 +86,17 @@ class DBQuery {
 	/**
 	 * Constant for the methods which provide the {@code int} parameter
 	 * {@code flags}. If set to this constant the method fails if a null result
-	 * would return. This constant overrides {@link #QUERY_NULLABLE}.
+	 * would return. This constant overrides {@link #QUERY_NULLABLE}. It doesn't
+	 * interfere with constants of the {@link IPersistence} interface, so it is
+	 * not necessary to sort out them.
 	 */
 	static final int QUERY_NOT_NULL = 512;
 
 	/**
 	 * Constant for the methods which provide the {@code int} parameter
 	 * {@code flags}. If set to this constant the method fails if a null result
-	 * would return.
+	 * would return. It doesn't interfere with constants of the
+	 * {@link IPersistence} interface, so it is not necessary to sort out them.
 	 */
 	static final int QUERY_UNIQUE_RESULT = 1024;
 
@@ -113,8 +106,8 @@ class DBQuery {
 	private final Session session;
 
 	/**
-	 * initialized state: calling twice {@link #getParameters(Object, boolean)}
-	 * will fail.
+	 * initialized state: calling twice {@link #getParameters(Object, int)} will
+	 * fail.
 	 */
 	private boolean initialized = false;
 
@@ -238,9 +231,9 @@ class DBQuery {
 	 *            the constants {@link #QUERY_NOT_EMPTY} or
 	 *            {@link #QUERY_EMPTY_VALID}.
 	 * @return the where clause or an empty string if no where parameter is set
-	 *         and the notEmpty flag is set to {@code false}
+	 *         and the notEmpty flag is set to {@link #QUERY_EMPTY_VALID}
 	 */
-	private String buildWhereClause(boolean notEmpty) {
+	private String buildWhereClause(int notEmpty) {
 		boolean valid = false;
 		StringBuilder builder = new StringBuilder("where ");
 		for (Pair<Vector<String>, Object> p : this.whereParameters) {
@@ -252,7 +245,7 @@ class DBQuery {
 			valid = true;
 		}
 		if (!valid) {
-			if (notEmpty) {
+			if (hasFlag(notEmpty, QUERY_NOT_EMPTY)) {
 				throw new IllegalArgumentException(
 						"Malformed query: no where clause defined.");
 			} else {
@@ -271,9 +264,9 @@ class DBQuery {
 	 *            the constants {@link #QUERY_NOT_EMPTY} or
 	 *            {@link #QUERY_EMPTY_VALID}.
 	 * @return the where clause or an empty string if no where parameter is set
-	 *         and the notEmpty flag is set to {@code false}
+	 *         and the notEmpty flag is set to {@link #QUERY_EMPTY_VALID}
 	 */
-	private String buildWhereFromAllParameters(boolean notEmpty) {
+	private String buildWhereFromAllParameters(int notEmpty) {
 		boolean valid = false;
 		StringBuilder builder = new StringBuilder(
 				buildWhereClause(QUERY_EMPTY_VALID));
@@ -289,7 +282,7 @@ class DBQuery {
 			builder.append(p.first).append(" = :").append(p.first).append(" ");
 			valid = true;
 			if (!valid) {
-				if (notEmpty) {
+				if (hasFlag(notEmpty, QUERY_NOT_EMPTY)) {
 					throw new IllegalArgumentException(
 							"Malformed query: no where clause defined.");
 				} else {
@@ -329,13 +322,13 @@ class DBQuery {
 	 * 
 	 * @param targetEntity
 	 * @param allParameters
-	 *            If set to {@code true} all parameters including them which
-	 *            aren't declared as where parameter are considered. Use
-	 *            constant {@link #QUERY_ALL_PARAMETERS} or
+	 *            If set to {@link #QUERY_ALL_PARAMETERS} all parameters
+	 *            including them which aren't declared as where parameter are
+	 *            considered. Use constant {@link #QUERY_ALL_PARAMETERS} or
 	 *            {@link #QUERY_WHERE_PARAMETERS_ONLY}.
 	 * @return the update query defined by parameters and where clauses
 	 */
-	private Query buildFromQuery(Object targetEntity, boolean allParameters) {
+	private Query buildFromQuery(Object targetEntity, int allParameters) {
 		if (!this.initialized) {
 			throw new HibernateException("The query of target "
 					+ targetEntity.getClass().getSimpleName()
@@ -346,7 +339,7 @@ class DBQuery {
 		for (Pair<Vector<String>, Object> w : this.whereParameters) {
 			result.setParameter(w.first.get(1), w.second);
 		}
-		if (allParameters) {
+		if (hasFlag(allParameters, QUERY_ALL_PARAMETERS)) {
 			for (Pair<String, Object> p : this.parameters) {
 				result.setParameter(p.first, p.second);
 			}
@@ -360,18 +353,17 @@ class DBQuery {
 	 * 
 	 * @param targetEntity
 	 * @param allParameters
-	 *            If set to {@code true} all parameters including them which
-	 *            aren't declared as where parameter are considered. Use
-	 *            constant {@link #QUERY_ALL_PARAMETERS} or
+	 *            If set to {@link #QUERY_ALL_PARAMETERS} all parameters
+	 *            including them which aren't declared as where parameter are
+	 *            considered. Use constant {@link #QUERY_ALL_PARAMETERS} or
 	 *            {@link #QUERY_WHERE_PARAMETERS_ONLY}.
 	 * @return the from query string
 	 */
-	private String buildFromQueryString(Object targetEntity,
-			boolean allParameters) {
+	private String buildFromQueryString(Object targetEntity, int allParameters) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("from ").append(targetEntity.getClass().getName())
 				.append(" ");
-		if (allParameters) {
+		if (hasFlag(allParameters, QUERY_ALL_PARAMETERS)) {
 			builder.append(buildWhereFromAllParameters(QUERY_EMPTY_VALID));
 		} else {
 			builder.append(buildWhereClause(QUERY_EMPTY_VALID));
@@ -384,15 +376,16 @@ class DBQuery {
 	 * Extract parameters from the entity and add them to the parameter lists.
 	 * 
 	 * @param targetEntity
-	 * @param forceNull
-	 *            If {@code true} null values are written into the parameters
-	 *            list. Use constants {@link #QUERY_FORCE_NULL_VALUES} or
-	 *            {@link #QUERY_SKIP_NULL_VALUES}.
+	 * @param flags
+	 *            set {@link IPersistence#DB_FORCE_NULL_VALUES} if null values
+	 *            are to write into the database. Any attempt to write null into
+	 *            a column declared as not null will be rejected. Use constant
+	 *            {@link IPersistence#DB_DEFAULT} to skip null values.
 	 * @return the primary key (Id). If the Id is no instance of
 	 *         {@code Serializable} or the Id coldn't be fetched {@code null} is
 	 *         returned.
 	 */
-	private Serializable getParameters(Object targetEntity, boolean forceNull) {
+	private Serializable getParameters(Object targetEntity, int flags) {
 		if (!targetEntity.getClass().isAnnotationPresent(Entity.class)) {
 			throw new HibernateException("Class "
 					+ targetEntity.getClass().getSimpleName()
@@ -410,7 +403,8 @@ class DBQuery {
 		for (Method m : methods) {
 			try {
 				if ((parameter = getColumnName(targetEntity, m)) != null
-						&& ((value = m.invoke(targetEntity, (Object[]) null)) != null || forceNull)) {
+						&& ((value = m.invoke(targetEntity, (Object[]) null)) != null || hasFlag(
+								flags, IPersistence.DB_FORCE_NULL_VALUES))) {
 					// Id, NatuarlId or EmbeddedId cannot be forced to null
 					if (hasAnnotationAndField(Id.class, targetEntity,
 							parameter, m)) {
@@ -655,7 +649,7 @@ class DBQuery {
 	 *            The constant {@link #QUERY_UNIQUE_RESULT} is ignored.
 	 * @throws NullPointerException
 	 *             if a field contains null.
-	 * @see #getParameters(Object, boolean)
+	 * @see #getParameters(Object, int)
 	 */
 	private void getWhereClauseFromEmbeddedId(String idString,
 			Serializable embeddedId, int flags) {
@@ -719,16 +713,15 @@ class DBQuery {
 	 * 
 	 * @param targetEntity
 	 *            the entity to update
-	 * @param forceNull
-	 *            set {@code true} if null values are to write into the
-	 *            database. Any attempt to write null into a column declared as
-	 *            not null will be rejected. Use constants
-	 *            {@link #QUERY_FORCE_NULL_VALUES} or
-	 *            {@link #QUERY_SKIP_NULL_VALUES}.
+	 * @param flags
+	 *            set {@link IPersistence#DB_FORCE_NULL_VALUES} if null values
+	 *            are to write into the database. Any attempt to write null into
+	 *            a column declared as not null will be rejected. Use constant
+	 *            {@link IPersistence#DB_DEFAULT} to skip null values.
 	 * @return the primary key (Id) of the entity
 	 */
-	Serializable update(Object targetEntity, boolean forceNull) {
-		Serializable key = getParameters(targetEntity, forceNull);
+	Serializable update(Object targetEntity, int flags) {
+		Serializable key = getParameters(targetEntity, flags);
 		if (!this.parameters.isEmpty()) {
 			key = getKey(targetEntity, QUERY_NOT_NULL);
 			if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
@@ -761,16 +754,15 @@ class DBQuery {
 	 * 
 	 * @param targetEntity
 	 *            the entity to update
-	 * @param forceNull
-	 *            set {@code true} if null values are to write into the
-	 *            database. Any attempt to write null into a column declared as
-	 *            not null will be rejected. Use constants
-	 *            {@link #QUERY_FORCE_NULL_VALUES} or
-	 *            {@link #QUERY_SKIP_NULL_VALUES}.
+	 * @param flags
+	 *            set {@link IPersistence#DB_FORCE_NULL_VALUES} if null values
+	 *            are to write into the database. Any attempt to write null into
+	 *            a column declared as not null will be rejected. Use constant
+	 *            {@link IPersistence#DB_DEFAULT} to skip null values.
 	 * @return the primary key (Id) of the entity
 	 */
-	Serializable insertOrUpdate(Object targetEntity, boolean forceNull) {
-		Serializable key = getParameters(targetEntity, forceNull);
+	Serializable insertOrUpdate(Object targetEntity, int flags) {
+		Serializable key = getParameters(targetEntity, flags);
 		if ((key = getKey(targetEntity, QUERY_NULLABLE)) != null) {
 			if (!this.parameters.isEmpty()) {
 				if (buildUpdateQuery(targetEntity).executeUpdate() < 1) {
@@ -799,11 +791,9 @@ class DBQuery {
 		if (hasFlag(flags, IPersistence.DB_NEW_ONLY)) {
 			return this.insert(targetEntity);
 		} else if (hasFlag(flags, IPersistence.DB_UPDATE_ONLY)) {
-			return this.update(targetEntity,
-					hasFlag(flags, IPersistence.DB_FORCE_NULL_VALUES));
+			return this.update(targetEntity, flags);
 		} else { // IPersistence.DB_DEFAULT case
-			return this.insertOrUpdate(targetEntity,
-					hasFlag(flags, IPersistence.DB_FORCE_NULL_VALUES));
+			return this.insertOrUpdate(targetEntity, flags);
 		}
 	}
 
@@ -827,7 +817,7 @@ class DBQuery {
 	 */
 	Serializable remove(Object targetEntity, int flags) {
 		Serializable key = getParameters(targetEntity,
-				hasFlag(flags, IPersistence.DB_FORCE_NULL_VALUES));
+				IPersistence.DB_FORCE_NULL_VALUES);
 		if (key == null) {
 			throw new HibernateException("remove query needs a serializable Id");
 		}
@@ -930,7 +920,7 @@ class DBQuery {
 	 *            the entity to delete
 	 */
 	void delete(Object targetEntity) {
-		Serializable key = getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
+		Serializable key = getParameters(targetEntity, IPersistence.DB_DEFAULT);
 		if (key == null) {
 			throw new HibernateException("delete query needs a serializable Id");
 		}
@@ -952,7 +942,7 @@ class DBQuery {
 	 * @return a list of entities of type {@code <T>}
 	 */
 	<T> List<T> from(T targetEntity) {
-		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
+		getParameters(targetEntity, IPersistence.DB_DEFAULT);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
 		@SuppressWarnings("unchecked")
 		// query.list() returns a list of equal type to targetEntity
@@ -973,7 +963,7 @@ class DBQuery {
 	 * @return a list of entities of type {@code <T>}
 	 */
 	<T> List<T> from(T targetEntity, Integer start, Integer count) {
-		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
+		getParameters(targetEntity, IPersistence.DB_DEFAULT);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
 		if (start != null && start > 0) {
 			query.setFirstResult(start);
@@ -1010,7 +1000,7 @@ class DBQuery {
 	// unchecked: singleQuery(...) returns an object of equal type to
 	// targetEntity
 	<T> T fromSingle(T targetEntity, int flags) {
-		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
+		getParameters(targetEntity, IPersistence.DB_DEFAULT);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
 		return (T) singleQuery(query, flags);
 	}
@@ -1059,7 +1049,7 @@ class DBQuery {
 	 * @return an iterator of type {@code <T>}
 	 */
 	<T> Iterator<T> iterate(T targetEntity) {
-		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
+		getParameters(targetEntity, IPersistence.DB_DEFAULT);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
 		@SuppressWarnings("unchecked")
 		// query.iterate() returns an iterator of equal type to targetEntity
@@ -1080,7 +1070,7 @@ class DBQuery {
 	 * @return an iterator of type {@code <T>}
 	 */
 	<T> Iterator<T> iterate(T targetEntity, Integer start, Integer count) {
-		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
+		getParameters(targetEntity, IPersistence.DB_DEFAULT);
 		Query query = buildFromQuery(targetEntity, QUERY_ALL_PARAMETERS);
 		if (start != null && start > 0) {
 			query.setFirstResult(start);
@@ -1109,7 +1099,7 @@ class DBQuery {
 	 * @return a list of results according to the select string
 	 */
 	List<?> select(Object targetEntity, String selectString) {
-		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
+		getParameters(targetEntity, IPersistence.DB_DEFAULT);
 		Query query = buildSelectQuery(targetEntity, selectString,
 				QUERY_ALL_PARAMETERS);
 		return query.list();
@@ -1135,7 +1125,7 @@ class DBQuery {
 	 */
 	List<?> select(Object targetEntity, String selectString, Integer start,
 			Integer count) {
-		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
+		getParameters(targetEntity, IPersistence.DB_DEFAULT);
 		Query query = buildSelectQuery(targetEntity, selectString,
 				QUERY_ALL_PARAMETERS);
 		if (start != null && start > 0) {
@@ -1174,7 +1164,7 @@ class DBQuery {
 	 *             underlying SQL-query returns a non unique result.
 	 */
 	Object selectSingle(Object targetEntity, String selectString, int flags) {
-		getParameters(targetEntity, QUERY_SKIP_NULL_VALUES);
+		getParameters(targetEntity, IPersistence.DB_DEFAULT);
 		Query query = buildSelectQuery(targetEntity, selectString,
 				QUERY_ALL_PARAMETERS);
 		return singleQuery(query, flags);
@@ -1193,14 +1183,14 @@ class DBQuery {
 	 *            {@link #addSelectParameter(String, Object)} with equal
 	 *            parameter strings declared.
 	 * @param allParameters
-	 *            If set to {@code true} all parameters including them which
-	 *            aren't declared as where parameter are considered. Use
-	 *            constant {@link #QUERY_ALL_PARAMETERS} or
+	 *            If set to {@link #QUERY_ALL_PARAMETERS} all parameters
+	 *            including them which aren't declared as where parameter are
+	 *            considered. Use constant {@link #QUERY_ALL_PARAMETERS} or
 	 *            {@link #QUERY_WHERE_PARAMETERS_ONLY}.
 	 * @return the select query
 	 */
 	private Query buildSelectQuery(Object targetEntity, String selectString,
-			boolean allParameters) {
+			int allParameters) {
 		if (!this.initialized) {
 			throw new HibernateException("The query of target "
 					+ targetEntity.getClass().getSimpleName()
@@ -1216,7 +1206,7 @@ class DBQuery {
 		for (Pair<Vector<String>, Object> w : this.whereParameters) {
 			result.setParameter(w.first.get(1), w.second);
 		}
-		if (allParameters) {
+		if (hasFlag(allParameters, QUERY_ALL_PARAMETERS)) {
 			for (Pair<String, Object> p : this.parameters) {
 				result.setParameter(p.first, p.second);
 			}

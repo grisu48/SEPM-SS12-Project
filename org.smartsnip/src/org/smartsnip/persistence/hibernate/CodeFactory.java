@@ -106,18 +106,39 @@ public class CodeFactory {
 		}
 	}
 
-	
 	/**
 	 * Implementation of {@link IPersistence#writeCodeFile}
 	 * 
-	 * @param language
+	 * @param codeId
+	 * @param file
 	 * @param flags
 	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeCodeFile(Long, File, int)
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeCodeFile(Long,
+	 *      File, int)
 	 */
-	static void writeCodeFile(Long codeId, File file, int flags) {
-		// TODO Auto-generated method stub
-		
+	static void writeCodeFile(Long codeId, File file, int flags)
+			throws IOException {
+		Session session = DBSessionFactory.open();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			DBCodeFile entity = new DBCodeFile();
+			entity.setCodeId(codeId); // codeId is read-only
+			entity.setFileName(file.getName());
+			entity.setFileContent(file.getContent());
+
+			query.update(entity, IPersistence.DB_FORCE_NULL_VALUES);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
 	}
 
 	/**
@@ -229,25 +250,8 @@ public class CodeFactory {
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-//			DBQuery query = new DBQuery(session);
-//			DBCode entity = new DBCode();
-//
-//			//XXX delete this
-//			DBSnippet snip = new DBSnippet();
-//			snip.setSnippetId(snippet.getHashId());
-//			snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
 
 			result = fetchCode(helper, session, snippet);
-			
-//			entity.setSnippetId(snippet.getHashId());
-//
-//			for (Iterator<DBCode> iterator = query.iterate(entity); iterator
-//					.hasNext();) {
-//				entity = iterator.next();
-//				result.add(helper.createCode(entity.getCodeId(),
-//						entity.getFile(), entity.getLanguage(), snippet,
-//						entity.getVersion()));
-//			}
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -260,9 +264,38 @@ public class CodeFactory {
 		return result;
 	}
 
-	public static File getCodeFile(Long codeId) {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * Implementation of {@link IPersistence#getCodeFile(Long)}
+	 * 
+	 * @param codeId
+	 * @return the file
+	 * @throws IOException 
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getCodeFile(java.lang.Long)
+	 */
+	static File getCodeFile(Long codeId) throws IOException {
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		DBCodeFile entity;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+
+			DBQuery query = new DBQuery(session);
+			entity = new DBCodeFile();
+			entity.setCodeId(codeId);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return helper.createCodeFile(entity.getFileName(), entity.getFileContent());
 	}
 
 	/**
@@ -351,19 +384,4 @@ public class CodeFactory {
 		}
 		return result;
 	}
-
-
-
-	// XXX backup to delete when alternative method works
-	// static Code fetchNewestCode(SqlPersistenceHelper helper, Session session,
-	// Snippet snippet) {
-	// List<Code> codes = fetchCode(helper, session, snippet);
-	// Code result = null;
-	// for (Code code : codes) {
-	// if (result == null || result.getVersion() < code.getVersion()) {
-	// result = code;
-	// }
-	// }
-	// return result;
-	// }
 }

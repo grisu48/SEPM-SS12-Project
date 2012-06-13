@@ -6,6 +6,7 @@ package org.smartsnip.persistence.hibernate;
 
 import static org.junit.Assert.*;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,10 +18,11 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.hibernate.FlushMode;
+import org.apache.naming.java.javaURLContextFactory;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -30,6 +32,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
+import org.smartsnip.core.File;
 import org.smartsnip.core.Comment;
 import org.smartsnip.core.Notification;
 import org.smartsnip.core.Snippet;
@@ -41,6 +44,22 @@ import org.smartsnip.persistence.PersistenceFactory;
 import org.smartsnip.security.MD5;
 
 /**
+ * Test cases for the database methods provided by the
+ * {@link org.smartsnip.persistence.IPersistence} interface and implemented by
+ * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl}. To drive the
+ * tests an empty MySQL database is needed. The setup of the table structure
+ * should be done with the DB_setup.sql script. Once set up the database the
+ * following lines in the hibernate.cfg.test_db.xml are to update with the
+ * connection data of the new created database.
+ * <p>
+ * &lt;!-- Local Database connection settings --&gt;<br>
+ * &lt;property
+ * name="connection.url"&gt;jdbc:mysql://test_host:port/test_database
+ * &lt;/property&gt;<br>
+ * &lt;property name="connection.username"&gt;test_user&lt;/property&gt;<br>
+ * &lt;property name="connection.password"&gt;test_password&lt;/property&gt;
+ * </p>
+ * 
  * @author littlelion
  * 
  */
@@ -72,7 +91,7 @@ public class SqlPersistenceImplTest {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 
-		String dbConfig = "/hibernate.cfg.local_db.xml"; // the config file
+		String dbConfig = "/hibernate.cfg.test_db.xml"; // the config file
 
 		log.info("Use local database defined in " + dbConfig);
 		PersistenceFactory.closeFactory();
@@ -405,7 +424,7 @@ public class SqlPersistenceImplTest {
 				"more stupid", "something else stupid stuff", cat.getName(),
 				tags, null, null, 0, 0F);
 		Code code = helper.createCode(1L, "code", "language", snip, 0);
-		snip.setCodeWithoutWriting(code);
+		helper.setCodeOfSnippet(snip, code);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
 		instance.writeTag(tags, IPersistence.DB_DEFAULT);
 		instance.writeCategory(par, IPersistence.DB_DEFAULT);
@@ -708,7 +727,6 @@ public class SqlPersistenceImplTest {
 		// remove middle Category
 		instance.removeCategory(midCat, IPersistence.DB_DEFAULT);
 
-		String str[] = { "_test_parent", "_test_middle", "_test_child" };
 		entities = new ArrayList<DBCategory>();
 		try {
 			session = DBSessionFactory.open();
@@ -958,7 +976,7 @@ public class SqlPersistenceImplTest {
 		System.out.println(snip2);
 		System.out.println(snip3);
 		System.out.println(snip4);
-		
+
 	}
 
 	/**
@@ -1045,6 +1063,52 @@ public class SqlPersistenceImplTest {
 
 	/**
 	 * Test method for
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getCodeFile(Long)}
+	 * and
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeCodeFile(Long, org.smartsnip.core.File, int)}
+	 * .
+	 * 
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testWriteAndGetCodeFile() throws Throwable {
+		String name = "hibernate.cfg.test_db.xml";
+		java.io.File file = new java.io.File("./test/" + name);
+		FileInputStream in = new FileInputStream(file);
+		long length = file.length();
+		assertTrue("File size > 0 expected. Size = " + length, length > 0);
+
+		if (length > Integer.MAX_VALUE) {
+			throw new IOException("file too large");
+		}
+		byte[] buffer = new byte[(int)length];
+		Byte[] content;
+		try {
+			in.read(buffer);
+			content = ArrayUtils.toObject(buffer);
+		} finally {
+			try {
+				in.close();
+			} catch (IOException ignored) {
+			}
+		}
+		File codeFile = helper.createCodeFile(name, content);
+		Code code = helper.createCode(1L, "to test", "java", test_snip2, 1);
+		Long codeId = instance.writeCode(code, IPersistence.DB_DEFAULT);
+		instance.writeCodeFile(codeId, codeFile, IPersistence.DB_DEFAULT);
+
+		File result = instance.getCodeFile(codeId);
+
+		// Tests on the object
+		assertEquals(name, result.getName());
+		assertEquals(content.length, result.getContent().length);
+		assertArrayEquals(content, result.getContent());
+
+	}
+
+	/**
+	 * Test method for
 	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllCategories()}
 	 * .
 	 * 
@@ -1053,8 +1117,9 @@ public class SqlPersistenceImplTest {
 	@Test
 	public void testGetAllCategories() throws Throwable {
 		List<Category> cat = instance.getAllCategories();
-		for(Category c: cat) {
-			System.out.println("Category: " + c.getName() + " Parent: " + c.getParentName());
+		for (Category c : cat) {
+			System.out.println("Category: " + c.getName() + " Parent: "
+					+ c.getParentName());
 		}
 	}
 
@@ -1168,7 +1233,7 @@ public class SqlPersistenceImplTest {
 
 	/**
 	 * Test method for
-	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#search(java.lang.String, java.lang.Integer, java.lang.Integer)}
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#search(java.lang.String, java.lang.Integer, java.lang.Integer, int)}
 	 * .
 	 * 
 	 * @throws Throwable

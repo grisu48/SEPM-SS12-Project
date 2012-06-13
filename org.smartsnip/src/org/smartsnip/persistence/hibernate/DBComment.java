@@ -38,7 +38,7 @@ public class DBComment {
 	private String refersTo;
 
 	@Lob
-	@Column(name = "message", length = 255)
+	@Column(name = "message", columnDefinition="TEXT")
 	private String message;
 
 	@GeneratedValue

@@ -29,7 +29,7 @@ class DBLicense {
 	private String shortDescr;
 
 	@Lob
-	@Column(name = "license_text")
+	@Column(name = "license_text", columnDefinition="TEXT")
 	private String licenseText;
 
 	/**
