@@ -13,12 +13,12 @@ import com.google.gwt.user.client.ui.Tree;
  * 
  * 
  */
-public class ModeratorPanel extends Composite {
+public class ModeratorArea extends Composite {
 
-	public ModeratorPanel() {
+	public ModeratorArea() {
 
 		TabPanel tabPanel = new TabPanel();
-		initWidget(tabPanel);
+
 
 		VerticalPanel pnlVertUsers = new VerticalPanel();
 		tabPanel.add(pnlVertUsers, "Users", false);
@@ -36,6 +36,10 @@ public class ModeratorPanel extends Composite {
 
 		Tree treeCategories = new Tree();
 		pnlVertCategories.add(treeCategories);
+		
+		initWidget(tabPanel);
+		// Give the overall composite a style name.
+		setStyleName("moderatorArea");
 	}
 
 }

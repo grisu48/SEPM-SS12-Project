@@ -29,6 +29,7 @@ public class GUI {
 	SnipArea mySnipArea = null;
 	PersonalArea myPersonalArea = null;
 	SearchArea mySearchArea = null;
+	ModeratorArea myModeratorArea = null;
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -307,6 +308,12 @@ public class GUI {
 				popup.hide();
 			}
 		});
+	}
+
+	public void showModPage() {
+		dataPanel.clear();
+		myModeratorArea = new ModeratorArea();
+		dataPanel.add(myModeratorArea);
 	}
 
 }

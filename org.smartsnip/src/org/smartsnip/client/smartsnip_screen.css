@@ -137,7 +137,7 @@ min-height:400px;
 
 }
 
-header .gwt-Label, .gwt-Anchor, .user {
+header .gwt-Label, .gwt-Anchor, .user, .mod {
 	display:block;
 	color:#fffeeb;
 	font-family:"Lato";

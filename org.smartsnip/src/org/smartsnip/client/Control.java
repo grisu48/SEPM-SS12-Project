@@ -129,6 +129,9 @@ public class Control implements EntryPoint {
 		case 'n':
 			myGUI.showCreateSnippetForm();
 			break;
+		case 'm':
+			myGUI.showModPage();
+			break;	
 		default:
 		}
 	}
