@@ -16,6 +16,14 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+
+/**
+ * The GUI
+ * 
+ * Putting together different Widgets
+ * 
+ * 
+ */
 public class GUI {
 
 	// visible in package, Control can modify
@@ -40,6 +48,12 @@ public class GUI {
 	// Create footerPanel
 	SimplePanel footerPanel = new SimplePanel();
 
+	
+	
+	/**
+	 * Start the GUI
+	 * 
+	 */
 	public void getReady() {
 		// Adds a personalized CSS-File
 		Resources.INSTANCE.css().ensureInjected();
@@ -61,6 +75,11 @@ public class GUI {
 
 	}
 
+	
+	/**
+	 * Preparing the basics widgets for the GUI
+	 * 
+	 */
 	public void createBasicPage() {
 
 		// Fill userPanel
@@ -87,6 +106,10 @@ public class GUI {
 
 	}
 
+	/**
+	 * shows the search page
+	 * 
+	 */
 	public void showSearchPage() {
 
 		dataPanel.clear();
@@ -112,6 +135,10 @@ public class GUI {
 
 	}
 
+	/**
+	 * shows the snippet page
+	 * 
+	 */
 	public void showSnipPage(XSnippet snip) {
 		dataPanel.clear();
 		mySnipArea = new SnipArea(snip);
@@ -120,6 +147,11 @@ public class GUI {
 		dataPanel.add(myCommentArea);
 	}
 
+	
+	/**
+	 * shows the Personal page
+	 * 
+	 */
 	public void showPersonalPage() {
 		dataPanel.clear();
 		myPersonalArea = new PersonalArea();
@@ -129,6 +161,11 @@ public class GUI {
 
 	}
 
+	
+	/**
+	 * shows the login popup
+	 * 
+	 */
 	public void showLoginPopup() {
 
 		PopupPanel loginPanel = new PopupPanel(false);
@@ -142,6 +179,13 @@ public class GUI {
 		loginPanel.show();
 	}
 
+	/**
+	 * shows a test popup
+	 * 
+	 * @param String
+	 * 		the titlee of the popup
+	 * 
+	 */
 	public void showTestPopup(String test) {
 
 		final PopupPanel loginPanel = new PopupPanel(true, true);
@@ -166,6 +210,12 @@ public class GUI {
 		});
 	}
 
+	/**
+	 * shows a error popup
+	 * @param String
+	 * 		the error message
+	 * 
+	 */
 	public void showErrorPopup(String message) {
 		if (message == null || message.isEmpty())
 			return;
@@ -192,6 +242,15 @@ public class GUI {
 		});
 	}
 
+	/**
+	 * shows a error popup
+	 * 
+	 * @param String
+	 * 			the error message
+	 * @param Throwable
+	 * 			the error
+	 * 
+	 */
 	public void showErrorPopup(String message, Throwable cause) {
 		if (message == null)
 			message = "";
@@ -201,6 +260,13 @@ public class GUI {
 		showErrorPopup(message);
 	}
 
+	
+	
+	/**
+	 * shows the register popup
+	 * 
+	 * 
+	 */
 	public void showRegisterPopup() {
 
 		Window.scrollTo(0, 0);
@@ -216,6 +282,12 @@ public class GUI {
 		registerPanel.show();
 	}
 
+	
+	/**
+	 * shows the impressum
+	 * 
+	 * 
+	 */
 	public void showImpressum() {
 
 		Window.scrollTo(0, 0);
@@ -231,6 +303,17 @@ public class GUI {
 		dataPanel.add(impressum);
 	}
 
+	
+	/**
+	 * updates the search page
+	 * 
+	 * @param XSearch
+	 * 			the search result
+	 * @param String
+	 * 			the current search status
+	 * 
+	 * 
+	 */
 	public void updateSearchPage(XSearch result, String status) {
 		showSearchPage();
 
@@ -242,6 +325,12 @@ public class GUI {
 		}
 	}
 
+	
+	/**
+	 * shows the contact form
+	 * 
+	 * 
+	 */
 	public void showContactForm() {
 
 		Window.scrollTo(0, 0);
@@ -256,6 +345,12 @@ public class GUI {
 		ppnlContact.show();
 	}
 
+	
+	/**
+	 * shows the create snippet popup
+	 * 
+	 * 
+	 */
 	public void showCreateSnippetForm() {
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
 		ppnlSnippet.setStyleName("contactForm");
@@ -269,6 +364,12 @@ public class GUI {
 
 	}
 
+	
+	/**
+	 * starts the search
+	 * 
+	 * 
+	 */
 	public void startSearch() {
 		showSearchPage();
 		mySortArea.update("Searching ... ");
@@ -277,6 +378,8 @@ public class GUI {
 	/**
 	 * Creates a popup window with a link
 	 * 
+	 * @param String
+	 * 			the download message
 	 * @param convertToLink
 	 *            link to be created
 	 */
@@ -310,12 +413,23 @@ public class GUI {
 		});
 	}
 
+	/**
+	 * shows the moderator page
+	 * 
+	 * 
+	 */
 	public void showModPage() {
 		dataPanel.clear();
 		myModeratorArea = new ModeratorArea();
 		dataPanel.add(myModeratorArea);
 	}
 
+	
+	/**
+	 * shows upload window
+	 * 
+	 * 
+	 */
 	public void showUpload() {
 		
 		Window.scrollTo(0, 0);
