@@ -175,6 +175,9 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 			logInfo("Search for: \"" + searchString + "\". " + result.totalresults + " results total");
 		}
 
+		// Log search
+		if (searchString != null && !searchString.isEmpty()) getSession().addSearchString(searchString);
+
 		return result;
 	}
 

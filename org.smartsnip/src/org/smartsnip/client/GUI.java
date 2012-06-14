@@ -213,8 +213,7 @@ public class GUI {
 	 * 
 	 */
 	public void showErrorPopup(String message) {
-		if (message == null || message.isEmpty())
-			return;
+		if (message == null || message.isEmpty()) return;
 
 		final PopupPanel errorPopup = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
@@ -248,8 +247,7 @@ public class GUI {
 	 * 
 	 */
 	public void showErrorPopup(String message, Throwable cause) {
-		if (message == null)
-			message = "";
+		if (message == null) message = "";
 		if (cause != null) {
 			message = message + "\n" + cause.getMessage();
 		}
@@ -316,6 +314,8 @@ public class GUI {
 			myTagArea.update(result.tagsAppearingInSearchString);
 			mySearchArea.update();
 		}
+
+		mySearchArea.updateSuggestions();
 	}
 
 	/**
@@ -374,10 +374,8 @@ public class GUI {
 	 *            link to be created
 	 */
 	public void showDownloadPopup(String message, String convertToLink) {
-		if (message == null)
-			message = "";
-		if (convertToLink == null || convertToLink.isEmpty())
-			return;
+		if (message == null) message = "";
+		if (convertToLink == null || convertToLink.isEmpty()) return;
 
 		final PopupPanel popup = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
@@ -426,8 +424,7 @@ public class GUI {
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
 		ppnlSnippet.setStyleName("uploadForm");
 		ppnlSnippet.setTitle("Upload Snippet");
-		Upload myUpload = new Upload(ppnlSnippet, "upload", "snip_id="
-				+ snippetID);
+		Upload myUpload = new Upload(ppnlSnippet, "upload", "snip_id=" + snippetID);
 		ppnlSnippet.setWidget(myUpload);
 		ppnlSnippet.setGlassEnabled(true);
 		ppnlSnippet.setPopupPosition(90, 104);

@@ -20,6 +20,62 @@ public class Search {
 	 */
 	private List<Snippet> totalResults;
 
+	/** Class managing the statistics for the searches */
+	public static class Stats {
+		/** Total number of searches done */
+		private static long totalSearched = 0L;
+
+		/** The last search strings */
+		private static List<String> lastSearches = new ArrayList<String>();
+
+		/** Maximum number of log entries */
+		private static int maxLogEntries = 2048;
+
+		/**
+		 * @return the number of total searches done in this session
+		 */
+		public static long getTotalSearchCount() {
+			return totalSearched;
+		}
+
+		/**
+		 * Gets a list of popular search strings
+		 * 
+		 * @param count
+		 *            Maximal number of search strings to return
+		 * @return a list containing the defined ammount of popular search
+		 *         strings
+		 */
+		public synchronized static List<String> getPopularSearchStrings(int count) {
+			if (count < 1) count = 1;
+			List<String> result = new ArrayList<String>(count);
+
+			// TODO: Hard coded - Replace me!
+			result.add("Snippet");
+			result.add("SmartSnip");
+			result.add("Comment");
+
+			return result;
+		}
+
+		/**
+		 * Protocols a given search string. A Null string or an empty string is
+		 * ignored in the statistics
+		 * 
+		 * NOTE: This call has to be synchronised
+		 * 
+		 * @param searchString
+		 *            to be protocoled
+		 */
+		private synchronized static void protocolSearch(String searchString) {
+			if (searchString == null || searchString.isEmpty()) return;
+
+			if (lastSearches.size() > maxLogEntries) lastSearches.remove(0);
+			lastSearches.add(searchString);
+
+		}
+	}
+
 	/** Current sorting */
 	private int sorting;
 
@@ -30,8 +86,7 @@ public class Search {
 	private List<Snippet> filterResults;
 
 	private Search(String searchString) {
-		if (searchString == null)
-			searchString = "";
+		if (searchString == null) searchString = "";
 
 		this.searchString = searchString;
 		this.totalResults = searchDB(searchString, tags, categories);
@@ -52,8 +107,7 @@ public class Search {
 	/**
 	 * @return the filtered search results
 	 */
-	public synchronized List<Snippet> getResults(XSearch.SearchSorting sorting,
-			int start, int count) {
+	public synchronized List<Snippet> getResults(XSearch.SearchSorting sorting, int start, int count) {
 
 		switch (sorting) {
 		case time:
@@ -67,14 +121,12 @@ public class Search {
 			break;
 		}
 
-		if (filterResults == null)
-			applyFilter();
+		if (filterResults == null) applyFilter();
 		List<Snippet> result = new ArrayList<Snippet>(count);
 		int maxSize = filterResults.size() - 1;
 		for (int i = 0; i < count; i++) {
 			int index = i + start;
-			if (index > maxSize)
-				break;
+			if (index > maxSize) break;
 
 			result.add(filterResults.get(index));
 		}
@@ -88,8 +140,7 @@ public class Search {
 	synchronized void applyFilter() {
 		filterResults = new ArrayList<Snippet>();
 		for (Snippet snippet : totalResults) {
-			if (checkSnippet(snippet))
-				filterResults.add(snippet);
+			if (checkSnippet(snippet)) filterResults.add(snippet);
 		}
 	}
 
@@ -98,8 +149,7 @@ public class Search {
 	 * @return the total number of results for this search
 	 */
 	public int getTotalResults() {
-		if (filterResults == null)
-			applyFilter();
+		if (filterResults == null) applyFilter();
 		return filterResults.size();
 	}
 
@@ -139,10 +189,8 @@ public class Search {
 	 *            to be added
 	 */
 	public synchronized void addTag(Tag tag) {
-		if (tag == null)
-			return;
-		if (tags.contains(tag))
-			return;
+		if (tag == null) return;
+		if (tags.contains(tag)) return;
 		tags.add(tag);
 		filterResults = null; // new criterium added. Need for new filtering
 	}
@@ -155,10 +203,8 @@ public class Search {
 	 *            to be remove
 	 */
 	public synchronized void removeTag(Tag tag) {
-		if (tag == null)
-			return;
-		if (!tags.contains(tag))
-			return;
+		if (tag == null) return;
+		if (!tags.contains(tag)) return;
 		tags.remove(tag);
 		filterResults = null; // new criterium added. Need for new filtering
 	}
@@ -171,10 +217,8 @@ public class Search {
 	 *            to be added
 	 */
 	public synchronized void addCategory(Category category) {
-		if (category == null)
-			return;
-		if (categories.contains(category))
-			return;
+		if (category == null) return;
+		if (categories.contains(category)) return;
 		categories.add(category);
 		filterResults = null; // new criterium added. Need for new filtering
 	}
@@ -187,10 +231,8 @@ public class Search {
 	 *            to be remove
 	 */
 	public synchronized void removeCategory(Category category) {
-		if (category == null)
-			return;
-		if (!categories.contains(category))
-			return;
+		if (category == null) return;
+		if (!categories.contains(category)) return;
 		categories.remove(category);
 		filterResults = null; // new criterium added. Need for new filtering
 	}
@@ -205,17 +247,12 @@ public class Search {
 	 *         tags
 	 */
 	private boolean checkSnippet(Snippet snippet) {
-		if (snippet == null)
-			return false;
+		if (snippet == null) return false;
 
-		if (categories != null && categories.size() > 0)
-			if (!categories.contains(snippet.getCategory()))
-				return false;
+		if (categories != null && categories.size() > 0) if (!categories.contains(snippet.getCategory())) return false;
 
-		if (tags != null && tags.size() > 0)
-			for (Tag tag : tags)
-				if (!snippet.hasTag(tag))
-					return false;
+		if (tags != null && tags.size() > 0) for (Tag tag : tags)
+			if (!snippet.hasTag(tag)) return false;
 
 		return true;
 	}
@@ -229,20 +266,30 @@ public class Search {
 	 * 
 	 * @return list of found snippets that match to the searchString
 	 */
-	private List<Snippet> searchDB(String searchString, List<Tag> tags,
-			List<Category> categories) {
+	private List<Snippet> searchDB(final String searchString, final List<Tag> tags, final List<Category> categories) {
 
 		try {
-			if (searchString == null || searchString.isEmpty())
-				return Persistence.getInstance().getAllSnippets(null, null,
-						sorting);
+			if (searchString == null || searchString.isEmpty()) return Persistence.getInstance().getAllSnippets(null,
+					null, sorting);
 			else
-				return Persistence.instance.search(searchString, null, null,
-						sorting);
+				return Persistence.instance.search(searchString, null, null, sorting);
 		} catch (IOException e) {
 			System.err.println("IOException during search: " + e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
+		} finally {
+
+			/* Protocol search */
+			Thread protocol = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					Stats.protocolSearch(searchString);
+				}
+			});
+			protocol.setDaemon(true);
+			protocol.start();
+
 		}
 	}
 
@@ -254,8 +301,7 @@ public class Search {
 	 *            to be added
 	 */
 	public void addTag(String tag) {
-		if (!Tag.exists(tag))
-			return;
+		if (!Tag.exists(tag)) return;
 		addTag(Tag.getTag(tag));
 	}
 
@@ -268,8 +314,7 @@ public class Search {
 	 */
 	public void addCategory(String category) {
 		Category cat = Category.getCategory(category);
-		if (cat == null)
-			return;
+		if (cat == null) return;
 
 		addCategory(cat);
 	}
@@ -278,15 +323,13 @@ public class Search {
 	 * @return a list of all tags that match the given search criteria
 	 */
 	public List<Tag> getAllTagsMatchingSearchCriteria() {
-		if (filterResults == null)
-			applyFilter();
+		if (filterResults == null) applyFilter();
 
 		List<Tag> result = new ArrayList<Tag>();
 		for (Snippet snippet : filterResults) {
 			List<Tag> tags = snippet.getTags();
 			for (Tag tag : tags)
-				if (!result.contains(tag))
-					result.add(tag);
+				if (!result.contains(tag)) result.add(tag);
 		}
 
 		return result;
@@ -297,14 +340,12 @@ public class Search {
 	 * @return a list of all categories that match the given search criteria
 	 */
 	public List<String> getAllCategoriesMatchingSearchString() {
-		if (filterResults == null)
-			applyFilter();
+		if (filterResults == null) applyFilter();
 
 		List<String> result = new ArrayList<String>();
 		for (Snippet snippet : filterResults) {
 			Category category = snippet.getCategory();
-			if (category != null && !result.contains(category.getName()))
-				result.add(category.getName());
+			if (category != null && !result.contains(category.getName())) result.add(category.getName());
 		}
 
 		return result;
@@ -318,8 +359,7 @@ public class Search {
 	 *            constants
 	 */
 	public void setSorting(int sorting) {
-		if (this.sorting == sorting)
-			return;
+		if (this.sorting == sorting) return;
 
 		synchronized (this) {
 			this.sorting = sorting;

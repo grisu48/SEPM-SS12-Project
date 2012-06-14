@@ -1,10 +1,8 @@
 package org.smartsnip.client;
 
+import java.util.List;
 
-
-
-
-
+import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.XSearch;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,6 +10,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -22,6 +21,7 @@ public class SearchArea extends Composite {
 
 	private final HorizontalPanel horPanel;
 	private final SuggestBox searchSnippet;
+	final MultiWordSuggestOracle oracle;
 	private final Button btSnippetOfDay;
 	private final Button searchButton;
 	private final Button btCreateSnippet;
@@ -37,11 +37,8 @@ public class SearchArea extends Composite {
 
 		horPanel = new HorizontalPanel();
 
-		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
-		oracle.add("Java");
-		oracle.add("Snippet");
-		oracle.add("Quicksort");
-		oracle.add("Smartsnip");
+		oracle = new MultiWordSuggestOracle();
+
 		searchSnippet = new SuggestBox(oracle);
 		searchSnippet.addKeyDownHandler(new KeyDownHandler() {
 			@Override
@@ -61,7 +58,6 @@ public class SearchArea extends Composite {
 			}
 		});
 
-		
 		searchButton = new Button("Search Snippet");
 		searchButton.addStyleName("searchButton");
 		searchButton.addClickHandler(new ClickHandler() {
@@ -93,14 +89,14 @@ public class SearchArea extends Composite {
 		setStyleName("searchArea");
 
 		update();
+		updateSuggestions();
 	}
 
 	public void fireSearch() {
 		searchButton.setEnabled(false);
 		Control control = Control.getInstance();
 		searchDuration = System.currentTimeMillis();
-		control.search(searchSnippet.getText(), null, null,
-				XSearch.SearchSorting.highestRated, 0, 10, SearchArea.this);
+		control.search(searchSnippet.getText(), null, null, XSearch.SearchSorting.highestRated, 0, 10, SearchArea.this);
 	}
 
 	public void update() {
@@ -133,12 +129,36 @@ public class SearchArea extends Composite {
 		searchDuration = System.currentTimeMillis() - searchDuration;
 		searchDuration = searchDuration / 10;
 		int time = (int) Math.floor(searchDuration);
-		
-		
+
 		status = result.totalresults + " results in " + time + " ms";
-		//status = "test";
+		// status = "test";
 		System.out.println(status);
 		return status;
 	}
 
+	/**
+	 * Refreshes the suggestions in the search field
+	 */
+	public void updateSuggestions() {
+		ISnippet.Util.getInstance().getSearchSuggestions(new AsyncCallback<List<String>>() {
+
+			@Override
+			public void onSuccess(List<String> result) {
+				final int maxSuggestions = 10;
+				int count = 0;
+
+				oracle.clear();
+				for (String suggestion : result) {
+					oracle.add(suggestion);
+					if (count++ > maxSuggestions) break;
+				}
+
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+
+	}
 }

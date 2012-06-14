@@ -7,6 +7,7 @@ import java.util.List;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Comment;
 import org.smartsnip.core.Persistence;
+import org.smartsnip.core.Search;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
 import org.smartsnip.security.IAccessPolicy;
@@ -31,6 +32,14 @@ public class Session {
 	 * assigned
 	 */
 	private User user = null;
+
+	/**
+	 * Temporary list of last search strings
+	 */
+	private transient final List<String> lastSearchStrings = new ArrayList<String>();
+
+	/** Maximum number of stored last search strings */
+	private transient static int maxStoredSearchStrings = 5;
 
 	/**
 	 * General access policy that applies to this session.
@@ -166,8 +175,7 @@ public class Session {
 	 * @return Session identified by the cookie
 	 */
 	public static Session getSession(String cookie) {
-		if (cookie == null || cookie.length() == 0)
-			return getStaticGuestSession();
+		if (cookie == null || cookie.length() == 0) return getStaticGuestSession();
 
 		synchronized (storedSessions) {
 			Session result = storedSessions.get(cookie);
@@ -195,12 +203,10 @@ public class Session {
 	 *         given cookie is null or empty
 	 */
 	public static boolean existsCookie(String cookie) {
-		if (cookie == null || cookie.length() == 0)
-			return false;
+		if (cookie == null || cookie.length() == 0) return false;
 		synchronized (storedSessions) {
 			Session result = storedSessions.get(cookie);
-			if (result == null)
-				return false;
+			if (result == null) return false;
 			if (result.isDead()) {
 				storedSessions.remove(cookie);
 				return false;
@@ -220,8 +226,7 @@ public class Session {
 	 */
 	private static Session createNewSession(String cookie) {
 		if (cookie == null || cookie.length() == 0)
-			throw new NullPointerException(
-					"Cannot create session with null cookie");
+			throw new NullPointerException("Cannot create session with null cookie");
 		Session newSession = new Session(cookie);
 		synchronized (storedSessions) {
 			storedSessions.put(cookie, newSession);
@@ -251,8 +256,7 @@ public class Session {
 	 * @return true if the user matches the session user
 	 */
 	public synchronized boolean isLoggedInUser(User user) {
-		if (user == null)
-			return this.user == null;
+		if (user == null) return this.user == null;
 		return user.equals(this.user);
 	}
 
@@ -270,8 +274,7 @@ public class Session {
 	 * @return true if the user matches the session user
 	 */
 	public boolean isLoggedInUser(String owner) {
-		if (owner == null)
-			return false;
+		if (owner == null) return false;
 		User user = User.getUser(owner);
 		return isLoggedInUser(user);
 	}
@@ -292,21 +295,16 @@ public class Session {
 	 * @throws NoAccessException
 	 *             Thrown as security exception when the login process fails.
 	 */
-	public synchronized void login(String username, String password)
-			throws NoAccessException {
+	public synchronized void login(String username, String password) throws NoAccessException {
 		doActivity();
 		logout();
 
-		if (username.length() == 0 || password.length() == 0)
-			throw new NoAccessException("Login credentials missing");
-		if (isLoggedIn())
-			throw new NoAccessException("The session is already logged in");
+		if (username.length() == 0 || password.length() == 0) throw new NoAccessException("Login credentials missing");
+		if (isLoggedIn()) throw new NoAccessException("The session is already logged in");
 
-		if (!User.auth(username, password))
-			throw new NoAccessException("Invalid username or password");
+		if (!User.auth(username, password)) throw new NoAccessException("Invalid username or password");
 		User user = User.getUser(username);
-		if (user == null)
-			throw new NoAccessException("Invalid username or password");
+		if (user == null) throw new NoAccessException("Invalid username or password");
 
 		this.user = user;
 		refreshPolicy();
@@ -335,10 +333,8 @@ public class Session {
 	 */
 	public void addObserver(ISessionObserver observer) {
 		synchronized (observers) {
-			if (observer == null)
-				return;
-			if (observers.contains(observer))
-				return;
+			if (observer == null) return;
+			if (observers.contains(observer)) return;
 			observers.add(observer);
 		}
 	}
@@ -353,10 +349,8 @@ public class Session {
 	 */
 	public void removeObserver(ISessionObserver observer) {
 		synchronized (observers) {
-			if (observer == null)
-				return;
-			if (!observers.contains(observer))
-				return;
+			if (observer == null) return;
+			if (!observers.contains(observer)) return;
 			observers.remove(observer);
 		}
 	}
@@ -385,8 +379,7 @@ public class Session {
 	 */
 	public void doActivity() {
 		synchronized (state) {
-			if (getState() == SessionState.deleted)
-				throw new IllegalStateException();
+			if (getState() == SessionState.deleted) throw new IllegalStateException();
 			this.lastActivityTime = System.currentTimeMillis();
 			if (this.state != SessionState.active) {
 				refreshSessionState();
@@ -402,8 +395,7 @@ public class Session {
 	 */
 	private void refreshSessionState() {
 		synchronized (state) {
-			if (getState() == SessionState.deleted)
-				throw new IllegalStateException();
+			if (getState() == SessionState.deleted) throw new IllegalStateException();
 			long delay = System.currentTimeMillis() - this.lastActivityTime;
 			if (delay > this.deleteDelay) {
 				deleteSession();
@@ -440,12 +432,10 @@ public class Session {
 	 *            of the session to be deleted.
 	 */
 	public static void deleteSession(String cookie) {
-		if (cookie == null || cookie.length() == 0)
-			return;
+		if (cookie == null || cookie.length() == 0) return;
 
 		Session session = getSession(cookie);
-		if (session == null)
-			return;
+		if (session == null) return;
 		session.deleteSession();
 	}
 
@@ -457,8 +447,7 @@ public class Session {
 	 */
 	private void inactivateSession() {
 		synchronized (state) {
-			if (getState() == SessionState.deleted)
-				throw new IllegalStateException();
+			if (getState() == SessionState.deleted) throw new IllegalStateException();
 			this.state = SessionState.inactive;
 		}
 	}
@@ -496,8 +485,7 @@ public class Session {
 		synchronized (storedSessions) {
 			int maxTries = storedSessions.size() * 1000;
 			while (storedSessions.containsKey((sid = getRandomizedSID())))
-				if (maxTries-- <= 0)
-					throw new RuntimeException("Session creation failure");
+				if (maxTries-- <= 0) throw new RuntimeException("Session creation failure");
 
 			session = createNewSession(sid);
 			// XXX: Maybe a new created session can have a reduced lifetime ...
@@ -530,8 +518,7 @@ public class Session {
 	 * @return the username or "guest" if a guest session
 	 */
 	public String getUsername() {
-		if (!isLoggedIn())
-			return "guest";
+		if (!isLoggedIn()) return "guest";
 		return user.getUsername();
 	}
 
@@ -601,8 +588,7 @@ public class Session {
 	 *            to be reported.
 	 */
 	static void report(Comment comment) {
-		if (comment == null)
-			return;
+		if (comment == null) return;
 		// TODO Auto-generated method stub
 
 	}
@@ -620,11 +606,9 @@ public class Session {
 	 *            To be dadded
 	 */
 	public void addFavorite(Snippet snippet) {
-		if (snippet == null || !isLoggedIn())
-			return;
+		if (snippet == null || !isLoggedIn()) return;
 		User owner = getUser();
-		if (owner == null)
-			return;
+		if (owner == null) return;
 
 		owner.addFavorite(snippet);
 
@@ -643,11 +627,9 @@ public class Session {
 	 *            To be removed
 	 */
 	public void removeFavorite(Snippet snippet) {
-		if (snippet == null || !isLoggedIn())
-			return;
+		if (snippet == null || !isLoggedIn()) return;
 		User owner = getUser();
-		if (owner == null)
-			return;
+		if (owner == null) return;
 
 		owner.removeFavorite(snippet);
 
@@ -663,18 +645,15 @@ public class Session {
 	 *            of the report
 	 */
 	public static void report(User user, String reason) {
-		if (user == null || reason == null)
-			return;
+		if (user == null || reason == null) return;
 
 		// TODO Implement me
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Session))
-			return false;
+		if (obj == null) return false;
+		if (!(obj instanceof Session)) return false;
 		Session session = (Session) obj;
 
 		return session.cookie.equals(this.cookie);
@@ -686,14 +665,57 @@ public class Session {
 	}
 
 	public String getRealname() {
-		if (!isLoggedIn())
-			return "realname guest";
+		if (!isLoggedIn()) return "realname guest";
 		return user.getRealName();
 	}
 
 	public String getMail() {
-		if (!isLoggedIn())
-			return "mail guest";
+		if (!isLoggedIn()) return "mail guest";
 		return user.getEmail();
+	}
+
+	/**
+	 * Gets a list with search suggestions for this session
+	 * 
+	 * @return the list of search suggestions
+	 */
+	public synchronized List<String> getSearchSuggestions(int max) {
+		List<String> result = new ArrayList<String>(lastSearchStrings);
+
+		int remaining = max - result.size();
+		if (remaining > 0) result.addAll(Search.Stats.getPopularSearchStrings(remaining));
+		else
+			while (remaining++ < 0)
+				result.remove(0);
+
+		return result;
+	}
+
+	/**
+	 * Adds a search string to the last search strings, used for
+	 * {@link Session#getSearchSuggestions()}
+	 * 
+	 * @param searchString
+	 *            to be added. If null or empty it is ignored
+	 */
+	synchronized void addSearchString(String searchString) {
+		if (searchString == null || searchString.isEmpty()) return;
+
+		// Crop list if necessary
+		while (lastSearchStrings.size() >= maxStoredSearchStrings)
+			lastSearchStrings.remove(0);
+
+		lastSearchStrings.add(searchString);
+	}
+
+	/**
+	 * Sets the maximum number of last stored search strings
+	 * 
+	 * @param count
+	 *            number to be set. if zero or les it is ignored
+	 */
+	synchronized void setMaxNumberOfLastSearchStrings(int count) {
+		if (count <= 0) return;
+		maxStoredSearchStrings = count;
 	}
 }
