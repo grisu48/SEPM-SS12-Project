@@ -54,6 +54,7 @@ public class GUI {
 	public void getReady() {
 		// Adds a personalized CSS-File
 		Resources.INSTANCE.css().ensureInjected();
+		Resources.INSTANCE.cssPrettify().ensureInjected();
 
 		// Get the updated userdata
 		Control control = Control.getInstance();

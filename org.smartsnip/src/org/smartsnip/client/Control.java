@@ -60,6 +60,16 @@ public class Control implements EntryPoint {
 	}
 
 	/**
+	 * This <em>JSNI</em> method includes the {@code prettyPrint()} function of the
+	 * <em>google-code-prettify</em> package. It is made up of a bundle of
+	 * <em>JavaScript</em> files in the folder <em>googleCodePrettify</em> and the
+	 * {@code prettify.css} file.
+	 */
+	public static native void prettyPrint() /*-{
+		$wnd.prettyPrint();
+	}-*/;
+
+	/**
 	 * The main method, which is loaded on start or refresh
 	 * 
 	 * 
@@ -270,7 +280,6 @@ public class Control implements EntryPoint {
 					public void onSuccess(XSearch result) {
 						String status = searchArea.searchDone(result);
 						myGUI.updateSearchPage(result, status);
-						
 					}
 				});
 	}

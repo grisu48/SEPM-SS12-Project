@@ -6,9 +6,16 @@ import com.google.gwt.resources.client.CssResource;
 
 public interface Resources extends ClientBundle {
 
-      public static final Resources INSTANCE = GWT.create(Resources.class); 
+	public static final Resources INSTANCE = GWT.create(Resources.class);
 
-      @Source("smartsnip_screen.css")
-      @CssResource.NotStrict
-      CssResource css();
+	@Source("smartsnip_screen.css")
+	@CssResource.NotStrict
+	CssResource css();
+
+	/**
+	 * @return the stylesheet according to the pretty printed code area
+	 */
+	@Source("prettify.css")
+	@CssResource.NotStrict
+	CssResource cssPrettify();
 }

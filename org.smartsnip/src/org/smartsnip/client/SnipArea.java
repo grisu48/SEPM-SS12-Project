@@ -43,6 +43,14 @@ public class SnipArea extends Composite {
 	private final Button btnFav;
 	private final Button btnEdit;
 	private final Button btnDelete;
+	
+	/**
+	 * @see com.google.gwt.user.client.ui.Widget#onLoad()
+	 */
+	@Override
+	protected void onLoad() {
+		Control.prettyPrint();
+	};
 
 	SnipArea(final XSnippet mySnip) {
 

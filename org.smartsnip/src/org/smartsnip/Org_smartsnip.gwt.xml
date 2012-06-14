@@ -13,7 +13,10 @@
 	
 
   <!-- Other module inherits                                      -->
-	
+  
+  <!-- Include external JavaScript packages.                      -->
+  <script src='../googleCodePrettify/prettify.js'/>
+  
   <!-- Specify the app entry point class.                         -->
   <entry-point class='org.smartsnip.client.Control'/>
 
