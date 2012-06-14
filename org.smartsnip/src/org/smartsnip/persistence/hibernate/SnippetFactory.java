@@ -1000,8 +1000,6 @@ public class SnippetFactory {
 				if (count != null && count > 0) {
 					query.setFetchSize(count);
 				}
-				System.err.println(query);
-				System.err.println(query.getQueryString());
 
 				// execute search and build Snippets
 				DBSnippet entity;
