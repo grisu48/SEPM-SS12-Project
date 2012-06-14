@@ -1,5 +1,7 @@
 package org.smartsnip.client;
 
+import org.smartsnip.shared.XSearch.SearchSorting;
+
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Composite;
@@ -15,10 +17,11 @@ public class StatusArea extends Composite {
 
 	public StatusArea() {
 		pnlBasis = new DockPanel();
-		//pnlBasis.setWidth("400px");
+		// pnlBasis.setWidth("400px");
 		lblStatus = new Label("");
 
 		lbSelectSort = new ListBox();
+		lbSelectSort.addItem("Unsorted");
 		lbSelectSort.addItem("Latest Snippets");
 		lbSelectSort.addItem("Mostly Viewed");
 		lbSelectSort.addItem("Best Rated");
@@ -26,13 +29,21 @@ public class StatusArea extends Composite {
 			@Override
 			public void onChange(ChangeEvent event) {
 				switch (lbSelectSort.getSelectedIndex()) {
-				case 0:
+				case 1: // Latest Snippets
+					Control.search.setSorting(SearchSorting.time);
 					break;
-				case 1:
+				case 2: // Mostly Viewed
+					Control.search.setSorting(SearchSorting.mostViewed);
 					break;
-				case 2:
+				case 3: // Best Rated
+					Control.search.setSorting(SearchSorting.highestRated);
+					break;
+				default: // Unsorted
+					Control.search.setSorting(SearchSorting.unsorted);
 					break;
 				}
+
+				Control.search.search();
 
 			}
 		});
@@ -45,7 +56,7 @@ public class StatusArea extends Composite {
 		setStyleName("statusArea");
 	}
 
-	public void update(String status) {
+	public void setStatus(String status) {
 		lblStatus.setText(status);
 	}
 

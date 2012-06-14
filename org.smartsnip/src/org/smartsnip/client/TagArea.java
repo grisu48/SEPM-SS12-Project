@@ -9,44 +9,101 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ToggleButton;
+
 import org.smartsnip.shared.XSearch;
 
 public class TagArea extends Composite {
 
 	private final FlowPanel myPanel;
 	private final Label title;
-	private Control control;
+	private final List<Button> tagButtons = new ArrayList<Button>();
 
 	public TagArea() {
-		control = Control.getInstance();
 		myPanel = new FlowPanel();
-		title = new Label("Tags");
+		title = new Label("Tags - (*) indicates enabled tags");
 		myPanel.add(title);
 		initWidget(myPanel);
 		// Give the overall composite a style name.
 		setStyleName("tagArea");
 	}
 
-	public void update(List<String> tagsAppearingInSearchString) {
-		if (tagsAppearingInSearchString == null)
-			return;
-			
-		for (final String i : tagsAppearingInSearchString) {
-			Button tagButton = new Button(i);
+	/**
+	 * Updates the GUI control according to the tag list. If the tag list is
+	 * null, the panel is cleared.
+	 * 
+	 * @param tagsAppearingInSearchString
+	 *            tag list to be applied
+	 */
+	public void update(final List<String> tagsAppearingInSearchString) {
+		clear();
+
+		if (tagsAppearingInSearchString == null) return;
+
+		// TODO Better representation - Maybe with ToggleButton?!?
+		for (final String tag : tagsAppearingInSearchString) {
+			final Button tagButton = new Button(tag);
+			tagButtons.add(tagButton);
+			tagButton.setTitle(tag); // DO NOT MODIFY - Used for each button to
+										// associate it with a tag!
 			tagButton.addClickHandler(new ClickHandler() {
+				private boolean enabled = false;
+
 				@Override
 				public void onClick(ClickEvent event) {
-					ArrayList<String> taglist = new ArrayList<String>();
-					taglist.add(i);
-					control.search(Control.myGUI.mySearchArea.getSearchText(), taglist, null,
-							XSearch.SearchSorting.highestRated, 0, 10, Control.myGUI.mySearchArea);
+					// Switch enabled state (tag can be ENABLED or DISABLED)
+					enabled = !enabled;
+
+					if (enabled) {
+						tagButton.setText("(*) " + tag);
+						Control.search.removeTag(tag);
+					} else {
+						tagButton.setText(tag);
+						Control.search.addTag(tag);
+					}
+
+					// Do a search, if auto apply is selected in the search
+					// toolbar
+					if (Control.myGUI.mySearchToolbar.autoApplySelected()) Control.search.search();
+
 				}
 			});
 			myPanel.add(tagButton);
 		}
-		
-		
-		
+
+	}
+
+	/**
+	 * Clears the field and removes all tag buttons. This method also removes
+	 * all tags from the search
+	 */
+	private void clear() {
+		myPanel.clear();
+		tagButtons.clear();
+		myPanel.add(title);
+		Control.search.clearTags();
+	}
+
+	/**
+	 * Disables all tags
+	 */
+	public void clearTags() {
+		Control.search.clearTags();
+		for (final Button tagButton : tagButtons) {
+			tagButton.setText(tagButton.getTitle());
+		}
+	}
+
+	/**
+	 * Enables or disables the category area
+	 * 
+	 * @param enabled
+	 *            true if enabled, false if disabled
+	 */
+	public void setEnabled(boolean enabled) {
+		for (final Button tagButton : tagButtons) {
+			tagButton.setEnabled(enabled);
+		}
 	}
 
 }

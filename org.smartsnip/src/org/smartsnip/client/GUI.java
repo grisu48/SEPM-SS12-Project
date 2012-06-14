@@ -6,6 +6,7 @@ import org.smartsnip.shared.XSnippet;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -37,6 +38,7 @@ public class GUI {
 	PersonalArea myPersonalArea = null;
 	SearchArea mySearchArea = null;
 	ModeratorArea myModeratorArea = null;
+	SearchToolbar mySearchToolbar = null;
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -46,6 +48,54 @@ public class GUI {
 	HorizontalPanel dataPanel = new HorizontalPanel();
 	// Create footerPanel
 	SimplePanel footerPanel = new SimplePanel();
+
+	/**
+	 * This callback registers itself in the constructor and handles the update
+	 * of the search page. It is called, when the search results come to the
+	 * client.
+	 * 
+	 * This is the callback for {@link Search#search()}, when an arbitary GUI
+	 * entity fires a search
+	 */
+	private final AsyncCallback<XSearch> searchAsynCallback = new AsyncCallback<XSearch>() {
+
+		@Override
+		public void onSuccess(XSearch result) {
+			String status = result.totalresults + " results in " + convertSearchTime(Control.search.getSearchTime());
+			updateSearchPage(result, status);
+		}
+
+		@Override
+		public void onFailure(Throwable caught) {
+			String status = "Search failed";
+			if (caught != null) status += ": " + caught.getMessage();
+
+			updateSearchPage(null, status);
+		}
+
+		/**
+		 * This call converts a given time interval given in milliseconds into a
+		 * string, that is readable for humans
+		 * 
+		 * @param millis
+		 *            milliseconds to be converted
+		 * @return a human readable format with possible less precision than the
+		 *         milliseconds
+		 */
+		private String convertSearchTime(long millis) {
+			if (millis < 0) return "- " + convertSearchTime(-millis);
+
+			if (millis < 1000) return millis + " ms";
+			int tenthSeconds = (int) (millis / 100); // 10th-seconds
+														// ("Zehntelsekunden")
+			if (tenthSeconds < 100) {
+				float result = tenthSeconds / (float) 10.0;
+				return result + " s";
+			}
+
+			return (millis / 1000) + " s";
+		}
+	};
 
 	/**
 	 * Start the GUI
@@ -61,6 +111,7 @@ public class GUI {
 		control.refresh();
 
 		// Create the Page
+		initComponents();
 		createBasicPage();
 		showSearchPage();
 		// showImpressum();
@@ -71,6 +122,29 @@ public class GUI {
 		// showRegisterPopup();
 		// showTestPopup();
 
+		// Register the search callback
+		Control.search.addCallback(searchAsynCallback);
+	}
+
+	/** Create components */
+	private void initComponents() {
+		mySearchToolbar = new SearchToolbar();
+		myCatArea = new CatArea();
+		myTagArea = new TagArea();
+
+		// Add a handler that is called, when a search is done
+		Control.search.addCallback(new AsyncCallback<XSearch>() {
+
+			@Override
+			public void onSuccess(XSearch result) {
+				onSearchDone(true);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				onSearchDone(false);
+			}
+		});
 	}
 
 	/**
@@ -113,8 +187,6 @@ public class GUI {
 
 		myResultArea = new ResultArea();
 		myStatusArea = new StatusArea();
-		myCatArea = new CatArea();
-		myTagArea = new TagArea();
 
 		VerticalPanel leftPanel = new VerticalPanel();
 		leftPanel.setStyleName("leftPanel");
@@ -124,6 +196,7 @@ public class GUI {
 
 		leftPanel.add(myStatusArea);
 		leftPanel.add(myResultArea);
+		rightPanel.add(mySearchToolbar);
 		rightPanel.add(myCatArea);
 		rightPanel.add(myTagArea);
 
@@ -295,7 +368,8 @@ public class GUI {
 	}
 
 	/**
-	 * updates the search page
+	 * updates the search pagel. Internal call for
+	 * {@link GUI#searchAsynCallback}
 	 * 
 	 * @param XSearch
 	 *            the search result
@@ -304,10 +378,10 @@ public class GUI {
 	 * 
 	 * 
 	 */
-	public void updateSearchPage(XSearch result, String status) {
+	private void updateSearchPage(XSearch result, String status) {
 		showSearchPage();
 
-		myStatusArea.update(status);
+		myStatusArea.setStatus(status);
 		if (result != null) {
 			myResultArea.update(result.snippets);
 			myCatArea.update(result.categories);
@@ -353,16 +427,6 @@ public class GUI {
 		ppnlSnippet.setWidth("250px");
 		ppnlSnippet.show();
 
-	}
-
-	/**
-	 * starts the search
-	 * 
-	 * 
-	 */
-	public void startSearch() {
-		showSearchPage();
-		myStatusArea.update("Searching ... ");
 	}
 
 	/**
@@ -431,6 +495,29 @@ public class GUI {
 		ppnlSnippet.setWidth("250px");
 		ppnlSnippet.show();
 
+	}
+
+	/**
+	 * This method is called by {@link Search#search()} when a new search has
+	 * started
+	 */
+	void onSearchStart() {
+		showSearchPage();
+		myStatusArea.setStatus("Searching ... ");
+
+		mySearchToolbar.setEnabled(false);
+		myCatArea.setEnabled(false);
+		myTagArea.setEnabled(false);
+	}
+
+	/**
+	 * This method is called by a search callback initialised in
+	 * {@link GUI#initComponents}
+	 */
+	void onSearchDone(boolean success) {
+		mySearchToolbar.setEnabled(success);
+		myCatArea.setEnabled(success);
+		myTagArea.setEnabled(success);
 	}
 
 }

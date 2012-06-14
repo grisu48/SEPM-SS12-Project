@@ -40,12 +40,13 @@ public class Control implements EntryPoint {
 	/** Session cookie */
 	private final static String COOKIE_SESSION = ISession.cookie_Session_ID;
 
+	/** Search entity */
+	public static final Search search = new Search();
+
 	/** Session proxy object, used for RPC in GWT */
-	public final static ISessionAsync proxySession = ISession.Util
-			.getInstance();
+	public final static ISessionAsync proxySession = ISession.Util.getInstance();
 	/** Snippet proxy object, used for RPC in GWT */
-	public final static ISnippetAsync proxySnippet = ISnippet.Util
-			.getInstance();
+	public final static ISnippetAsync proxySnippet = ISnippet.Util.getInstance();
 	/** Main GUI distributor */
 	public final static GUI myGUI = new GUI();
 
@@ -60,10 +61,10 @@ public class Control implements EntryPoint {
 	}
 
 	/**
-	 * This <em>JSNI</em> method includes the {@code prettyPrint()} function of the
-	 * <em>google-code-prettify</em> package. It is made up of a bundle of
-	 * <em>JavaScript</em> files in the folder <em>googleCodePrettify</em> and the
-	 * {@code prettify.css} file.
+	 * This <em>JSNI</em> method includes the {@code prettyPrint()} function of
+	 * the <em>google-code-prettify</em> package. It is made up of a bundle of
+	 * <em>JavaScript</em> files in the folder <em>googleCodePrettify</em> and
+	 * the {@code prettify.css} file.
 	 */
 	public static native void prettyPrint() /*-{
 		$wnd.prettyPrint();
@@ -80,8 +81,7 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				myGUI.showTestPopup("Error getting session cookie: "
-						+ caught.getMessage());
+				myGUI.showTestPopup("Error getting session cookie: " + caught.getMessage());
 			}
 
 			@Override
@@ -121,6 +121,9 @@ public class Control implements EntryPoint {
 	 * @return the session id of the newly generated session
 	 */
 	private static String createNewSession() {
+		// XXX: Paul - hab' das ich gemacht?!! Ergibt keinen Sinn auser ich
+		// dachte
+		// ich will das noch machen ...
 		return "session.getCookie()";
 	}
 
@@ -223,65 +226,24 @@ public class Control implements EntryPoint {
 	 *            the password
 	 * 
 	 */
-	public void register(final String user, final String mail, final String pw,
-			final Register register) {
-		if (user.isEmpty() || mail.isEmpty() || pw.isEmpty())
-			return;
+	public void register(final String user, final String mail, final String pw, final Register register) {
+		if (user.isEmpty() || mail.isEmpty() || pw.isEmpty()) return;
 
-		proxySession.registerNewUser(user, pw, mail,
-				new AsyncCallback<Boolean>() {
+		proxySession.registerNewUser(user, pw, mail, new AsyncCallback<Boolean>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						if (caught instanceof NoAccessException) {
-							register.registerFailure("Access denied");
-						} else
-							register.registerFailure("Unknown error: "
-									+ caught.getMessage());
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				if (caught instanceof NoAccessException) {
+					register.registerFailure("Access denied");
+				} else
+					register.registerFailure("Unknown error: " + caught.getMessage());
+			}
 
-					@Override
-					public void onSuccess(Boolean result) {
-						register.registerSuccess();
-					}
-				});
-	}
-
-	/**
-	 * Calls a search on the Server
-	 * 
-	 * @param String
-	 *            the search word
-	 * @param List
-	 *            <String> the tags which are wanted
-	 * @param List
-	 *            <String> the categories which wanted
-	 * @param XSearch
-	 *            .SearchSorting the sorting parameter
-	 * @param int the starting number of the uses results
-	 * @param int the count of the results
-	 * 
-	 */
-	public void search(String searchString, List<String> tags,
-			List<String> categories, XSearch.SearchSorting sorting, int start,
-			int count, final SearchArea searchArea) {
-
-		myGUI.startSearch();
-		proxySession.doSearch(searchString, tags, categories, sorting, start,
-				count, new AsyncCallback<XSearch>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						String status = searchArea.searchFailed(caught);
-						myGUI.updateSearchPage(null, status);
-					}
-
-					@Override
-					public void onSuccess(XSearch result) {
-						String status = searchArea.searchDone(result);
-						myGUI.updateSearchPage(result, status);
-					}
-				});
+			@Override
+			public void onSuccess(Boolean result) {
+				register.registerSuccess();
+			}
+		});
 	}
 
 	/**
@@ -342,8 +304,7 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onSuccess(XUser result) {
-				if (result == null || result.username.isEmpty())
-					user.username = "Guest";
+				if (result == null || result.username.isEmpty()) user.username = "Guest";
 				else {
 					user.username = result.username;
 					user.email = result.email;
@@ -391,8 +352,7 @@ public class Control implements EntryPoint {
 	 * @param long the hash of the current snippet
 	 */
 	public void writeComment(String comment, long hash) {
-		if (comment == null || comment.isEmpty())
-			return;
+		if (comment == null || comment.isEmpty()) return;
 
 		ISnippetAsync snippetProxy = ISnippet.Util.getInstance();
 
@@ -401,14 +361,12 @@ public class Control implements EntryPoint {
 			@Override
 			public void onFailure(Throwable caught) {
 				if (caught instanceof NoAccessException) {
-					if (!isLoggedIn())
-						myGUI.showErrorPopup("You must login first");
+					if (!isLoggedIn()) myGUI.showErrorPopup("You must login first");
 					else
 						myGUI.showErrorPopup("Access denied.");
 
 				} else
-					myGUI.showErrorPopup("Creation of new comment failed",
-							caught);
+					myGUI.showErrorPopup("Creation of new comment failed", caught);
 			}
 
 			@Override
@@ -433,11 +391,9 @@ public class Control implements EntryPoint {
 				if (caught instanceof NoAccessException) {
 					myGUI.showErrorPopup("Access denial", caught);
 				} else if (caught instanceof NotFoundException) {
-					myGUI.showErrorPopup("Snippet cannot be found by server",
-							caught);
+					myGUI.showErrorPopup("Snippet cannot be found by server", caught);
 				} else {
-					myGUI.showErrorPopup("Adding snippet to favorites failed",
-							caught);
+					myGUI.showErrorPopup("Adding snippet to favorites failed", caught);
 				}
 			}
 
@@ -482,19 +438,18 @@ public class Control implements EntryPoint {
 	public void setPassword(String pw1, String pw2) {
 		if (pw1.equals(pw2)) {
 
-			IUser.Util.getInstance().setPassword(pw1,
-					new AsyncCallback<Void>() {
+			IUser.Util.getInstance().setPassword(pw1, new AsyncCallback<Void>() {
 
-						@Override
-						public void onSuccess(Void result) {
-							myGUI.myPersonalArea.update(true);
-						}
+				@Override
+				public void onSuccess(Void result) {
+					myGUI.myPersonalArea.update(true);
+				}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							myGUI.myPersonalArea.update(false);
-						}
-					});
+				@Override
+				public void onFailure(Throwable caught) {
+					myGUI.myPersonalArea.update(false);
+				}
+			});
 
 		} else {
 			myGUI.myPersonalArea.update(false);
@@ -507,21 +462,20 @@ public class Control implements EntryPoint {
 	 * 
 	 */
 	public void showSnippetOfDay() {
-		ISnippet.Util.getInstance().getSnippetOfDay(
-				new AsyncCallback<XSnippet>() {
+		ISnippet.Util.getInstance().getSnippetOfDay(new AsyncCallback<XSnippet>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
 
-					}
+			}
 
-					@Override
-					public void onSuccess(XSnippet result) {
-						changeToSnipPage(result);
-					}
+			@Override
+			public void onSuccess(XSnippet result) {
+				changeToSnipPage(result);
+			}
 
-				});
+		});
 
 	}
 }

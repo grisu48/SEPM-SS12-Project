@@ -8,8 +8,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 public class ShortSnipCell extends AbstractCell<XSnippet> {
 
 	@Override
-	public void render(com.google.gwt.cell.client.Cell.Context context,
-			XSnippet snip, SafeHtmlBuilder sb) {
+	public void render(com.google.gwt.cell.client.Cell.Context context, XSnippet snip, SafeHtmlBuilder sb) {
 
 		// Value can be null, so do a null check..
 		if (snip == null) {
@@ -37,6 +36,10 @@ public class ShortSnipCell extends AbstractCell<XSnippet> {
 		// Add license
 		sb.appendHtmlConstant("<tr><td>");
 		sb.appendHtmlConstant(snip.license);
+		sb.appendHtmlConstant("</td></tr>");
+		// Add view counts
+		sb.appendHtmlConstant("<tr><td>");
+		sb.appendHtmlConstant(snip.viewcount + " views");
 		sb.appendHtmlConstant("</td></tr>");
 
 		sb.appendHtmlConstant("</table>");

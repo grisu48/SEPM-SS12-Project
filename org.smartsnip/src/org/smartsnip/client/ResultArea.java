@@ -18,17 +18,12 @@ public class ResultArea extends Composite {
 
 	CellList<XSnippet> myCellList;
 
-	static final List<String> TESTTAGS = Arrays.asList("Tag1", "Tag2", "Tag3",
-			"Tag4");
-	static final XCategory CAT = new XCategory("catname", "description",
-			"parent", new ArrayList<String>());
-	static final XSnippet SNIPPET = new XSnippet("owner", 123, "title",
-			"description", CAT, new ArrayList<String>(TESTTAGS),
-			new ArrayList<XComment>(), "code", "codeHTML", "language",
-			"license", 4);
-	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET,
-			SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET,
-			SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET);
+	static final List<String> TESTTAGS = Arrays.asList("Tag1", "Tag2", "Tag3", "Tag4");
+	static final XCategory CAT = new XCategory("catname", "description", "parent", new ArrayList<String>());
+	static final XSnippet SNIPPET = new XSnippet("owner", 123, "title", "description", CAT, new ArrayList<String>(
+			TESTTAGS), "code", "codeHTML", "language", "license", 4);
+	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET,
+			SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET);
 
 	public ResultArea() {
 
@@ -40,17 +35,16 @@ public class ResultArea extends Composite {
 		// Add a selection model to handle user selection.
 		final SingleSelectionModel<XSnippet> selectionModel = new SingleSelectionModel<XSnippet>();
 		myCellList.setSelectionModel(selectionModel);
-		selectionModel
-				.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-					@Override
-					public void onSelectionChange(SelectionChangeEvent event) {
-						XSnippet selected = selectionModel.getSelectedObject();
-						if (selected != null) {
-							Control control = Control.getInstance();
-							control.changeToSnipPage(selected);
-						}
-					}
-				});
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				XSnippet selected = selectionModel.getSelectedObject();
+				if (selected != null) {
+					Control control = Control.getInstance();
+					control.changeToSnipPage(selected);
+				}
+			}
+		});
 
 		// myCellList.setRowData(0, TESTLIST);
 		myPanel.setHeight("600px");
@@ -61,8 +55,7 @@ public class ResultArea extends Composite {
 	}
 
 	void update(List<XSnippet> snippets) {
-		if (snippets == null)
-			return;
+		if (snippets == null) return;
 
 		myCellList.setRowCount(snippets.size(), true);
 		myCellList.setRowData(0, snippets);

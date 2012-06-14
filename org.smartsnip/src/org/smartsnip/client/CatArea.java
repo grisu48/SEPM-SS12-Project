@@ -11,15 +11,16 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ToggleButton;
 
 public class CatArea extends Composite {
 
 	private final FlowPanel myPanel;
 	private final Label title;
-	private final Control control;
+
+	private final List<Button> catButtons = new ArrayList<Button>();
 
 	public CatArea() {
-		control = Control.getInstance();
 		myPanel = new FlowPanel();
 		title = new Label("Categories");
 		myPanel.add(title);
@@ -29,23 +30,57 @@ public class CatArea extends Composite {
 	}
 
 	public void update(List<String> categories) {
-		if (categories == null)
-			return;
+		clear();
 
-		for (final String i : categories) {
-			Button catButton = new Button(i);
+		if (categories == null) return;
+
+		for (final String category : categories) {
+			final Button catButton = new Button(category);
+			catButtons.add(catButton);
 			catButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					ArrayList<String> catList = new ArrayList<String>();
-					catList.add(i);
-					control.search(Control.myGUI.mySearchArea.getSearchText(), null, catList,
-							XSearch.SearchSorting.highestRated, 0, 10, Control.myGUI.mySearchArea);
+					// Currently only one category is supported by the client
+					// gui
+					Control.search.clearCategories();
+					Control.search.addCategory(category);
+
+					// Do a search, if auto apply is selected in the search
+					// toolbar
+					if (Control.myGUI.mySearchToolbar.autoApplySelected()) Control.search.search();
 				}
 			});
 			myPanel.add(catButton);
 		}
 
+	}
+
+	/**
+	 * Clears the component
+	 */
+	private void clear() {
+		myPanel.clear();
+		myPanel.add(title);
+		catButtons.clear();
+	}
+
+	/**
+	 * Clears all selected categories
+	 */
+	public void clearCategories() {
+		// Obsolete, because currently only one category is supported
+	}
+
+	/**
+	 * Enables or disables the category area
+	 * 
+	 * @param enabled
+	 *            true if enabled, false if disabled
+	 */
+	public void setEnabled(boolean enabled) {
+		for (final Button catButton : catButtons) {
+			catButton.setEnabled(enabled);
+		}
 	}
 
 }

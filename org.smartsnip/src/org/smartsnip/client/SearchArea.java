@@ -31,6 +31,20 @@ public class SearchArea extends Composite {
 	/** Search duration timer */
 	private long searchDuration = 0L;
 
+	/** Callback when the search returns new results */
+	private final AsyncCallback<XSearch> searchCallback = new AsyncCallback<XSearch>() {
+
+		@Override
+		public void onSuccess(XSearch result) {
+			searchButton.setEnabled(true);
+		}
+
+		@Override
+		public void onFailure(Throwable caught) {
+			searchButton.setEnabled(true);
+		}
+	};
+
 	public SearchArea() {
 
 		control = Control.getInstance();
@@ -88,15 +102,18 @@ public class SearchArea extends Composite {
 		// Give the overall composite a style name.
 		setStyleName("searchArea");
 
+		// The async callback of the search results acts as a observable. So
+		// register the internal callback in the search object
+		Control.search.addCallback(searchCallback);
+
 		update();
 		updateSuggestions();
 	}
 
 	public void fireSearch() {
 		searchButton.setEnabled(false);
-		Control control = Control.getInstance();
-		searchDuration = System.currentTimeMillis();
-		control.search(searchSnippet.getText(), null, null, XSearch.SearchSorting.highestRated, 0, 10, SearchArea.this);
+		Control.search.setSearchString(getSearchText());
+		Control.search.search();
 	}
 
 	public void update() {
@@ -106,34 +123,6 @@ public class SearchArea extends Composite {
 			btCreateSnippet.setVisible(false);
 		}
 		searchButton.setEnabled(true);
-	}
-
-	/**
-	 * Callback if the search failed with an exception
-	 * 
-	 * @param caught
-	 *            Cause why the search failed
-	 */
-	String searchFailed(Throwable caught) {
-		status = "Search failed: " + caught.getMessage();
-		return status;
-	}
-
-	/**
-	 * Callback if the search succeeds
-	 * 
-	 * @param result
-	 *            Of the search
-	 */
-	String searchDone(XSearch result) {
-		searchDuration = System.currentTimeMillis() - searchDuration;
-		searchDuration = searchDuration / 10;
-		int time = (int) Math.floor(searchDuration);
-
-		status = result.totalresults + " results in " + time + " ms";
-		// status = "test";
-		System.out.println(status);
-		return status;
 	}
 
 	/**
