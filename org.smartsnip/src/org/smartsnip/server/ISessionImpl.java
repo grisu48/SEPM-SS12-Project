@@ -137,7 +137,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 		result.start = start;
 		result.count = count;
 
-		Search search = Search.createSearch(searchString);
+		Search search = Search.createSearch(searchString, sorting);
 		if (tags != null) {
 			for (String tag : tags) {
 				search.addTag(tag);
@@ -149,7 +149,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 			result.categories.add(category);
 		}
 
-		List<Snippet> snippets = search.getResults(sorting, start, count);
+		List<Snippet> snippets = search.getResults(start, count);
 		List<String> resultCategories = new ArrayList<String>();
 		List<String> resultTags = new ArrayList<String>();
 		for (Snippet snippet : snippets) {

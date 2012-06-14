@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.shared.XSearch;
+import org.smartsnip.shared.XSearch.SearchSorting;
 
 public class Search {
 	/** Defined search string */
@@ -85,10 +86,26 @@ public class Search {
 	 */
 	private List<Snippet> filterResults;
 
-	private Search(String searchString) {
+	private Search(String searchString, SearchSorting sorting) {
 		if (searchString == null) searchString = "";
 
 		this.searchString = searchString;
+		switch (sorting) // Must be done before searchDB
+		{
+		case highestRated:
+			this.sorting = IPersistence.SORT_BEST_RATED;
+			break;
+		case mostViewed:
+			this.sorting = IPersistence.SORT_MOSTVIEWED;
+			break;
+		case time:
+			this.sorting = IPersistence.SORT_LATEST;
+			break;
+		case unsorted:
+			this.sorting = IPersistence.SORT_UNSORTED;
+			break;
+		}
+
 		this.totalResults = searchDB(searchString, tags, categories);
 	}
 
@@ -100,27 +117,25 @@ public class Search {
 	 * @return
 	 */
 	public static Search createSearch(String searchString) {
-		Search result = new Search(searchString);
+		return createSearch(searchString, SearchSorting.unsorted);
+	}
+
+	/**
+	 * Creates a new search with the given string to search for. If the string
+	 * is null or empty, null will be returned.
+	 * 
+	 * @param searchString
+	 * @return
+	 */
+	public static Search createSearch(String searchString, SearchSorting sorting) {
+		Search result = new Search(searchString, sorting);
 		return result;
 	}
 
 	/**
 	 * @return the filtered search results
 	 */
-	public synchronized List<Snippet> getResults(XSearch.SearchSorting sorting, int start, int count) {
-
-		switch (sorting) {
-		case time:
-			sortByTime();
-			break;
-		case highestRated:
-			sortByHightestRating();
-			break;
-		case mostViewed:
-			sortByViewCount();
-			break;
-		}
-
+	public synchronized List<Snippet> getResults(int start, int count) {
 		if (filterResults == null) applyFilter();
 		List<Snippet> result = new ArrayList<Snippet>(count);
 		int maxSize = filterResults.size() - 1;
@@ -151,34 +166,6 @@ public class Search {
 	public int getTotalResults() {
 		if (filterResults == null) applyFilter();
 		return filterResults.size();
-	}
-
-	/**
-	 * Sorts filterResults by time
-	 */
-	private void sortByTime() {
-		setSorting(IPersistence.SORT_LATEST);
-	}
-
-	/**
-	 * Sorts filterResults by highest ratings
-	 */
-	private void sortByHightestRating() {
-		setSorting(IPersistence.SORT_BEST_RATED);
-	}
-
-	/**
-	 * Sorts filterResults by highest view counts
-	 */
-	private void sortByViewCount() {
-		setSorting(IPersistence.SORT_MOSTVIEWED);
-	}
-
-	/**
-	 * Do not sort
-	 */
-	private void sortUnsorted() {
-		setSorting(IPersistence.SORT_UNSORTED);
 	}
 
 	/**
@@ -278,17 +265,20 @@ public class Search {
 			e.printStackTrace(System.err);
 			return null;
 		} finally {
+			/* Protocol search, if not empty */
+			if (searchString != null && !searchString.isEmpty()) {
 
-			/* Protocol search */
-			Thread protocol = new Thread(new Runnable() {
+				Thread protocol = new Thread(new Runnable() {
 
-				@Override
-				public void run() {
-					Stats.protocolSearch(searchString);
-				}
-			});
-			protocol.setDaemon(true);
-			protocol.start();
+					@Override
+					public void run() {
+						Stats.protocolSearch(searchString);
+					}
+				});
+				protocol.setDaemon(true);
+				protocol.start();
+
+			}
 
 		}
 	}

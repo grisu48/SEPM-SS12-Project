@@ -11,7 +11,6 @@ public class XSnippet implements IsSerializable {
 	public String description;
 	public XCategory category;
 	public ArrayList<String> tags;
-	public ArrayList<XComment> comments;
 	public String code;
 	public String codeHTML;
 	public String language;
@@ -25,17 +24,14 @@ public class XSnippet implements IsSerializable {
 		// this("", 0, "", "", null, null, null, "", "", "", "", 0);
 	}
 
-	public XSnippet(String owner, long hash, String title, String description,
-			XCategory category, ArrayList<String> tags,
-			ArrayList<XComment> comments, String code, String codeHTML,
-			String language, String license, int viewcount) {
+	public XSnippet(String owner, long hash, String title, String description, XCategory category,
+			ArrayList<String> tags, String code, String codeHTML, String language, String license, int viewcount) {
 		this.owner = owner;
 		this.hash = hash;
 		this.title = title;
 		this.description = description;
 		this.category = category;
 		this.tags = tags;
-		this.comments = comments;
 		this.code = code;
 		this.codeHTML = codeHTML;
 		this.language = language;
@@ -44,17 +40,15 @@ public class XSnippet implements IsSerializable {
 		this.isFavorite = false;
 	}
 
-	public XSnippet(String owner, long hash, String title, String description,
-			XCategory category, ArrayList<String> tags,
-			ArrayList<XComment> comments, String code, String codeHTML,
-			String language, String license, int viewcount, boolean isFavorite) {
+	public XSnippet(String owner, long hash, String title, String description, XCategory category,
+			ArrayList<String> tags, String code, String codeHTML, String language, String license, int viewcount,
+			boolean isFavorite) {
 		this.owner = owner;
 		this.hash = hash;
 		this.title = title;
 		this.description = description;
 		this.category = category;
 		this.tags = tags;
-		this.comments = comments;
 		this.code = code;
 		this.codeHTML = codeHTML;
 		this.language = language;

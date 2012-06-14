@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class XSearch implements IsSerializable {
 
 	public enum SearchSorting implements IsSerializable {
-		mostViewed, highestRated, time;
+		mostViewed, highestRated, time, unsorted;
 	}
 
 	public int totalresults = 0;
