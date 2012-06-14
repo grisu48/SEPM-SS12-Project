@@ -1,7 +1,10 @@
 package org.smartsnip.client;
 
+import org.smartsnip.shared.IModerator;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -21,7 +24,6 @@ public class Meta extends Composite {
 	private final Anchor mod;
 	private Image icon;
 	private Control control;
-	
 
 	public Meta() {
 
@@ -29,11 +31,9 @@ public class Meta extends Composite {
 		pnlUser = new VerticalPanel();
 		metaPanel = new HorizontalPanel();
 
-		
-
 		icon = new Image("/images/user1.png");
 		icon.setSize("35px", "35px");
-		
+
 		user = new Anchor(Control.getInstance().getUsername());
 		user.setStyleName("user");
 		user.addClickHandler(new ClickHandler() {
@@ -46,6 +46,7 @@ public class Meta extends Composite {
 
 		mod = new Anchor("Moderate");
 		mod.setStyleName("mod");
+		mod.setVisible(false);
 		mod.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -53,7 +54,7 @@ public class Meta extends Composite {
 			}
 
 		});
-		
+
 		login = new Anchor(" > Login");
 		login.addClickHandler(new ClickHandler() {
 			@Override
@@ -81,8 +82,6 @@ public class Meta extends Composite {
 
 		});
 
-		
-
 		metaPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		metaPanel.add(icon);
 		metaPanel.add(user);
@@ -90,10 +89,6 @@ public class Meta extends Composite {
 		metaPanel.add(register);
 		metaPanel.add(mod);
 		metaPanel.add(logout);
-		
-
-
-
 
 		initWidget(metaPanel);
 
@@ -103,9 +98,9 @@ public class Meta extends Composite {
 	}
 
 	public void update() {
-		
+
 		user.setText(control.getUsername() + " | " + control.getUserMail());
-		
+
 		if (control.isLoggedIn()) {
 			user.setVisible(true);
 			icon.setVisible(true);
@@ -122,8 +117,18 @@ public class Meta extends Composite {
 			logout.setVisible(false);
 			mod.setVisible(false);
 		}
-		
 
+		IModerator.Util.getInstance().isModerator(new AsyncCallback<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean result) {
+				mod.setVisible(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
 	}
 
 }

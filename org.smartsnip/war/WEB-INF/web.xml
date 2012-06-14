@@ -49,6 +49,20 @@
     <url-pattern>/org_smartsnip/category</url-pattern>
   </servlet-mapping>
   
+  
+  <servlet>
+    <servlet-name>Moderator</servlet-name>
+    <servlet-class>org.smartsnip.server.IModeratorImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>Moderator</servlet-name>
+    <url-pattern>/org_smartsnip/moderator</url-pattern>
+  </servlet-mapping>
+  
+  
+  
+  
   <servlet>
     <servlet-name>SnippetOfDay</servlet-name>
     <servlet-class>org.smartsnip.server.SnippetOfDay</servlet-class>
