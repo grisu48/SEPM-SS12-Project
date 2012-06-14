@@ -31,8 +31,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	@Override
 	public String getUsername() {
 		Session session = getSession();
-		if (!session.isLoggedIn())
-			return null;
+		if (!session.isLoggedIn()) return null;
 
 		return session.getUsername();
 	}
@@ -63,13 +62,11 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	}
 
 	@Override
-	public boolean login(String username, String password)
-			throws NoAccessException {
+	public boolean login(String username, String password) throws NoAccessException {
 
 		Session session = getSession();
 
-		if (session.isLoggedIn())
-			return false;
+		if (session.isLoggedIn()) return false;
 
 		try {
 			session.login(username, password);
@@ -96,30 +93,21 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	}
 
 	@Override
-	public boolean registerNewUser(String username, String password,
-			String email) throws NoAccessException {
-		if (username == null)
-			return false;
-		if (password == null || password.isEmpty())
-			return false;
-		if (email == null || email.isEmpty())
-			return false;
+	public boolean registerNewUser(String username, String password, String email) throws NoAccessException {
+		if (username == null) return false;
+		if (password == null || password.isEmpty()) return false;
+		if (email == null || email.isEmpty()) return false;
 
 		username = User.trimUsername(username);
-		if (username.isEmpty())
-			return false;
+		if (username.isEmpty()) return false;
 
 		Session session = getSession();
-		if (!session.getPolicy().canRegister(session))
-			throw new NoAccessException();
+		if (!session.getPolicy().canRegister(session)) throw new NoAccessException();
 
-		if (User.exists(username))
-			return false;
+		if (User.exists(username)) return false;
 		try {
-			logInfo("Requesting create new user (USER=" + username + "; MAIL="
-					+ email + ")");
-			if (User.createNewUser(username, password, email) == null)
-				return false;
+			logInfo("Requesting create new user (USER=" + username + "; MAIL=" + email + ")");
+			if (User.createNewUser(username, password, email) == null) return false;
 
 			// Success
 			return true;
@@ -135,25 +123,19 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	}
 
 	@Override
-	public XSearch doSearch(String searchString, List<String> tags,
-			List<String> categories, SearchSorting sorting, int start, int count) {
+	public XSearch doSearch(String searchString, List<String> tags, List<String> categories, SearchSorting sorting,
+			int start, int count) {
 
 		XSearch result = new XSearch();
 		result.snippets = new ArrayList<XSnippet>();
 		result.searchString = searchString;
 
-		if (start < 0)
-			start = 0;
-		if (count <= 0)
-			count = 1;
-		if (count >= maxSearchItems)
-			count = maxSearchItems;
+		if (start < 0) start = 0;
+		if (count <= 0) count = 1;
+		if (count >= maxSearchItems) count = maxSearchItems;
 
 		result.start = start;
 		result.count = count;
-
-		if (searchString == null || searchString.isEmpty())
-			return new XSearch();
 
 		Search search = Search.createSearch(searchString);
 		if (tags != null) {
@@ -162,11 +144,10 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 				result.tags.add(tag);
 			}
 		}
-		if (categories != null)
-			for (String category : categories) {
-				search.addCategory(category);
-				result.categories.add(category);
-			}
+		if (categories != null) for (String category : categories) {
+			search.addCategory(category);
+			result.categories.add(category);
+		}
 
 		List<Snippet> snippets = search.getResults(sorting, start, count);
 		List<String> resultCategories = new ArrayList<String>();
@@ -175,27 +156,23 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 			result.snippets.add(snippet.toXSnippet());
 
 			String category = snippet.getCategoryName();
-			if (!resultCategories.contains(category))
-				resultCategories.add(category);
+			if (!resultCategories.contains(category)) resultCategories.add(category);
 			for (Tag tag : snippet.getTags()) {
-				if (!resultTags.contains(tag.name))
-					resultTags.add(tag.name);
+				if (!resultTags.contains(tag.name)) resultTags.add(tag.name);
 			}
 		}
 
 		result.categories = resultCategories;
 		result.tags = resultTags;
 
-		List<Tag> allTagsMatchingSearchCriteria = search
-				.getAllTagsMatchingSearchCriteria();
+		List<Tag> allTagsMatchingSearchCriteria = search.getAllTagsMatchingSearchCriteria();
 		for (Tag tag : allTagsMatchingSearchCriteria) {
 			result.tagsAppearingInSearchString.add(tag.name);
 		}
 
 		result.totalresults = search.getTotalResults();
 		if (result.totalresults > 0) {
-			logInfo("Search for: \"" + searchString + "\". "
-					+ result.totalresults + " results total");
+			logInfo("Search for: \"" + searchString + "\". " + result.totalresults + " results total");
 		}
 
 		return result;
@@ -205,11 +182,9 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	public XUser getUser(String username) {
 
 		Session session = getSession();
-		if (!session.isLoggedIn())
-			return null;
+		if (!session.isLoggedIn()) return null;
 
-		XUser user = new XUser(session.getUsername(), session.getRealname(),
-				session.getMail());
+		XUser user = new XUser(session.getUsername(), session.getRealname(), session.getMail());
 
 		return user;
 	}
