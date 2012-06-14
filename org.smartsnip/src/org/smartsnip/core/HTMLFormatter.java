@@ -11,12 +11,13 @@ public abstract class HTMLFormatter {
 	private static JavaFormatter javaFormatter = null;
 
 	private static final List<Pair<String, String>> htmlSpecialChars = new ArrayList<Pair<String, String>>(
-			3);
+			4);
 
 	static {
 		htmlSpecialChars.add(new Pair<String, String>("&", "&amp;"));
 		htmlSpecialChars.add(new Pair<String, String>("<", "&lt;"));
 		htmlSpecialChars.add(new Pair<String, String>(">", "&gt;"));
+		htmlSpecialChars.add(new Pair<String, String>("\n", "&nbsp;\n"));
 	}
 
 	HTMLFormatter() {
@@ -33,7 +34,7 @@ public abstract class HTMLFormatter {
 		if (java == null)
 			return null;
 		StringBuilder builder = new StringBuilder(
-				"<pre class='prettyprint linenums:1'><code class='language-java'>");
+				"<pre class='prettyprint linenums'><code class='language-java'>");
 		builder.append(replaceHtmlSpecialChars(java.code));
 		builder.append("</code></pre>");
 		return builder.toString();
