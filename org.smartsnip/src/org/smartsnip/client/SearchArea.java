@@ -161,4 +161,8 @@ public class SearchArea extends Composite {
 		});
 
 	}
+
+	public String getSearchText() {
+		return searchSnippet.getText();
+	}
 }
