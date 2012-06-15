@@ -366,7 +366,7 @@ footer .gwt-Label, .gwt-Anchor {
 	margin-bottom:20px;
 	padding-left: 20px;
 	width: 300px;
-	min-height:200px;
+	min-height:100px;
 
 .catArea .gwt-Button {
 	padding:3px;
@@ -390,7 +390,7 @@ footer .gwt-Label, .gwt-Anchor {
 .tagArea {
 	padding: 20px;
 	width: 300px;
-	min-height:200px;
+	min-height:100px;
 }
 
 .tagArea .gwt-Button {
@@ -508,6 +508,6 @@ height: 80px;
 	background-image:url(images/trans.png);
 	border-radius:10px;
 	background-repeat:repeat-x;
-	width:600px;
+	width:580px;
 	
 }
