@@ -38,19 +38,6 @@ class DBLicense {
 	DBLicense() {
 	}
 
-	// XXX remove constructor
-//	/**
-//	 * @param licenseId
-//	 * @param shortDescr
-//	 * @param licenseText
-//	 */
-//	DBLicense(Long licenseId, String shortDescr, String licenseText) {
-//		super();
-//		this.licenseId = licenseId;
-//		this.shortDescr = shortDescr;
-//		this.LicenseText = licenseText;
-//	}
-
 	/**
 	 * @return the licenseId
 	 */

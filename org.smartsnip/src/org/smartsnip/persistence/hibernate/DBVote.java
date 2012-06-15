@@ -37,16 +37,6 @@ public class DBVote {
 		super();
 	}
 
-	// XXX remove constructor
-	// /**
-	// * @param vote
-	// */
-	// DBVote(Long commentId, String userName, Vote vote) {
-	// super();
-	// this.voteId = new VoteId(commentId, userName);
-	// this.vote = vote;
-	// }
-
 	/**
 	 * @return the voteId
 	 */

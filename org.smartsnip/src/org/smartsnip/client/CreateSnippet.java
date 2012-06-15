@@ -7,6 +7,8 @@ import org.smartsnip.shared.ICategory;
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.XCategory;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -43,6 +45,7 @@ public class CreateSnippet extends Composite {
 	private final TextArea txtDescription;
 	private final TextArea txtCode;
 	private final ListBox lstLanguage;
+	private List<String> moreLanguageList = null;
 	private final ListBox lstCategory;
 	private final ListBox lstLicense;
 	private final TextBox txtTag;
@@ -81,6 +84,21 @@ public class CreateSnippet extends Composite {
 		lstLicense.addItem("CC");
 		lstLicense.addItem("GPL");
 
+		// updates the entries of the languages selector on demand
+		lstLanguage.addChangeHandler(new ChangeHandler() {
+
+			@Override
+			public void onChange(ChangeEvent event) {
+				if (lstLanguage.getSelectedIndex() != -1
+						&& lstLanguage.getItemText(lstLanguage
+								.getSelectedIndex()).equalsIgnoreCase(ISnippet.moreLanguages)) {
+					lstLanguage.removeItem(lstLanguage.getSelectedIndex());
+					for (String lang : moreLanguageList)
+						lstLanguage.addItem(lang);
+				}
+			}
+		});
+
 		ISnippet.Util.getInstance().getSupportedLanguages(
 				new AsyncCallback<List<String>>() {
 
@@ -99,6 +117,25 @@ public class CreateSnippet extends Composite {
 					}
 				});
 
+		ISnippet.Util.getInstance().getMoreLanguages(
+				new AsyncCallback<List<String>>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						lblStatus
+								.setText("Error retrieving supported languages");
+					}
+
+					@Override
+					public void onSuccess(List<String> result) {
+						if (result != null) {
+							moreLanguageList = result;
+						} else {
+							moreLanguageList = new ArrayList<String>(0);
+						}
+					}
+				});
+
 		ICategory.Util.getInstance().getCategories(null,
 				new AsyncCallback<List<XCategory>>() {
 
@@ -110,7 +147,6 @@ public class CreateSnippet extends Composite {
 
 						for (XCategory category : result) {
 							lstCategory.addItem(category.name);
-							lstCategory.addItem("Category");
 						}
 					}
 
@@ -120,8 +156,6 @@ public class CreateSnippet extends Composite {
 						lblStatus.setText("Error fetching categories list");
 					}
 				});
-
-		lstCategory.addItem("Category");
 
 		txtTag = new TextBox();
 		txtTag.setStyleName("txtTag");

@@ -3,6 +3,8 @@ package org.smartsnip.core;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.shared.XCategory;
@@ -762,5 +764,47 @@ public class Snippet {
 	 */
 	public String createNewSourceFilename() {
 		return "snippet_source_file_" + getHashId();
+	}
+
+	/**
+	 * @return the languages which are tagged as default
+	 */
+	public static List<String> getSupportedLanguages() {
+		List<String> result;
+		try {
+			result = Persistence.instance.getDefaultLanguages();
+		} catch (IOException e) {
+			result = new ArrayList<String>(0);
+		}
+		return result;
+	}
+
+	/**
+	 * @return all available languages
+	 */
+	public static List<String> getAllLanguages() {
+		List<String> result;
+		try {
+			result = Persistence.instance.getAllLanguages();
+		} catch (IOException e) {
+			result = new ArrayList<String>(0);
+		}
+		return result;
+	}
+
+	/**
+	 * @return all languages which are not returned by
+	 *         {@link #getSupportedLanguages()}
+	 */
+	public static List<String> getNonDefaultLanguages() {
+		// TODO find more efficient way to implement this method
+		List<String> result = getAllLanguages();
+		Set<String> toRemove = new TreeSet<String>(getSupportedLanguages());
+		for (String language : result) {
+			if (toRemove.contains(language)) {
+				result.remove(language);
+			}
+		}
+		return result;
 	}
 }

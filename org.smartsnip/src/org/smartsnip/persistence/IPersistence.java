@@ -47,13 +47,12 @@ import sun.reflect.Reflection;
 public interface IPersistence {
 
 	/**
-	 * <p>
 	 * Constant for the parameter {@code flags} of the writeXxx() and
 	 * removeXxx() methods: use the default conditions. This constant is
 	 * overridden by all other flags, so it isn't necessary to set this flag
 	 * combined with any additional flag. If no deviating behavior is described
 	 * at the corresponding method the default is:
-	 * </p>
+	 * <p>
 	 * <blockquote>
 	 * <nl>
 	 * <li>to create a new entry if not already present</li>
@@ -350,15 +349,18 @@ public interface IPersistence {
 	 * Persist a file with the source code. The code with the given
 	 * {@code codeId} must exist in the database.
 	 * 
-	 * @param codeId the Id
-	 * @param file the file to persist
+	 * @param codeId
+	 *            the Id
+	 * @param file
+	 *            the file to persist
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeCodeFile(Long codeId, File file, int flags) throws IOException;
+	public void writeCodeFile(Long codeId, File file, int flags)
+			throws IOException;
 
 	/**
 	 * Persist a single Category-dataset.
@@ -397,13 +399,19 @@ public interface IPersistence {
 	 * 
 	 * @param language
 	 *            the language to write
+	 * @param highlighter
+	 *            the calling string for invoking the syntax highlighter
+	 * @param isDefault
+	 *            Set this flag to {@code true} to assign this language to the
+	 *            default set.
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a bitwise or connection.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeLanguage(String language, int flags) throws IOException;
+	public void writeLanguage(String language, String highlighter,
+			boolean isDefault, int flags) throws IOException;
 
 	/**
 	 * Persist a License.
@@ -580,7 +588,7 @@ public interface IPersistence {
 			throws IOException;
 
 	/**
-	 * remove the User from the database
+	 * Remove the User from the database.
 	 * 
 	 * @param user
 	 *            the user to remove
@@ -734,7 +742,7 @@ public interface IPersistence {
 	public void removeLanguage(String language, int flags) throws IOException;
 
 	/**
-	 * remove the License file from the database. The snippets which refer to
+	 * Remove the License file from the database. The snippets which refer to
 	 * this object loose their license.
 	 * 
 	 * @param shortDescription
@@ -749,7 +757,7 @@ public interface IPersistence {
 			throws IOException;
 
 	/**
-	 * get a user by his nickname
+	 * Get a user by his nickname.
 	 * 
 	 * @param nick
 	 *            the nickname of the user as key
@@ -760,7 +768,7 @@ public interface IPersistence {
 	public User getUser(String nick) throws IOException;
 
 	/**
-	 * get a user by his email address
+	 * Get a user by his email address.
 	 * 
 	 * @param email
 	 *            the email address
@@ -771,7 +779,7 @@ public interface IPersistence {
 	public User getUserByEmail(String email) throws IOException;
 
 	/**
-	 * get the password string related to the user. This method is deprecated
+	 * Get the password string related to the user. This method is deprecated
 	 * because of security reasons. It violates the one-way stream of password
 	 * strings to the database.
 	 * 
@@ -790,7 +798,7 @@ public interface IPersistence {
 			UnsupportedOperationException;
 
 	/**
-	 * verifies the password and the permission to login of the given user. This
+	 * Verifies the password and the permission to login of the given user. This
 	 * method returns true if the grant_login flag is set and the given password
 	 * matches to the stored password. Due to security reasons the password
 	 * can't be read out of the database.
@@ -815,7 +823,7 @@ public interface IPersistence {
 	public boolean isLoginGranted(User user) throws IOException;
 
 	/**
-	 * find all users with matching names
+	 * Find all users with matching names.
 	 * 
 	 * @param realName
 	 *            a string containing all parts of the searched user's name. The
@@ -827,7 +835,7 @@ public interface IPersistence {
 	public List<User> findUser(String realName) throws IOException;
 
 	/**
-	 * get all snippets where the user is the owner
+	 * Get all snippets where the user is the owner.
 	 * 
 	 * @param owner
 	 *            a user owning the snippets
@@ -838,8 +846,8 @@ public interface IPersistence {
 	public List<Snippet> getUserSnippets(User owner) throws IOException;
 
 	/**
-	 * get all snippets which are tagged with the favourite attribute of the
-	 * given user
+	 * Get all snippets which are tagged with the favourite attribute of the
+	 * given user.
 	 * 
 	 * @param user
 	 *            the user who attached the favourite tags
@@ -850,7 +858,7 @@ public interface IPersistence {
 	public List<Snippet> getFavorited(User user) throws IOException;
 
 	/**
-	 * get all snippets
+	 * Get all snippets.
 	 * 
 	 * @param start
 	 *            the starting index of the results set, null or 0 for start at
@@ -864,11 +872,11 @@ public interface IPersistence {
 	 * @return all snippets of the given range
 	 * @throws IOException
 	 */
-	public List<Snippet> getAllSnippets(Integer start, Integer count, int sorting)
-			throws IOException;
+	public List<Snippet> getAllSnippets(Integer start, Integer count,
+			int sorting) throws IOException;
 
 	/**
-	 * get the snippet with the given id or null, if not existing
+	 * Get the snippet with the given id or null, if not existing.
 	 * 
 	 * @param id
 	 *            id of the snippet
@@ -890,7 +898,7 @@ public interface IPersistence {
 	public Snippet getRandomSnippet(double random) throws IOException;
 
 	/**
-	 * get all snippets which contain all of the given tags in their tag-list
+	 * Get all snippets which contain all of the given tags in their tag-list.
 	 * 
 	 * @param matchingTags
 	 *            a list of tags
@@ -902,7 +910,7 @@ public interface IPersistence {
 	public List<Snippet> getSnippets(List<Tag> matchingTags) throws IOException;
 
 	/**
-	 * get all snippets of a given category
+	 * Get all snippets of a given category.
 	 * 
 	 * @param category
 	 *            the category
@@ -914,7 +922,7 @@ public interface IPersistence {
 	public List<Snippet> getSnippets(Category category) throws IOException;
 
 	/**
-	 * get all snippets of a given category
+	 * Get all snippets of a given category.
 	 * 
 	 * @param category
 	 *            the category
@@ -931,7 +939,7 @@ public interface IPersistence {
 			Integer count) throws IOException;
 
 	/**
-	 * get the comment by it's identifier
+	 * Get the comment by it's identifier.
 	 * 
 	 * @param id
 	 * @return the comment
@@ -942,7 +950,7 @@ public interface IPersistence {
 	public Comment getComment(Long id) throws IOException;
 
 	/**
-	 * get all comments attached to the given snippet
+	 * Get all comments attached to the given snippet.
 	 * 
 	 * @param snippet
 	 * @return all matching comments
@@ -952,7 +960,7 @@ public interface IPersistence {
 	public List<Comment> getComments(Snippet snippet) throws IOException;
 
 	/**
-	 * get all tags attached to the given snippet
+	 * Get all tags attached to the given snippet.
 	 * 
 	 * @param snippet
 	 * @return the list of tags
@@ -963,7 +971,7 @@ public interface IPersistence {
 	public List<Tag> getTags(Snippet snippet) throws IOException;
 
 	/**
-	 * get all tags
+	 * Get all tags.
 	 * 
 	 * @param start
 	 *            the starting index of the results set, null or 0 for start at
@@ -978,7 +986,7 @@ public interface IPersistence {
 			throws IOException;
 
 	/**
-	 * get all notifications belonging to the given user
+	 * Get all notifications belonging to the given user.
 	 * 
 	 * @param user
 	 *            the user to notify
@@ -993,7 +1001,7 @@ public interface IPersistence {
 			throws IOException;
 
 	/**
-	 * get all code fragments of a given snippet
+	 * Get all code fragments of a given snippet.
 	 * 
 	 * @param snippet
 	 * @return all code fragments
@@ -1003,7 +1011,7 @@ public interface IPersistence {
 	public List<Code> getCodes(Snippet snippet) throws IOException;
 
 	/**
-	 * get a file with the source code
+	 * Get a file with the source code.
 	 * 
 	 * @param codeId
 	 *            the id
@@ -1014,7 +1022,7 @@ public interface IPersistence {
 	public File getCodeFile(Long codeId) throws IOException;
 
 	/**
-	 * get all categories
+	 * Get all categories.
 	 * 
 	 * @return all categories
 	 * @throws IOException
@@ -1022,7 +1030,7 @@ public interface IPersistence {
 	public List<Category> getAllCategories() throws IOException;
 
 	/**
-	 * get the category the snippet belongs to
+	 * Get the category the snippet belongs to.
 	 * 
 	 * @param snippet
 	 * @return the category
@@ -1032,7 +1040,7 @@ public interface IPersistence {
 	public Category getCategory(Snippet snippet) throws IOException;
 
 	/**
-	 * get the category by name
+	 * Get the category by name.
 	 * <p>
 	 * This method returns a Category with the parent field set to null.
 	 * 
@@ -1044,7 +1052,7 @@ public interface IPersistence {
 	public Category getCategory(String name) throws IOException;
 
 	/**
-	 * get the immediate parent of a category
+	 * Get the immediate parent of a category.
 	 * <p>
 	 * This method returns a generated Category object if the parameter is root.
 	 * The marker contains the string "_you_asked_for_root_parent" in the name
@@ -1060,7 +1068,7 @@ public interface IPersistence {
 	public Category getParentCategory(Category category) throws IOException;
 
 	/**
-	 * get the immediate subcategories
+	 * Get the immediate subcategories.
 	 * 
 	 * @param category
 	 *            the parent category
@@ -1073,7 +1081,7 @@ public interface IPersistence {
 			throws IOException;
 
 	/**
-	 * get all available programming-languages
+	 * Get all available programming-languages.
 	 * 
 	 * @return a list of all languages
 	 * @throws IOException
@@ -1082,7 +1090,33 @@ public interface IPersistence {
 	public List<String> getAllLanguages() throws IOException;
 
 	/**
-	 * get the license document by it's shortDescription
+	 * Get the available programming-languages with the default-flag present.
+	 * 
+	 * @return a list of all languages
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public List<String> getDefaultLanguages() throws IOException;
+
+	/**
+	 * Get the properties assigned to the given language.
+	 * 
+	 * @param language
+	 *            the language to fetch the properties
+	 * 
+	 * @return the properties: <br>
+	 *         <ul>
+	 *         <li>a string argument to pass to the syntax highlighter</li>
+	 *         <li>a flag assigning this language as default</li>
+	 *         </ul>
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public Pair<String, Boolean> getLanguageProperties(String language)
+			throws IOException;
+
+	/**
+	 * Get the license document by it's shortDescription.
 	 * 
 	 * @param shortDescription
 	 *            the short description
@@ -1093,7 +1127,7 @@ public interface IPersistence {
 	public String getLicense(String shortDescription) throws IOException;
 
 	/**
-	 * get all ratings belonging to the given snippet
+	 * Get all ratings belonging to the given snippet.
 	 * 
 	 * @param snippet
 	 * @return a list of pairs of user objects and ratings as integer
@@ -1104,7 +1138,7 @@ public interface IPersistence {
 			throws IOException;
 
 	/**
-	 * get the average rating belonging to the given snippet
+	 * Get the average rating belonging to the given snippet.
 	 * 
 	 * @param snippet
 	 * @return the average of all ratings
@@ -1127,7 +1161,7 @@ public interface IPersistence {
 	public Pair<Integer, Integer> getVotes(Comment comment) throws IOException;
 
 	/**
-	 * get the state of a user's vote according to a comment
+	 * Get the state of a user's vote according to a comment.
 	 * 
 	 * @param user
 	 * @param comment
@@ -1138,7 +1172,7 @@ public interface IPersistence {
 	public Integer getVote(User user, Comment comment) throws IOException;
 
 	/**
-	 * search for the arguments of the given search-string.
+	 * Search for the arguments of the given search-string.
 	 * 
 	 * @param searchString
 	 *            the string to search for
@@ -1159,7 +1193,7 @@ public interface IPersistence {
 			Integer count, int sorting) throws IOException;
 
 	/**
-	 * get the number of users which are currently in the database
+	 * Get the number of users which are currently in the database.
 	 * 
 	 * @return the count
 	 * @throws IOException
@@ -1168,7 +1202,7 @@ public interface IPersistence {
 	public int getUserCount() throws IOException;
 
 	/**
-	 * get the number of categories which are currently in the database
+	 * Get the number of categories which are currently in the database.
 	 * 
 	 * @return the count
 	 * @throws IOException
@@ -1177,7 +1211,7 @@ public interface IPersistence {
 	public int getCategoryCount() throws IOException;
 
 	/**
-	 * get the number of snippets which are currently in the database
+	 * Get the number of snippets which are currently in the database.
 	 * 
 	 * @return the count
 	 * @throws IOException
@@ -1186,7 +1220,7 @@ public interface IPersistence {
 	public int getSnippetsCount() throws IOException;
 
 	/**
-	 * get the number of tags which are currently in the database
+	 * Get the number of tags which are currently in the database.
 	 * 
 	 * @return the count
 	 * @throws IOException
@@ -1195,7 +1229,7 @@ public interface IPersistence {
 	public int getTagsCount() throws IOException;
 
 	/**
-	 * close the implementing factory. If some logging is needed use
+	 * Close the implementing factory. If some logging is needed use
 	 * {@link PersistenceFactory#closeFactory()} instead.
 	 * 
 	 * @throws IOException

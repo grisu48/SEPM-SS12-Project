@@ -258,9 +258,14 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 
 	@Override
 	public List<String> getSupportedLanguages() {
-		// currently we are only supporting Java
-		List<String> result = new ArrayList<String>();
-		result.add("Java");
+		List<String> result = Snippet.getSupportedLanguages();
+		result.add(ISnippet.moreLanguages);
+		return result;
+	}
+
+	@Override
+	public List<String> getMoreLanguages() {
+		List<String> result = Snippet.getAllLanguages();
 		return result;
 	}
 

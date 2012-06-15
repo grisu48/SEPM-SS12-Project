@@ -57,7 +57,7 @@ public class MemPersistence implements IPersistence {
 	private final HashMap<Long, Comment> commentMap = new HashMap<Long, Comment>();
 
 	private final List<Tag> allTags = new ArrayList<Tag>();
-	private final List<String> allLanguages = new ArrayList<String>();
+	private final HashMap<String, Pair<String, Boolean>> allLanguages = new HashMap<String, Pair<String, Boolean>>();
 
 	private final HashMap<Snippet, List<Tag>> snippetTags = new HashMap<Snippet, List<Tag>>();
 
@@ -266,7 +266,8 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeLanguage(String language, int mode) throws IOException {
+	public void writeLanguage(String language, String highlighter,
+			boolean isDefault, int mode) throws IOException {
 		checkFail();
 		if (language == null)
 			return;
@@ -274,12 +275,8 @@ public class MemPersistence implements IPersistence {
 		if (language.isEmpty())
 			return;
 
-		// Check for existings
-		for (String lang : allLanguages)
-			if (lang.equalsIgnoreCase(language))
-				return;
-
-		allLanguages.add(language);
+		allLanguages.put(language, new Pair<String, Boolean>(highlighter,
+				isDefault));
 	}
 
 	@Override
@@ -578,7 +575,35 @@ public class MemPersistence implements IPersistence {
 	@Override
 	public List<String> getAllLanguages() throws IOException {
 		checkFail();
-		return allLanguages;
+		if (allLanguages == null) {
+			return null;
+		}
+		return new ArrayList<String>(allLanguages.keySet());
+	}
+
+	@Override
+	public List<String> getDefaultLanguages() throws IOException {
+		checkFail();
+		if (allLanguages == null) {
+			return null;
+		}
+		List<String> result = new ArrayList<String>();
+		for (String lang : allLanguages.keySet()) {
+			if (this.allLanguages.get(lang).second) {
+				result.add(lang);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public Pair<String, Boolean> getLanguageProperties(String language)
+			throws IOException {
+		checkFail();
+		if (allLanguages == null) {
+			return null;
+		}
+		return allLanguages.get(language);
 	}
 
 	/**
@@ -836,11 +861,7 @@ public class MemPersistence implements IPersistence {
 			return;
 		language = language.trim();
 
-		for (String lang : allLanguages) {
-			if (lang.trim().equalsIgnoreCase(language)) {
-				allLanguages.remove(lang);
-			}
-		}
+		allLanguages.remove(language.toLowerCase());
 	}
 
 	@Override
@@ -1031,7 +1052,7 @@ public class MemPersistence implements IPersistence {
 			min = start;
 		if (count != null && count > 0)
 			max = min + count;
-		
+
 		List<Snippet> result = new ArrayList<Snippet>();
 		int i = 0;
 		for (Snippet snip : this.allSnippets.values()) {

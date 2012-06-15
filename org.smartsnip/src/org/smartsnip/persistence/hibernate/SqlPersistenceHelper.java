@@ -41,14 +41,16 @@ public class SqlPersistenceHelper extends PersistenceHelper {
 	@Override
 	protected Snippet createSnippet(Long id, String owner, String name,
 			String description, String category, List<Tag> tags,
-			List<Long> comments, String license, int viewcount, Float ratingAverage) {
+			List<Long> comments, String license, int viewcount,
+			Float ratingAverage) {
 		// Auto-generated method stub
 		return super.createSnippet(id, owner, name, description, category,
 				tags, comments, license, viewcount, ratingAverage);
 	}
 
 	/**
-	 * @see org.smartsnip.core.PersistenceHelper#setCodeOfSnippet(org.smartsnip.core.Snippet, org.smartsnip.core.Code)
+	 * @see org.smartsnip.core.PersistenceHelper#setCodeOfSnippet(org.smartsnip.core.Snippet,
+	 *      org.smartsnip.core.Code)
 	 */
 	@Override
 	protected void setCodeOfSnippet(Snippet snippet, Code code) {
@@ -94,17 +96,20 @@ public class SqlPersistenceHelper extends PersistenceHelper {
 
 	/**
 	 * @see org.smartsnip.core.PersistenceHelper#createCode(java.lang.Long,
-	 *      java.lang.String, java.lang.String, org.smartsnip.core.Snippet, int)
+	 *      java.lang.String, java.lang.String, org.smartsnip.core.Snippet, int,
+	 *      java.lang.String)
 	 */
 	@Override
 	protected Code createCode(Long id, String code, String language,
-			Snippet snippet, int version) {
+			Snippet snippet, int version, String downloadableSourceName) {
 		// Auto-generated method stub
-		return super.createCode(id, code, language, snippet, version);
+		return super.createCode(id, code, language, snippet, version,
+				downloadableSourceName);
 	}
 
 	/**
-	 * @see org.smartsnip.core.PersistenceHelper#createCodeFile(java.lang.String, java.lang.Byte[])
+	 * @see org.smartsnip.core.PersistenceHelper#createCodeFile(java.lang.String,
+	 *      java.lang.Byte[])
 	 */
 	@Override
 	protected File createCodeFile(String name, Byte[] content) {

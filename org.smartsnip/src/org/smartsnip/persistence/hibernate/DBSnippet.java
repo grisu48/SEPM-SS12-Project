@@ -77,33 +77,6 @@ public class DBSnippet {
 		super();
 	}
 
-	// XXX remove constructor
-	// /**
-	// * @param snippetId
-	// * @param headline
-	// * @param description
-	// * @param viewcount
-	// * @param ratingAverage
-	// * @param lastEdited
-	// * @param owner
-	// * @param categoryId
-	// * @param licenseId
-	// */
-	// DBSnippet(Long snippetId, String headline, String description,
-	// Integer viewcount, Float ratingAverage, Date lastEdited, String owner,
-	// Long categoryId, Long licenseId) {
-	// super();
-	// this.snippetId = snippetId;
-	// this.headline = headline;
-	// this.description = description;
-	// this.viewcount = viewcount;
-	// this.ratingAverage = ratingAverage;
-	// this.lastEdited = lastEdited;
-	// this.owner = owner;
-	// this.categoryId = categoryId;
-	// this.licenseId = licenseId;
-	// }
-
 	/**
 	 * @return the snippetId
 	 */

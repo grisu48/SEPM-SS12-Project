@@ -32,15 +32,6 @@ public class DBRelTagSnippet {
 		super();
 	}
 
-	// XXX remove constructor
-	// /**
-	// * @param tagSnippetId
-	// */
-	// DBRelTagSnippet(Long snippetId, String userName) {
-	// super();
-	// this.tagSnippetId = new RelTagSnippetId(snippetId, userName);
-	// }
-
 	/**
 	 * @return the tagSnippetId
 	 */

@@ -203,6 +203,20 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	public List<String> getSupportedLanguages();
 
 	/**
+	 * Retrieves a list of more supported languages from the server.
+	 * It is used to append the list of supported languages on demand.
+	 * 
+	 * @return List of supported languages
+	 */
+	public List<String> getMoreLanguages();
+
+	/**
+	 * This String represents a list entry of the languages-selector in the
+	 * create-snippet area. It is shown if more languages are available.
+	 */
+	public static final String moreLanguages = "more ...";
+
+	/**
 	 * Checks if there is a downloadable source
 	 * 
 	 * @return true if a downloadable source is found

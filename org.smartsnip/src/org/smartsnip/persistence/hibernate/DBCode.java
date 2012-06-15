@@ -39,14 +39,17 @@ public class DBCode {
 	private Long snippetId;
 
 	@Column(name = "language", length = 50)
-	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
+	@Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
 	private String language;
 
 	@Lob
-	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
-	@Column(name = "file", columnDefinition="TEXT")
+	@Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
+	@Column(name = "file", columnDefinition = "TEXT")
 	private String file;
-	
+
+	@Column(name = "file_name")
+	private String fileName;
+
 	@Column(name = "version")
 	private Integer version;
 
@@ -56,21 +59,6 @@ public class DBCode {
 	DBCode() {
 		super();
 	}
-
-	// XXX remove constructor
-	// /**
-	// * @param codeId
-	// * @param snippetId
-	// * @param language
-	// * @param file
-	// */
-	// DBCode(Long codeId, Long snippetId, String language, String file) {
-	// super();
-	// this.codeId = codeId;
-	// this.snippetId = snippetId;
-	// this.language = language;
-	// this.file = file;
-	// }
 
 	/**
 	 * @return the codeId
@@ -133,6 +121,21 @@ public class DBCode {
 	}
 
 	/**
+	 * @return the fileName
+	 */
+	public String getFileName() {
+		return this.fileName;
+	}
+
+	/**
+	 * @param fileName
+	 *            the fileName to set
+	 */
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	/**
 	 * @return the version
 	 */
 	public Integer getVersion() {
@@ -156,6 +159,16 @@ public class DBCode {
 		int result = 1;
 		result = prime * result
 				+ ((this.codeId == null) ? 0 : this.codeId.hashCode());
+		result = prime * result
+				+ ((this.file == null) ? 0 : this.file.hashCode());
+		result = prime * result
+				+ ((this.fileName == null) ? 0 : this.fileName.hashCode());
+		result = prime * result
+				+ ((this.language == null) ? 0 : this.language.hashCode());
+		result = prime * result
+				+ ((this.snippetId == null) ? 0 : this.snippetId.hashCode());
+		result = prime * result
+				+ ((this.version == null) ? 0 : this.version.hashCode());
 		return result;
 	}
 
@@ -175,6 +188,31 @@ public class DBCode {
 			if (other.codeId != null)
 				return false;
 		} else if (!this.codeId.equals(other.codeId))
+			return false;
+		if (this.file == null) {
+			if (other.file != null)
+				return false;
+		} else if (!this.file.equals(other.file))
+			return false;
+		if (this.fileName == null) {
+			if (other.fileName != null)
+				return false;
+		} else if (!this.fileName.equals(other.fileName))
+			return false;
+		if (this.language == null) {
+			if (other.language != null)
+				return false;
+		} else if (!this.language.equals(other.language))
+			return false;
+		if (this.snippetId == null) {
+			if (other.snippetId != null)
+				return false;
+		} else if (!this.snippetId.equals(other.snippetId))
+			return false;
+		if (this.version == null) {
+			if (other.version != null)
+				return false;
+		} else if (!this.version.equals(other.version))
 			return false;
 		return true;
 	}

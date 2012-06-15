@@ -98,13 +98,15 @@ public class BHPersistenceHelper extends PersistenceHelper {
 
 	/**
 	 * @see org.smartsnip.core.PersistenceHelper#createCode(java.lang.Long,
-	 *      java.lang.String, java.lang.String, org.smartsnip.core.Snippet, int)
+	 *      java.lang.String, java.lang.String, org.smartsnip.core.Snippet, int,
+	 *      java.lang.String)
 	 */
 	@Override
 	protected Code createCode(Long id, String code, String language,
-			Snippet snippet, int version) {
+			Snippet snippet, int version, String downloadableSourceName) {
 		// Auto-generated method stub
-		return super.createCode(id, code, language, snippet, version);
+		return super.createCode(id, code, language, snippet, version,
+				downloadableSourceName);
 	}
 
 	/**

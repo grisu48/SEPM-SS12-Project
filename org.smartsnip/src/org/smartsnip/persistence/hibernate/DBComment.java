@@ -64,30 +64,6 @@ public class DBComment {
 		super();
 	}
 
-	// XXX remove constructor
-//	/**
-//	 * @param commentId
-//	 * @param snippetId
-//	 * @param refersTo
-//	 * @param message
-//	 * @param createdAt
-//	 * @param userName
-//	 * @param posVotes
-//	 * @param negVotes
-//	 */
-//	DBComment(Long commentId, Long snippetId, String refersTo, String message,
-//			Date createdAt, String userName, Integer posVotes, Integer negVotes) {
-//		super();
-//		this.commentId = commentId;
-//		this.snippetId = snippetId;
-//		this.refersTo = refersTo;
-//		this.message = message;
-//		this.createdAt = createdAt;
-//		this.userName = userName;
-//		this.posVotes = posVotes;
-//		this.negVotes = negVotes;
-//	}
-
 	/**
 	 * @return the commentId
 	 */

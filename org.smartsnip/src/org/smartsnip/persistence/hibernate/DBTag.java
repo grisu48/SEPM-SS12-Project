@@ -41,11 +41,6 @@ class DBTag {
 	DBTag() {
 	}
 
-	// XXX remove constructor
-//	DBTag(String name) {
-//		this.name = name;
-//	}
-
 	/**
 	 * @return the name
 	 */

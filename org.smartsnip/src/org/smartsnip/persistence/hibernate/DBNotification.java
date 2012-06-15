@@ -58,28 +58,6 @@ public class DBNotification {
 		super();
 	}
 
-	// XXX remove constructor
-//	/**
-//	 * @param notificationId
-//	 * @param userName
-//	 * @param snippetId
-//	 * @param viewed
-//	 * @param message
-//	 * @param origin
-//	 * @param createdAt
-//	 */
-//	DBNotification(Long notificationId, String userName, Long snippetId,
-//			Boolean viewed, String message, String origin, Date createdAt) {
-//		super();
-//		this.notificationId = notificationId;
-//		this.userName = userName;
-//		this.snippetId = snippetId;
-//		this.viewed = viewed;
-//		this.message = message;
-//		this.origin = origin;
-//		this.createdAt = createdAt;
-//	}
-
 	/**
 	 * @return the notificationId
 	 */

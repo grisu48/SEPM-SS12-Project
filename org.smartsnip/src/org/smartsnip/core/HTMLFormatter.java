@@ -7,13 +7,11 @@ import org.smartsnip.shared.Pair;
 
 public abstract class HTMLFormatter {
 
-	/** Instance of the Java formatter */
-	private static JavaFormatter javaFormatter = null;
-
 	private static final List<Pair<String, String>> htmlSpecialChars = new ArrayList<Pair<String, String>>(
 			4);
 
 	static {
+		// keep attention of the order: the last rule overwrites all previous rules
 		htmlSpecialChars.add(new Pair<String, String>("&", "&amp;"));
 		htmlSpecialChars.add(new Pair<String, String>("<", "&lt;"));
 		htmlSpecialChars.add(new Pair<String, String>(">", "&gt;"));
@@ -36,6 +34,29 @@ public abstract class HTMLFormatter {
 		StringBuilder builder = new StringBuilder(
 				"<pre class='prettyprint linenums'><code class='language-java'>");
 		builder.append(replaceHtmlSpecialChars(java.code));
+		builder.append("</code></pre>");
+		return builder.toString();
+	}
+
+	/**
+	 * Formats a java code
+	 * 
+	 * @param generic
+	 *            generic code to be formatted
+	 * @return HTML code of the formatted java code
+	 */
+	public static String formatCodeGeneric(CodeGeneric generic) {
+		if (generic == null)
+			return null;
+		String codeFormatterCallerString;
+		if (generic.getHighlighter() == CodeGeneric.HIGHLIGHTER_NONE) {
+			codeFormatterCallerString = "<pre class='prettyprint'><code class='nocode'>";
+		} else {
+			codeFormatterCallerString = "<pre class='prettyprint linenums'><code class='language-"
+					+ generic.getHighlighter() + "'>";
+		}
+		StringBuilder builder = new StringBuilder(codeFormatterCallerString);
+		builder.append(replaceHtmlSpecialChars(generic.code));
 		builder.append("</code></pre>");
 		return builder.toString();
 	}
@@ -95,7 +116,9 @@ public abstract class HTMLFormatter {
 	public static String formatCode(Code code) {
 		if (code == null)
 			return null;
-		if (code instanceof CodeJava) {
+		if (code instanceof CodeGeneric) {
+			return (formatCodeGeneric((CodeGeneric) code));
+		} else if (code instanceof CodeJava) {
 			return (formatCodeJava((CodeJava) code));
 		} else if (code instanceof CodeText) {
 			return (formatCodeText((CodeText) code));

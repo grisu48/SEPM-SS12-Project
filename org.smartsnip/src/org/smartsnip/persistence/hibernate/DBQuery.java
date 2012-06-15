@@ -188,7 +188,7 @@ class DBQuery {
 	 * @param value
 	 *            the value to insert as parameter
 	 */
-	private void addWhereParameter(String before, String parameter,
+	void addWhereParameter(String before, String parameter,
 			String after, Object value) {
 		Vector<String> args = new Vector<String>(3);
 		args.add(before);

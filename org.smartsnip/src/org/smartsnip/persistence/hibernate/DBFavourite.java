@@ -34,17 +34,6 @@ public class DBFavourite {
 		super();
 	}
 
-	// XXX remove constructor
-	// /**
-	// * @param favouriteId
-	// * @param favourite
-	// */
-	// DBFavourite(String userName, Long snippetId, Boolean favourite) {
-	// super();
-	// this.favouriteId = new FavouriteId(userName, snippetId);
-	// this.favourite = favourite;
-	// }
-
 	/**
 	 * @return the favourite
 	 */

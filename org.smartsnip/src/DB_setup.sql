@@ -57,6 +57,8 @@ CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE `Language` (
   `language` VARCHAR(50) NOT NULL,
+  `highlighter` VARCHAR(255) DEFAULT NULL,
+  `is_default` BOOLEAN NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`language`)
 )
 ENGINE = InnoDB
@@ -469,3 +471,34 @@ $
  * reset the delimiter to it's default
  */
 DELIMITER ;
+
+/*
+ * set up some language entries
+ */
+INSERT INTO `Language` (`language`, `highlighter`, `is_default`) VALUES
+  ("Java", "java", TRUE),
+  ("C", "c", TRUE),
+  ("C++", "cpp", TRUE),
+  ("Shell script", "sh", TRUE),
+  ("Plain Text", NULL, TRUE),
+  ("LaTeX", "tex", FALSE),
+  ("SQL", "sql", FALSE),
+  ("JavaScript", "js", FALSE),
+  ("JSON", "json", FALSE),
+  ("CoffeeScript", "coffee", FALSE),
+  ("HTML", "html", FALSE),
+  ("XHTML", "xhtml", FALSE),
+  ("XML", "xml", FALSE),
+  ("CSS Stylesheet", "css", FALSE),
+  ("Visual Basic", "vb", FALSE),
+  ("OCaml", "ml", FALSE),
+  ("VHDL", "vhdl", FALSE),
+  ("Haskell", "hs", FALSE),
+  ("Ruby", "rb", FALSE),
+  ("Perl", "perl", FALSE),
+  ("Python", "py", FALSE),
+  ("C#", "cs", FALSE),
+  ("F#", "fs", FALSE),
+  ("XQuery", "xquery", FALSE),
+  ("Prolog", NULL, FALSE)
+;

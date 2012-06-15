@@ -115,8 +115,8 @@ public class PersistenceHelper {
 	 * @return an initialized Code object
 	 */
 	protected Code createCode(Long id, String code, String language,
-			Snippet snippet, int version) {
-		return Code.createCodeDB(code, language, snippet, id, version);
+			Snippet snippet, int version, String downloadableSourceName) {
+		return Code.createCodeDB(code, language, snippet, id, version, downloadableSourceName);
 	}
 
 	/**

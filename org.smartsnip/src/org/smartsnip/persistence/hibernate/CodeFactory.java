@@ -17,6 +17,7 @@ import org.smartsnip.core.Code;
 import org.smartsnip.core.File;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.shared.Pair;
 
 /**
  * @author littlelion
@@ -142,15 +143,19 @@ public class CodeFactory {
 	}
 
 	/**
-	 * Implementation of {@link IPersistence#writeLanguage(String, int)}
+	 * Implementation of
+	 * {@link IPersistence#writeLanguage(String, String, boolean, int)}
 	 * 
 	 * @param language
+	 * @param highlighter
+	 * @param isDefault
 	 * @param flags
 	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeLanguage(java.lang.String,
-	 *      int)
+	 *      java.lang.String, boolean, int)
 	 */
-	static void writeLanguage(String language, int flags) throws IOException {
+	static void writeLanguage(String language, String highlighter,
+			boolean isDefault, int flags) throws IOException {
 		Session session = DBSessionFactory.open();
 
 		Transaction tx = null;
@@ -160,6 +165,8 @@ public class CodeFactory {
 
 			DBLanguage entity = new DBLanguage();
 			entity.setLanguage(language);
+			entity.setHighlighter(highlighter);
+			entity.setIsDefault(isDefault);
 
 			query.write(entity, flags);
 			tx.commit();
@@ -269,7 +276,7 @@ public class CodeFactory {
 	 * 
 	 * @param codeId
 	 * @return the file
-	 * @throws IOException 
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getCodeFile(java.lang.Long)
 	 */
 	static File getCodeFile(Long codeId) throws IOException {
@@ -285,7 +292,6 @@ public class CodeFactory {
 			entity = new DBCodeFile();
 			entity.setCodeId(codeId);
 			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
-			
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -295,7 +301,8 @@ public class CodeFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return helper.createCodeFile(entity.getFileName(), entity.getFileContent());
+		return helper.createCodeFile(entity.getFileName(),
+				entity.getFileContent());
 	}
 
 	/**
@@ -333,6 +340,77 @@ public class CodeFactory {
 	}
 
 	/**
+	 * Implementation of {@link IPersistence#getDefaultLanguages()}
+	 * 
+	 * @return a list of languages
+	 * @throws IOException
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getDefaultLanguages()
+	 */
+	static List<String> getDefaultLanguages() throws IOException {
+		Session session = DBSessionFactory.open();
+		List<String> result = new ArrayList<String>();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			DBLanguage entity = new DBLanguage();
+			query.addWhereParameter("isDefault =", "isDefault", "",
+					Boolean.TRUE);
+
+			for (Iterator<DBLanguage> iterator = query.iterate(entity); iterator
+					.hasNext();) {
+				entity = iterator.next();
+				result.add(entity.getLanguage());
+			}
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
+	}
+
+	/**
+	 * Implementation of {@link IPersistence#getLanguageProperties(String)}
+	 * 
+	 * @param language
+	 *            the language as primary key.
+	 * @return the properties
+	 * @throws IOException
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getLanguageProperties(java.lang.String)
+	 */
+	static Pair<String, Boolean> getLanguageProperties(String language)
+			throws IOException {
+		Session session = DBSessionFactory.open();
+		DBLanguage entity;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+			entity = new DBLanguage();
+			entity.setLanguage(language);
+
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return new Pair<String, Boolean>(entity.getHighlighter(),
+				entity.getIsDefault());
+	}
+
+	/**
 	 * Helper method to fetch all code fragments from a snippet.
 	 * 
 	 * @param helper
@@ -353,7 +431,8 @@ public class CodeFactory {
 		for (Iterator<DBCode> itr = query.iterate(entity); itr.hasNext();) {
 			entity = itr.next();
 			result.add(helper.createCode(entity.getCodeId(), entity.getFile(),
-					entity.getLanguage(), snippet, entity.getVersion()));
+					entity.getLanguage(), snippet, entity.getVersion(),
+					entity.getFileName()));
 		}
 		return result;
 	}
@@ -380,7 +459,8 @@ public class CodeFactory {
 		Code result = null;
 		if (entity != null) {
 			result = helper.createCode(entity.getCodeId(), entity.getFile(),
-					entity.getLanguage(), snippet, entity.getVersion());
+					entity.getLanguage(), snippet, entity.getVersion(),
+					entity.getFileName());
 		}
 		return result;
 	}

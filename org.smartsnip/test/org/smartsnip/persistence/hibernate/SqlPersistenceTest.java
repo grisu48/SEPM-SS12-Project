@@ -110,8 +110,11 @@ public class SqlPersistenceTest {
 		instance.writeCategory(par, IPersistence.DB_DEFAULT);
 		instance.writeCategory(cat, IPersistence.DB_DEFAULT);
 
-		instance.writeLanguage("_test_java", IPersistence.DB_DEFAULT);
-		instance.writeLanguage("_test_c", IPersistence.DB_DEFAULT);
+		instance.writeLanguage("_test_java", "java", true,
+				IPersistence.DB_DEFAULT);
+		instance.writeLanguage("_test_c", "c", true, IPersistence.DB_DEFAULT);
+		instance.writeLanguage("_test_sql", "sql", false,
+				IPersistence.DB_DEFAULT);
 
 		instance.writeLicense(
 				"_test_license",
@@ -157,10 +160,10 @@ public class SqlPersistenceTest {
 		builder.append("{\n\t\tSystem.out.println(\"Number = \" + i);\n\t}\n}\n");
 
 		List<Code> codes = new ArrayList<Code>();
-		codes.add(helper.createCode(1L, "/* test code incomplete */\n", "_test_java", snip1, 1));
-		codes.add(helper.createCode(2L, builder.toString(), "_test_java", snip1, 2));
-		codes.add(helper.createCode(3L, "/* test code to snippet 2 */", "_test_java", snip2, 0));
-		codes.add(helper.createCode(4L, "/* test code to snippet 3 */", "_test_java", snip3, 7));
+		codes.add(helper.createCode(1L, "/* test code incomplete */\n", "_test_java", snip1, 1, null));
+		codes.add(helper.createCode(2L, builder.toString(), "_test_java", snip1, 2, null));
+		codes.add(helper.createCode(3L, "/* test code to snippet 2 */", "_test_java", snip2, 0, null));
+		codes.add(helper.createCode(4L, "/* test code to snippet 3 */", "_test_java", snip3, 7, null));
 		instance.writeCode(codes, IPersistence.DB_DEFAULT);
 		
 		Notification notif = helper.createNotification(1L, user1, "a test notification",

@@ -34,18 +34,6 @@ public class DBRating {
 		super();
 	}
 
-	// XXX remove constructor
-	// /**
-	// * @param snippetId
-	// * @param userName
-	// * @param value
-	// */
-	// DBRating(Long snippetId, String userName, Integer value) {
-	// super();
-	// this.ratingId = new RatingId(snippetId, userName);
-	// this.value = value;
-	// }
-
 	/**
 	 * @return the ratingId
 	 */

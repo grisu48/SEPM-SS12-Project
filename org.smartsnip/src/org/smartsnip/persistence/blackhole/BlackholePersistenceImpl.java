@@ -36,7 +36,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	private User staticUser2 = this.helper.createUser("bin_da", "asdfgh",
 			"bd@finger.net", User.UserState.validated);
 	private Code staticCode = this.helper.createCode(1L,
-			"/* There's nothing interesting to know.*/", "java", null, 0);
+			"/* There's nothing interesting to know.*/", "java", null, 0, null);
 
 	/**
 	 * This constructor is protected against multiple instantiation to
@@ -229,10 +229,11 @@ public class BlackholePersistenceImpl implements IPersistence {
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#writeLanguage(java.lang.String,
-	 *      int)
+	 *      java.lang.String, boolean, int)
 	 */
 	@Override
-	public void writeLanguage(String language, int flags) throws IOException {
+	public void writeLanguage(String language, String highlighter,
+			boolean isDefault, int flags) throws IOException {
 		checkFail();
 		// do nothing -> data vanish in the black hole!
 	}
@@ -591,10 +592,39 @@ public class BlackholePersistenceImpl implements IPersistence {
 	@Override
 	public List<String> getAllLanguages() throws IOException {
 		checkFail();
-		List<String> list = new ArrayList<String>();
-		list.add(new String("c"));
-		list.add(new String("java"));
-		return list;
+		List<String> result = new ArrayList<String>();
+		result.add("java");
+		result.add("c");
+		result.add("cpp");
+		result.add("html");
+		return result;
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getDefaultLanguages()
+	 */
+	@Override
+	public List<String> getDefaultLanguages() throws IOException {
+		List<String> result = new ArrayList<String>();
+		result.add("java");
+		result.add("c");
+		return result;
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getLanguageProperties(java.lang.String)
+	 */
+	@Override
+	public Pair<String, Boolean> getLanguageProperties(String language)
+			throws IOException {
+		boolean isDefault = false;
+		for(String def: getDefaultLanguages()) {
+			if (def.equalsIgnoreCase(language.trim())) {
+				isDefault = true;
+				break;
+			}
+		}
+		return new Pair<String, Boolean>(language, isDefault);
 	}
 
 	/**

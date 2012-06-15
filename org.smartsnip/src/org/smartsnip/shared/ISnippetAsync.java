@@ -35,6 +35,8 @@ public interface ISnippetAsync {
 
 	void getSupportedLanguages(AsyncCallback<List<String>> callback);
 
+	void getMoreLanguages(AsyncCallback<List<String>> callback);
+
 	void getDownloadSourceTicket(long snippet_id, AsyncCallback<Long> callback);
 
 	void hasDownloadableSource(long snippet_id, AsyncCallback<Boolean> callback);

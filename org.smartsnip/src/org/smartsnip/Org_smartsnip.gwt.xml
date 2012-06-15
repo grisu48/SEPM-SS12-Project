@@ -15,8 +15,29 @@
   <!-- Other module inherits                                      -->
   
   <!-- Include external JavaScript packages.                      -->
+  <!-- the google code prettifyer                                 -->
   <script src='../googleCodePrettify/prettify.js'/>
-  
+  <!-- Additional language handlers                               -->
+  <script src='../googleCodePrettify/lang-tex.js'/>
+  <script src='../googleCodePrettify/lang-sql.js'/>
+  <script src='../googleCodePrettify/lang-css.js'/>
+  <script src='../googleCodePrettify/lang-vb.js'/>
+  <script src='../googleCodePrettify/lang-ml.js'/>
+  <script src='../googleCodePrettify/lang-vhdl.js'/>
+  <script src='../googleCodePrettify/lang-hs.js'/>
+  <script src='../googleCodePrettify/lang-xq.js'/>
+  <!-- Optional language handlers                                 -->
+  <!-- <script src='../googleCodePrettify/lang-apollo.js'/>       -->
+  <!-- <script src='../googleCodePrettify/lang-clj.js'/>          -->
+  <!-- <script src='../googleCodePrettify/lang-go.js'/>           -->
+  <!-- <script src='../googleCodePrettify/lang-lisp.js'/>         -->
+  <!-- <script src='../googleCodePrettify/lang-lua.js'/>          -->
+  <!-- <script src='../googleCodePrettify/lang-n.js'/>            -->
+  <!-- <script src='../googleCodePrettify/lang-proto.js'/>        -->
+  <!-- <script src='../googleCodePrettify/lang-scala.js'/>        -->
+  <!-- <script src='../googleCodePrettify/lang-wiki.js'/>         -->
+  <!-- <script src='../googleCodePrettify/lang-yaml.js'/>         -->
+
   <!-- Specify the app entry point class.                         -->
   <entry-point class='org.smartsnip.client.Control'/>
 

@@ -198,11 +198,11 @@ public class SqlPersistenceImpl implements IPersistence {
 
 	/**
 	 * @see org.smartsnip.persistence.IPersistence#writeLanguage(java.lang.String,
-	 *      int)
+	 *      java.lang.String, boolean, int)
 	 */
 	@Override
-	public void writeLanguage(String language, int flags) throws IOException {
-		CodeFactory.writeLanguage(language, flags);
+	public void writeLanguage(String language,String highlighter, boolean isDefault, int flags) throws IOException {
+		CodeFactory.writeLanguage(language, highlighter, isDefault, flags);
 	}
 
 	/**
@@ -614,6 +614,23 @@ public class SqlPersistenceImpl implements IPersistence {
 	@Override
 	public List<String> getAllLanguages() throws IOException {
 		return CodeFactory.getAllLanguages();
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getDefaultLanguages()
+	 */
+	@Override
+	public List<String> getDefaultLanguages() throws IOException {
+		return CodeFactory.getDefaultLanguages();
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getLanguageProperties(java.lang.String)
+	 */
+	@Override
+	public Pair<String, Boolean> getLanguageProperties(String language)
+			throws IOException {
+		return CodeFactory.getLanguageProperties(language);
 	}
 
 	/**

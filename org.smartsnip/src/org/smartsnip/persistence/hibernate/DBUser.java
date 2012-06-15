@@ -56,22 +56,6 @@ class DBUser {
 		super();
 	}
 
-	// XXX remove constructor
-	// /**
-	// * @param userName
-	// * @param fullName
-	// * @param email
-	// * @param userState
-	// */
-	// DBUser(String nickName, String fullName, String email,
-	// User.UserState userState) {
-	// super();
-	// this.userName = nickName;
-	// this.fullName = fullName;
-	// this.email = email;
-	// this.userState = userState;
-	// }
-
 	/**
 	 * @return the userName
 	 */

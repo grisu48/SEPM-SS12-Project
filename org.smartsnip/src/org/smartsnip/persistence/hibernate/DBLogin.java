@@ -39,18 +39,6 @@ class DBLogin {
 		super();
 	}
 
-	// XXX remove constructor
-	// /**
-	// * @param user
-	// * @param password
-	// */
-	// DBLogin(String user, String password, Boolean grantLogin) {
-	// super();
-	// this.user = user;
-	// this.password = password;
-	// this.grantLogin = grantLogin;
-	// }
-
 	/**
 	 * @return the user
 	 */

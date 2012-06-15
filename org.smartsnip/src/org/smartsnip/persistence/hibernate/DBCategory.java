@@ -58,21 +58,6 @@ public class DBCategory {
 		super();
 	}
 
-	// XXX remove constructor
-//	/**
-//	 * @param categoryId
-//	 * @param parentId
-//	 * @param name
-//	 * @param description
-//	 */
-//	DBCategory(Long categoryId, Long parentId, String name, String description) {
-//		super();
-//		this.categoryId = categoryId;
-//		this.parentId = parentId;
-//		this.name = name;
-//		this.description = description;
-//	}
-
 	/**
 	 * @return the categoryId
 	 */

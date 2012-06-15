@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -22,7 +24,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.naming.java.javaURLContextFactory;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -42,6 +43,7 @@ import org.smartsnip.core.User.UserState;
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.persistence.PersistenceFactory;
 import org.smartsnip.security.MD5;
+import org.smartsnip.shared.Pair;
 
 /**
  * Test cases for the database methods provided by the
@@ -134,8 +136,11 @@ public class SqlPersistenceImplTest {
 		instance.writeCategory(par, IPersistence.DB_FORCE_NULL_VALUES);
 		instance.writeCategory(cat, IPersistence.DB_DEFAULT);
 
-		instance.writeLanguage("_test_java", IPersistence.DB_DEFAULT);
-		instance.writeLanguage("_test_c", IPersistence.DB_DEFAULT);
+		instance.writeLanguage("_test_java", "java", true,
+				IPersistence.DB_DEFAULT);
+		instance.writeLanguage("_test_c", "c", true, IPersistence.DB_DEFAULT);
+		instance.writeLanguage("_test_sql", "sql", false,
+				IPersistence.DB_DEFAULT);
 
 		instance.writeLicense(
 				"_test_license",
@@ -182,13 +187,13 @@ public class SqlPersistenceImplTest {
 
 		List<Code> codes = new ArrayList<Code>();
 		codes.add(helper.createCode(1L, "/* test code incomplete */\n",
-				"_test_java", snip1, 1));
+				"_test_java", snip1, 1, null));
 		codes.add(helper.createCode(2L, builder.toString(), "_test_java",
-				snip1, 2));
+				snip1, 2, null));
 		codes.add(helper.createCode(3L, "/* test code to snippet 2 */",
-				"_test_java", snip2, 0));
+				"_test_java", snip2, 0, null));
 		codes.add(helper.createCode(4L, "/* test code to snippet 3 */",
-				"_test_java", snip3, 7));
+				"_test_java", snip3, 7, null));
 		instance.writeCode(codes, IPersistence.DB_DEFAULT);
 
 		Notification notif = helper
@@ -423,7 +428,7 @@ public class SqlPersistenceImplTest {
 		Snippet snip = helper.createSnippet(7L, user.getUsername(),
 				"more stupid", "something else stupid stuff", cat.getName(),
 				tags, null, null, 0, 0F);
-		Code code = helper.createCode(1L, "code", "language", snip, 0);
+		Code code = helper.createCode(1L, "code", "language", snip, 0, null);
 		helper.setCodeOfSnippet(snip, code);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
 		instance.writeTag(tags, IPersistence.DB_DEFAULT);
@@ -475,7 +480,7 @@ public class SqlPersistenceImplTest {
 
 	/**
 	 * Test method for
-	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeLanguage(java.lang.String, int)}
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeLanguage(java.lang.String, java.lang.String, boolean, int)}
 	 * .
 	 * 
 	 * @throws Throwable
@@ -1082,7 +1087,7 @@ public class SqlPersistenceImplTest {
 		if (length > Integer.MAX_VALUE) {
 			throw new IOException("file too large");
 		}
-		byte[] buffer = new byte[(int)length];
+		byte[] buffer = new byte[(int) length];
 		Byte[] content;
 		try {
 			in.read(buffer);
@@ -1094,7 +1099,8 @@ public class SqlPersistenceImplTest {
 			}
 		}
 		File codeFile = helper.createCodeFile(name, content);
-		Code code = helper.createCode(1L, "to test", "java", test_snip2, 1);
+		Code code = helper.createCode(1L, "to test", "java", test_snip2, 1,
+				null);
 		Long codeId = instance.writeCode(code, IPersistence.DB_DEFAULT);
 		instance.writeCodeFile(codeId, codeFile, IPersistence.DB_DEFAULT);
 
@@ -1178,9 +1184,61 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testGetAllLanguages() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		Set<String> languagesSet = new TreeSet<String>(
+				instance.getAllLanguages());
+		assertTrue("Expected language not present: _test_java",
+				languagesSet.contains("_test_java"));
+		assertTrue("Expected language not present: _test_c",
+				languagesSet.contains("_test_c"));
+		assertTrue("Expected language not present: _test_sql",
+				languagesSet.contains("_test_sql"));
+		assertTrue(
+				"Number of expected languages > 2, but is "
+						+ languagesSet.size(), languagesSet.size() > 2);
+	}
+
+	/**
+	 * Test method for
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getDefaultLanguages()}
+	 * .
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testGetDefaultLanguages() throws Throwable {
+		Set<String> languagesSet = new TreeSet<String>(
+				instance.getDefaultLanguages());
+		Set<String> allLanguages = new TreeSet<String>(
+				instance.getAllLanguages());
+		assertTrue("Expected language not present: _test_java",
+				languagesSet.contains("_test_java"));
+		assertTrue("Expected language not present: _test_c",
+				languagesSet.contains("_test_c"));
+		assertFalse(
+				"Language expected as not default is in defaults-list: _test_sql",
+				languagesSet.contains("_test_sql"));
+		assertTrue(
+				"Number of expected languages > 1, but is "
+						+ languagesSet.size(), languagesSet.size() > 1);
+		assertTrue("Number of expected defaults < all languages, but is "
+				+ languagesSet.size() + " < " + allLanguages.size(),
+				languagesSet.size() < allLanguages.size());
+	}
+
+	/**
+	 * Test method for
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getLanguageProperties(String)}
+	 * .
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testGetLanguageProperties() throws Throwable {
+		Pair<String, Boolean> result = instance.getLanguageProperties("_test_java");
+		assertEquals("java", result.first);
+		assertTrue("Expected property: isDefault == true", result.second);
 	}
 
 	/**
@@ -1240,8 +1298,8 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testSearch() throws Throwable {
-		List<Snippet> snippets = instance.search("third _test_snippet_1", null,
-				null, IPersistence.SORT_LATEST);
+		List<Snippet> snippets = instance.search("Joe", null, null,
+				IPersistence.SORT_LATEST);
 		System.err.println("Search:");
 		for (Snippet s : snippets) {
 			System.out.println("Search result: snippetId = " + s.getHashId()
