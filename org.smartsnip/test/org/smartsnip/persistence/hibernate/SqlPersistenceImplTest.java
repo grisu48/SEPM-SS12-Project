@@ -1179,53 +1179,61 @@ public class SqlPersistenceImplTest {
 
 	/**
 	 * Test method for
-	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllLanguages()}
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getLanguages(int)}
 	 * .
 	 * 
 	 * @throws Throwable
 	 */
 	@Test
-	public void testGetAllLanguages() throws Throwable {
-		Set<String> languagesSet = new TreeSet<String>(
-				instance.getAllLanguages());
+	public void testGetLanguages() throws Throwable {
+		Set<String> allLanguages = new TreeSet<String>(
+				instance.getLanguages(IPersistence.LANGUAGE_GET_ALL));
+		Set<String> defaultSubset = new TreeSet<String>(
+				instance.getLanguages(IPersistence.LANGUAGE_GET_DEFAULTS));
+		Set<String> othersSubset = new TreeSet<String>(
+				instance.getLanguages(IPersistence.LANGUAGE_GET_OTHERS));
+		
+		// tests on all set
 		assertTrue("Expected language not present: _test_java",
-				languagesSet.contains("_test_java"));
+				allLanguages.contains("_test_java"));
 		assertTrue("Expected language not present: _test_c",
-				languagesSet.contains("_test_c"));
+				allLanguages.contains("_test_c"));
 		assertTrue("Expected language not present: _test_sql",
-				languagesSet.contains("_test_sql"));
+				allLanguages.contains("_test_sql"));
 		assertTrue(
 				"Number of expected languages > 2, but is "
-						+ languagesSet.size(), languagesSet.size() > 2);
-	}
-
-	/**
-	 * Test method for
-	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getDefaultLanguages()}
-	 * .
-	 * 
-	 * @throws Throwable
-	 */
-	@Test
-	public void testGetDefaultLanguages() throws Throwable {
-		Set<String> languagesSet = new TreeSet<String>(
-				instance.getDefaultLanguages());
-		Set<String> allLanguages = new TreeSet<String>(
-				instance.getAllLanguages());
+						+ allLanguages.size(), allLanguages.size() > 2);
+		
+		// tests on default subset
 		assertTrue("Expected language not present: _test_java",
-				languagesSet.contains("_test_java"));
+				defaultSubset.contains("_test_java"));
 		assertTrue("Expected language not present: _test_c",
-				languagesSet.contains("_test_c"));
+				defaultSubset.contains("_test_c"));
 		assertFalse(
 				"Language expected as not default is in defaults-list: _test_sql",
-				languagesSet.contains("_test_sql"));
+				defaultSubset.contains("_test_sql"));
 		assertTrue(
 				"Number of expected languages > 1, but is "
-						+ languagesSet.size(), languagesSet.size() > 1);
+						+ defaultSubset.size(), defaultSubset.size() > 1);
 		assertTrue("Number of expected defaults < all languages, but is "
-				+ languagesSet.size() + " < " + allLanguages.size(),
-				languagesSet.size() < allLanguages.size());
-	}
+				+ defaultSubset.size() + " < " + allLanguages.size(),
+				defaultSubset.size() < allLanguages.size());
+
+		// tests on non-default subset
+		assertFalse("Language expected as default is in non-defaults-list: _test_java",
+				othersSubset.contains("_test_java"));
+		assertFalse("Language expected as default is in non-defaults-list: _test_c",
+				othersSubset.contains("_test_c"));
+		assertTrue(
+				"Expected language not present: _test_sql",
+				othersSubset.contains("_test_sql"));
+		assertTrue(
+				"Number of expected languages > 0, but is "
+						+ defaultSubset.size(), defaultSubset.size() > 0);
+		assertTrue("Number of expected non-defaults < all languages, but is "
+				+ othersSubset.size() + " < " + allLanguages.size(),
+				othersSubset.size() < allLanguages.size());
+}
 
 	/**
 	 * Test method for

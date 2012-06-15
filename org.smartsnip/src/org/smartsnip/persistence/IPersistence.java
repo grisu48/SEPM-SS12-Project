@@ -142,6 +142,24 @@ public interface IPersistence {
 	public static final int SORT_BEST_RATED = 3;
 
 	/**
+	 * Modifiers for the {@link #getLanguages(int)} method. Fetch all available
+	 * languages.
+	 */
+	public static final int LANGUAGE_GET_ALL = 0;
+
+	/**
+	 * Modifiers for the {@link #getLanguages(int)} method. Fetch only the
+	 * default flagged languages.
+	 */
+	public static final int LANGUAGE_GET_DEFAULTS = 1;
+
+	/**
+	 * Modifiers for the {@link #getLanguages(int)} method. Fetch only the
+	 * non-default flagged languages.
+	 */
+	public static final int LANGUAGE_GET_OTHERS = 2;
+
+	/**
 	 * Persist a single User-dataset.
 	 * 
 	 * @param user
@@ -1083,20 +1101,16 @@ public interface IPersistence {
 	/**
 	 * Get all available programming-languages.
 	 * 
-	 * @return a list of all languages
-	 * @throws IOException
-	 *             at a problem retrieving the data
-	 */
-	public List<String> getAllLanguages() throws IOException;
-
-	/**
-	 * Get the available programming-languages with the default-flag present.
+	 * @param toFetch
+	 *            Defines the subset of languages to fetch. Use the constants
+	 *            {@link #LANGUAGE_GET_ALL}, {@link #LANGUAGE_GET_DEFAULTS} or
+	 *            {@link #LANGUAGE_GET_OTHERS}.
 	 * 
 	 * @return a list of all languages
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public List<String> getDefaultLanguages() throws IOException;
+	public List<String> getLanguages(int toFetch) throws IOException;
 
 	/**
 	 * Get the properties assigned to the given language.

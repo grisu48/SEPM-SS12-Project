@@ -609,19 +609,11 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getAllLanguages()
+	 * @see org.smartsnip.persistence.IPersistence#getLanguages(int)
 	 */
 	@Override
-	public List<String> getAllLanguages() throws IOException {
-		return CodeFactory.getAllLanguages();
-	}
-
-	/**
-	 * @see org.smartsnip.persistence.IPersistence#getDefaultLanguages()
-	 */
-	@Override
-	public List<String> getDefaultLanguages() throws IOException {
-		return CodeFactory.getDefaultLanguages();
+	public List<String> getLanguages(int toFetch) throws IOException {
+		return CodeFactory.getLanguages(toFetch);
 	}
 
 	/**

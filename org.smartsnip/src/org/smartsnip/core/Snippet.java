@@ -772,7 +772,7 @@ public class Snippet {
 	public static List<String> getSupportedLanguages() {
 		List<String> result;
 		try {
-			result = Persistence.instance.getDefaultLanguages();
+			result = Persistence.instance.getLanguages(IPersistence.LANGUAGE_GET_DEFAULTS);
 		} catch (IOException e) {
 			result = new ArrayList<String>(0);
 		}
@@ -785,7 +785,7 @@ public class Snippet {
 	public static List<String> getAllLanguages() {
 		List<String> result;
 		try {
-			result = Persistence.instance.getAllLanguages();
+			result = Persistence.instance.getLanguages(IPersistence.LANGUAGE_GET_ALL);
 		} catch (IOException e) {
 			result = new ArrayList<String>(0);
 		}
@@ -797,13 +797,11 @@ public class Snippet {
 	 *         {@link #getSupportedLanguages()}
 	 */
 	public static List<String> getNonDefaultLanguages() {
-		// TODO find more efficient way to implement this method
-		List<String> result = getAllLanguages();
-		Set<String> toRemove = new TreeSet<String>(getSupportedLanguages());
-		for (String language : result) {
-			if (toRemove.contains(language)) {
-				result.remove(language);
-			}
+		List<String> result;
+		try {
+			result = Persistence.instance.getLanguages(IPersistence.LANGUAGE_GET_OTHERS);
+		} catch (IOException e) {
+			result = new ArrayList<String>(0);
 		}
 		return result;
 	}

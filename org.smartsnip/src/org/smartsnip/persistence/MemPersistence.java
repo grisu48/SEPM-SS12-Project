@@ -573,25 +573,31 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<String> getAllLanguages() throws IOException {
-		checkFail();
-		if (allLanguages == null) {
-			return null;
-		}
-		return new ArrayList<String>(allLanguages.keySet());
-	}
-
-	@Override
-	public List<String> getDefaultLanguages() throws IOException {
+	public List<String> getLanguages(int toFetch) throws IOException {
 		checkFail();
 		if (allLanguages == null) {
 			return null;
 		}
 		List<String> result = new ArrayList<String>();
-		for (String lang : allLanguages.keySet()) {
-			if (this.allLanguages.get(lang).second) {
-				result.add(lang);
+
+		switch (toFetch) {
+		case IPersistence.LANGUAGE_GET_DEFAULTS:
+			for (String lang : allLanguages.keySet()) {
+				if (this.allLanguages.get(lang).second) {
+					result.add(lang);
+				}
 			}
+			break;
+		case IPersistence.LANGUAGE_GET_OTHERS:
+			for (String lang : allLanguages.keySet()) {
+				if (!this.allLanguages.get(lang).second) {
+					result.add(lang);
+				}
+			}
+			break;
+		default:
+			result = new ArrayList<String>(this.allLanguages.keySet());
+			break;
 		}
 		return result;
 	}

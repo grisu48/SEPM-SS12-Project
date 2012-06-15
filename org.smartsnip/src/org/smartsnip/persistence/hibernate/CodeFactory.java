@@ -306,13 +306,16 @@ public class CodeFactory {
 	}
 
 	/**
-	 * Implementation of {@link IPersistence#getAllLanguages()}
+	 * Implementation of {@link IPersistence#getLanguages(int)}
+	 * 
+	 * @param toFetch
+	 *            the subset to fetch
 	 * 
 	 * @return a list of languages
 	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllLanguages()
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getLanguages(int)
 	 */
-	static List<String> getAllLanguages() throws IOException {
+	static List<String> getLanguages(int toFetch) throws IOException {
 		Session session = DBSessionFactory.open();
 		List<String> result = new ArrayList<String>();
 
@@ -322,42 +325,19 @@ public class CodeFactory {
 			DBQuery query = new DBQuery(session);
 			DBLanguage entity = new DBLanguage();
 
-			for (Iterator<DBLanguage> iterator = query.iterate(entity); iterator
-					.hasNext();) {
-				entity = iterator.next();
-				result.add(entity.getLanguage());
+			switch (toFetch) {
+			case IPersistence.LANGUAGE_GET_DEFAULTS:
+				query.addWhereParameter("isDefault =", "isDefault", "",
+						Boolean.TRUE);
+				break;
+			case IPersistence.LANGUAGE_GET_OTHERS:
+				query.addWhereParameter("isDefault =", "isDefault", "",
+						Boolean.FALSE);
+				break;
+			default:
+				// don't set isDefault
+				break;
 			}
-
-			tx.commit();
-		} catch (RuntimeException e) {
-			if (tx != null)
-				tx.rollback();
-			throw new IOException(e);
-		} finally {
-			DBSessionFactory.close(session);
-		}
-		return result;
-	}
-
-	/**
-	 * Implementation of {@link IPersistence#getDefaultLanguages()}
-	 * 
-	 * @return a list of languages
-	 * @throws IOException
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getDefaultLanguages()
-	 */
-	static List<String> getDefaultLanguages() throws IOException {
-		Session session = DBSessionFactory.open();
-		List<String> result = new ArrayList<String>();
-
-		Transaction tx = null;
-		try {
-			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
-			DBLanguage entity = new DBLanguage();
-			query.addWhereParameter("isDefault =", "isDefault", "",
-					Boolean.TRUE);
-
 			for (Iterator<DBLanguage> iterator = query.iterate(entity); iterator
 					.hasNext();) {
 				entity = iterator.next();

@@ -587,27 +587,20 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getAllLanguages()
+	 * @see org.smartsnip.persistence.IPersistence#getLanguages(int)
 	 */
 	@Override
-	public List<String> getAllLanguages() throws IOException {
+	public List<String> getLanguages(int toFetch) throws IOException {
 		checkFail();
 		List<String> result = new ArrayList<String>();
-		result.add("java");
-		result.add("c");
-		result.add("cpp");
-		result.add("html");
-		return result;
-	}
-
-	/**
-	 * @see org.smartsnip.persistence.IPersistence#getDefaultLanguages()
-	 */
-	@Override
-	public List<String> getDefaultLanguages() throws IOException {
-		List<String> result = new ArrayList<String>();
-		result.add("java");
-		result.add("c");
+		if (toFetch != IPersistence.LANGUAGE_GET_OTHERS) {
+			result.add("java");
+			result.add("c");
+		}
+		if (toFetch != IPersistence.LANGUAGE_GET_DEFAULTS) {
+			result.add("cpp");
+			result.add("html");
+		}
 		return result;
 	}
 
@@ -618,7 +611,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	public Pair<String, Boolean> getLanguageProperties(String language)
 			throws IOException {
 		boolean isDefault = false;
-		for(String def: getDefaultLanguages()) {
+		for (String def : getLanguages(IPersistence.LANGUAGE_GET_DEFAULTS)) {
 			if (def.equalsIgnoreCase(language.trim())) {
 				isDefault = true;
 				break;
