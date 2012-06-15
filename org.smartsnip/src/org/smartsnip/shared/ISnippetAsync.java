@@ -45,4 +45,6 @@ public interface ISnippetAsync {
 
 	void getSearchSuggestions(AsyncCallback<List<String>> callback);
 
+	void increaseViewCounter(long snippet, AsyncCallback<Void> callback);
+
 }

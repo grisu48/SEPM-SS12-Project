@@ -235,4 +235,21 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @return the list with search suggestions
 	 */
 	public List<String> getSearchSuggestions();
+
+	/**
+	 * Informs the server, that the client now views this snippet. Is used,
+	 * because the client stores all snippets from the search without calling
+	 * {@link ISnippet#getSnippet(long)} that would automatically increase the
+	 * view count.
+	 * 
+	 * 
+	 * This method is a bypass to provide the cache ability for the client and
+	 * sends the viewcount increase command to the server
+	 * 
+	 * @param snippet
+	 *            Snippet id of the snippet to be increase.
+	 * @throws NotFoundException
+	 *             Thrown if the given snippet is not found
+	 */
+	public void increaseViewCounter(long snippet) throws NotFoundException;
 }

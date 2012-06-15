@@ -317,4 +317,11 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 		Session session = getSession();
 		return session.getSearchSuggestions(10);
 	}
+
+	@Override
+	public void increaseViewCounter(long id) throws NotFoundException {
+		Snippet snippet = Snippet.getSnippet(id);
+		if (snippet == null) throw new NotFoundException("Snippet " + id + " cannot be found");
+		snippet.increaseViewCounter();
+	}
 }
