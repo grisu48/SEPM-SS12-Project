@@ -265,7 +265,7 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 
 	@Override
 	public List<String> getMoreLanguages() {
-		List<String> result = Snippet.getAllLanguages();
+		List<String> result = Snippet.getNonDefaultLanguages();
 		return result;
 	}
 
