@@ -21,7 +21,7 @@ public class TagArea extends Composite {
 
 	public TagArea() {
 		myPanel = new FlowPanel();
-		title = new Label("Tags - (*) indicates enabled tags");
+		title = new Label("Tags");
 		myPanel.add(title);
 		initWidget(myPanel);
 		// Give the overall composite a style name.

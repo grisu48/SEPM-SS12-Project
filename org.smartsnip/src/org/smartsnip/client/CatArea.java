@@ -22,7 +22,7 @@ public class CatArea extends Composite {
 
 	public CatArea() {
 		myPanel = new FlowPanel();
-		title = new Label("Categories - (*) indicates enabled categories");
+		title = new Label("Categories");
 		myPanel.add(title);
 		initWidget(myPanel);
 		// Give the overall composite a style name.
