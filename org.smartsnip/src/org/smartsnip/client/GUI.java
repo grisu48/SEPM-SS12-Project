@@ -504,10 +504,12 @@ public class GUI {
 	void onSearchStart() {
 		showSearchPage();
 		myStatusArea.setStatus("Searching ... ");
+		mySearchArea.disableSearchButton();
 
 		mySearchToolbar.setEnabled(false);
 		myCatArea.setEnabled(false);
 		myTagArea.setEnabled(false);
+
 	}
 
 	/**

@@ -5,12 +5,20 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class Rating extends Composite {
 
+	private final VerticalPanel pnlVertical;
 	private final HorizontalPanel pnlHorizontal;
 	private final Anchor anchNull;
 	private final Anchor[] anchRatings;
+
+	private final Label lblRating;
+
+	/** Current set rating */
+	private int rating = 0;
 
 	private RatingHandler handler = new RatingHandler() {
 
@@ -37,10 +45,7 @@ public class Rating extends Composite {
 
 		@Override
 		public void onClick(ClickEvent event) {
-			if (rate == 0)
-				handler.unrate();
-			else
-				handler.rate(rate);
+			setRating(rate);
 		}
 
 	}
@@ -76,10 +81,12 @@ public class Rating extends Composite {
 	 *            than 1, only one element will be created
 	 */
 	public Rating(int count) {
-		if (count < 1)
-			count = 1;
+		if (count < 1) count = 1;
 
+		pnlVertical = new VerticalPanel();
 		pnlHorizontal = new HorizontalPanel();
+
+		lblRating = new Label("");
 
 		anchNull = new Anchor("Unrate");
 		anchNull.addClickHandler(new RatingClickHandler(0));
@@ -91,7 +98,9 @@ public class Rating extends Composite {
 			pnlHorizontal.add(anchRatings[i]);
 		}
 
-		initWidget(pnlHorizontal);
+		pnlVertical.add(pnlHorizontal);
+		pnlVertical.add(lblRating);
+		initWidget(pnlVertical);
 	}
 
 	public void setRatingHandler(RatingHandler handler) {
@@ -111,5 +120,37 @@ public class Rating extends Composite {
 		anchNull.setEnabled(enabled);
 		for (Anchor anchRating : anchRatings)
 			anchRating.setEnabled(enabled);
+	}
+
+	/**
+	 * Sets the rating that is displayed
+	 * 
+	 * @param value
+	 *            ratining, ranging from 0 to the defined maximum
+	 */
+	public void setRating(int value) {
+		if (value == 0) {
+			handler.unrate();
+			lblRating.setText("Unrated");
+		} else {
+			handler.rate(value);
+			lblRating.setText("Rated: " + value);
+		}
+		rating = value;
+
+	}
+
+	/**
+	 * @return the maximum rating of this widget
+	 */
+	public int getMax() {
+		return anchRatings.length;
+	}
+
+	/**
+	 * @return the current set rating
+	 */
+	public int getRating() {
+		return rating;
 	}
 }

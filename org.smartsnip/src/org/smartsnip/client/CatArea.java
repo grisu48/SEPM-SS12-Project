@@ -22,7 +22,7 @@ public class CatArea extends Composite {
 
 	public CatArea() {
 		myPanel = new FlowPanel();
-		title = new Label("Categories");
+		title = new Label("Categories - (*) indicates enabled categories");
 		myPanel.add(title);
 		initWidget(myPanel);
 		// Give the overall composite a style name.
@@ -35,15 +35,20 @@ public class CatArea extends Composite {
 		if (categories == null) return;
 
 		for (final String category : categories) {
-			final Button catButton = new Button(category);
+			final boolean isEnabled = Control.search.containsCategory(category);
+			final Button catButton = new Button(getCatDescription(category, isEnabled));
 			catButtons.add(catButton);
 			catButton.addClickHandler(new ClickHandler() {
+				private boolean enabled = isEnabled;
+
 				@Override
 				public void onClick(ClickEvent event) {
-					// Currently only one category is supported by the client
-					// gui
-					Control.search.clearCategories();
-					Control.search.addCategory(category);
+					enabled = !enabled;
+
+					if (enabled) Control.search.addCategory(category);
+					else
+						Control.search.removeCategory(category);
+					catButton.setText(getCatDescription(category, enabled));
 
 					// Do a search, if auto apply is selected in the search
 					// toolbar
@@ -53,6 +58,24 @@ public class CatArea extends Composite {
 			myPanel.add(catButton);
 		}
 
+	}
+
+	/**
+	 * The result is used for the category buttons. The return value is
+	 * dependent on the enabled status of the category
+	 * 
+	 * @param category
+	 *            Category to be checked
+	 * @param enabled
+	 *            true if the tag is enabled, otherwise false
+	 * @return the button description
+	 */
+	private String getCatDescription(String category, boolean enabled) {
+		if (category == null || category.isEmpty()) return "";
+
+		if (enabled) return "(*) " + category + " (*)";
+		else
+			return category;
 	}
 
 	/**

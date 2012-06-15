@@ -116,6 +116,17 @@ public class SearchArea extends Composite {
 		Control.search.search();
 	}
 
+	/**
+	 * This method disabled the searchButton of this area. It should only be
+	 * used, when a foreign control invokes a search procedure to prevent
+	 * duplicate search processes.
+	 * 
+	 * Currently it is used in {@link GUI#onSearchStart()}
+	 */
+	public void disableSearchButton() {
+		searchButton.setEnabled(false);
+	}
+
 	public void update() {
 		if (control.isLoggedIn()) {
 			btCreateSnippet.setVisible(true);

@@ -42,12 +42,13 @@ public class TagArea extends Composite {
 
 		// TODO Better representation - Maybe with ToggleButton?!?
 		for (final String tag : tagsAppearingInSearchString) {
-			final Button tagButton = new Button(getTagDescription(tag, Control.search.containsTag(tag)));
+			final boolean isEnabled = Control.search.containsTag(tag);
+			final Button tagButton = new Button(getTagDescription(tag, isEnabled));
 			tagButtons.add(tagButton);
 			tagButton.setTitle(tag); // DO NOT MODIFY - Used for each button to
 										// associate it with a tag!
 			tagButton.addClickHandler(new ClickHandler() {
-				private boolean enabled = false;
+				private boolean enabled = isEnabled;
 
 				@Override
 				public void onClick(ClickEvent event) {
@@ -90,14 +91,12 @@ public class TagArea extends Composite {
 	}
 
 	/**
-	 * Clears the field and removes all tag buttons. This method also removes
-	 * all tags from the search
+	 * Clears the field and removes all tag buttons.
 	 */
 	private void clear() {
 		myPanel.clear();
 		tagButtons.clear();
 		myPanel.add(title);
-		Control.search.clearTags();
 	}
 
 	/**

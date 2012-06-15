@@ -25,8 +25,6 @@ public class Search {
 	 */
 	private XSearch lastResult = null;
 
-	/** List of all tags, that appear in all results of the search string */
-	private List<String> allTagsAppearinginSearch = new ArrayList<String>();
 	/** Last search string */
 	private String searchString = "";
 
@@ -48,7 +46,6 @@ public class Search {
 			searchTime = System.currentTimeMillis() - time;
 
 			searchString = result.searchString;
-			allTagsAppearinginSearch = result.tagsAppearingInSearchString;
 
 			for (AsyncCallback<XSearch> callback : callbacks)
 				callback.onSuccess(result);
@@ -132,6 +129,7 @@ public class Search {
 
 		if (containsTag(tag)) return;
 		tags.add(tag);
+		System.err.println("Tag added: \"" + tag + "\"");
 	}
 
 	/**
@@ -150,6 +148,8 @@ public class Search {
 
 		for (String remove : removeList)
 			tags.remove(remove);
+
+		System.err.println("Tag removed: \"" + tag + "\"");
 	}
 
 	/**
@@ -179,6 +179,7 @@ public class Search {
 
 		if (containsCategory(category)) return;
 		tags.add(category);
+		System.err.println("Category added: \"" + category + "\"");
 	}
 
 	/**
@@ -197,6 +198,7 @@ public class Search {
 
 		for (String remove : removeList)
 			categories.remove(remove);
+		System.err.println("Category removed: \"" + category + "\"");
 
 	}
 
