@@ -501,4 +501,21 @@ INSERT INTO `Language` (`language`, `highlighter`, `is_default`) VALUES
   ("F#", "fs", FALSE),
   ("XQuery", "xquery", FALSE),
   ("Prolog", NULL, FALSE)
+  ("Pseudocode", NULL, FALSE)
+;
+
+/*
+ * set up some category entries
+ */
+INSERT INTO `Category` (`category_id`, `parent_id`, `name`, `description`) VALUES 
+  (1, NULL, "Uncategorized", "This is a failback category for snippets without a category."), 
+  (2, 1, "Text only", "Category which belongs to no explicite programming language, nor is there any category which does fit."), 
+
+  (3, NULL, "Misc", "Miscelanous snippets, they don't fit in another category"), 
+  (4, NULL, "File Handling", "Everything which creates or modifies files"), 
+  (5, NULL, "I/O Streams", "Input and output streams"), 
+  (6, 5, "Input", "Input streams"), 
+  (7, 5, "Output", "Output streams"), 
+  (8, NULL, "Search", "Searching algorithms"), 
+  (9, NULL, "Sort", "Sorting algorithms")
 ;
