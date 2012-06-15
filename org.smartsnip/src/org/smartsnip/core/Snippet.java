@@ -547,9 +547,7 @@ public class Snippet {
 	 */
 	synchronized public XSnippet toXSnippet() {
 		XCategory category = new XCategory("Root", "Desc", "", new ArrayList<String>());
-		Category objCategory = this.getCategory();
-		if (objCategory != null) category = objCategory.toXCategory();
-		XSnippet result = new XSnippet(owner, id, this.getName(), description, category, new ArrayList<String>(
+		XSnippet result = new XSnippet(owner, id, this.getName(), description, this.category, new ArrayList<String>(
 				getStringTags()), code.getCode(), code.getFormattedHTML(), code.getLanguage(), license, viewcount);
 
 		// Add custom variables
@@ -718,7 +716,7 @@ public class Snippet {
 
 		User owner = User.getUser(snippet.owner);
 		if (owner == null) throw new IllegalArgumentException("Illegal owner (not found)");
-		Category category = Category.getCategory(snippet.category.name);
+		Category category = Category.getCategory(snippet.category);
 		if (category == null) throw new IllegalArgumentException("Illegal category: not found");
 
 		// Change code only if needed to!

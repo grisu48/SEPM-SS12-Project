@@ -124,7 +124,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 
 	@Override
 	public XSearch doSearch(String searchString, List<String> tags, List<String> categories, SearchSorting sorting,
-			int start, int count) {
+			int start, int count, final int id) {
 
 		XSearch result = new XSearch();
 		result.snippets = new ArrayList<XSnippet>();
@@ -178,6 +178,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 		// Log search
 		if (searchString != null && !searchString.isEmpty()) getSession().addSearchString(searchString);
 
+		result.id = id;
 		return result;
 	}
 

@@ -77,8 +77,7 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the login process fails
 	 */
-	public boolean login(String username, String password)
-			throws NoAccessException;
+	public boolean login(String username, String password) throws NoAccessException;
 
 	/**
 	 * Logs the session out
@@ -108,12 +107,15 @@ public interface ISession extends RemoteService, IsSerializable {
 	 *            Start index of the subset of the total search set
 	 * @param count
 	 *            Count of maximal objects that are returned
+	 * @param id
+	 *            Search id, that is given by the client and returned by the
+	 *            server in the XSearch result to identify multiple search
+	 *            requests
 	 * @return a List with max count snippets that match the search string, or
 	 *         null, if something went wrong
 	 */
-	public XSearch doSearch(String searchString, List<String> tags,
-			List<String> categories, XSearch.SearchSorting sorting, int start,
-			int count);
+	public XSearch doSearch(String searchString, List<String> tags, List<String> categories,
+			XSearch.SearchSorting sorting, int start, int count, int id);
 
 	/**
 	 * @return Gets the server status object
@@ -136,14 +138,13 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public boolean registerNewUser(String username, String password,
-			String email) throws NoAccessException;
+	public boolean registerNewUser(String username, String password, String email) throws NoAccessException;
 
 	/**
 	 * @return Gets the cookie value for this session
 	 */
 	public String getSessionCookie();
-	
+
 	public XUser getUser(String username);
 
 }

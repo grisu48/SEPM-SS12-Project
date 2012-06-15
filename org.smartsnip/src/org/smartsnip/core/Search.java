@@ -106,7 +106,7 @@ public class Search {
 			break;
 		}
 
-		this.totalResults = searchDB(searchString, tags, categories);
+		this.totalResults = searchDB(searchString);
 	}
 
 	/**
@@ -136,6 +136,9 @@ public class Search {
 	 * @return the filtered search results
 	 */
 	public synchronized List<Snippet> getResults(int start, int count) {
+		if (start < 0) start = 0;
+		if (count < 1) return new ArrayList<Snippet>();
+
 		if (filterResults == null) applyFilter();
 		List<Snippet> result = new ArrayList<Snippet>(count);
 		int maxSize = filterResults.size() - 1;
@@ -236,11 +239,25 @@ public class Search {
 	private boolean checkSnippet(Snippet snippet) {
 		if (snippet == null) return false;
 
-		if (categories != null && categories.size() > 0) if (!categories.contains(snippet.getCategory())) return false;
+		// Do we have to check categories?
+		if (categories != null && categories.size() > 0) {
+			// Check if the category of the snippet matches the search category
+			if (!categories.contains(snippet.getCategory())) return false;
+		}
 
-		if (tags != null && tags.size() > 0) for (Tag tag : tags)
-			if (!snippet.hasTag(tag)) return false;
+		// Do we have tags to check?
+		if (tags != null && tags.size() > 0) {
 
+			// Check if the snippet has at least one tag of the matching tags
+			boolean result = false;
+			for (Tag tag : tags) {
+				if (snippet.hasTag(tag)) result = true;
+				break;
+			}
+			if (result == false) return false;
+		}
+
+		// Seems legit
 		return true;
 	}
 
@@ -253,7 +270,10 @@ public class Search {
 	 * 
 	 * @return list of found snippets that match to the searchString
 	 */
-	private List<Snippet> searchDB(final String searchString, final List<Tag> tags, final List<Category> categories) {
+	private synchronized List<Snippet> searchDB(final String searchString) {
+
+		// Need to re-filter after this call
+		filterResults = null;
 
 		try {
 			if (searchString == null || searchString.isEmpty()) return Persistence.getInstance().getAllSnippets(null,
@@ -291,7 +311,7 @@ public class Search {
 	 *            to be added
 	 */
 	public void addTag(String tag) {
-		if (!Tag.exists(tag)) return;
+		if (Tag.exists(tag)) return;
 		addTag(Tag.getTag(tag));
 	}
 
@@ -362,7 +382,7 @@ public class Search {
 	 * Re-fetches all results from the database
 	 */
 	private synchronized void refetchResults() {
-		totalResults = searchDB(searchString, tags, categories);
+		totalResults = searchDB(searchString);
 		filterResults = null;
 	}
 }
