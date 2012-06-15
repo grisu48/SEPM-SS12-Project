@@ -18,30 +18,24 @@ public class ShortSnipCell extends AbstractCell<XSnippet> {
 		sb.appendHtmlConstant("<table>");
 
 		// Add title
-		sb.appendHtmlConstant("<tr><td><b>");
+		sb.appendHtmlConstant("<tr><td><b><span style='h4'>");
 		sb.appendHtmlConstant(snip.title);
-		sb.appendHtmlConstant("</b></td></tr>");
-		// Add owner
-		sb.appendHtmlConstant("<tr><td>");
-		sb.appendHtmlConstant(snip.owner);
-		sb.appendHtmlConstant("</td></tr>");
-		// Add language
-		sb.appendHtmlConstant("<tr><td>");
-		sb.appendHtmlConstant(snip.language);
-		sb.appendHtmlConstant("</td></tr>");
+		sb.appendHtmlConstant("</span></b></td></tr>");
 		// Add desc
 		sb.appendHtmlConstant("<tr><td>");
 		sb.appendHtmlConstant(snip.description);
 		sb.appendHtmlConstant("</td></tr>");
-		// Add license
+		// Add language and license
 		sb.appendHtmlConstant("<tr><td>");
+		sb.appendHtmlConstant(snip.language);
+		sb.appendHtmlConstant(" -- ");
 		sb.appendHtmlConstant(snip.license);
 		sb.appendHtmlConstant("</td></tr>");
 		// Add view counts
 		sb.appendHtmlConstant("<tr><td>");
 		sb.appendHtmlConstant(snip.viewcount + " views");
+		sb.appendHtmlConstant(" -- rating: " + snip.rating);
 		sb.appendHtmlConstant("</td></tr>");
-
 		sb.appendHtmlConstant("</table>");
 		// Add space
 		sb.appendHtmlConstant("<br />");

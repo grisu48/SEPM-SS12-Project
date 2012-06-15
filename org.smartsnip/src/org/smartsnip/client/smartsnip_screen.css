@@ -322,6 +322,9 @@ footer .gwt-Label, .gwt-Anchor {
 .statusArea {
 	margin:20px;
 	width: 600px;
+	border-top-style:solid;
+	border-color:black;
+	border-width:1px;
 }
 
 
@@ -330,22 +333,28 @@ footer .gwt-Label, .gwt-Anchor {
 }
 
 .statusArea .gwt-Label {
-	
+	margin-top:0px;
+	font-family:"Lato";
+	font-weight:300;
+	font-size:large;
 }
 
 .statusArea .gwt-ListBox {
 	margin:0px;
 	width:150px;
+	margin-top:0px;
+	font-family:"Lato";
+	font-weight:300;
+	font-size:large;
+	background-color:transparent;
+	border-bottom-style:none;
+	border-width:0px;
 }
 
 
 .resultArea {
 	padding: 20px;
-	margin: 20px;
-	background-color:#e6e6e6;
-	border-style:solid;
-	border-color:#a9c34a;
-	border-width:1px;
+	width:580px;
 }
 
 

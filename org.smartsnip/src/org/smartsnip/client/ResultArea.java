@@ -20,12 +20,6 @@ public class ResultArea extends Composite {
 
 	CellList<XSnippet> myCellList;
 
-	static final List<String> TESTTAGS = Arrays.asList("Tag1", "Tag2", "Tag3", "Tag4");
-	static final String CAT = "catname";
-	static final XSnippet SNIPPET = new XSnippet("owner", 123, "title", "description", CAT, new ArrayList<String>(
-			TESTTAGS), "code", "codeHTML", "language", "license", 4);
-	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET,
-			SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET);
 
 	public ResultArea() {
 
@@ -66,7 +60,7 @@ public class ResultArea extends Composite {
 		});
 
 		// myCellList.setRowData(0, TESTLIST);
-		myPanel.setHeight("600px");
+		myPanel.setHeight("400px");
 		myPanel.add(myCellList);
 		initWidget(myPanel);
 		// Give the overall composite a style name.
