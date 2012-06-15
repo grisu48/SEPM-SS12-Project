@@ -15,8 +15,7 @@ public class Tag {
 	public final String name;
 
 	Tag(String name) {
-		if (name.length() == 0)
-			throw new IllegalArgumentException("Tag name cannot be empty");
+		if (name.length() == 0) throw new IllegalArgumentException("Tag name cannot be empty");
 		this.name = name;
 	}
 
@@ -29,8 +28,7 @@ public class Tag {
 	 * @return the given tag if exists, otherwise null
 	 */
 	public static synchronized Tag getTag(String name) {
-		if (name == null || name.length() == 0)
-			return null;
+		if (name == null || name.length() == 0) return null;
 		return allTags.get(name.toLowerCase());
 	}
 
@@ -46,12 +44,10 @@ public class Tag {
 	 *         generated one
 	 */
 	public static synchronized Tag createTag(String name) {
-		if (name == null || name.length() == 0)
-			return null;
+		if (name == null || name.length() == 0) return null;
 		name = trimName(name);
 
-		if (exists(name))
-			return getTag(name);
+		if (exists(name)) return getTag(name);
 		Tag newTag = new Tag(name);
 		allTags.put(name.toLowerCase(), newTag);
 		addToDB(newTag);
@@ -67,8 +63,7 @@ public class Tag {
 	 * @return true if existsing otherwise false
 	 */
 	public static synchronized boolean exists(String name) {
-		if (name.length() == 0)
-			return false;
+		if (name.length() == 0) return false;
 		name = trimName(name);
 		return allTags.containsKey(name);
 	}
@@ -106,14 +101,21 @@ public class Tag {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null)
+		if (obj == null) return false;
+		if (obj instanceof Tag) return equals((Tag) obj);
+		else if (obj instanceof String) return equals((String) obj);
+		else
 			return false;
-		if (!(obj instanceof Tag))
-			return false;
+	}
 
-		Tag tag = (Tag) obj;
-		return tag.equals(this.name);
+	public boolean equals(String obj) {
+		if (obj == null) return false;
+		return obj.equalsIgnoreCase(name);
+	}
 
+	public boolean equals(Tag obj) {
+		if (obj == null) return false;
+		return obj.name.equalsIgnoreCase(this.name);
 	}
 
 	@Override

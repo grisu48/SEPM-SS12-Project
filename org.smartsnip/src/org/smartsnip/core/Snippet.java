@@ -444,7 +444,12 @@ public class Snippet {
 	 */
 	public boolean hasTag(Tag tag) {
 		if (tag == null) return false;
-		return tags.contains(tag);
+
+		// DO NOT USE tags.contains!
+
+		for (Tag item : tags)
+			if (item.equals(tag)) return true;
+		return false;
 	}
 
 	/**

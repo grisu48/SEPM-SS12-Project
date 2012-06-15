@@ -52,13 +52,13 @@ public class TagArea extends Composite {
 				@Override
 				public void onClick(ClickEvent event) {
 
-					tagButton.setText(getTagDescription(tag, enabled));
-					if (enabled) Control.search.removeTag(tag);
-					else
-						Control.search.addTag(tag);
-
 					// Switch enabled state (tag can be ENABLED or DISABLED)
 					enabled = !enabled;
+
+					if (enabled) Control.search.addTag(tag);
+					else
+						Control.search.removeTag(tag);
+					tagButton.setText(getTagDescription(tag, enabled));
 
 					// Do a search, if auto apply is selected in the search
 					// toolbar

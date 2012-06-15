@@ -251,8 +251,10 @@ public class Search {
 			// Check if the snippet has at least one tag of the matching tags
 			boolean result = false;
 			for (Tag tag : tags) {
-				if (snippet.hasTag(tag)) result = true;
-				break;
+				if (snippet.hasTag(tag)) {
+					result = true;
+					break;
+				}
 			}
 			if (result == false) return false;
 		}
@@ -311,8 +313,8 @@ public class Search {
 	 *            to be added
 	 */
 	public void addTag(String tag) {
-		if (Tag.exists(tag)) return;
-		addTag(Tag.getTag(tag));
+		if (tag == null || tag.isEmpty()) return;
+		addTag(Tag.createTag(tag));
 	}
 
 	/**
@@ -336,7 +338,7 @@ public class Search {
 		if (filterResults == null) applyFilter();
 
 		List<Tag> result = new ArrayList<Tag>();
-		for (Snippet snippet : filterResults) {
+		for (Snippet snippet : totalResults) {
 			List<Tag> tags = snippet.getTags();
 			for (Tag tag : tags)
 				if (!result.contains(tag)) result.add(tag);
