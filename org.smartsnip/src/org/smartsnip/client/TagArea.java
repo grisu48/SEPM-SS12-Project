@@ -42,7 +42,7 @@ public class TagArea extends Composite {
 
 		// TODO Better representation - Maybe with ToggleButton?!?
 		for (final String tag : tagsAppearingInSearchString) {
-			final Button tagButton = new Button(tag);
+			final Button tagButton = new Button(getTagDescription(tag, Control.search.containsTag(tag)));
 			tagButtons.add(tagButton);
 			tagButton.setTitle(tag); // DO NOT MODIFY - Used for each button to
 										// associate it with a tag!
@@ -51,16 +51,14 @@ public class TagArea extends Composite {
 
 				@Override
 				public void onClick(ClickEvent event) {
+
+					tagButton.setText(getTagDescription(tag, enabled));
+					if (enabled) Control.search.removeTag(tag);
+					else
+						Control.search.addTag(tag);
+
 					// Switch enabled state (tag can be ENABLED or DISABLED)
 					enabled = !enabled;
-
-					if (enabled) {
-						tagButton.setText("(*) " + tag);
-						Control.search.removeTag(tag);
-					} else {
-						tagButton.setText(tag);
-						Control.search.addTag(tag);
-					}
 
 					// Do a search, if auto apply is selected in the search
 					// toolbar
@@ -71,6 +69,24 @@ public class TagArea extends Composite {
 			myPanel.add(tagButton);
 		}
 
+	}
+
+	/**
+	 * The result is used for the tag buttons. The return value is dependent on
+	 * the enabled status of the tag
+	 * 
+	 * @param tag
+	 *            Tag to be checked
+	 * @param enabled
+	 *            true if the tag is enabled, otherwise false
+	 * @return the button description
+	 */
+	private String getTagDescription(String tag, boolean enabled) {
+		if (tag == null || tag.isEmpty()) return "";
+
+		if (enabled) return "(*) " + tag + " (*)";
+		else
+			return tag;
 	}
 
 	/**

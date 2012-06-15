@@ -41,8 +41,11 @@ public class Search {
 
 		@Override
 		public void onSuccess(final XSearch result) {
-			searchTime = System.currentTimeMillis() - time;
+			// Check matching ID
 			if (result == null) return;
+			if (result.id != getID()) return;
+
+			searchTime = System.currentTimeMillis() - time;
 
 			searchString = result.searchString;
 			allTagsAppearinginSearch = result.tagsAppearingInSearchString;
@@ -72,11 +75,40 @@ public class Search {
 	private long searchTime = 0L;
 
 	/**
-	 * Invokes a search on the server with all parameters given above
+	 * Search id, used if multiple searches are done parallel to just take the
+	 * last one
+	 */
+	private static int id = Integer.MIN_VALUE;
+
+	/**
+	 * Invokes a search on the server with all parameters given above. With this
+	 * call a previous search, that is currently in progress on the server will
+	 * be completely ignored
+	 * 
 	 */
 	private void invokeSearch() {
 		time = System.currentTimeMillis();
-		ISession.Util.getInstance().doSearch(searchString, tags, categories, sorting, start, count, observableCallback);
+		int searchID = getNextID(); // Get next search ID. This call causes
+									// previous search procedures to be ignored
+
+		ISession.Util.getInstance().doSearch(searchString, tags, categories, sorting, start, count, searchID,
+				observableCallback);
+	}
+
+	/**
+	 * Increases the id counter for the searches and returns the current one
+	 * 
+	 * @return current search id
+	 */
+	private static int getNextID() {
+		return ++id;
+	}
+
+	/**
+	 * @return the current used search id
+	 */
+	private static int getID() {
+		return id;
 	}
 
 	/**
@@ -112,8 +144,12 @@ public class Search {
 	public void removeTag(String tag) {
 		if (tag == null || tag.isEmpty()) return;
 
+		List<String> removeList = new ArrayList<String>();
 		for (String cTag : tags)
-			if (cTag.equalsIgnoreCase(tag)) tags.remove(cTag);
+			if (cTag.equalsIgnoreCase(tag)) removeList.add(cTag);
+
+		for (String remove : removeList)
+			tags.remove(remove);
 	}
 
 	/**
@@ -155,8 +191,13 @@ public class Search {
 	public void removeCategory(String category) {
 		if (category == null || category.isEmpty()) return;
 
+		List<String> removeList = new ArrayList<String>();
 		for (String ccategory : categories)
-			if (ccategory.equalsIgnoreCase(category)) categories.remove(category);
+			if (ccategory.equalsIgnoreCase(category)) removeList.add(category);
+
+		for (String remove : removeList)
+			categories.remove(remove);
+
 	}
 
 	/**

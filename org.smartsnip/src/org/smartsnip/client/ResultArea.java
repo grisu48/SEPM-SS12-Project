@@ -19,7 +19,7 @@ public class ResultArea extends Composite {
 	CellList<XSnippet> myCellList;
 
 	static final List<String> TESTTAGS = Arrays.asList("Tag1", "Tag2", "Tag3", "Tag4");
-	static final XCategory CAT = new XCategory("catname", "description", "parent", new ArrayList<String>());
+	static final String CAT = "catname";
 	static final XSnippet SNIPPET = new XSnippet("owner", 123, "title", "description", CAT, new ArrayList<String>(
 			TESTTAGS), "code", "codeHTML", "language", "license", 4);
 	static final List<XSnippet> TESTLIST = Arrays.asList(SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET, SNIPPET,
