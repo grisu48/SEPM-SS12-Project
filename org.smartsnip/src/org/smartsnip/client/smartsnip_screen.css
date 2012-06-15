@@ -170,7 +170,7 @@ footer .gwt-Label, .gwt-Anchor {
 	margin:10px, 0px, 10px, 0px;
 }
 
-.h4 {
+.h4, b {
 	font-family:"Lato";
 	font-size: x-large;
 	font-weight:300;
@@ -266,7 +266,6 @@ footer .gwt-Label, .gwt-Anchor {
 	padding: 40px;
 	background-color: #e6e6e6;
 	background-image: url("images/grau.png");
-	//background-repeat:repeat-y;
 	box-shadow:4px 4px 25px #666;
 }
 
@@ -314,13 +313,16 @@ footer .gwt-Label, .gwt-Anchor {
 }
 
 .rightPanel {
+	padding:0px;
+	margin:0px;
 	margin-left:20px;
 	width: 300px;
 }
 
 
 .statusArea {
-	margin:20px;
+	margin-left:20px;
+	margin-right:20px;
 	width: 600px;
 	border-top-style:solid;
 	border-color:black;
@@ -360,9 +362,9 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 .catArea {
-	margin-top: 20px;
+	margin-top:0px;
 	margin-bottom:20px;
-	padding: 20px;
+	padding-left: 20px;
 	width: 300px;
 	min-height:200px;
 
@@ -376,6 +378,7 @@ footer .gwt-Label, .gwt-Anchor {
 
 .catArea .gwt-Label {
 	margin-top:0px;
+	padding:0px;
 	font-family:"Lato";
 	font-weight:300;
 	font-size:x-large;
@@ -497,3 +500,14 @@ height: 80px;
 	font-weight:700;
 }
 
+.resultArea table {
+	
+	padding:10px;
+	border-color:black;
+	border-width:1px;
+	background-image:url(images/trans.png);
+	border-radius:10px;
+	background-repeat:repeat-x;
+	width:600px;
+	
+}

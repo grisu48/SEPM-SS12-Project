@@ -18,9 +18,9 @@ public class ShortSnipCell extends AbstractCell<XSnippet> {
 		sb.appendHtmlConstant("<table>");
 
 		// Add title
-		sb.appendHtmlConstant("<tr><td><b><span style='h4'>");
+		sb.appendHtmlConstant("<tr><td><b>");
 		sb.appendHtmlConstant(snip.title);
-		sb.appendHtmlConstant("</span></b></td></tr>");
+		sb.appendHtmlConstant("</b></td></tr>");
 		// Add desc
 		sb.appendHtmlConstant("<tr><td>");
 		sb.appendHtmlConstant(snip.description);

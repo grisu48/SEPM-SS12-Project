@@ -196,10 +196,10 @@ public class GUI {
 
 		leftPanel.add(myStatusArea);
 		leftPanel.add(myResultArea);
-		rightPanel.add(mySearchToolbar);
+		
 		rightPanel.add(myCatArea);
 		rightPanel.add(myTagArea);
-
+		rightPanel.add(mySearchToolbar);
 		dataPanel.add(leftPanel);
 		dataPanel.add(rightPanel);
 
