@@ -21,8 +21,10 @@ public class PersonalArea extends Composite {
 		horPanel = new HorizontalPanel();
 		myPersonalField = new PersonalField();
 		raOwn = new ResultArea();
+		raOwn.setStyleName("raOwn");
 		raOwn.setWidth("400px");
 		raFav = new ResultArea();
+		raFav.setStyleName("raFav");
 		raFav.setWidth("400px");
 
 		horPanel.add(myPersonalField);

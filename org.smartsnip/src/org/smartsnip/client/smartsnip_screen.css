@@ -581,6 +581,12 @@ height: 80px;
 	overflow-y: auto;
 }
 
+.raOwn, .raFav {
+	border-style:solid;
+	border-color:black;
+	border-width:1px;
+	margin: 20px;
+}
 
 
 

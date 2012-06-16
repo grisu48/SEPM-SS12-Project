@@ -1,12 +1,8 @@
 package org.smartsnip.client;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
+import java.util.List;
 import org.smartsnip.shared.ISnippet;
-import org.smartsnip.shared.XCategory;
-import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.user.cellview.client.CellList;
