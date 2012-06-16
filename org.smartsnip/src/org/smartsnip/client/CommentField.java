@@ -45,8 +45,8 @@ public class CommentField extends Composite {
 		lblRating = new Label(getRatingString(myComment.positiveVotes,
 				myComment.negativeVotes));
 
-		anchRatePositive = new Anchor("Rate positive");
-		anchRateNegative = new Anchor("Rate negative");
+		anchRatePositive = new Anchor("Vote positive");
+		anchRateNegative = new Anchor("Vote negative");
 		anchUnvote = new Anchor("Unvote");
 		anchEdit = new Anchor("Edit");
 		anchUnvote.setStyleName("toollink");
@@ -206,12 +206,14 @@ public class CommentField extends Composite {
 		StringBuffer buffer = new StringBuffer("");
 
 		if (positiveVotes > 0) {
+			buffer.append("+");
 			buffer.append(positiveVotes);
-			buffer.append(" positive ");
+			
 		}
 		if (negativeVotes > 0) {
+			buffer.append("-");
 			buffer.append(negativeVotes);
-			buffer.append(" negative");
+			
 		}
 
 		return buffer.toString();

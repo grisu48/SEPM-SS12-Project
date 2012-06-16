@@ -491,15 +491,12 @@ a.toollink:hover {color:blue}
 }
 
 .commentArea {
-	margin-top:140px;
-	border-left-style:solid;
-	border-color:black;
-	border-width:0px;
+	margin-top:100px;
 	padding-left:10px;
 }
 
 .commentArea .gwt-TextArea {
-width: 150px;
+width: 190px;
 margin-top: 10px;
 margin-bottom: 10px;
 height: 60px;
@@ -568,11 +565,22 @@ height: 80px;
 	overflow-x:hidden;
 }
 
-.scrollSnippet, .scrollComment {
+.scrollSnippet {
 	max-height:500px;
 	overflow-x:hidden;
 	overflow-y: auto;
 	margin-bottom:20px;
 }
+
+.scrollComment {
+	margin-bottom:20px;
+	margin-top:10px;
+	max-height:390px;
+	min-height:20px;
+	overflow-x:hidden;
+	overflow-y: auto;
+}
+
+
 
 

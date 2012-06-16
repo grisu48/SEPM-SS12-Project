@@ -1,6 +1,7 @@
 package org.smartsnip.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.smartsnip.shared.ISnippet;
@@ -88,12 +89,11 @@ public class CommentArea extends Composite {
 
 		update();
 
-		System.out.println(snip);
 	}
 
 	public void update() {
-		lblComments.setText("Refreshing ... ");
-		vertComments.clear();
+		lblComments.setText("Refreshing comments ... ");
+		
 
 		ISnippet.Util.getInstance().getComments(snippet.hash, 0, 50, new AsyncCallback<List<XComment>>() {
 
@@ -101,11 +101,19 @@ public class CommentArea extends Composite {
 			public void onSuccess(List<XComment> result) {
 				if (result == null) result = new ArrayList<XComment>();
 
+				vertComments.clear();
+				
+				
 				for (XComment i : result) {
 					vertComments.add(new CommentField(i));
 				}
 				int count = result.size();
-				lblComments.setText(count + " comment" + (count == 1 ? "" : "s"));
+				lblComments.setText(count + " Comment" + (count == 1 ? "" : "s"));
+				
+				if (result.size() < 4) {
+					Label myLabel = new Label("Feel free to start commenting");
+					vertComments.add(myLabel);
+				}
 			}
 
 			@Override
