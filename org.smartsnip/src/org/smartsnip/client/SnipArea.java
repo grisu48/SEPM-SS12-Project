@@ -1,11 +1,9 @@
 package org.smartsnip.client;
 
-import java.util.List;
-
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.NotFoundException;
-import org.smartsnip.shared.XComment;
+
 import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.core.client.GWT;

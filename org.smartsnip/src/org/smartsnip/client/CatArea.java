@@ -3,27 +3,25 @@ package org.smartsnip.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.smartsnip.shared.XSearch;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ToggleButton;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class CatArea extends Composite {
 
-	private final FlowPanel myPanel;
+	private final VerticalPanel myPanel;
 	private final Label title;
-
 	private final List<Button> catButtons = new ArrayList<Button>();
 
 	public CatArea() {
-		myPanel = new FlowPanel();
+		myPanel = new VerticalPanel();
 		title = new Label("Categories");
 		myPanel.add(title);
+		
 		initWidget(myPanel);
 		// Give the overall composite a style name.
 		setStyleName("catArea");
@@ -35,24 +33,29 @@ public class CatArea extends Composite {
 		if (categories == null) return;
 
 		for (final String category : categories) {
-			final boolean isEnabled = Control.search.containsCategory(category);
-			final Button catButton = new Button(getCatDescription(category, isEnabled));
+			
+			final Button catButton = new Button(category);
+			catButton.setEnabled(true);
+			catButton.setStyleName("btEnCat");
 			catButtons.add(catButton);
 			catButton.addClickHandler(new ClickHandler() {
-				private boolean enabled = isEnabled;
+				private boolean enabled = catButton.isEnabled();
 
 				@Override
 				public void onClick(ClickEvent event) {
 					enabled = !enabled;
 
-					if (enabled) Control.search.addCategory(category);
-					else
+					if (enabled) {
+						Control.search.addCategory(category);
+						catButton.setStyleName("btEnCat");
+					}
+					else {
 						Control.search.removeCategory(category);
-					catButton.setText(getCatDescription(category, enabled));
+						catButton.setStyleName("btDisCat");
+					}
+						
 
-					// Do a search, if auto apply is selected in the search
-					// toolbar
-					if (Control.myGUI.mySearchToolbar.autoApplySelected()) Control.search.search();
+
 				}
 			});
 			myPanel.add(catButton);
@@ -60,23 +63,7 @@ public class CatArea extends Composite {
 
 	}
 
-	/**
-	 * The result is used for the category buttons. The return value is
-	 * dependent on the enabled status of the category
-	 * 
-	 * @param category
-	 *            Category to be checked
-	 * @param enabled
-	 *            true if the tag is enabled, otherwise false
-	 * @return the button description
-	 */
-	private String getCatDescription(String category, boolean enabled) {
-		if (category == null || category.isEmpty()) return "";
-
-		if (enabled) return "(*) " + category + " (*)";
-		else
-			return category;
-	}
+	
 
 	/**
 	 * Clears the component
@@ -87,23 +74,39 @@ public class CatArea extends Composite {
 		catButtons.clear();
 	}
 
-	/**
-	 * Clears all selected categories
-	 */
-	public void clearCategories() {
-		// Obsolete, because currently only one category is supported
-	}
+	
 
+	
 	/**
-	 * Enables or disables the category area
-	 * 
-	 * @param enabled
-	 *            true if enabled, false if disabled
+	 * Disables all tags
 	 */
-	public void setEnabled(boolean enabled) {
+	public void removeAll() {
+		Control.search.clearCategories();
 		for (final Button catButton : catButtons) {
-			catButton.setEnabled(enabled);
+			catButton.setStyleName("btDisCat");
 		}
+		
 	}
 
+	/**
+	 * Enable all tags
+	 */
+	public void addAll() {
+		for (final Button catButton : catButtons) {
+			Control.search.addTag(catButton.getText());
+			catButton.setStyleName("btEnCat");
+		}
+		
+	}
+	
+	/**
+	 * Enables the buttons
+	 */
+	public void setEnabled(boolean b) {
+		for (final Button catButton : catButtons) {
+			catButton.setEnabled(b);
+		}
+		
+	}
+	
 }

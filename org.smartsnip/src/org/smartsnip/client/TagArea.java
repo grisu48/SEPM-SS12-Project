@@ -9,18 +9,16 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ToggleButton;
-
-import org.smartsnip.shared.XSearch;
 
 public class TagArea extends Composite {
 
 	private final FlowPanel myPanel;
+	private final ArrayList<Button> tagButtons;
 	private final Label title;
-	private final List<Button> tagButtons = new ArrayList<Button>();
 
 	public TagArea() {
 		myPanel = new FlowPanel();
+		tagButtons = new ArrayList<Button>();
 		title = new Label("Tags");
 		myPanel.add(title);
 		initWidget(myPanel);
@@ -40,15 +38,16 @@ public class TagArea extends Composite {
 
 		if (tagsAppearingInSearchString == null) return;
 
-		// TODO Better representation - Maybe with ToggleButton?!?
 		for (final String tag : tagsAppearingInSearchString) {
-			final boolean isEnabled = Control.search.containsTag(tag);
-			final Button tagButton = new Button(getTagDescription(tag, isEnabled));
+			
+			final Button tagButton = new Button(tag);
+			tagButton.setEnabled(true);
+			tagButton.setStyleName("btEn");
 			tagButtons.add(tagButton);
 			tagButton.setTitle(tag); // DO NOT MODIFY - Used for each button to
 										// associate it with a tag!
 			tagButton.addClickHandler(new ClickHandler() {
-				private boolean enabled = isEnabled;
+				private boolean enabled = tagButton.isEnabled();
 
 				@Override
 				public void onClick(ClickEvent event) {
@@ -56,14 +55,16 @@ public class TagArea extends Composite {
 					// Switch enabled state (tag can be ENABLED or DISABLED)
 					enabled = !enabled;
 
-					if (enabled) Control.search.addTag(tag);
-					else
+					if (enabled) {
+						Control.search.addTag(tag);
+						tagButton.setStyleName("btEn");
+					}
+						
+					else {
 						Control.search.removeTag(tag);
-					tagButton.setText(getTagDescription(tag, enabled));
-
-					// Do a search, if auto apply is selected in the search
-					// toolbar
-					if (Control.myGUI.mySearchToolbar.autoApplySelected()) Control.search.search();
+						tagButton.setStyleName("btDis");
+					}
+						
 
 				}
 			});
@@ -72,23 +73,6 @@ public class TagArea extends Composite {
 
 	}
 
-	/**
-	 * The result is used for the tag buttons. The return value is dependent on
-	 * the enabled status of the tag
-	 * 
-	 * @param tag
-	 *            Tag to be checked
-	 * @param enabled
-	 *            true if the tag is enabled, otherwise false
-	 * @return the button description
-	 */
-	private String getTagDescription(String tag, boolean enabled) {
-		if (tag == null || tag.isEmpty()) return "";
-
-		if (enabled) return "(*) " + tag + " (*)";
-		else
-			return tag;
-	}
 
 	/**
 	 * Clears the field and removes all tag buttons.
@@ -99,26 +83,39 @@ public class TagArea extends Composite {
 		myPanel.add(title);
 	}
 
+	
+
+
 	/**
 	 * Disables all tags
 	 */
-	public void clearTags() {
+	public void removeAll() {
 		Control.search.clearTags();
 		for (final Button tagButton : tagButtons) {
-			tagButton.setText(tagButton.getTitle());
+			tagButton.setStyleName("btDis");
 		}
+		
 	}
 
 	/**
-	 * Enables or disables the category area
-	 * 
-	 * @param enabled
-	 *            true if enabled, false if disabled
+	 * Enables all tags
 	 */
-	public void setEnabled(boolean enabled) {
+	public void addAll() {
 		for (final Button tagButton : tagButtons) {
-			tagButton.setEnabled(enabled);
+			Control.search.addTag(tagButton.getText());
+			tagButton.setStyleName("btEn");
 		}
+		
+	}
+
+	/**
+	 * Enables the buttons
+	 */
+	public void setEnabled(boolean b) {
+		for (final Button tagButton : tagButtons) {
+			tagButton.setEnabled(b);
+		}
+		
 	}
 
 }

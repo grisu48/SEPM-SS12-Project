@@ -362,19 +362,15 @@ footer .gwt-Label, .gwt-Anchor {
 
 
 .catArea {
-	margin-top:0px;
-	margin-bottom:20px;
-	padding-left: 20px;
+	padding:10px;
+	padding-top:0px;
 	width: 300px;
 	min-height:100px;
-
-.catArea .gwt-Button {
-	padding:3px;
-	margin:3px;
-	background-color:#fffeeb;
-	color:#a9c34a;
-	
+	border-left-style:solid;
+	border-color:black;
+	border-width:1px;
 }
+
 
 .catArea .gwt-Label {
 	margin-top:0px;
@@ -384,21 +380,51 @@ footer .gwt-Label, .gwt-Anchor {
 	font-size:x-large;
 }
 
+.btEnCat {
+	padding:1px;
+	margin:1px;
+	background-color:#a9c34a;
+	color:white;
+	border-radius:5px;
+}
+
+.btDisCat {
+	padding:1px;
+	margin:1px;
+	background-color:#DEE8BA;
+	color:white;
+	border-radius:5px;
+}
 
 
 
 .tagArea {
-	padding: 20px;
+	margin-top:20px;
+	padding: 10px;
+	padding-top:0px;
 	width: 300px;
 	min-height:100px;
+	border-left-style:solid;
+	border-color:black;
+	border-width:1px;
+	
 }
 
-.tagArea .gwt-Button {
-	padding:3px;
+
+.btEn {
+	padding:2px;
 	margin:3px;
-	background-color:#fffeeb;
-	color:#a9c34a;
-	
+	background-color:#a9c34a;
+	color:white;
+	border-radius:5px;
+}
+
+.btDis {
+	padding:2px;
+	margin:3px;
+	background-color:#DEE8BA;
+	color:white;
+	border-radius:5px;
 }
 
 .tagArea .gwt-Label {
@@ -511,3 +537,11 @@ height: 80px;
 	width:580px;
 	
 }
+
+.btnRestrict, .btnApply, .btnUnrestrict {
+	margin:4px;
+	padding:4px;
+	margin-top:20px;
+}
+
+

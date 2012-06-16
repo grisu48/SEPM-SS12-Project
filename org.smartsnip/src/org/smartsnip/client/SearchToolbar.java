@@ -2,11 +2,10 @@ package org.smartsnip.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ToggleButton;
+
 
 public class SearchToolbar extends Composite {
 
@@ -14,18 +13,33 @@ public class SearchToolbar extends Composite {
 	private final HorizontalPanel pnlHorizontal = new HorizontalPanel();
 
 	/* Tools */
-	private final Button btnClear = new Button("Clear");
-	private final Button btnApply = new Button("Apply categories and tags");
-	private final ToggleButton tglAutoApply = new ToggleButton("Auto-Apply");
+	private final Button btnRestrict = new Button("Restrict all");
+	private final Button btnUnrestrict = new Button("Unrestrict all");
+	private final Button btnApply = new Button("Apply restricted search");
+
 
 	public SearchToolbar() {
-		btnClear.addClickHandler(new ClickHandler() {
+		
+		btnRestrict.setStyleName("btnRestrict");
+		btnUnrestrict.setStyleName("btnUnrestrict");
+		btnApply.setStyleName("btnApply");
+		
+		btnRestrict.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				onClear_Click();
+				onRestrict_Click();
 			}
 		});
+		
+		btnUnrestrict.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				onUnrestrict_Click();
+			}
+		});
+		
 		btnApply.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -33,27 +47,31 @@ public class SearchToolbar extends Composite {
 				onApply_Click();
 			}
 		});
-		tglAutoApply.addClickHandler(new ClickHandler() {
+		
 
-			@Override
-			public void onClick(ClickEvent event) {
-				onAutoApply_Check(tglAutoApply.isDown());
-			}
-		});
-
-		pnlHorizontal.add(btnClear);
+		pnlHorizontal.add(btnRestrict);
+		pnlHorizontal.add(btnUnrestrict);
 		pnlHorizontal.add(btnApply);
-		pnlHorizontal.add(tglAutoApply);
+		
+
 
 		initWidget(pnlHorizontal);
 	}
 
 	/**
-	 * Occurs when the user clicks on the clear button
+	 * Occurs when the user clicks on the restrict button
 	 */
-	private void onClear_Click() {
-		Control.myGUI.myCatArea.clearCategories();
-		Control.myGUI.myTagArea.clearTags();
+	private void onRestrict_Click() {
+		Control.myGUI.myCatArea.removeAll();
+		Control.myGUI.myTagArea.removeAll();
+	}
+	
+	/**
+	 * Occurs when the user clicks on the unrestrict button
+	 */
+	private void onUnrestrict_Click() {
+		Control.myGUI.myCatArea.addAll();
+		Control.myGUI.myTagArea.addAll();
 	}
 
 	/**
@@ -65,31 +83,14 @@ public class SearchToolbar extends Composite {
 	}
 
 	/**
-	 * Occurs when the user enabled/disables the auto-apply button
+	 * Enables/Disables the buttons (while searching)
 	 */
-	private void onAutoApply_Check(boolean isDown) {
-		// Apply if down, otherwise do nothing
-		if (isDown) onApply_Click();
+	public void setEnabled(boolean b) {
+		btnRestrict.setEnabled(b);
+		btnUnrestrict.setEnabled(b);
+		btnApply.setEnabled(b);
+		
 	}
 
-	/**
-	 * If auto apply is selected or not
-	 * 
-	 * @return true if auto apply is selected, otherwise false
-	 */
-	public boolean autoApplySelected() {
-		return tglAutoApply.isDown();
-	}
 
-	/**
-	 * Enables or disables the toolbar
-	 * 
-	 * @param enabled
-	 *            true if enabled, false if disabled
-	 */
-	public void setEnabled(boolean enabled) {
-		btnClear.setEnabled(enabled);
-		btnApply.setEnabled(enabled);
-		tglAutoApply.setEnabled(enabled);
-	}
 }
