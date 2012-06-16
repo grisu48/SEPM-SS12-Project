@@ -482,31 +482,41 @@ a.toollink:hover {color:blue}
 
 
 .commentField {
-	margin:7px;
+	width:250px;
+	margin:10px;
 	padding:2px;
 	border-top-style:solid;
 	border-color:#e6e6e6;
 	border-width:1px;
 }
 
+.commentArea {
+	margin-top:140px;
+	border-left-style:solid;
+	border-color:black;
+	border-width:0px;
+	padding-left:10px;
+}
+
 .commentArea .gwt-TextArea {
-width: 243px;
+width: 150px;
 margin-top: 10px;
 margin-bottom: 10px;
 height: 60px;
 }
 
-.commentArea .gwt-Button {
+.commentBtn {
 padding: 10px;
-margin: 10px;
-background-image: none;
-background-color: #A9C34A;
-color: white;
+margin-top: 10px;
 height: 80px;
 }
 
 .properties {
+	margin-top: 5px;
 	margin-bottom: 20px;
+	border-left-style:solid;
+	border-color:black;
+	border-width:1px;
 }
 
 .properties td {
@@ -518,7 +528,7 @@ height: 80px;
 
 .properties .txt {
 	font-family:Arial;
-	margin-left:3wpx;
+	margin-left:3px;
 }
 
 .properties .gwt-Label {
@@ -542,6 +552,27 @@ height: 80px;
 	margin:4px;
 	padding:4px;
 	margin-top:20px;
+}
+
+.desc {
+	font-family:"Lato";
+	font-size: large;
+	font-weight:300;
+	font-style:italic;
+	margin:10px, 0px, 10px, 0px;
+}
+
+.snipHtml {
+	border-style:none;
+	max-width:680px;
+	overflow-x:hidden;
+}
+
+.scrollSnippet, .scrollComment {
+	max-height:500px;
+	overflow-x:hidden;
+	overflow-y: auto;
+	margin-bottom:20px;
 }
 
 

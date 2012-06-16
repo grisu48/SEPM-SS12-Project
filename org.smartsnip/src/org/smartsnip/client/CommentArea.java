@@ -14,38 +14,47 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-// TODO: Die Comment list in pages unterteilen!
 
 public class CommentArea extends Composite {
 
 	private final XSnippet snippet;
 
-	private VerticalPanel vertPanel;
+	private VerticalPanel myPanel;
 	private Label lblComments;
 	private VerticalPanel vertComments;
 	private HorizontalPanel horPanel;
 	private TextArea myComment;
 	private Button btnSend;
+	private ScrollPanel scrPanel;
 
 	public CommentArea(final XSnippet snip) {
-
+		myPanel = new VerticalPanel();
+		
 		this.snippet = snip;
-
-		vertPanel = new VerticalPanel();
+		
+		scrPanel = new ScrollPanel();
+		scrPanel.setStyleName("scrollComment");
+	
+		
+		
+		myPanel.setWidth("300px");
+		myPanel.setHeight("500px");
+		
 		vertComments = new VerticalPanel();
 		horPanel = new HorizontalPanel();
 
 		lblComments = new Label("");
-		vertPanel.add(lblComments);
-		vertPanel.add(vertComments);
-
+		lblComments.setStyleName("h4");
+		myPanel.add(lblComments);
+		
 		myComment = new TextArea();
 		// myComment.setStyleName("commentTxt");
 		btnSend = new Button("Send");
-		// btnSend.setStyleName("commentBtn");
+		btnSend.setStyleName("commentBtn");
 		btnSend.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -62,17 +71,24 @@ public class CommentArea extends Composite {
 				control.writeComment(comment, snip.hash);
 			}
 		});
-
+		
+		
 		horPanel.add(myComment);
 		horPanel.add(btnSend);
-		vertPanel.add(horPanel);
+		
+		scrPanel.add(vertComments);
+		
+		myPanel.add(scrPanel);
+		myPanel.add(horPanel);
 
-		initWidget(vertPanel);
+
+		initWidget(myPanel);
 		// Give the overall composite a style name.
 		setStyleName("commentArea");
 
 		update();
 
+		System.out.println(snip);
 	}
 
 	public void update() {

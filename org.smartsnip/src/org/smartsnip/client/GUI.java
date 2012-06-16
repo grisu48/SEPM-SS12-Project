@@ -39,6 +39,8 @@ public class GUI {
 	SearchArea mySearchArea = null;
 	ModeratorArea myModeratorArea = null;
 	SearchToolbar mySearchToolbar = null;
+	
+	Control control = Control.getInstance();
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -113,9 +115,11 @@ public class GUI {
 		// Create the Page
 		initComponents();
 		createBasicPage();
-		showSearchPage();
+		//showSearchPage();
 		// showImpressum();
-		// showSnipPage(SNIPPET);
+		
+		control.showSnippetOfDay();
+		
 
 		// showPersonalPage();
 		// showLoginPopup();
@@ -212,8 +216,8 @@ public class GUI {
 	public void showSnipPage(XSnippet snip) {
 		dataPanel.clear();
 		mySnipArea = new SnipArea(snip);
-		myCommentArea = new CommentArea(snip);
 		dataPanel.add(mySnipArea);
+		myCommentArea = new CommentArea(snip);
 		dataPanel.add(myCommentArea);
 	}
 
@@ -236,6 +240,7 @@ public class GUI {
 	 */
 	public void showLoginPopup() {
 
+		Window.scrollTo(0, 0);
 		PopupPanel loginPanel = new PopupPanel(false);
 		loginPanel.setStyleName("Login");
 		loginPanel.setTitle("Login");
@@ -417,6 +422,7 @@ public class GUI {
 	 * 
 	 */
 	public void showCreateSnippetForm() {
+		Window.scrollTo(0, 0);
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
 		ppnlSnippet.setStyleName("contactForm");
 		ppnlSnippet.setTitle("Create snippet");
@@ -438,9 +444,13 @@ public class GUI {
 	 *            link to be created
 	 */
 	public void showDownloadPopup(String message, String convertToLink) {
+	
+		Window.scrollTo(0, 0);
+		
 		if (message == null) message = "";
 		if (convertToLink == null || convertToLink.isEmpty()) return;
 
+		
 		final PopupPanel popup = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
 		Anchor link = new Anchor(convertToLink);
@@ -453,8 +463,8 @@ public class GUI {
 		vertPanel.add(close);
 		popup.setWidget(vertPanel);
 		popup.setGlassEnabled(true);
-		popup.setPopupPosition(110, 100);
-		popup.setWidth("340px");
+		popup.setPopupPosition(90, 104);
+		popup.setWidth("250px");
 		popup.show();
 		close.addClickHandler(new ClickHandler() {
 

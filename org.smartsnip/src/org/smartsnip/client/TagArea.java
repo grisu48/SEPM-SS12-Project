@@ -36,7 +36,9 @@ public class TagArea extends Composite {
 	public void update(final List<String> tagsAppearingInSearchString) {
 		clear();
 
-		if (tagsAppearingInSearchString == null) return;
+		if (tagsAppearingInSearchString == null) {
+			return;
+		}
 
 		for (final String tag : tagsAppearingInSearchString) {
 			

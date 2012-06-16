@@ -33,8 +33,11 @@
 
 /* Put a border around prettyprinted code snippets. */
 pre.prettyprint { 
-  padding: 2px; 
-  border: 1px solid #888;
+  margin:3px;
+  padding: 3px; 
+  border: 0px solid #888;
+  max-width:680px;
+  overflow-x:hidden;
 }
 
 /* Specify class=linenums on a pre to get line numbering */
