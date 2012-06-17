@@ -77,7 +77,8 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the login process fails
 	 */
-	public boolean login(String username, String password) throws NoAccessException;
+	public boolean login(String username, String password)
+			throws NoAccessException;
 
 	/**
 	 * Logs the session out
@@ -114,8 +115,21 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @return a List with max count snippets that match the search string, or
 	 *         null, if something went wrong
 	 */
-	public XSearch doSearch(String searchString, List<String> tags, List<String> categories,
-			XSearch.SearchSorting sorting, int start, int count, int id);
+	public XSearch doSearch(String searchString, List<String> tags,
+			List<String> categories, XSearch.SearchSorting sorting, int start,
+			int count, int id);
+
+	/**
+	 * Gets a list of favourites for the current session. If the session is
+	 * logged in, the result is the list of the user favourites. If a guest
+	 * session it returns a list of the session favourite snippets.
+	 * 
+	 * This method should be used instant of {@link IUser#getFavorites()}
+	 * 
+	 * @return List of favourite snippets for the current session or of the
+	 *         user, if logged in
+	 */
+	public List<XSnippet> getFavorites();
 
 	/**
 	 * @return Gets the server status object
@@ -138,7 +152,8 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public boolean registerNewUser(String username, String password, String email) throws NoAccessException;
+	public boolean registerNewUser(String username, String password,
+			String email) throws NoAccessException;
 
 	/**
 	 * @return Gets the cookie value for this session

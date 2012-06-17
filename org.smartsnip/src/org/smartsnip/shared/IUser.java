@@ -53,13 +53,50 @@ public interface IUser extends RemoteService, IsSerializable {
 	 */
 	public void logout();
 
+	/**
+	 * Sets the email for the current logged in user
+	 * 
+	 * @param newAddress
+	 *            New email address set to
+	 * @throws NoAccessException
+	 *             Thrown if the access is denied by the server
+	 * @throws IllegalArgumentException
+	 *             Thrown, if the given email adress is invalid
+	 */
 	public void setEmail(String newAddress) throws NoAccessException,
 			IllegalArgumentException;
 
+	/**
+	 * Sets the new real name of the logged in user
+	 * 
+	 * @param newName
+	 *            The new realname of the user
+	 * @throws NoAccessException
+	 *             Thrown, if there was an access denial from the server, e.g.
+	 *             if there was no currently logged in user
+	 */
 	public void setRealName(String newName) throws NoAccessException;
 
+	/**
+	 * Gets a list of snippets, where the current logged in user is the owner
+	 * 
+	 * @return List of the own snippets of the user
+	 * @throws NoAccessException
+	 *             Thrown if the server denied the access
+	 */
 	public List<XSnippet> getSnippets() throws NoAccessException;
 
+	/**
+	 * Gets the favourites of the current user.
+	 * 
+	 * @deprecated Deprecated because it does not return the favourites for a
+	 *             guest session. Use {@link ISession#getFavorites()} instant.
+	 * @return A list of the favourites of the user, if successful.
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access, i.e. if the current
+	 *             session is not logged in
+	 */
+	@Deprecated
 	public List<XSnippet> getFavorites() throws NoAccessException;
 
 	public void setPassword(String pw1) throws NoAccessException;
