@@ -1,9 +1,7 @@
 package org.smartsnip.server;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
@@ -66,7 +64,11 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 		if (user == null || !session.isLoggedIn())
 			throw new NoAccessException();
 
-		return toXSnippets(user.getMySnippets());
+		List<XSnippet> result = toXSnippets(user.getMySnippets());
+		// XXX Check this one day ...
+		for (XSnippet snippet : result)
+			snippet.isOwn = true;
+		return result;
 	}
 
 	@Override
@@ -91,42 +93,6 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 			throw new NoAccessException();
 
 		user.setPassword(password);
-	}
-
-	/**
-	 * Converts a list of snippet into a list of XSnippet objects
-	 * 
-	 * If the source list is null, the method returns null
-	 * 
-	 * @param source
-	 *            Source list of snippets.
-	 * @return a list containing {@link XSnippet} objects of the corresponding
-	 *         source objects
-	 */
-	private List<XSnippet> toXSnippets(List<Snippet> source) {
-		if (source == null)
-			return null;
-		List<XSnippet> result = new ArrayList<XSnippet>();
-
-		Session session = getSession();
-		User user = session.getUser();
-
-		for (Snippet snippet : source) {
-			XSnippet xsnippet = snippet.toXSnippet();
-
-			if (user == null)
-				xsnippet.isFavorite = session.isFavourite(snippet);
-			else
-				xsnippet.isFavorite = user.isFavourite(snippet);
-			xsnippet.canDelete = session.getPolicy().canDeleteSnippet(session,
-					snippet);
-			xsnippet.canEdit = session.getPolicy().canEditSnippet(session,
-					snippet);
-
-			result.add(xsnippet);
-		}
-
-		return result;
 	}
 
 }

@@ -1,12 +1,18 @@
 package org.smartsnip.server;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.smartsnip.core.Logging;
+import org.smartsnip.core.Snippet;
+import org.smartsnip.core.User;
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.XServerStatus;
+import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -239,5 +245,87 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 		if (request == null)
 			return "0.0.0.0";
 		return request.getRemoteHost();
+	}
+
+	/**
+	 * Converts a list of snippets to a list of XSnippets
+	 * 
+	 * @param snippets
+	 *            Source list
+	 * @return a list of {@link XSnippet}
+	 */
+	protected final List<XSnippet> toXSnippets(List<Snippet> snippets) {
+		if (snippets == null)
+			return null;
+
+		Session session = getSession();
+		User user = session.getUser();
+
+		List<XSnippet> result = new ArrayList<XSnippet>();
+		for (Snippet snippet : snippets)
+			result.add(toXSnippet(snippet, session, user));
+
+		return result;
+	}
+
+	/**
+	 * Converts a snippet to a eXchange Snippet ({@link XSnippet} object.
+	 * 
+	 * Use this method instance of {@link Snippet#toXSnippet()} to initialise
+	 * also the session- and user specific options like
+	 * {@link XSnippet#isFavorite}, like {@link XSnippet#canDelete} and like
+	 * {@link XSnippet#canEdit}
+	 * 
+	 * @param snippet
+	 *            to be converted
+	 * @return the converted {@link XSnippet} object
+	 */
+	protected final XSnippet toXSnippet(Snippet snippet) {
+		Session session = getSession();
+		return toXSnippet(snippet, session, session.getUser());
+	}
+
+	/**
+	 * Converts a snippet to a eXchange Snippet ({@link XSnippet} object.
+	 * 
+	 * Use this method instance of {@link Snippet#toXSnippet()} to initialise
+	 * also the session- and user specific options like
+	 * {@link XSnippet#isFavorite}, like {@link XSnippet#canDelete} and like
+	 * {@link XSnippet#canEdit}
+	 * 
+	 * This call should only be used internally, because no checks for session
+	 * and user are done. The calling method must be sure, that the given
+	 * parameters are right, otherwise the behaviour can be unpredictable
+	 * 
+	 * @param snippet
+	 *            to be converted
+	 * @param session
+	 *            Session to be user
+	 * @param user
+	 *            User to be used
+	 * @return the converted {@link XSnippet} object
+	 */
+	private final XSnippet toXSnippet(Snippet snippet, Session session,
+			User user) {
+		if (snippet == null)
+			return null;
+
+		XSnippet result = snippet.toXSnippet();
+
+		if (user == null) {
+			result.isFavorite = session.isFavourite(snippet);
+			result.myRating = 0;
+			result.isOwn = false;
+		} else {
+			result.isFavorite = user.isFavourite(snippet);
+			result.myRating = user.getSnippetRating(snippet.getHashId());
+			result.isOwn = user.getUsername().equalsIgnoreCase(
+					snippet.getOwnerUsername());
+		}
+		result.canDelete = session.getPolicy().canDeleteSnippet(session,
+				snippet);
+		result.canEdit = session.getPolicy().canEditSnippet(session, snippet);
+
+		return result;
 	}
 }

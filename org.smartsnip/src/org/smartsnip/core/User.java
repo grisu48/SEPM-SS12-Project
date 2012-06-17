@@ -638,4 +638,17 @@ public class User {
 
 		return false;
 	}
+
+	/**
+	 * Gets the rating, the user gave for a snippet or 0, if unrated, or if the
+	 * snippet is not found
+	 * 
+	 * @param hashId
+	 *            Snippet's hash id to fetch the rating status from
+	 * @return the rating of the snippet
+	 */
+	public int getSnippetRating(Long hashId) {
+		// TODO Auto-generated method stub
+		return 3;
+	}
 }

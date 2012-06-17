@@ -388,35 +388,4 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 			throw new NotFoundException("Snippet " + id + " cannot be found");
 		snippet.increaseViewCounter();
 	}
-
-	/**
-	 * Converts a snippet to a eXchange Snippet ({@link XSnippet} object.
-	 * 
-	 * Use this method instance of {@link Snippet#toXSnippet()} to initialise
-	 * also the session- and user specific options like
-	 * {@link XSnippet#isFavorite}, like {@link XSnippet#canDelete} and like
-	 * {@link XSnippet#canEdit}
-	 * 
-	 * @param snippet
-	 *            to be converted
-	 * @return the converted {@link XSnippet} object
-	 */
-	private XSnippet toXSnippet(Snippet snippet) {
-		if (snippet == null)
-			return null;
-		Session session = getSession();
-		User user = session.getUser();
-
-		XSnippet result = snippet.toXSnippet();
-
-		if (user == null)
-			result.isFavorite = session.isFavourite(snippet);
-		else
-			result.isFavorite = user.isFavourite(snippet);
-		result.canDelete = session.getPolicy().canDeleteSnippet(session,
-				snippet);
-		result.canEdit = session.getPolicy().canEditSnippet(session, snippet);
-
-		return result;
-	}
 }
