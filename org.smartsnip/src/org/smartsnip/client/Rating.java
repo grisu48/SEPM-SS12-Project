@@ -2,7 +2,7 @@ package org.smartsnip.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -12,8 +12,8 @@ public class Rating extends Composite {
 
 	private final VerticalPanel pnlVertical;
 	private final HorizontalPanel pnlHorizontal;
-	private final Anchor anchNull;
-	private final Anchor[] anchRatings;
+	private final Button btnNull;
+	private final Button[] btnRatings;
 
 	private final Label lblRating;
 
@@ -81,21 +81,22 @@ public class Rating extends Composite {
 	 *            than 1, only one element will be created
 	 */
 	public Rating(int count) {
-		if (count < 1) count = 1;
+		if (count < 1)
+			count = 1;
 
 		pnlVertical = new VerticalPanel();
 		pnlHorizontal = new HorizontalPanel();
 
 		lblRating = new Label("");
 
-		anchNull = new Anchor("Unrate");
-		anchNull.addClickHandler(new RatingClickHandler(0));
-		pnlHorizontal.add(anchNull);
-		anchRatings = new Anchor[count];
+		btnNull = new Button("Unrate");
+		btnNull.addClickHandler(new RatingClickHandler(0));
+		pnlHorizontal.add(btnNull);
+		btnRatings = new Button[count];
 		for (int i = 0; i < count; i++) {
-			anchRatings[i] = new Anchor((i + 1) + "");
-			anchRatings[i].addClickHandler(new RatingClickHandler(i + 1));
-			pnlHorizontal.add(anchRatings[i]);
+			btnRatings[i] = new Button((i + 1) + "");
+			btnRatings[i].addClickHandler(new RatingClickHandler(i + 1));
+			pnlHorizontal.add(btnRatings[i]);
 		}
 
 		pnlVertical.add(pnlHorizontal);
@@ -110,16 +111,16 @@ public class Rating extends Composite {
 	@Override
 	public void setStyleName(String name) {
 
-		anchNull.setStyleName(name);
-		for (Anchor anchRating : anchRatings) {
-			anchRating.setStyleName(name);
+		btnNull.setStyleName(name);
+		for (Button btnRating : btnRatings) {
+			btnRating.setStyleName(name);
 		}
 	}
 
 	public void setEnabled(boolean enabled) {
-		anchNull.setEnabled(enabled);
-		for (Anchor anchRating : anchRatings)
-			anchRating.setEnabled(enabled);
+		btnNull.setEnabled(enabled);
+		for (Button btnRating : btnRatings)
+			btnRating.setEnabled(enabled);
 	}
 
 	/**
@@ -144,7 +145,7 @@ public class Rating extends Composite {
 	 * @return the maximum rating of this widget
 	 */
 	public int getMax() {
-		return anchRatings.length;
+		return btnRatings.length;
 	}
 
 	/**
@@ -152,5 +153,18 @@ public class Rating extends Composite {
 	 */
 	public int getRating() {
 		return rating;
+	}
+
+	/**
+	 * Enabled or disabled the control buttons for rating. If disabled, the
+	 * rating buttons are not shown.
+	 * 
+	 * @param enabled
+	 *            if enabled or disabled
+	 */
+	public void setRatingEanbled(boolean enabled) {
+		btnNull.setVisible(enabled);
+		for (Button btnRating : btnRatings)
+			btnRating.setVisible(enabled);
 	}
 }
