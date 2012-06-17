@@ -1,6 +1,5 @@
 package org.smartsnip.client;
 
-import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSnippet;
 
@@ -248,25 +247,10 @@ public class GUI {
 	public void showSnipPage(XSnippet snip) {
 		dataPanel.clear();
 		mySnipArea = new SnipArea(snip);
+		mySnipArea.update(); // Updade increases viewcounter
 		dataPanel.add(mySnipArea);
 		myCommentArea = new CommentArea(snip);
 		dataPanel.add(myCommentArea);
-
-		// XXX ugly in this position, but at least increase here
-		// the view count
-		ISnippet.Util.getInstance().increaseViewCounter(snip.hash,
-				new AsyncCallback<Void>() {
-
-					@Override
-					public void onSuccess(Void result) {
-						// Should be done in background, so do nothing
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						// Should be done in background, so do nothing
-					}
-				});
 	}
 
 	/**
