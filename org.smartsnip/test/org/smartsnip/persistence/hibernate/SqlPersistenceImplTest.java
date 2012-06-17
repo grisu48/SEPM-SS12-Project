@@ -31,6 +31,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.smartsnip.client.Rating;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
 import org.smartsnip.core.File;
@@ -44,6 +45,8 @@ import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.persistence.PersistenceFactory;
 import org.smartsnip.security.MD5;
 import org.smartsnip.shared.Pair;
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.IO;
 
 /**
  * Test cases for the database methods provided by the
@@ -74,6 +77,9 @@ public class SqlPersistenceImplTest {
 
 	private static Snippet test_snip1;
 	private static Snippet test_snip2;
+	private static User test_user1;
+	private static User test_user2;
+	private static Comment test_comment1;
 
 	/**
 	 * set up the database connection before unit tests
@@ -232,6 +238,9 @@ public class SqlPersistenceImplTest {
 
 		test_snip1 = snip1;
 		test_snip2 = snip2;
+		test_user1 = user1;
+		test_user2 = user2;
+		test_comment1 = comm1;
 	}
 
 	/**
@@ -493,25 +502,32 @@ public class SqlPersistenceImplTest {
 	/**
 	 * Test method for
 	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeRating(java.lang.Integer, org.smartsnip.core.Snippet, org.smartsnip.core.User, int)}
-	 * .
-	 * 
-	 * @throws Throwable
-	 */
-	@Ignore
-	public void testWriteRating() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
-	}
-
-	/**
-	 * Test method for
 	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#unRate(org.smartsnip.core.User, org.smartsnip.core.Snippet, int)}
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getRatings(org.smartsnip.core.Snippet)}
 	 * .
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
-	public void testUnRate() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+	@Test
+	public void testWriteRating() throws Throwable {
+		// try{
+		// instance.unRate(null, test_snip1, IPersistence.DB_FORCE_DELETE);
+		// } catch (IOException ignore){}
+		double rating = instance.getSnippet(test_snip1.getHashId())
+				.getAverageRating();
+		// assertEquals("Expected rating 0", 0, rating, 0.01);
+		instance.writeRating(4, test_snip1, test_user1, IPersistence.DB_DEFAULT);
+		rating = instance.getSnippet(test_snip1.getHashId()).getAverageRating();
+		System.err.println(rating);
+		// assertEquals("Expected rating 4", 4, rating, 0.01);
+		List<Pair<User, Integer>> ratings = instance.getRatings(test_snip1);
+		// assertEquals(1, ratings.size());
+		// instance.unRate(null, test_snip1, IPersistence.DB_FORCE_DELETE);
+		rating = instance.getSnippet(test_snip1.getHashId()).getAverageRating();
+		// assertEquals(0, rating, 0.01);
+
+		ratings = instance.getRatings(test_snip1);
+		// assertEquals(0, ratings.size());
 	}
 
 	/**
@@ -521,9 +537,15 @@ public class SqlPersistenceImplTest {
 	 * 
 	 * @throws Throwable
 	 */
-	@Ignore
+	@Test
 	public void testWriteVote() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
+		instance.writeVote(1, test_comment1, test_user1, IPersistence.DB_DEFAULT);
+		instance.writeVote(-1, test_comment1, test_user2, IPersistence.DB_DEFAULT);
+		Comment comm = instance.getComment(test_comment1.getHashID());
+		System.err.println(comm);
+		Pair<Integer, Integer> votes = instance.getVotes(test_comment1);
+		assertEquals(1, votes.first.intValue());
+		assertEquals(2, votes.second.intValue());
 	}
 
 	/**
@@ -701,7 +723,9 @@ public class SqlPersistenceImplTest {
 			query.addParameter("name3", "_test_child");
 			query.initialize();
 			Query hibQuery = query
-					.buildCustomQuery("from DBCategory where name = :name1 or name = :name2 or name = :name3", IPersistence.DB_DEFAULT);
+					.buildCustomQuery(
+							"from DBCategory where name = :name1 or name = :name2 or name = :name3",
+							IPersistence.DB_DEFAULT);
 			entities = hibQuery.list();
 		} finally {
 			DBSessionFactory.close(session);
@@ -741,7 +765,9 @@ public class SqlPersistenceImplTest {
 			query.addParameter("name3", "_test_child");
 			query.initialize();
 			Query hibQuery = query
-					.buildCustomQuery("from DBCategory where name = :name1 or name = :name2 or name = :name3", IPersistence.DB_DEFAULT);
+					.buildCustomQuery(
+							"from DBCategory where name = :name1 or name = :name2 or name = :name3",
+							IPersistence.DB_DEFAULT);
 			entities = hibQuery.list();
 		} finally {
 			DBSessionFactory.close(session);
@@ -1192,7 +1218,7 @@ public class SqlPersistenceImplTest {
 				instance.getLanguages(IPersistence.LANGUAGE_GET_DEFAULTS));
 		Set<String> othersSubset = new TreeSet<String>(
 				instance.getLanguages(IPersistence.LANGUAGE_GET_OTHERS));
-		
+
 		// tests on all set
 		assertTrue("Expected language not present: _test_java",
 				allLanguages.contains("_test_java"));
@@ -1203,7 +1229,7 @@ public class SqlPersistenceImplTest {
 		assertTrue(
 				"Number of expected languages > 2, but is "
 						+ allLanguages.size(), allLanguages.size() > 2);
-		
+
 		// tests on default subset
 		assertTrue("Expected language not present: _test_java",
 				defaultSubset.contains("_test_java"));
@@ -1220,12 +1246,13 @@ public class SqlPersistenceImplTest {
 				defaultSubset.size() < allLanguages.size());
 
 		// tests on non-default subset
-		assertFalse("Language expected as default is in non-defaults-list: _test_java",
+		assertFalse(
+				"Language expected as default is in non-defaults-list: _test_java",
 				othersSubset.contains("_test_java"));
-		assertFalse("Language expected as default is in non-defaults-list: _test_c",
+		assertFalse(
+				"Language expected as default is in non-defaults-list: _test_c",
 				othersSubset.contains("_test_c"));
-		assertTrue(
-				"Expected language not present: _test_sql",
+		assertTrue("Expected language not present: _test_sql",
 				othersSubset.contains("_test_sql"));
 		assertTrue(
 				"Number of expected languages > 0, but is "
@@ -1233,7 +1260,7 @@ public class SqlPersistenceImplTest {
 		assertTrue("Number of expected non-defaults < all languages, but is "
 				+ othersSubset.size() + " < " + allLanguages.size(),
 				othersSubset.size() < allLanguages.size());
-}
+	}
 
 	/**
 	 * Test method for
@@ -1244,21 +1271,10 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testGetLanguageProperties() throws Throwable {
-		Pair<String, Boolean> result = instance.getLanguageProperties("_test_java");
+		Pair<String, Boolean> result = instance
+				.getLanguageProperties("_test_java");
 		assertEquals("java", result.first);
 		assertTrue("Expected property: isDefault == true", result.second);
-	}
-
-	/**
-	 * Test method for
-	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getRatings(org.smartsnip.core.Snippet)}
-	 * .
-	 * 
-	 * @throws Throwable
-	 */
-	@Ignore
-	public void testGetRatings() throws Throwable {
-		fail("Not yet implemented"); // TODO implement test case
 	}
 
 	/**

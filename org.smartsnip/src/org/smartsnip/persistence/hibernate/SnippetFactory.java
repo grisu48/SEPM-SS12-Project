@@ -262,7 +262,15 @@ public class SnippetFactory {
 			DBQuery query = new DBQuery(session);
 
 			DBRating entity = new DBRating();
-			entity.setRatingId(snippet.getHashId(), user.getUsername());
+			Long snipId = null;
+			String userName = null;
+			if(snippet != null) {
+				snipId = snippet.getHashId();
+			}
+			if(user != null) {
+				user.getUsername();
+			}
+			entity.setRatingId(snipId, userName);
 
 			query.remove(entity, flags);
 			tx.commit();
@@ -895,6 +903,7 @@ public class SnippetFactory {
 					.hasNext();) {
 				entity = iterator.next();
 
+				query.reset();
 				dbUser = new DBUser();
 				dbUser.setUserName(entity.getRatingId().getUserName());
 				dbUser = query.fromSingle(dbUser, DBQuery.QUERY_NOT_NULL);
