@@ -22,6 +22,7 @@ public class XSnippet implements IsSerializable {
 	public float rating;
 	public int myRating;
 	public boolean isOwn;
+	public boolean canRate;
 
 	/** Used by GWT */
 	private XSnippet() {

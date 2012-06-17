@@ -170,7 +170,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 		List<String> resultCategories = new ArrayList<String>();
 		List<String> resultTags = new ArrayList<String>();
 		for (Snippet snippet : snippets) {
-			result.snippets.add(snippet.toXSnippet());
+			result.snippets.add(toXSnippet(snippet));
 
 			String category = snippet.getCategoryName();
 			if (!resultCategories.contains(category))
@@ -220,12 +220,6 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	@Override
 	public List<XSnippet> getFavorites() {
 		Session session = getSession();
-		User user = session.getUser();
-		List<Snippet> snippets = session.getFavorites();
-		List<XSnippet> result = new ArrayList<XSnippet>(snippets.size());
-		for (Snippet snippet : snippets)
-			result.add(snippet.toXSnippet());
-
-		return result;
+		return toXSnippets(session.getFavorites());
 	}
 }

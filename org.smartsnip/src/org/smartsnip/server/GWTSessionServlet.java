@@ -322,6 +322,7 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 			result.isOwn = user.getUsername().equalsIgnoreCase(
 					snippet.getOwnerUsername());
 		}
+		result.canRate = session.getPolicy().canRateSnippet(session, snippet);
 		result.canDelete = session.getPolicy().canDeleteSnippet(session,
 				snippet);
 		result.canEdit = session.getPolicy().canEditSnippet(session, snippet);

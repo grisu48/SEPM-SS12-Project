@@ -277,6 +277,7 @@ public class SnipArea extends Composite {
 					public void onSuccess(Boolean result) {
 						btnEdit.setVisible(result);
 						btnDelete.setVisible(result);
+						// TODO Increment
 						anchUpload.setVisible(result);
 					}
 
@@ -350,13 +351,21 @@ public class SnipArea extends Composite {
 	 */
 	private void updateComponents() {
 		updateFavortiteStatus();
-		title.setText(snippet.title);
+		String msgTitle = snippet.title;
+		if (snippet.isOwn)
+			msgTitle += " (own snippet)";
+		title.setText(msgTitle);
 		description.setText(snippet.description);
 		language.setText(snippet.language);
 		license.setText(snippet.license);
 		lblAverageRating.setText("Rating: " + getRating(snippet.rating));
-
 		rating.setRatingStatus(snippet.myRating);
+
+		btnEdit.setVisible(snippet.canEdit);
+		btnDelete.setVisible(snippet.canDelete);
+		updateFavortiteStatus();
+		rating.setEnabled(snippet.canRate);
+
 	}
 
 	/**
@@ -365,7 +374,7 @@ public class SnipArea extends Composite {
 	private void updateFavortiteStatus() {
 		if (snippet.isFavorite) {
 			btnFav.setEnabled(false);
-			btnFav.setText("Favorited");
+			btnFav.setText("Favourited");
 		} else {
 			btnFav.setEnabled(true);
 			btnFav.setText("Add to favorites");

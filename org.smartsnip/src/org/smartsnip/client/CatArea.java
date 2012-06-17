@@ -3,7 +3,6 @@ package org.smartsnip.client;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -21,7 +20,7 @@ public class CatArea extends Composite {
 		myPanel = new VerticalPanel();
 		title = new Label("Categories");
 		myPanel.add(title);
-		
+
 		initWidget(myPanel);
 		// Give the overall composite a style name.
 		setStyleName("catArea");
@@ -30,16 +29,25 @@ public class CatArea extends Composite {
 	public void update(List<String> categories) {
 		clear();
 
-		if (categories == null) return;
+		if (categories == null)
+			return;
 
 		for (final String category : categories) {
-			
+
 			final Button catButton = new Button(category);
+			final boolean categoryEnabled = Control.search
+					.containsCategory(category);
+
 			catButton.setEnabled(true);
-			catButton.setStyleName("btEnCat");
+
+			if (categoryEnabled)
+				catButton.setStyleName("btDisCat");
+			else
+				catButton.setStyleName("btEnCat");
+
 			catButtons.add(catButton);
 			catButton.addClickHandler(new ClickHandler() {
-				private boolean enabled = catButton.isEnabled();
+				private boolean enabled = categoryEnabled;
 
 				@Override
 				public void onClick(ClickEvent event) {
@@ -47,14 +55,11 @@ public class CatArea extends Composite {
 
 					if (enabled) {
 						Control.search.addCategory(category);
+						catButton.setStyleName("btDisCat");
+					} else {
+						Control.search.removeCategory(category);
 						catButton.setStyleName("btEnCat");
 					}
-					else {
-						Control.search.removeCategory(category);
-						catButton.setStyleName("btDisCat");
-					}
-						
-
 
 				}
 			});
@@ -62,8 +67,6 @@ public class CatArea extends Composite {
 		}
 
 	}
-
-	
 
 	/**
 	 * Clears the component
@@ -74,9 +77,6 @@ public class CatArea extends Composite {
 		catButtons.clear();
 	}
 
-	
-
-	
 	/**
 	 * Disables all tags
 	 */
@@ -85,7 +85,7 @@ public class CatArea extends Composite {
 		for (final Button catButton : catButtons) {
 			catButton.setStyleName("btDisCat");
 		}
-		
+
 	}
 
 	/**
@@ -96,9 +96,9 @@ public class CatArea extends Composite {
 			Control.search.addTag(catButton.getText());
 			catButton.setStyleName("btEnCat");
 		}
-		
+
 	}
-	
+
 	/**
 	 * Enables the buttons
 	 */
@@ -106,7 +106,7 @@ public class CatArea extends Composite {
 		for (final Button catButton : catButtons) {
 			catButton.setEnabled(b);
 		}
-		
+
 	}
-	
+
 }

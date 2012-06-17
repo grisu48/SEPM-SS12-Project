@@ -408,7 +408,7 @@ public class User {
 	/**
 	 * @return a list of the users' favourite snippets
 	 */
-	public List<Snippet> getFavoriteSnippets() {
+	public synchronized List<Snippet> getFavoriteSnippets() {
 		if (favourites != null)
 			return favourites;
 
@@ -649,6 +649,7 @@ public class User {
 	 */
 	public int getSnippetRating(Long hashId) {
 		// TODO Auto-generated method stub
-		return 3;
+		// TODO Not yet implemented in persistence!
+		return -1;
 	}
 }

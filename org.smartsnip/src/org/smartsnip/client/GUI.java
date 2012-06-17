@@ -585,7 +585,7 @@ public class GUI {
 		ppnlSnippet.setWidget(newSnippet);
 		ppnlSnippet.setGlassEnabled(true);
 		ppnlSnippet.setPopupPosition(90, 104);
-		ppnlSnippet.setWidth("250px");
+		ppnlSnippet.setWidth("450px");
 		ppnlSnippet.show();
 
 	}

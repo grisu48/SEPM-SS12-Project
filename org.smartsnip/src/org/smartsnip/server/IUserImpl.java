@@ -78,7 +78,12 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 
 		if (user == null || !session.isLoggedIn())
 			throw new NoAccessException();
-		return toXSnippets(user.getFavoriteSnippets());
+
+		List<XSnippet> result = toXSnippets(user.getFavoriteSnippets());
+		// XXX Check this one day ...
+		for (XSnippet snippet : result)
+			snippet.isFavorite = true;
+		return result;
 	}
 
 	@Override

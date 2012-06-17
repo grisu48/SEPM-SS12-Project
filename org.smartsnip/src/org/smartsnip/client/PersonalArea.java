@@ -59,7 +59,7 @@ public class PersonalArea extends Composite {
 	}
 
 	public void updateSnippets() {
-		raFav.updateStatus("Getting favourites ... ");
+		lblFavorites.setText("Getting favourites ... ");
 		ISession.Util.getInstance().getFavorites(
 				new AsyncCallback<List<XSnippet>>() {
 
@@ -72,22 +72,20 @@ public class PersonalArea extends Composite {
 						}
 						lblFavorites.setText("Favourites (" + result.size()
 								+ ")");
-						raFav.updateStatus(result.size() + " snippets fetched");
 						raFav.update(result);
-						raFav.hideStatus();
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
 						if (caught == null)
-							raFav.updateStatus("Unknown error - Please try again");
+							lblFavorites
+									.setText("Favourites: Unknown error - Please try again");
 						else
-							raFav.updateStatus("Error fetching favourites: "
+							lblFavorites.setText("Error fetching favourites: "
 									+ caught.getMessage());
-						lblFavorites.setText("Favourites");
 					}
 				});
-		raOwn.updateStatus("Getting own snippets ... ");
+		lblOwnSnippets.setText("Getting own snippets ... ");
 		IUser.Util.getInstance().getSnippets(
 				new AsyncCallback<List<XSnippet>>() {
 
@@ -101,18 +99,17 @@ public class PersonalArea extends Composite {
 						lblOwnSnippets.setText("My created snippets ("
 								+ result.size() + ")");
 						raOwn.update(result);
-						raOwn.updateStatus(result.size() + " snippets fetched");
-						raOwn.hideStatus();
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
 						if (caught == null)
-							raOwn.updateStatus("Unknown error - Please try again");
+							lblOwnSnippets
+									.setText("Own snippets: Unknown error - Please try again");
 						else
-							raOwn.updateStatus("Error fetching favourites: "
-									+ caught.getMessage());
-						lblOwnSnippets.setText("My created snippets");
+							lblOwnSnippets
+									.setText("Error fetching own snippets: "
+											+ caught.getMessage());
 					}
 				});
 	}

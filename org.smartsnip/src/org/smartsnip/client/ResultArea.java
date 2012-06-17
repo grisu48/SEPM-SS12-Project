@@ -8,7 +8,6 @@ import org.smartsnip.shared.XSnippet;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -18,15 +17,12 @@ public class ResultArea extends Composite {
 
 	private final CellList<XSnippet> myCellList;
 	private final VerticalPanel pnlVerticalMain;
-	private final Label lblStatus;
 
 	public ResultArea() {
 
 		pnlVerticalMain = new VerticalPanel();
 		ScrollPanel myPanel = new ScrollPanel();
-		lblStatus = new Label("");
 
-		pnlVerticalMain.add(lblStatus);
 		pnlVerticalMain.add(myPanel);
 
 		ShortSnipCell myShortSnipCell = new ShortSnipCell();
@@ -81,37 +77,6 @@ public class ResultArea extends Composite {
 
 		myCellList.setRowCount(snippets.size(), true);
 		myCellList.setRowData(0, snippets);
-	}
-
-	/**
-	 * Sets the status of the status label. If the status message is null or
-	 * empty, this method simply hides the status message, using
-	 * {@link #hideStatus()}.
-	 * 
-	 * @param status
-	 *            status message the status label is set to
-	 */
-	public void updateStatus(String status) {
-		if (status == null || status.isEmpty()) {
-			hideStatus();
-			return;
-		}
-		lblStatus.setText(status);
-		showStatus();
-	}
-
-	/**
-	 * Shows the status message
-	 */
-	public void showStatus() {
-		lblStatus.setVisible(true);
-	}
-
-	/**
-	 * Hides the status message
-	 */
-	public void hideStatus() {
-		lblStatus.setVisible(false);
 	}
 
 }

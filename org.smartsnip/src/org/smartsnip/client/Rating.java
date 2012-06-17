@@ -146,6 +146,8 @@ public class Rating extends Composite {
 	 *            status to be set
 	 */
 	public void setRatingStatus(int value) {
+		if (value < 0 || value > getMax())
+			return;
 		if (value == 0) {
 			lblRating.setText("Unrated");
 		} else {

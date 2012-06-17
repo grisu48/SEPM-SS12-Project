@@ -41,15 +41,20 @@ public class TagArea extends Composite {
 		}
 
 		for (final String tag : tagsAppearingInSearchString) {
-			
+
 			final Button tagButton = new Button(tag);
+			final boolean tagEnabled = Control.search.containsTag(tag);
 			tagButton.setEnabled(true);
-			tagButton.setStyleName("btEn");
+			if (tagEnabled)
+				tagButton.setStyleName("btDis");
+			else
+				tagButton.setStyleName("btEn");
+
 			tagButtons.add(tagButton);
 			tagButton.setTitle(tag); // DO NOT MODIFY - Used for each button to
 										// associate it with a tag!
 			tagButton.addClickHandler(new ClickHandler() {
-				private boolean enabled = tagButton.isEnabled();
+				private boolean enabled = tagEnabled;
 
 				@Override
 				public void onClick(ClickEvent event) {
@@ -59,14 +64,13 @@ public class TagArea extends Composite {
 
 					if (enabled) {
 						Control.search.addTag(tag);
-						tagButton.setStyleName("btEn");
-					}
-						
-					else {
-						Control.search.removeTag(tag);
 						tagButton.setStyleName("btDis");
 					}
-						
+
+					else {
+						Control.search.removeTag(tag);
+						tagButton.setStyleName("btEn");
+					}
 
 				}
 			});
@@ -74,7 +78,6 @@ public class TagArea extends Composite {
 		}
 
 	}
-
 
 	/**
 	 * Clears the field and removes all tag buttons.
@@ -85,9 +88,6 @@ public class TagArea extends Composite {
 		myPanel.add(title);
 	}
 
-	
-
-
 	/**
 	 * Disables all tags
 	 */
@@ -96,7 +96,7 @@ public class TagArea extends Composite {
 		for (final Button tagButton : tagButtons) {
 			tagButton.setStyleName("btDis");
 		}
-		
+
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class TagArea extends Composite {
 			Control.search.addTag(tagButton.getText());
 			tagButton.setStyleName("btEn");
 		}
-		
+
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class TagArea extends Composite {
 		for (final Button tagButton : tagButtons) {
 			tagButton.setEnabled(b);
 		}
-		
+
 	}
 
 }
