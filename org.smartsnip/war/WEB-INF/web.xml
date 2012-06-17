@@ -7,8 +7,10 @@
   <!-- Servlets -->
  
   
+  
+  <!-- ==== GWT Servlet mappings =================================== -->
 
-     <servlet>
+  <servlet>
     <servlet-name>Session</servlet-name>
     <servlet-class>org.smartsnip.server.ISessionImpl</servlet-class>
   </servlet>
@@ -50,6 +52,17 @@
   </servlet-mapping>
   
   
+   <servlet>
+    <servlet-name>User</servlet-name>
+    <servlet-class>org.smartsnip.server.IUserImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>User</servlet-name>
+    <url-pattern>/org_smartsnip/user</url-pattern>
+  </servlet-mapping>
+  
+  
   <servlet>
     <servlet-name>Moderator</servlet-name>
     <servlet-class>org.smartsnip.server.IModeratorImpl</servlet-class>
@@ -62,6 +75,8 @@
   
   
   
+  
+  <!-- ==== NON-GWT servlets ======================================= -->
   
   <servlet>
     <servlet-name>SnippetOfDay</servlet-name>

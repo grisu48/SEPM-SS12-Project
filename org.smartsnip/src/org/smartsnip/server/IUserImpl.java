@@ -9,28 +9,23 @@ import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XSnippet;
 
+/**
+ * This is the implementation of the {@link org.smartsnip.shared.IUser}
+ * interface that runs on the server
+ * 
+ */
 public class IUserImpl extends GWTSessionServlet implements IUser {
 
 	/** Serialisation ID */
-	private static final long serialVersionUID = 1235424507650742693L;
-
-	/** Associated user object */
-	protected final User user;
-
-	public IUserImpl(User user) {
-		super();
-
-		if (user == null)
-			throw new NullPointerException();
-		this.user = user;
-	}
+	private static final long serialVersionUID = -6793875859564213616L;
 
 	@Override
 	public void setEmail(String newAddress) throws NoAccessException,
 			IllegalArgumentException {
 		Session session = getSession();
+		User user = session.getUser();
 
-		if (!session.getPolicy().canEditUserData(session, user))
+		if (user == null || !session.getPolicy().canEditUserData(session, user))
 			throw new NoAccessException();
 		user.setEmail(newAddress);
 	}
@@ -38,8 +33,9 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 	@Override
 	public void setRealName(String newName) throws NoAccessException {
 		Session session = getSession();
+		User user = session.getUser();
 
-		if (!session.getPolicy().canEditUserData(session, user))
+		if (user == null || !session.getPolicy().canEditUserData(session, user))
 			throw new NoAccessException();
 
 		user.setRealName(newName);
@@ -64,14 +60,37 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 
 	@Override
 	public List<XSnippet> getSnippets() throws NoAccessException {
-		// XXX Check security privileges
+		Session session = getSession();
+		User user = session.getUser();
+
+		if (user == null || !session.isLoggedIn())
+			throw new NoAccessException();
+
 		return toXSnippets(user.getMySnippets());
 	}
 
 	@Override
 	public List<XSnippet> getFavorites() throws NoAccessException {
-		// XXX Check security privileges
+		Session session = getSession();
+		User user = session.getUser();
+
+		if (user == null || !session.isLoggedIn())
+			throw new NoAccessException();
 		return toXSnippets(user.getFavoriteSnippets());
+	}
+
+	@Override
+	public void setPassword(String password) throws NoAccessException {
+		if (password == null || password.isEmpty())
+			return;
+
+		Session session = getSession();
+		User user = session.getUser();
+
+		if (user == null || !session.getPolicy().canEditUserData(session, user))
+			throw new NoAccessException();
+
+		user.setPassword(password);
 	}
 
 	/**
@@ -84,7 +103,7 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 	 * @return a list containing {@link XSnippet} objects of the corresponding
 	 *         source objects
 	 */
-	private List<XSnippet> toXSnippets(List<Snippet> source) {
+	private static List<XSnippet> toXSnippets(List<Snippet> source) {
 		if (source == null)
 			return null;
 		List<XSnippet> result = new ArrayList<XSnippet>();
@@ -94,11 +113,5 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 		}
 
 		return result;
-	}
-
-	@Override
-	public void setPassword(String pw1) throws NoAccessException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Implement me");
 	}
 }

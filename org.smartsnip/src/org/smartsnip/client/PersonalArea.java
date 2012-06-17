@@ -2,24 +2,35 @@ package org.smartsnip.client;
 
 import java.util.List;
 
+import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Label;
 
 public class PersonalArea extends Composite {
 
-	private final HorizontalPanel horPanel;
+	private final Grid grid;
 	private final PersonalField myPersonalField;
 	private final ResultArea raOwn;
 	private final ResultArea raFav;
 
+	// private final Label lblMyPersonalArea;
+	private final Label lblOwnSnippets;
+	private final Label lblFavorites;
+
 	public PersonalArea() {
 
-		horPanel = new HorizontalPanel();
+		grid = new Grid(2, 3);
+		// This is needed as placeholder
+		// lblMyPersonalArea = new Label("");
+		lblOwnSnippets = new Label("My created snippets");
+		lblFavorites = new Label("Favourites");
 		myPersonalField = new PersonalField();
+
 		raOwn = new ResultArea();
 		raOwn.setStyleName("raOwn");
 		raOwn.setWidth("400px");
@@ -27,11 +38,14 @@ public class PersonalArea extends Composite {
 		raFav.setStyleName("raFav");
 		raFav.setWidth("400px");
 
-		horPanel.add(myPersonalField);
-		horPanel.add(raOwn);
-		horPanel.add(raFav);
+		// grid.setWidget(0, 0, lblMyPersonalArea);
+		grid.setWidget(1, 0, myPersonalField);
+		grid.setWidget(0, 1, lblOwnSnippets);
+		grid.setWidget(1, 1, raOwn);
+		grid.setWidget(0, 2, lblFavorites);
+		grid.setWidget(1, 2, raFav);
 
-		initWidget(horPanel);
+		initWidget(grid);
 		// Give the overall composite a style name.
 		setStyleName("personalArea");
 
@@ -45,36 +59,60 @@ public class PersonalArea extends Composite {
 	}
 
 	public void updateSnippets() {
-		IUser.Util.getInstance().getFavorites(
+		raFav.updateStatus("Getting favourites ... ");
+		ISession.Util.getInstance().getFavorites(
 				new AsyncCallback<List<XSnippet>>() {
 
 					@Override
 					public void onSuccess(List<XSnippet> result) {
-						if (result == null)
+						if (result == null) {
+							onFailure(new IllegalArgumentException(
+									"Server returned null"));
 							return;
+						}
+						lblFavorites.setText("Favourites (" + result.size()
+								+ ")");
+						raFav.updateStatus(result.size() + " snippets fetched");
 						raFav.update(result);
+						raFav.hideStatus();
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-
+						if (caught == null)
+							raFav.updateStatus("Unknown error - Please try again");
+						else
+							raFav.updateStatus("Error fetching favourites: "
+									+ caught.getMessage());
+						lblFavorites.setText("Favourites");
 					}
 				});
+		raOwn.updateStatus("Getting own snippets ... ");
 		IUser.Util.getInstance().getSnippets(
 				new AsyncCallback<List<XSnippet>>() {
 
 					@Override
 					public void onSuccess(List<XSnippet> result) {
-						if (result == null)
+						if (result == null) {
+							onFailure(new IllegalArgumentException(
+									"Server returned null"));
 							return;
+						}
+						lblOwnSnippets.setText("My created snippets ("
+								+ result.size() + ")");
 						raOwn.update(result);
+						raOwn.updateStatus(result.size() + " snippets fetched");
+						raOwn.hideStatus();
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-
+						if (caught == null)
+							raOwn.updateStatus("Unknown error - Please try again");
+						else
+							raOwn.updateStatus("Error fetching favourites: "
+									+ caught.getMessage());
+						lblOwnSnippets.setText("My created snippets");
 					}
 				});
 	}
