@@ -26,6 +26,34 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class GUI {
 
+	/**
+	 * This inner class is used for return results in instantiated popup dialogs
+	 * 
+	 * @param <E>
+	 *            Generic type of the return value
+	 */
+	private static class ReturnValue<E> {
+		/** Value that is returned */
+		private E value = null;
+
+		/**
+		 * Set return value
+		 * 
+		 * @param value
+		 *            value to be set
+		 */
+		public void setValue(E value) {
+			this.value = value;
+		}
+
+		/**
+		 * @return the previously set return value, or null, if not yet set
+		 */
+		public E getValue() {
+			return value;
+		}
+	}
+
 	// visible in package, Control can modify
 	ResultArea myResultArea = null;
 	StatusArea myStatusArea = null;
@@ -39,7 +67,7 @@ public class GUI {
 	SearchArea mySearchArea = null;
 	ModeratorArea myModeratorArea = null;
 	SearchToolbar mySearchToolbar = null;
-	
+
 	Control control = Control.getInstance();
 
 	// Create userPanel
@@ -63,14 +91,16 @@ public class GUI {
 
 		@Override
 		public void onSuccess(XSearch result) {
-			String status = result.totalresults + " results in " + convertSearchTime(Control.search.getSearchTime());
+			String status = result.totalresults + " results in "
+					+ convertSearchTime(Control.search.getSearchTime());
 			updateSearchPage(result, status);
 		}
 
 		@Override
 		public void onFailure(Throwable caught) {
 			String status = "Search failed";
-			if (caught != null) status += ": " + caught.getMessage();
+			if (caught != null)
+				status += ": " + caught.getMessage();
 
 			updateSearchPage(null, status);
 		}
@@ -85,9 +115,11 @@ public class GUI {
 		 *         milliseconds
 		 */
 		private String convertSearchTime(long millis) {
-			if (millis < 0) return "- " + convertSearchTime(-millis);
+			if (millis < 0)
+				return "- " + convertSearchTime(-millis);
 
-			if (millis < 1000) return millis + " ms";
+			if (millis < 1000)
+				return millis + " ms";
 			int tenthSeconds = (int) (millis / 100); // 10th-seconds
 														// ("Zehntelsekunden")
 			if (tenthSeconds < 100) {
@@ -115,11 +147,10 @@ public class GUI {
 		// Create the Page
 		initComponents();
 		createBasicPage();
-		//showSearchPage();
+		// showSearchPage();
 		// showImpressum();
-		
+
 		control.showSnippetOfDay();
-		
 
 		// showPersonalPage();
 		// showLoginPopup();
@@ -200,7 +231,7 @@ public class GUI {
 
 		leftPanel.add(myStatusArea);
 		leftPanel.add(myResultArea);
-		
+
 		rightPanel.add(myCatArea);
 		rightPanel.add(myTagArea);
 		rightPanel.add(mySearchToolbar);
@@ -284,14 +315,84 @@ public class GUI {
 	}
 
 	/**
+	 * Shows a simple confirmation dialog, with the YES/NO Option.
+	 * 
+	 * @param message
+	 *            Message to be displayed
+	 * @return true if the user clicked YES, false if the user clicked NO
+	 */
+	public boolean showConfirmPopup(String message) {
+		return showConfirmPopup(message, "Confirmation");
+	}
+
+	/**
+	 * Shows a simple confirmation dialog, with the YES/NO Option.
+	 * 
+	 * @param message
+	 *            Message to be displayed
+	 * @param title
+	 *            Title of the message to be displayed
+	 * @return true if the user clicked YES, false if the user clicked NO
+	 */
+	public boolean showConfirmPopup(String message, String title) {
+		if (message == null)
+			message = "";
+		if (title == null)
+			title = "";
+
+		final PopupPanel confirmPopup = new PopupPanel(true, true);
+		Button btnYes = new Button("<b>Yes</b>");
+		Button btnNo = new Button("<b>No</b>");
+
+		confirmPopup.setTitle("Error");
+		VerticalPanel vertPanel = new VerticalPanel();
+		HorizontalPanel pnlButtons = new HorizontalPanel();
+		Label lname = new Label(message);
+		vertPanel.add(lname);
+		pnlButtons.add(btnYes);
+		pnlButtons.add(btnNo);
+		vertPanel.add(pnlButtons);
+		confirmPopup.setWidget(vertPanel);
+		confirmPopup.setGlassEnabled(true);
+		confirmPopup.setPopupPosition(110, 100);
+		confirmPopup.setWidth("340px");
+
+		final ReturnValue<Boolean> result = new ReturnValue<Boolean>();
+		btnNo.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				result.setValue(Boolean.FALSE);
+				confirmPopup.hide();
+			}
+		});
+		btnYes.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				result.setValue(Boolean.TRUE);
+				confirmPopup.hide();
+			}
+		});
+		confirmPopup.show();
+
+		return result.getValue() == Boolean.TRUE;
+	}
+
+	/**
 	 * shows a error popup
 	 * 
 	 * @param String
 	 *            the error message
+	 * @deprecated Deprecated because it uses less fuctionality than
+	 *             {@link #showErrorPopup(String, Throwable)} Use this method
+	 *             instant
 	 * 
 	 */
+	@Deprecated
 	public void showErrorPopup(String message) {
-		if (message == null || message.isEmpty()) return;
+		if (message == null || message.isEmpty())
+			return;
 
 		final PopupPanel errorPopup = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
@@ -316,7 +417,9 @@ public class GUI {
 	}
 
 	/**
-	 * shows a error popup
+	 * Shows a error popup. This error popup is more detailed than
+	 * {@link #showErrorPopup(String)} and gives the user some more tools to
+	 * investigate the error
 	 * 
 	 * @param String
 	 *            the error message
@@ -324,12 +427,63 @@ public class GUI {
 	 *            the error
 	 * 
 	 */
-	public void showErrorPopup(String message, Throwable cause) {
-		if (message == null) message = "";
+	public void showErrorPopup(String message, final Throwable cause) {
+		if (message == null)
+			message = "";
 		if (cause != null) {
-			message = message + "\n" + cause.getMessage();
+			String causeMessage = cause.getMessage();
+			if (causeMessage != null)
+				message = message + "\n" + cause.getMessage();
 		}
-		showErrorPopup(message);
+
+		final PopupPanel errorPopup = new PopupPanel(true, true);
+		Button close = new Button("<b>Close</b>");
+		final Anchor anchDetails = new Anchor("Show me more details ... ");
+
+		errorPopup.setTitle("Error");
+		final VerticalPanel vertPanel = new VerticalPanel();
+		Label lname = new Label(message);
+		final Label lblErrorTrace = new Label("");
+		vertPanel.add(lname);
+		vertPanel.add(close);
+		vertPanel.add(lblErrorTrace);
+		vertPanel.add(anchDetails);
+		lblErrorTrace.setVisible(false);
+		errorPopup.setWidget(vertPanel);
+		errorPopup.setGlassEnabled(true);
+		errorPopup.setPopupPosition(110, 100);
+		errorPopup.setWidth("340px");
+		errorPopup.show();
+		close.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				errorPopup.hide();
+			}
+		});
+		anchDetails.addClickHandler(new ClickHandler() {
+
+			boolean enabled = false;
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if (enabled)
+					return;
+				enabled = true;
+
+				// Show more details
+				lblErrorTrace.setVisible(true);
+				anchDetails.setEnabled(false);
+				printErrorTrace();
+			}
+
+			private void printErrorTrace() {
+				lblErrorTrace.setText("Not yet implemented, unfortunately ");
+
+				// TODO Print error stack trace
+
+			}
+		});
 	}
 
 	/**
@@ -444,13 +598,14 @@ public class GUI {
 	 *            link to be created
 	 */
 	public void showDownloadPopup(String message, String convertToLink) {
-	
-		Window.scrollTo(0, 0);
-		
-		if (message == null) message = "";
-		if (convertToLink == null || convertToLink.isEmpty()) return;
 
-		
+		Window.scrollTo(0, 0);
+
+		if (message == null)
+			message = "";
+		if (convertToLink == null || convertToLink.isEmpty())
+			return;
+
 		final PopupPanel popup = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
 		Anchor link = new Anchor(convertToLink);
@@ -498,7 +653,8 @@ public class GUI {
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
 		ppnlSnippet.setStyleName("uploadForm");
 		ppnlSnippet.setTitle("Upload Snippet");
-		Upload myUpload = new Upload(ppnlSnippet, "upload", "snip_id=" + snippetID);
+		Upload myUpload = new Upload(ppnlSnippet, "upload", "snip_id="
+				+ snippetID);
 		ppnlSnippet.setWidget(myUpload);
 		ppnlSnippet.setGlassEnabled(true);
 		ppnlSnippet.setPopupPosition(90, 104);
