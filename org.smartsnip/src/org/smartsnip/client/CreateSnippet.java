@@ -84,14 +84,17 @@ public class CreateSnippet extends Composite {
 		lstLicense.addItem("CC");
 		lstLicense.addItem("GPL");
 
+		txtCode.setSize("600px", "150px");
+
 		// updates the entries of the languages selector on demand
 		lstLanguage.addChangeHandler(new ChangeHandler() {
 
 			@Override
 			public void onChange(ChangeEvent event) {
 				if (lstLanguage.getSelectedIndex() != -1
-						&& lstLanguage.getItemText(lstLanguage
-								.getSelectedIndex()).equalsIgnoreCase(ISnippet.moreLanguages)) {
+						&& lstLanguage.getItemText(
+								lstLanguage.getSelectedIndex())
+								.equalsIgnoreCase(ISnippet.moreLanguages)) {
 					lstLanguage.removeItem(lstLanguage.getSelectedIndex());
 					for (String lang : moreLanguageList)
 						lstLanguage.addItem(lang);
@@ -240,7 +243,7 @@ public class CreateSnippet extends Composite {
 		String code = txtCode.getText();
 		String cat;
 		String license;
-		
+
 		if (lstLicense.getSelectedIndex() == -1) {
 			license = "";
 		} else {
@@ -270,8 +273,8 @@ public class CreateSnippet extends Composite {
 		// TODO Category and Tags
 		btCreate.setEnabled(false);
 		lblStatus.setText("Creating snippet ... ");
-		ISnippet.Util.getInstance().create(name, desc, code, language, license, cat,
-				taglist, new AsyncCallback<Void>() {
+		ISnippet.Util.getInstance().create(name, desc, code, language, license,
+				cat, taglist, new AsyncCallback<Void>() {
 
 					@Override
 					public void onSuccess(Void result) {

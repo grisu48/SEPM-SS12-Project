@@ -158,7 +158,7 @@ public class SnipArea extends Composite {
 			}
 
 			@Override
-			public void rate(int rate) {
+			public void rate(final int rate) {
 				rating.setEnabled(false);
 
 				ISnippet.Util.getInstance().rateSnippet(snippet.hash, rate,
@@ -167,6 +167,8 @@ public class SnipArea extends Composite {
 							@Override
 							public void onSuccess(Void result) {
 								rating.setEnabled(true);
+								rating.setRatingStatus(rate);
+								lblAverageRating.setText("Getting rating ... ");
 								update();
 							}
 
@@ -175,6 +177,8 @@ public class SnipArea extends Composite {
 								rating.setEnabled(false);
 								Control.myGUI.showErrorPopup("Rating failed",
 										caught);
+
+								caught.printStackTrace(System.err);
 							}
 						});
 			}
@@ -350,9 +354,9 @@ public class SnipArea extends Composite {
 		description.setText(snippet.description);
 		language.setText(snippet.language);
 		license.setText(snippet.license);
-		lblAverageRating.setText("Rating: " + snippet.rating);
+		lblAverageRating.setText("Rating: " + getRating(snippet.rating));
 
-		// TODO Update snipFull
+		rating.setRatingStatus(snippet.myRating);
 	}
 
 	/**
@@ -366,6 +370,19 @@ public class SnipArea extends Composite {
 			btnFav.setEnabled(true);
 			btnFav.setText("Add to favorites");
 		}
+	}
+
+	/**
+	 * Formats the rating
+	 * 
+	 * @param rating
+	 *            to be formatted
+	 * @return formatted string out of a rating
+	 */
+	private String getRating(float rating) {
+		int temp = (int) (rating * 10);
+		rating = (float) (temp / 10.0);
+		return Float.toString(rating);
 	}
 
 }

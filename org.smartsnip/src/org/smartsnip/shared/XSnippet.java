@@ -20,6 +20,8 @@ public class XSnippet implements IsSerializable {
 	public boolean canEdit;
 	public boolean canDelete;
 	public float rating;
+	public int myRating;
+	public boolean isOwn;
 
 	/** Used by GWT */
 	private XSnippet() {

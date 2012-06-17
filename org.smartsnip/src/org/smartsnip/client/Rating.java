@@ -130,15 +130,27 @@ public class Rating extends Composite {
 	 *            ratining, ranging from 0 to the defined maximum
 	 */
 	public void setRating(int value) {
+		rating = value;
 		if (value == 0) {
 			handler.unrate();
-			lblRating.setText("Unrated");
 		} else {
 			handler.rate(value);
+		}
+		setRatingStatus(value);
+	}
+
+	/**
+	 * Sets the current displayed rating status
+	 * 
+	 * @param rating
+	 *            status to be set
+	 */
+	public void setRatingStatus(int value) {
+		if (value == 0) {
+			lblRating.setText("Unrated");
+		} else {
 			lblRating.setText("Rated: " + value);
 		}
-		rating = value;
-
 	}
 
 	/**

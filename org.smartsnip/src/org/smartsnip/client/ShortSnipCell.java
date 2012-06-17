@@ -8,7 +8,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 public class ShortSnipCell extends AbstractCell<XSnippet> {
 
 	@Override
-	public void render(com.google.gwt.cell.client.Cell.Context context, XSnippet snip, SafeHtmlBuilder sb) {
+	public void render(com.google.gwt.cell.client.Cell.Context context,
+			XSnippet snip, SafeHtmlBuilder sb) {
 
 		// Value can be null, so do a null check..
 		if (snip == null) {
@@ -16,11 +17,15 @@ public class ShortSnipCell extends AbstractCell<XSnippet> {
 		}
 
 		sb.appendHtmlConstant("<table>");
-
 		// Add title
 		sb.appendHtmlConstant("<tr><td><b>");
 		sb.appendHtmlConstant(snip.title);
-		sb.appendHtmlConstant("</b></td></tr>");
+		sb.appendHtmlConstant("</b>");
+		if (snip.isFavorite)
+			sb.appendHtmlConstant(" <i>(Favourite)</i>");
+		if (snip.isOwn)
+			sb.appendHtmlConstant(" <i>(Own snippet)</i>");
+		sb.appendHtmlConstant("</td></tr>");
 		// Add desc
 		sb.appendHtmlConstant("<tr><td>");
 		sb.appendHtmlConstant(snip.description);
@@ -34,11 +39,24 @@ public class ShortSnipCell extends AbstractCell<XSnippet> {
 		// Add view counts
 		sb.appendHtmlConstant("<tr><td>");
 		sb.appendHtmlConstant(snip.viewcount + " views");
-		sb.appendHtmlConstant(" -- rating: " + snip.rating);
+		sb.appendHtmlConstant(" -- rating: " + getRating(snip.rating));
 		sb.appendHtmlConstant("</td></tr>");
 		sb.appendHtmlConstant("</table>");
 		// Add space
 		sb.appendHtmlConstant("<br />");
+	}
+
+	/**
+	 * Formats the rating
+	 * 
+	 * @param rating
+	 *            to be formatted
+	 * @return formatted string out of a rating
+	 */
+	private String getRating(float rating) {
+		int temp = (int) (rating * 10);
+		rating = (float) (temp / 10.0);
+		return Float.toString(rating);
 	}
 
 }
