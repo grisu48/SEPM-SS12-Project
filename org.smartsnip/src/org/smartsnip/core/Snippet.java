@@ -3,8 +3,6 @@ package org.smartsnip.core;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.shared.XCategory;
@@ -76,18 +74,27 @@ public class Snippet {
 	 * @throws IllegalArgumentException
 	 *             Thrown, if at least one of the arguments is null or empty
 	 */
-	Snippet(String owner, String name, String description, Long id, String category, String license, List<Tag> tags,
+	Snippet(String owner, String name, String description, Long id,
+			String category, String license, List<Tag> tags,
 			List<Long> comments, int viewcount, Float averageRating) {
 
 		if (owner == null || owner.isEmpty())
-			throw new IllegalArgumentException("Owner of snippet cannot be null or empty");
-		if (name == null || name.isEmpty()) throw new IllegalArgumentException("Name of snippet cannot be null");
-		if (description == null) description = "";
-		if (license == null) license = "";
-		if (tags == null) tags = new ArrayList<Tag>();
-		if (comments == null) comments = new ArrayList<Long>();
-		if (viewcount < 0) viewcount = 0;
-		if (averageRating < 0) averageRating = 0F;
+			throw new IllegalArgumentException(
+					"Owner of snippet cannot be null or empty");
+		if (name == null || name.isEmpty())
+			throw new IllegalArgumentException("Name of snippet cannot be null");
+		if (description == null)
+			description = "";
+		if (license == null)
+			license = "";
+		if (tags == null)
+			tags = new ArrayList<Tag>();
+		if (comments == null)
+			comments = new ArrayList<Long>();
+		if (viewcount < 0)
+			viewcount = 0;
+		if (averageRating < 0)
+			averageRating = 0F;
 
 		this.owner = owner;
 		this.name = name;
@@ -104,7 +111,8 @@ public class Snippet {
 
 	@Override
 	public int hashCode() {
-		if (id == null) return 0;
+		if (id == null)
+			return 0;
 		return id.hashCode();
 	}
 
@@ -139,10 +147,12 @@ public class Snippet {
 	 *             Thrown if an argument is null or empty
 	 * @return the newly created snippet
 	 */
-	public static Snippet createSnippet(String owner, String name, String description, String category, String code,
-			String language, String license, List<Tag> tags) throws IOException {
+	public static Snippet createSnippet(String owner, String name,
+			String description, String category, String code, String language,
+			String license, List<Tag> tags) throws IOException {
 
-		Snippet snippet = new Snippet(owner, name, description, null, category, license, tags, null, 0, 0F);
+		Snippet snippet = new Snippet(owner, name, description, null, category,
+				license, tags, null, 0, 0F);
 		addToDB(snippet);
 		snippet.code = Code.createCode(code, language, snippet);
 
@@ -157,13 +167,15 @@ public class Snippet {
 	 * @return true if already registered hash, otherwise false
 	 */
 	synchronized static boolean exists(Long hash) {
-		if (hash == null) return false;
+		if (hash == null)
+			return false;
 
 		try {
 			Snippet snippet = Persistence.instance.getSnippet(hash);
 			return snippet != null;
 		} catch (IOException e) {
-			System.err.println("IOException while exists(" + hash + ") " + e.getMessage());
+			System.err.println("IOException while exists(" + hash + ") "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 			return false;
 		}
@@ -178,7 +190,8 @@ public class Snippet {
 	 * @return the found snippet or null if not existsing
 	 */
 	public synchronized static Snippet getSnippet(Long hash) {
-		if (hash == null) return null;
+		if (hash == null)
+			return null;
 
 		try {
 			// TODO Fix IPersistence:
@@ -186,7 +199,8 @@ public class Snippet {
 			Snippet snippet = Persistence.instance.getSnippet(hash);
 			return snippet;
 		} catch (IOException e) {
-			System.err.println("IOException while getSnippet(" + hash + ") " + e.getMessage());
+			System.err.println("IOException while getSnippet(" + hash + ") "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -207,8 +221,10 @@ public class Snippet {
 	 *            the name to set
 	 */
 	public void setName(String name) {
-		if (name == null || name.length() == 0) return;
-		if (this.name.equals(name)) return;
+		if (name == null || name.length() == 0)
+			return;
+		if (this.name.equals(name))
+			return;
 
 		this.name = name;
 		refreshDB();
@@ -229,8 +245,10 @@ public class Snippet {
 	 *            the description to set
 	 */
 	public void setDescription(String description) {
-		if (description == null || description.length() == 0) return;
-		if (this.description.equals(description)) return;
+		if (description == null || description.length() == 0)
+			return;
+		if (this.description.equals(description))
+			return;
 
 		this.description = description;
 		refreshDB();
@@ -240,7 +258,8 @@ public class Snippet {
 	 * @return the code of the snippet
 	 */
 	public Code getCode() {
-		if (code == null) CodeNull.getInstance();
+		if (code == null)
+			CodeNull.getInstance();
 		return code;
 	}
 
@@ -253,8 +272,10 @@ public class Snippet {
 	 *            the code to set
 	 */
 	public void setCode(Code code) {
-		if (code == null || code instanceof CodeNull) return;
-		if (this.code.equals(code)) return;
+		if (code == null || code instanceof CodeNull)
+			return;
+		if (this.code.equals(code))
+			return;
 
 		this.code = code;
 		refreshDB();
@@ -280,10 +301,12 @@ public class Snippet {
 			try {
 				averageRating = Persistence.instance.getAverageRating(this);
 			} catch (IOException e) {
-				System.err.println("IOException during getting average ratining of snippet \"" + getName() + "\": "
-						+ e.getMessage());
+				System.err
+						.println("IOException during getting average ratining of snippet \""
+								+ getName() + "\": " + e.getMessage());
 				e.printStackTrace(System.err);
-				if (averageRating == null) return 0;
+				if (averageRating == null)
+					return 0;
 			}
 		}
 		return averageRating;
@@ -299,7 +322,8 @@ public class Snippet {
 	 *            the category to set
 	 */
 	public void setCategory(Category category) {
-		if (category == null || this.category.equals(category)) return;
+		if (category == null || this.category.equals(category))
+			return;
 
 		// IMPORTANT: This command must be in this order,
 		// otherwise we are in an endless loop!
@@ -324,8 +348,10 @@ public class Snippet {
 	 *            the license to set
 	 */
 	public void setLicense(String license) {
-		if (license == null || license.length() == 0) return;
-		if (this.license.equals(license)) return;
+		if (license == null || license.length() == 0)
+			return;
+		if (this.license.equals(license))
+			return;
 		this.license = license;
 		refreshDB();
 	}
@@ -346,8 +372,10 @@ public class Snippet {
 	 *            to be added to the snippet
 	 */
 	public synchronized void addTag(Tag tag) {
-		if (tag == null) return;
-		if (tags.contains(tag)) return;
+		if (tag == null)
+			return;
+		if (tags.contains(tag))
+			return;
 
 		tags.add(tag);
 		refreshDB();
@@ -361,9 +389,11 @@ public class Snippet {
 	 *            to be removed from the snippet
 	 */
 	public synchronized void removeTag(Tag tag) {
-		if (tag == null) return;
+		if (tag == null)
+			return;
 
-		if (!tags.contains(tag)) return;
+		if (!tags.contains(tag))
+			return;
 
 		tags.remove(tag);
 
@@ -380,8 +410,9 @@ public class Snippet {
 		try {
 			comments = Persistence.getInstance().getComments(this);
 		} catch (IOException e) {
-			System.err.println("IOException refreshing the comments of snippet \"" + name + "\" (id=" + id + ": "
-					+ e.getMessage());
+			System.err
+					.println("IOException refreshing the comments of snippet \""
+							+ name + "\" (id=" + id + ": " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 		return comments;
@@ -409,15 +440,18 @@ public class Snippet {
 	 */
 	public void addComment(Comment comment) {
 		try {
-			if (comment == null) return;
+			if (comment == null)
+				return;
 			if (!this.equals(comment.getSnippet()))
-				throw new IOException("Comment owner not equals snippet to be added");
+				throw new IOException(
+						"Comment owner not equals snippet to be added");
 
 			Persistence.instance.writeComment(comment, IPersistence.DB_DEFAULT);
 			refreshComments();
 
 		} catch (IOException e) {
-			Logging.printError("IOException during addComment(Comment object) " + e.getMessage(), e);
+			Logging.printError("IOException during addComment(Comment object) "
+					+ e.getMessage(), e);
 			e.printStackTrace(Logging.err);
 		}
 	}
@@ -431,7 +465,8 @@ public class Snippet {
 	 *            to be removed
 	 */
 	public void removeComment(Comment comment) {
-		if (comment == null) return;
+		if (comment == null)
+			return;
 
 		// TODO Implement this
 	}
@@ -445,12 +480,14 @@ public class Snippet {
 	 *         false
 	 */
 	public boolean hasTag(Tag tag) {
-		if (tag == null) return false;
+		if (tag == null)
+			return false;
 
 		// DO NOT USE tags.contains!
 
 		for (Tag item : tags)
-			if (item.equals(tag)) return true;
+			if (item.equals(tag))
+				return true;
 		return false;
 	}
 
@@ -469,7 +506,8 @@ public class Snippet {
 		try {
 			return Persistence.instance.getSnippetsCount();
 		} catch (IOException e) {
-			System.err.println("IOException while totalCount() " + e.getMessage());
+			System.err.println("IOException while totalCount() "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 			return 0;
 		}
@@ -482,7 +520,8 @@ public class Snippet {
 		try {
 			Persistence.instance.writeSnippet(this, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("Error writing snippet " + name + " (" + id + "): " + e.getMessage());
+			System.err.println("Error writing snippet " + name + " (" + id
+					+ "): " + e.getMessage());
 			e.printStackTrace(System.err);
 			return;
 		}
@@ -495,9 +534,11 @@ public class Snippet {
 	 *            to be added.
 	 */
 	static protected void addToDB(Snippet snippet) throws IOException {
-		if (snippet == null) return;
+		if (snippet == null)
+			return;
 
-		snippet.id = Persistence.getInstance().writeSnippet(snippet, IPersistence.DB_NEW_ONLY);
+		snippet.id = Persistence.getInstance().writeSnippet(snippet,
+				IPersistence.DB_NEW_ONLY);
 	}
 
 	/**
@@ -506,7 +547,8 @@ public class Snippet {
 	protected final synchronized void refreshComments() {
 		// XXX Ugly hack although COW-method
 		try {
-			List<Comment> comments = Persistence.getInstance().getComments(this);
+			List<Comment> comments = Persistence.getInstance()
+					.getComments(this);
 			if (comments != null) {
 				List<Long> newComments = new ArrayList<Long>(comments.size());
 				for (Comment c : comments) {
@@ -515,8 +557,9 @@ public class Snippet {
 				this.comments = newComments;
 			}
 		} catch (IOException e) {
-			System.err.println("IOException refreshing the comments of snippet \"" + name + "\" (id=" + id + ": "
-					+ e.getMessage());
+			System.err
+					.println("IOException refreshing the comments of snippet \""
+							+ name + "\" (id=" + id + ": " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -526,10 +569,12 @@ public class Snippet {
 	 */
 	public void delete() {
 		try {
-			Persistence.getInstance().removeSnippet(this, IPersistence.DB_DEFAULT);
+			Persistence.getInstance().removeSnippet(this,
+					IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("IOException during delete of snippet \"" + this.getName() + "\" (id=" + getHashId()
-					+ "): " + e.getMessage());
+			System.err.println("IOException during delete of snippet \""
+					+ this.getName() + "\" (id=" + getHashId() + "): "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -553,12 +598,22 @@ public class Snippet {
 	 * @return
 	 */
 	synchronized public XSnippet toXSnippet() {
-		XCategory category = new XCategory("Root", "Desc", "", new ArrayList<String>());
-		XSnippet result = new XSnippet(owner, id, this.getName(), description, this.category, new ArrayList<String>(
-				getStringTags()), code.getCode(), code.getFormattedHTML(), code.getLanguage(), license, viewcount);
+		XCategory category = new XCategory("Root", "Desc", "",
+				new ArrayList<String>());
+		XSnippet result = new XSnippet(owner, id, this.getName(), description,
+				this.category, new ArrayList<String>(getStringTags()),
+				code.getCode(), code.getFormattedHTML(), code.getLanguage(),
+				license, viewcount);
 
-		// Add custom variables
-		result.rating = 3; // TODO Add current user rating
+		result.rating = getAverageRating();
+
+		// Caution: Some settings (e.g. canEdit, isFavourite) are user or
+		// session specific and cannot be initialised here correctly.
+		// This initialisation is therefore considerer generic and safe but may
+		// not be correct
+		result.isFavorite = false;
+		result.canDelete = false;
+		result.canEdit = false;
 
 		return result;
 	}
@@ -590,9 +645,12 @@ public class Snippet {
 	 * @throws IOException
 	 *             Thrown, if occurring during creation of the comment
 	 */
-	public synchronized Comment addComment(String message, User owner) throws IOException {
-		if (message == null || message.isEmpty() || owner == null) return null;
-		Comment result = Comment.createComment(owner.getUsername(), this.getHashId(), message);
+	public synchronized Comment addComment(String message, User owner)
+			throws IOException {
+		if (message == null || message.isEmpty() || owner == null)
+			return null;
+		Comment result = Comment.createComment(owner.getUsername(),
+				this.getHashId(), message);
 		return result;
 	}
 
@@ -647,12 +705,15 @@ public class Snippet {
 	 *            the rating should be removed from
 	 */
 	public void unrate(User user) {
-		if (user == null) return;
+		if (user == null)
+			return;
 		try {
-			Persistence.getInstance().unRate(user, this, IPersistence.DB_DEFAULT);
+			Persistence.getInstance().unRate(user, this,
+					IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("IOException during unrating of snippet " + getHashId() + " of user "
-					+ user.getUsername() + ": " + e.getMessage());
+			System.err.println("IOException during unrating of snippet "
+					+ getHashId() + " of user " + user.getUsername() + ": "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -669,15 +730,19 @@ public class Snippet {
 	 *            between 1 and 5, the according rating is set
 	 */
 	public void setRating(User user, int rate) {
-		if (user == null || rate < 0 || rate > 5) return;
+		if (user == null || rate < 0 || rate > 5)
+			return;
 
-		if (rate == 0) unrate(user);
+		if (rate == 0)
+			unrate(user);
 		else {
 			try {
-				Persistence.getInstance().writeRating(rate, this, user, IPersistence.DB_DEFAULT);
+				Persistence.getInstance().writeRating(rate, this, user,
+						IPersistence.DB_DEFAULT);
 			} catch (IOException e) {
-				System.err.println("IOException during rating of snippet " + getHashId() + " to score=" + rate
-						+ " of user " + user.getUsername() + ": " + e.getMessage());
+				System.err.println("IOException during rating of snippet "
+						+ getHashId() + " to score=" + rate + " of user "
+						+ user.getUsername() + ": " + e.getMessage());
 				e.printStackTrace(System.err);
 			}
 		}
@@ -690,14 +755,17 @@ public class Snippet {
 		if (snippetOfDay != null) {
 			// Check if it is fresh
 			long delay = System.currentTimeMillis() - snippetOfDayRefreshTime;
-			if (delay < 1000 * 60 * 60 * 24) return snippetOfDay;
+			if (delay < 1000 * 60 * 60 * 24)
+				return snippetOfDay;
 		}
 
 		try {
-			snippetOfDay = Persistence.getInstance().getRandomSnippet(Math.random());
+			snippetOfDay = Persistence.getInstance().getRandomSnippet(
+					Math.random());
 			snippetOfDayRefreshTime = System.currentTimeMillis();
 		} catch (IOException e) {
-			System.err.println("IOException fetching randomized snippet: " + e.getMessage());
+			System.err.println("IOException fetching randomized snippet: "
+					+ e.getMessage());
 			e.printStackTrace(System.err);
 		}
 
@@ -718,17 +786,22 @@ public class Snippet {
 	 */
 	public void edit(XSnippet snippet) throws IllegalArgumentException {
 		/* Check snippet data that must be congruent */
-		if (snippet == null) return;
-		if (snippet.hash != getHashId()) throw new IllegalArgumentException("Snippet hash id doesn't match");
+		if (snippet == null)
+			return;
+		if (snippet.hash != getHashId())
+			throw new IllegalArgumentException("Snippet hash id doesn't match");
 
 		User owner = User.getUser(snippet.owner);
-		if (owner == null) throw new IllegalArgumentException("Illegal owner (not found)");
+		if (owner == null)
+			throw new IllegalArgumentException("Illegal owner (not found)");
 		Category category = Category.getCategory(snippet.category);
-		if (category == null) throw new IllegalArgumentException("Illegal category: not found");
+		if (category == null)
+			throw new IllegalArgumentException("Illegal category: not found");
 
 		// Change code only if needed to!
 		if (!this.code.equals(snippet.code)) {
-			Code newCode = Code.createCode(snippet.code, snippet.language, this);
+			Code newCode = Code
+					.createCode(snippet.code, snippet.language, this);
 
 			// TODO Code history
 
@@ -772,7 +845,8 @@ public class Snippet {
 	public static List<String> getSupportedLanguages() {
 		List<String> result;
 		try {
-			result = Persistence.instance.getLanguages(IPersistence.LANGUAGE_GET_DEFAULTS);
+			result = Persistence.instance
+					.getLanguages(IPersistence.LANGUAGE_GET_DEFAULTS);
 		} catch (IOException e) {
 			result = new ArrayList<String>(0);
 		}
@@ -785,7 +859,8 @@ public class Snippet {
 	public static List<String> getAllLanguages() {
 		List<String> result;
 		try {
-			result = Persistence.instance.getLanguages(IPersistence.LANGUAGE_GET_ALL);
+			result = Persistence.instance
+					.getLanguages(IPersistence.LANGUAGE_GET_ALL);
 		} catch (IOException e) {
 			result = new ArrayList<String>(0);
 		}
@@ -799,10 +874,22 @@ public class Snippet {
 	public static List<String> getNonDefaultLanguages() {
 		List<String> result;
 		try {
-			result = Persistence.instance.getLanguages(IPersistence.LANGUAGE_GET_OTHERS);
+			result = Persistence.instance
+					.getLanguages(IPersistence.LANGUAGE_GET_OTHERS);
 		} catch (IOException e) {
 			result = new ArrayList<String>(0);
 		}
 		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (obj instanceof Snippet) {
+			Snippet snippet = (Snippet) obj;
+			return (snippet.getHashId() == this.getHashId());
+		} else
+			return false;
 	}
 }

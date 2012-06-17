@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Snippet;
+import org.smartsnip.core.User;
 import org.smartsnip.shared.ICategory;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XCategory;
@@ -123,9 +124,20 @@ public class ICategoryImpl extends GWTSessionServlet implements ICategory {
 		if (snippets == null)
 			return null;
 
+		Session session = getSession();
+		User user = session.getUser();
+
 		List<XSnippet> result = new ArrayList<XSnippet>();
 		for (Snippet snippet : snippets) {
-			result.add(snippet.toXSnippet());
+			XSnippet xsnippet = snippet.toXSnippet();
+			if (user != null) {
+				xsnippet.isFavorite = user.isFavourite(snippet.id);
+				xsnippet.canEdit = session.getPolicy().canEditSnippet(session,
+						snippet);
+				xsnippet.canDelete = session.getPolicy().canDeleteSnippet(
+						session, snippet);
+			}
+			result.add(xsnippet);
 		}
 
 		return result;

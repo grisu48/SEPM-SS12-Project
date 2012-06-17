@@ -779,4 +779,19 @@ public class Session {
 		} else
 			return user.getFavoriteSnippets();
 	}
+
+	/**
+	 * Checks if the given snippet is in the session-only favourite snippet
+	 * list. If the given snippet is null, false is returned
+	 * 
+	 * @param snippet
+	 *            to be checked.
+	 * @return true if in the favourites, otherwise false
+	 */
+	public boolean isFavourite(Snippet snippet) {
+		if (snippet == null)
+			return false;
+
+		return favorites.contains(snippet.getHashId());
+	}
 }

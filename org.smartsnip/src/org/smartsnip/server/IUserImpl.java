@@ -103,15 +103,30 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 	 * @return a list containing {@link XSnippet} objects of the corresponding
 	 *         source objects
 	 */
-	private static List<XSnippet> toXSnippets(List<Snippet> source) {
+	private List<XSnippet> toXSnippets(List<Snippet> source) {
 		if (source == null)
 			return null;
 		List<XSnippet> result = new ArrayList<XSnippet>();
 
+		Session session = getSession();
+		User user = session.getUser();
+
 		for (Snippet snippet : source) {
-			result.add(snippet.toXSnippet());
+			XSnippet xsnippet = snippet.toXSnippet();
+
+			if (user == null)
+				xsnippet.isFavorite = session.isFavourite(snippet);
+			else
+				xsnippet.isFavorite = user.isFavourite(snippet);
+			xsnippet.canDelete = session.getPolicy().canDeleteSnippet(session,
+					snippet);
+			xsnippet.canEdit = session.getPolicy().canEditSnippet(session,
+					snippet);
+
+			result.add(xsnippet);
 		}
 
 		return result;
 	}
+
 }

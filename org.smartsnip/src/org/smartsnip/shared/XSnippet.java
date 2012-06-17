@@ -17,15 +17,18 @@ public class XSnippet implements IsSerializable {
 	public String license;
 	public int viewcount;
 	public boolean isFavorite;
-	public int rating;
+	public boolean canEdit;
+	public boolean canDelete;
+	public float rating;
 
 	/** Used by GWT */
 	private XSnippet() {
 		// this("", 0, "", "", null, null, null, "", "", "", "", 0);
 	}
 
-	public XSnippet(String owner, long hash, String title, String description, String category, ArrayList<String> tags,
-			String code, String codeHTML, String language, String license, int viewcount) {
+	public XSnippet(String owner, long hash, String title, String description,
+			String category, ArrayList<String> tags, String code,
+			String codeHTML, String language, String license, int viewcount) {
 		this.owner = owner;
 		this.hash = hash;
 		this.title = title;
@@ -40,8 +43,10 @@ public class XSnippet implements IsSerializable {
 		this.isFavorite = false;
 	}
 
-	public XSnippet(String owner, long hash, String title, String description, String category, ArrayList<String> tags,
-			String code, String codeHTML, String language, String license, int viewcount, boolean isFavorite) {
+	public XSnippet(String owner, long hash, String title, String description,
+			String category, ArrayList<String> tags, String code,
+			String codeHTML, String language, String license, int viewcount,
+			boolean isFavorite) {
 		this.owner = owner;
 		this.hash = hash;
 		this.title = title;
