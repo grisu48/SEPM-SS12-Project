@@ -588,7 +588,8 @@ public class UserFactory {
 				entity.setViewed(false);
 			}
 
-			List<DBNotification> entities = query.from(entity);
+			List<DBNotification> entities = query.from(entity,
+					IPersistence.DB_DEFAULT);
 			for (DBNotification n : entities) {
 				if (n.getSnippetId() != null) {
 					snip = new DBSnippet();
@@ -607,9 +608,9 @@ public class UserFactory {
 							SnippetFactory.fetchLicense(helper, session, snip)
 									.getShortDescr(), snip.getViewcount(), snip
 									.getRatingAverage());
-					helper.setCodeOfSnippet(snippet,
-							CodeFactory.fetchNewestCode(helper, session, snippet));
-					} else {
+					helper.setCodeOfSnippet(snippet, CodeFactory
+							.fetchNewestCode(helper, session, snippet));
+				} else {
 					snippet = null;
 				}
 				result.add(helper.createNotification(
@@ -647,7 +648,7 @@ public class UserFactory {
 
 			entity = new DBUser();
 
-			result = query.count(entity).intValue();
+			result = query.count(entity, DBQuery.QUERY_CACHEABLE).intValue();
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)

@@ -883,7 +883,7 @@ public interface IPersistence {
 	 *            the first index
 	 * @param count
 	 *            the number of entries, null if no upper limit is wanted
-	 * @param sorting
+	 * @param sortingOrder
 	 *            the result is sorted by the given order. Available are the
 	 *            sorting constants {@link #SORT_UNSORTED}, {@link #SORT_LATEST}
 	 *            , {@link #SORT_MOSTVIEWED} and {@link #SORT_BEST_RATED}.
@@ -891,7 +891,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 */
 	public List<Snippet> getAllSnippets(Integer start, Integer count,
-			int sorting) throws IOException;
+			int sortingOrder) throws IOException;
 
 	/**
 	 * Get the snippet with the given id or null, if not existing.
@@ -1195,7 +1195,7 @@ public interface IPersistence {
 	 *            the first index
 	 * @param count
 	 *            the number of entries, null if no upper limit is wanted
-	 * @param sorting
+	 * @param sortingOrder
 	 *            the result is sorted by the given order. Available are the
 	 *            sorting constants {@link #SORT_UNSORTED}, {@link #SORT_LATEST}
 	 *            , {@link #SORT_MOSTVIEWED} and {@link #SORT_BEST_RATED}.
@@ -1204,7 +1204,7 @@ public interface IPersistence {
 	 *             at a problem retrieving the data
 	 */
 	public List<Snippet> search(String searchString, Integer start,
-			Integer count, int sorting) throws IOException;
+			Integer count, int sortingOrder) throws IOException;
 
 	/**
 	 * Get the number of users which are currently in the database.

@@ -183,8 +183,8 @@ public class TagFactory {
 			DBQuery query = new DBQuery(session);
 			DBTag entity = new DBTag();
 
-			for (Iterator<DBTag> iterator = query.iterate(entity, start, count); iterator
-					.hasNext();) {
+			for (Iterator<DBTag> iterator = query.iterate(entity, start, count,
+					DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 				entity = iterator.next();
 				result.add(helper.createTag(entity.getName()));
 			}
@@ -219,7 +219,7 @@ public class TagFactory {
 
 			entity = new DBTag();
 
-			result = query.count(entity).intValue();
+			result = query.count(entity, DBQuery.QUERY_CACHEABLE).intValue();
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -249,13 +249,14 @@ public class TagFactory {
 		DBTag tag;
 		List<Tag> result = new ArrayList<Tag>();
 		relationship.setTagSnippetId(snippetId, null);
-		for (Iterator<DBRelTagSnippet> itr = query.iterate(relationship); itr
-				.hasNext();) {
+		for (Iterator<DBRelTagSnippet> itr = query.iterate(relationship,
+				DBQuery.QUERY_CACHEABLE); itr.hasNext();) {
 			relationship = itr.next();
 			query = new DBQuery(session);
 			tag = new DBTag();
 			tag.setName(relationship.getTagSnippetId().getTagName());
-			tag = query.fromSingle(tag, DBQuery.QUERY_NOT_NULL);
+			tag = query.fromSingle(tag, DBQuery.QUERY_NOT_NULL
+					| DBQuery.QUERY_CACHEABLE);
 			result.add(helper.createTag(tag.getName()));
 		}
 		return result;
@@ -284,7 +285,8 @@ public class TagFactory {
 			DBRelTagSnippet entity = new DBRelTagSnippet();
 			DBTag oldTag = new DBTag();
 			entity.setTagSnippetId(snippetId, null);
-			List<DBRelTagSnippet> oldTags = query.from(entity);
+			List<DBRelTagSnippet> oldTags = query.from(entity,
+					IPersistence.DB_DEFAULT);
 
 			for (Tag tag : tags) {
 				query.reset();

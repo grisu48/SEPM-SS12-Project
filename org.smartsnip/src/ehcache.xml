@@ -10,15 +10,38 @@
 	
 	<defaultCache
 		maxElementsInMemory="5000"
+		eternal="false"
+		timeToLiveSeconds="6000"
+		overflowToDisk="true"
+	/>
+	
+	<cache
+		name="EntityCache"
+		maxElementsInMemory="5000"
+		eternal="false"
+		timeToLiveSeconds="2600000"
+		overflowToDisk="true"
+	/>
+	
+	<cache
+		name="LanguagesCache"
+		maxElementsInMemory="50"
+		eternal="true"
+		overflowToDisk="true"
+	/>
+	
+	<cache
+		name="LicensesCache"
+		maxElementsInMemory="50"
 		eternal="true"
 		overflowToDisk="true"
 	/>
 	
 	<cache
 		name="org.hibernate.cache.internal.StandardQueryCache"
-		maxEntriesLocalHeap="5"
+		maxEntriesLocalHeap="50"
 		eternal="false"
-		timeToLiveSeconds="120"
+		timeToLiveSeconds="600"
 		overflowToDisk="true"
 	/>
 
@@ -29,7 +52,7 @@
 		overflowToDisk="true"
 	/>
 
-	<!-- cache name="de.ordix.BigObject"
+	<!-- cache name="BigObject"
 		maxElementsInMemory="10"
 		eternal="false"
 		timeToIdleSeconds="300"

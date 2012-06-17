@@ -494,9 +494,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 * @see org.smartsnip.persistence.IPersistence#getAllSnippets(java.lang.Integer, java.lang.Integer, int)
 	 */
 	@Override
-	public List<Snippet> getAllSnippets(Integer start, Integer count, int sorting)
+	public List<Snippet> getAllSnippets(Integer start, Integer count, int sortingOrder)
 			throws IOException {
-		return SnippetFactory.getAllSnippets(start, count, sorting);
+		return SnippetFactory.getAllSnippets(start, count, sortingOrder);
 	}
 
 	/**
@@ -673,8 +673,8 @@ public class SqlPersistenceImpl implements IPersistence {
 	 */
 	@Override
 	public List<Snippet> search(String searchString, Integer start,
-			Integer count, int sorting) throws IOException {
-		return SnippetFactory.search(searchString, start, count, sorting);
+			Integer count, int sortingOrder) throws IOException {
+		return SnippetFactory.search(searchString, start, count, sortingOrder);
 	}
 
 	/**

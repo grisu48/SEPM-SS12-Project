@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
@@ -369,7 +370,7 @@ public class SnippetFactory {
 				tagNames = new ArrayList<String>();
 				DBRelTagSnippet tagRef = new DBRelTagSnippet();
 				tagRef.setTagSnippetId(snippet.getHashId(), null);
-				for (Iterator<DBRelTagSnippet> itr = query.iterate(tagRef); itr
+				for (Iterator<DBRelTagSnippet> itr = query.iterate(tagRef, IPersistence.DB_DEFAULT); itr
 						.hasNext();) {
 					tagNames.add(itr.next().getTagSnippetId().getTagName());
 				}
@@ -454,7 +455,7 @@ public class SnippetFactory {
 			Snippet snippet;
 			entity.setOwner(owner.getUsername());
 
-			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
+			for (Iterator<DBSnippet> iterator = query.iterate(entity, DBQuery.QUERY_CACHEABLE); iterator
 					.hasNext();) {
 				entity = iterator.next();
 
@@ -507,7 +508,7 @@ public class SnippetFactory {
 
 			DBSnippet snip;
 			DBQuery snipQuery;
-			for (Iterator<DBFavourite> iterator = query.iterate(entity); iterator
+			for (Iterator<DBFavourite> iterator = query.iterate(entity, IPersistence.DB_DEFAULT); iterator
 					.hasNext();) {
 				entity = iterator.next();
 				snip = new DBSnippet();
@@ -572,7 +573,7 @@ public class SnippetFactory {
 				query = new DBQuery(session);
 				entity = new DBRelTagSnippet();
 				entity.setTagSnippetId(null, tag.toString());
-				for (Iterator<DBRelTagSnippet> itr = query.iterate(entity); itr
+				for (Iterator<DBRelTagSnippet> itr = query.iterate(entity, DBQuery.QUERY_CACHEABLE); itr
 						.hasNext();) {
 					snippetIds.add(itr.next().getTagSnippetId().getSnippetId());
 				}
@@ -582,7 +583,7 @@ public class SnippetFactory {
 				snip = new DBSnippet();
 				snip.setSnippetId(id);
 				query = new DBQuery(session);
-				snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
+				snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_CACHEABLE);
 
 				snippet = helper.createSnippet(snip.getSnippetId(),
 						snip.getOwner(), snip.getHeadline(),
@@ -637,14 +638,14 @@ public class SnippetFactory {
 			DBQuery query = new DBQuery(session);
 			DBCategory cat = new DBCategory();
 			cat.setName(category.getName());
-			cat = query.fromSingle(cat, DBQuery.QUERY_NOT_NULL);
+			cat = query.fromSingle(cat, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_CACHEABLE);
 
 			query = new DBQuery(session);
 			DBSnippet entity = new DBSnippet();
 			Snippet snippet;
 			entity.setCategoryId(cat.getCategoryId());
 
-			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
+			for (Iterator<DBSnippet> iterator = query.iterate(entity, DBQuery.QUERY_CACHEABLE); iterator
 					.hasNext();) {
 				entity = iterator.next();
 
@@ -693,7 +694,7 @@ public class SnippetFactory {
 			DBQuery query = new DBQuery(session);
 			DBSnippet entity = new DBSnippet();
 			entity.setSnippetId(id);
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_CACHEABLE);
 
 			result = helper
 					.createSnippet(entity.getSnippetId(), entity.getOwner(),
@@ -725,14 +726,14 @@ public class SnippetFactory {
 	 * 
 	 * @param start
 	 * @param count
-	 * @param sorting
+	 * @param sortingOrder
 	 * @return all snippets of the given range
 	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllSnippets(Integer,
 	 *      Integer, int)
 	 */
 	static List<Snippet> getAllSnippets(Integer start, Integer count,
-			int sorting) throws IOException {
+			int sortingOrder) throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		int initialSize = 10;
@@ -742,7 +743,7 @@ public class SnippetFactory {
 		List<Snippet> result = new ArrayList<Snippet>(initialSize);
 
 		// set the sorting order
-		createSortingCriteria(DBSnippet.class, sorting, session);
+		addSortingCriteria(session.createCriteria(DBSnippet.class), sortingOrder);
 
 		Transaction tx = null;
 		try {
@@ -752,7 +753,7 @@ public class SnippetFactory {
 			DBSnippet entity = new DBSnippet();
 			Snippet snippet;
 
-			for (Iterator<DBSnippet> iterator = query.iterate(entity); iterator
+			for (Iterator<DBSnippet> iterator = query.iterate(entity, DBQuery.QUERY_CACHEABLE); iterator
 					.hasNext();) {
 				entity = iterator.next();
 
@@ -806,10 +807,10 @@ public class SnippetFactory {
 			tx = session.beginTransaction();
 			DBQuery query = new DBQuery(session);
 			DBSnippet entity = new DBSnippet();
-			double offset = (query.count(entity).doubleValue() - 0.5) * random;
+			double offset = (query.count(entity, IPersistence.DB_DEFAULT).doubleValue() - 0.5) * random;
 			query.reset();
 			List<DBSnippet> snips = query.from(entity,
-					new Double(offset).intValue(), 1);
+					new Double(offset).intValue(), 1, IPersistence.DB_DEFAULT);
 			if (snips != null && !snips.isEmpty()) {
 				entity = snips.get(0);
 				result = helper.createSnippet(entity.getSnippetId(), entity
@@ -855,7 +856,7 @@ public class SnippetFactory {
 			DBQuery query = new DBQuery(session);
 			entity = new DBLicense();
 			entity.setShortDescr(shortDescription);
-			entity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE | DBQuery.QUERY_CACHEABLE);
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -890,7 +891,7 @@ public class SnippetFactory {
 			entity.setRatingId(snippet.getHashId(), null);
 
 			DBUser dbUser;
-			for (Iterator<DBRating> iterator = query.iterate(entity); iterator
+			for (Iterator<DBRating> iterator = query.iterate(entity, IPersistence.DB_DEFAULT); iterator
 					.hasNext();) {
 				entity = iterator.next();
 
@@ -953,7 +954,7 @@ public class SnippetFactory {
 	 * @param searchString
 	 * @param start
 	 * @param count
-	 * @param sorting
+	 * @param sortingOrder
 	 *            the sorting order: one of the constants
 	 *            {@link IPersistence#SORT_UNSORTED} ,
 	 *            {@link IPersistence#SORT_LATEST} ,
@@ -965,18 +966,19 @@ public class SnippetFactory {
 	 *      java.lang.Integer, java.lang.Integer, int)
 	 */
 	static List<Snippet> search(String searchString, Integer start,
-			Integer count, int sorting) throws IOException {
+			Integer count, int sortingOrder) throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		List<Snippet> result = new ArrayList<Snippet>();
 
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
-		// set the sorting order
-		createSortingCriteria(DBSnippet.class, sorting, fullTextSession);
+
+		addSortingCriteria(session.createCriteria(DBSnippet.class), sortingOrder);
 
 		Transaction tx = null;
 		try {
-			tx = fullTextSession.beginTransaction(); //TODO include tags, categories
+			tx = fullTextSession.beginTransaction(); // TODO include tags,
+														// categories
 
 			// lucene full text query
 			QueryBuilder builder = fullTextSession.getSearchFactory()
@@ -989,7 +991,7 @@ public class SnippetFactory {
 				Logger log = Logger.getLogger(SnippetFactory.class);
 				log.trace("Search with no results: " + searchString, se);
 			}
-			
+
 			if (ftQuery != null) {
 				// wrap Lucene query in a org.hibernate.Query
 				org.hibernate.Query query = fullTextSession
@@ -1000,6 +1002,7 @@ public class SnippetFactory {
 				if (count != null && count > 0) {
 					query.setFetchSize(count);
 				}
+				query.setCacheable(true);
 
 				// execute search and build Snippets
 				DBSnippet entity;
@@ -1054,7 +1057,7 @@ public class SnippetFactory {
 
 			entity = new DBSnippet();
 
-			result = query.count(entity).intValue();
+			result = query.count(entity, DBQuery.QUERY_CACHEABLE).intValue();
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -1082,35 +1085,35 @@ public class SnippetFactory {
 		DBQuery query = new DBQuery(session);
 		DBLicense entity = new DBLicense();
 		entity.setLicenseId(snippet.getLicenseId());
-		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_CACHEABLE);
 		return entity;
 	}
 
 	/**
 	 * Helper method to define the sorting order of a DB-query.
 	 * 
-	 * @param clazz
-	 *            the entity class which is the criteria for
+	 * @param criteria
+	 *            an {@link org.hibernate.Criteria} object according to the
+	 *            active session.
 	 * @param sorting
 	 *            the sorting type
-	 * @param session
-	 *            the session which builds the query
+	 * @return the criteria looped through for chaining calls
 	 */
-	private static void createSortingCriteria(Class<?> clazz, int sorting,
-			Session session) {
+	private static Criteria addSortingCriteria(Criteria criteria, int sorting) {
 		switch (sorting) {
 		case IPersistence.SORT_LATEST:
-			session.createCriteria(clazz).addOrder(Order.desc("lastEdited"));
+			criteria.addOrder(Order.desc("lastEdited"));
 			break;
 		case IPersistence.SORT_MOSTVIEWED:
-			session.createCriteria(clazz).addOrder(Order.desc("viewcount"));
+			criteria.addOrder(Order.desc("viewcount"));
 			break;
 		case IPersistence.SORT_BEST_RATED:
-			session.createCriteria(clazz).addOrder(Order.desc("ratingAverage"));
+			criteria.addOrder(Order.desc("ratingAverage"));
 			break;
 		default:
 			// case IPersistence.SORT_UNSORTED
 			break;
 		}
+		return criteria;
 	}
 }

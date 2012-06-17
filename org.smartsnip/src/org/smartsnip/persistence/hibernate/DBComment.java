@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 
 /**
@@ -23,6 +25,7 @@ import org.hibernate.annotations.DynamicInsert;
  */
 @Entity
 @DynamicInsert
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="EntityCache")
 @Table(name = "Comment")
 public class DBComment {
 

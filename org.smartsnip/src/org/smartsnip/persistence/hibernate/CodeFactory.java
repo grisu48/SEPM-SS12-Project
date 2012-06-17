@@ -338,8 +338,8 @@ public class CodeFactory {
 				// don't set isDefault
 				break;
 			}
-			for (Iterator<DBLanguage> iterator = query.iterate(entity); iterator
-					.hasNext();) {
+			for (Iterator<DBLanguage> iterator = query.iterate(entity,
+					DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 				entity = iterator.next();
 				result.add(entity.getLanguage());
 			}
@@ -376,7 +376,8 @@ public class CodeFactory {
 			entity = new DBLanguage();
 			entity.setLanguage(language);
 
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+					| DBQuery.QUERY_CACHEABLE);
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -407,8 +408,8 @@ public class CodeFactory {
 		DBCode entity = new DBCode();
 		List<Code> result = new ArrayList<Code>();
 		entity.setSnippetId(snippet.getHashId());
-		System.err.println("entity: " + entity.getSnippetId());
-		for (Iterator<DBCode> itr = query.iterate(entity); itr.hasNext();) {
+		for (Iterator<DBCode> itr = query.iterate(entity,
+				DBQuery.QUERY_CACHEABLE); itr.hasNext();) {
 			entity = itr.next();
 			result.add(helper.createCode(entity.getCodeId(), entity.getFile(),
 					entity.getLanguage(), snippet, entity.getVersion(),
@@ -435,7 +436,8 @@ public class CodeFactory {
 		DBQuery query = new DBQuery(session);
 		DBCode entity = new DBCode();
 		entity.setSnippetId(snippet.getHashId());
-		entity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE);
+		entity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE
+				| DBQuery.QUERY_CACHEABLE);
 		Code result = null;
 		if (entity != null) {
 			result = helper.createCode(entity.getCodeId(), entity.getFile(),

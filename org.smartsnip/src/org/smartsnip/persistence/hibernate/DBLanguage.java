@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 
 /**
@@ -18,6 +20,7 @@ import org.hibernate.annotations.DynamicInsert;
  */
 @Entity
 @DynamicInsert
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="LanguagesCache")
 @Table(name = "Language")
 public class DBLanguage {
 

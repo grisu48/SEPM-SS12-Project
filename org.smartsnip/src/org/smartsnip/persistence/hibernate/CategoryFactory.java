@@ -155,7 +155,9 @@ public class CategoryFactory {
 				query.reset();
 				query.addParameter("categoryId", cat.getCategoryId());
 				query.addParameter("parentId", cat.getParentId());
-				query.customQueryWrite("update DBCategory set parentId = :parentId where parentId = :categoryId");
+				query.customQueryWrite(
+						"update DBCategory set parentId = :parentId where parentId = :categoryId",
+						IPersistence.DB_DEFAULT);
 			}
 
 			// remove the category
@@ -192,19 +194,19 @@ public class CategoryFactory {
 			String parentName;
 
 			Map<Long, DBCategory> categoryMap = new TreeMap<Long, DBCategory>();
-			for (Iterator<DBCategory> iterator = query.iterate(entity); iterator
-					.hasNext();) {
+			for (Iterator<DBCategory> iterator = query.iterate(entity,
+					DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 				entity = iterator.next();
 				categoryMap.put(entity.getCategoryId(), entity);
 			}
-			for(Map.Entry<Long, DBCategory> entry: categoryMap.entrySet()) {
-				if((parent = entry.getValue().getParentId()) != null) {
+			for (Map.Entry<Long, DBCategory> entry : categoryMap.entrySet()) {
+				if ((parent = entry.getValue().getParentId()) != null) {
 					parentName = categoryMap.get(parent).getName();
 				} else {
 					parentName = null;
 				}
 				result.add(helper.createCategory(entry.getValue().getName(),
-								entry.getValue().getDescription(), parentName));				
+						entry.getValue().getDescription(), parentName));
 			}
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -237,12 +239,14 @@ public class CategoryFactory {
 
 			DBSnippet snip = new DBSnippet();
 			snip.setSnippetId(snippet.getHashId());
-			snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL);
+			snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL
+					| DBQuery.QUERY_CACHEABLE);
 
 			query = new DBQuery(session);
 			entity = new DBCategory();
 			entity.setCategoryId(snip.getCategoryId());
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+					| DBQuery.QUERY_CACHEABLE);
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -277,7 +281,8 @@ public class CategoryFactory {
 
 			entity = new DBCategory();
 			entity.setName(name);
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+					| DBQuery.QUERY_CACHEABLE);
 
 			result = helper.createCategory(entity.getName(),
 					entity.getDescription(),
@@ -313,13 +318,15 @@ public class CategoryFactory {
 
 			entity = new DBCategory();
 			entity.setName(category.getName());
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+					| DBQuery.QUERY_CACHEABLE);
 			Long id = entity.getParentId();
 
 			query = new DBQuery(session);
 			entity = new DBCategory();
 			entity.setCategoryId(id);
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+					| DBQuery.QUERY_CACHEABLE);
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -355,14 +362,15 @@ public class CategoryFactory {
 
 			entity = new DBCategory();
 			entity.setName(category.getName());
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+					| DBQuery.QUERY_CACHEABLE);
 			Long id = entity.getCategoryId();
 
 			query.reset(); // new query
 			entity = new DBCategory();
 			entity.setParentId(id);
-			for (Iterator<DBCategory> iterator = query.iterate(entity); iterator
-					.hasNext();) {
+			for (Iterator<DBCategory> iterator = query.iterate(entity,
+					DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 				entity = iterator.next();
 				result.add(helper.createCategory(entity.getName(),
 						entity.getDescription(), category.getName()));
@@ -398,7 +406,7 @@ public class CategoryFactory {
 
 			entity = new DBCategory();
 
-			result = query.count(entity).intValue();
+			result = query.count(entity, DBQuery.QUERY_CACHEABLE).intValue();
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -425,7 +433,8 @@ public class CategoryFactory {
 		DBQuery query = new DBQuery(session);
 		DBCategory entity = new DBCategory();
 		entity.setCategoryId(snippet.getCategoryId());
-		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+				| DBQuery.QUERY_CACHEABLE);
 		return entity;
 	}
 
@@ -444,7 +453,8 @@ public class CategoryFactory {
 		DBQuery query = new DBQuery(session);
 		DBCategory entity = new DBCategory();
 		entity.setName(snippet.getCategoryName());
-		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+				| DBQuery.QUERY_CACHEABLE);
 		return entity;
 	}
 
@@ -466,7 +476,8 @@ public class CategoryFactory {
 		DBQuery query = new DBQuery(session);
 		DBCategory entity = new DBCategory();
 		entity.setCategoryId(category.getParentId());
-		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+				| DBQuery.QUERY_CACHEABLE);
 		return helper.createCategory(entity.getName(), entity.getDescription(),
 				null); // flat object: no parent of the parent
 	}
@@ -488,11 +499,13 @@ public class CategoryFactory {
 		DBQuery query = new DBQuery(session);
 		DBCategory entity = new DBCategory();
 		entity.setCategoryId(category.getParentId());
-		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+				| DBQuery.QUERY_CACHEABLE);
 
 		DBCategory parent = new DBCategory();
 		parent.setCategoryId(entity.getParentId());
-		parent = query.fromSingle(parent, DBQuery.QUERY_NOT_NULL);
+		parent = query.fromSingle(parent, DBQuery.QUERY_NOT_NULL
+				| DBQuery.QUERY_CACHEABLE);
 
 		return helper.createCategory(entity.getName(), entity.getDescription(),
 				parent.getName());

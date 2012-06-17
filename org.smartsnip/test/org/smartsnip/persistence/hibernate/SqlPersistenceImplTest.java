@@ -701,7 +701,7 @@ public class SqlPersistenceImplTest {
 			query.addParameter("name3", "_test_child");
 			query.initialize();
 			Query hibQuery = query
-					.buildCustomQuery("from DBCategory where name = :name1 or name = :name2 or name = :name3");
+					.buildCustomQuery("from DBCategory where name = :name1 or name = :name2 or name = :name3", IPersistence.DB_DEFAULT);
 			entities = hibQuery.list();
 		} finally {
 			DBSessionFactory.close(session);
@@ -741,7 +741,7 @@ public class SqlPersistenceImplTest {
 			query.addParameter("name3", "_test_child");
 			query.initialize();
 			Query hibQuery = query
-					.buildCustomQuery("from DBCategory where name = :name1 or name = :name2 or name = :name3");
+					.buildCustomQuery("from DBCategory where name = :name1 or name = :name2 or name = :name3", IPersistence.DB_DEFAULT);
 			entities = hibQuery.list();
 		} finally {
 			DBSessionFactory.close(session);

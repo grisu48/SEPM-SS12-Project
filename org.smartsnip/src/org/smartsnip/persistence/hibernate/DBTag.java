@@ -6,6 +6,8 @@ package org.smartsnip.persistence.hibernate;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
@@ -23,6 +25,7 @@ import org.hibernate.search.annotations.Store;
 @Entity
 @Indexed
 @DynamicInsert
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="EntityCache")
 @Table(name = "Tag")
 class DBTag {
 	@Id

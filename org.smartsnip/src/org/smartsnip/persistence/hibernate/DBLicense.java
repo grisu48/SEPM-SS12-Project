@@ -6,6 +6,8 @@ package org.smartsnip.persistence.hibernate;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.NaturalId;
 
@@ -17,6 +19,7 @@ import org.hibernate.annotations.NaturalId;
  */
 @Entity
 @DynamicInsert
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="LicensesCache")
 @Table(name = "License")
 class DBLicense {
 	@Id

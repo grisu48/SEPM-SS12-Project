@@ -89,7 +89,8 @@ public class CommentFactory {
 			for (Comment comment : comments) {
 				query = new DBQuery(session);
 				entity = new DBComment();
-				entity.setCommentId(comment.getHashID()); // commentId is read-only
+				entity.setCommentId(comment.getHashID()); // commentId is
+															// read-only
 				entity.setSnippetId(comment.getSnippetId());
 				entity.setMessage(comment.getMessage());
 				// createdAt is read-only
@@ -307,7 +308,8 @@ public class CommentFactory {
 
 			entity = new DBComment();
 			entity.setCommentId(id);
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+					| DBQuery.QUERY_CACHEABLE);
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -443,8 +445,8 @@ public class CommentFactory {
 		entity.setSnippetId(snippetId);
 		List<Comment> result = new ArrayList<Comment>();
 
-		for (Iterator<DBComment> iterator = query.iterate(entity); iterator
-				.hasNext();) {
+		for (Iterator<DBComment> iterator = query.iterate(entity,
+				DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 			entity = iterator.next();
 			result.add(helper.createComment(entity.getUserName(),
 					entity.getSnippetId(), entity.getMessage(),
@@ -469,8 +471,8 @@ public class CommentFactory {
 		entity.setSnippetId(snippetId);
 		List<Long> result = new ArrayList<Long>();
 
-		for (Iterator<DBComment> iterator = query.iterate(entity); iterator
-				.hasNext();) {
+		for (Iterator<DBComment> iterator = query.iterate(entity,
+				DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 			result.add(iterator.next().getCommentId());
 		}
 		return result;
