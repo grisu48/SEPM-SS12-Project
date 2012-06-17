@@ -33,6 +33,7 @@ public class SnipArea extends Composite {
 	private final Label language;
 	private final Label lblViewCount;
 	private final Label license;
+	private final Label lblOwner;
 
 	private final Anchor anchUpload;
 	private final Anchor anchDownload;
@@ -63,7 +64,7 @@ public class SnipArea extends Composite {
 		scrPanel.setWidth("700px");
 		scrPanel.setStyleName("scrollSnippet");
 		anchorGrid = new Grid(3, 1);
-		properties = new Grid(2, 6);
+		properties = new Grid(2, 7);
 		properties.setStyleName("properties");
 		title = new Label(mySnip.title);
 		title.setStyleName("h3");
@@ -75,6 +76,9 @@ public class SnipArea extends Composite {
 		lblViewCount.setStyleName("txt");
 		license = new Label(mySnip.license);
 		license.setStyleName("txt");
+		lblOwner = new Label(getOwnerText(mySnip));
+		lblOwner.setStyleName("txt");
+
 		snipFull = new HTMLPanel(mySnip.codeHTML);
 		snipFull.setWidth("680px");
 		snipFull.setStyleName("snipHtml");
@@ -99,6 +103,8 @@ public class SnipArea extends Composite {
 		properties.setWidget(1, 2, lblViewCount);
 		properties.setWidget(0, 3, new Label("Average Rating"));
 		properties.setWidget(1, 3, lblAverageRating);
+		properties.setWidget(0, 4, new Label("Owner"));
+		properties.setWidget(1, 4, lblOwner);
 
 		btnFav.addClickHandler(new ClickHandler() {
 			@Override
@@ -193,6 +199,7 @@ public class SnipArea extends Composite {
 			}
 		});
 
+		anchDownload.setVisible(false);
 		anchDownload.setStyleName("toollink");
 		anchDownload.addClickHandler(new ClickHandler() {
 
@@ -359,7 +366,9 @@ public class SnipArea extends Composite {
 		language.setText(snippet.language);
 		license.setText(snippet.license);
 		lblAverageRating.setText("Rating: " + getRating(snippet.rating));
+		lblViewCount.setText(snippet.viewcount + "");
 		rating.setRatingStatus(snippet.myRating);
+		lblOwner.setText(getOwnerText(snippet));
 
 		btnEdit.setVisible(snippet.canEdit);
 		btnDelete.setVisible(snippet.canDelete);
@@ -392,6 +401,29 @@ public class SnipArea extends Composite {
 		int temp = (int) (rating * 10);
 		rating = (float) (temp / 10.0);
 		return Float.toString(rating);
+	}
+
+	/**
+	 * Gets the owner description based on a xsnippet
+	 * 
+	 * @param mySnip
+	 *            xsnippet the text is created from
+	 * @return description for the owner field
+	 */
+	private String getOwnerText(XSnippet mySnip) {
+		if (mySnip == null)
+			return "";
+		if (mySnip.isOwn)
+			return mySnip.owner + " (You)";
+		else
+			return mySnip.owner;
+	}
+
+	/**
+	 * Refreshes the control
+	 */
+	public void refresh() {
+		update();
 	}
 
 }

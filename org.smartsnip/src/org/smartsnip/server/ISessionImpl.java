@@ -139,6 +139,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 			List<String> categories, SearchSorting sorting, int start,
 			int count, final int id) {
 
+		long time = System.currentTimeMillis();
 		XSearch result = new XSearch();
 		result.snippets = new ArrayList<XSnippet>();
 		result.searchString = searchString;
@@ -191,9 +192,15 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 		}
 
 		result.totalresults = search.getTotalResults();
+		time = System.currentTimeMillis() - time;
 		if (result.totalresults > 0) {
-			logInfo("Search for: \"" + searchString + "\". "
-					+ result.totalresults + " results total");
+			if (searchString == null || searchString.isEmpty()) {
+				logInfo("Search for all Snippets. " + result.totalresults
+						+ " results total found in " + time + " ms");
+			} else
+				logInfo("Search for: \"" + searchString + "\". "
+						+ result.totalresults + " results total found in "
+						+ time + " ms");
 		}
 
 		// Log search

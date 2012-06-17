@@ -2,11 +2,9 @@ package org.smartsnip.client;
 
 import java.util.List;
 
-import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -39,26 +37,6 @@ public class ResultArea extends Composite {
 						if (selected != null) {
 							Control control = Control.getInstance();
 							control.changeToSnipPage(selected);
-
-							// Workaround, to fix the problem that the server is
-							// not
-							// informed about a viewed snippet
-							// XXX Ugly hack, but till now no other solution
-							// found ...
-
-							ISnippet.Util.getInstance().increaseViewCounter(
-									selected.hash, new AsyncCallback<Void>() {
-
-										@Override
-										public void onSuccess(Void result) {
-											// Ignore
-										}
-
-										@Override
-										public void onFailure(Throwable caught) {
-											// Ignore
-										}
-									});
 						}
 					}
 				});

@@ -2,6 +2,7 @@ package org.smartsnip.client;
 
 import java.util.List;
 
+import org.smartsnip.client.GUI.Page;
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.XSearch;
 
@@ -29,7 +30,7 @@ public class SearchArea extends Composite {
 	private String status;
 
 	/** Search duration timer */
-	private long searchDuration = 0L;
+	private final long searchDuration = 0L;
 
 	/** Callback when the search returns new results */
 	private final AsyncCallback<XSearch> searchCallback = new AsyncCallback<XSearch>() {
@@ -68,7 +69,7 @@ public class SearchArea extends Composite {
 		btSnippetOfDay.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				control.showSnippetOfDay();
+				control.changeSite(Page.PAGE_SnippetOfDay);
 			}
 		});
 
@@ -140,25 +141,27 @@ public class SearchArea extends Composite {
 	 * Refreshes the suggestions in the search field
 	 */
 	public void updateSuggestions() {
-		ISnippet.Util.getInstance().getSearchSuggestions(new AsyncCallback<List<String>>() {
+		ISnippet.Util.getInstance().getSearchSuggestions(
+				new AsyncCallback<List<String>>() {
 
-			@Override
-			public void onSuccess(List<String> result) {
-				final int maxSuggestions = 10;
-				int count = 0;
+					@Override
+					public void onSuccess(List<String> result) {
+						final int maxSuggestions = 10;
+						int count = 0;
 
-				oracle.clear();
-				for (String suggestion : result) {
-					oracle.add(suggestion);
-					if (count++ > maxSuggestions) break;
-				}
+						oracle.clear();
+						for (String suggestion : result) {
+							oracle.add(suggestion);
+							if (count++ > maxSuggestions)
+								break;
+						}
 
-			}
+					}
 
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-		});
+					@Override
+					public void onFailure(Throwable caught) {
+					}
+				});
 
 	}
 

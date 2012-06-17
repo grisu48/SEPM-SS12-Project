@@ -113,4 +113,11 @@ public class PersonalArea extends Composite {
 					}
 				});
 	}
+
+	/**
+	 * Refreshes the component
+	 */
+	public void refresh() {
+		updateSnippets();
+	}
 }

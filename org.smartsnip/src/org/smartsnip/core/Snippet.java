@@ -422,7 +422,7 @@ public class Snippet {
 	/**
 	 * @return the counts of view
 	 */
-	public int getViewcount() {
+	public synchronized int getViewcount() {
 		return viewcount;
 	}
 
@@ -603,7 +603,7 @@ public class Snippet {
 		XSnippet result = new XSnippet(owner, id, this.getName(), description,
 				this.category, new ArrayList<String>(getStringTags()),
 				code.getCode(), code.getFormattedHTML(), code.getLanguage(),
-				license, viewcount);
+				license, getViewcount());
 
 		result.rating = getAverageRating();
 

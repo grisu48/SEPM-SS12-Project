@@ -27,6 +27,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class GUI {
 
 	/**
+	 * Enumeration of all available pages
+	 * 
+	 */
+	public enum Page {
+		PAGE_Impressum, PAGE_Login, PAGE_Register, PAGE_User, PAGE_Contact, PAGE_CreateSnippet, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet
+	}
+
+	/**
 	 * This inner class is used for return results in instantiated popup dialogs
 	 * 
 	 * @param <E>
@@ -78,6 +86,9 @@ public class GUI {
 	HorizontalPanel dataPanel = new HorizontalPanel();
 	// Create footerPanel
 	SimplePanel footerPanel = new SimplePanel();
+
+	/** The current displayed page */
+	private Page currentPage = Page.PAGE_SnippetOfDay;
 
 	/**
 	 * This callback registers itself in the constructor and handles the update
@@ -217,6 +228,7 @@ public class GUI {
 	 * 
 	 */
 	public void showSearchPage() {
+		currentPage = Page.PAGE_Search;
 
 		dataPanel.clear();
 
@@ -245,6 +257,8 @@ public class GUI {
 	 * 
 	 */
 	public void showSnipPage(XSnippet snip) {
+		currentPage = Page.PAGE_Snippet;
+
 		dataPanel.clear();
 		mySnipArea = new SnipArea(snip);
 		mySnipArea.update(); // Updade increases viewcounter
@@ -258,6 +272,8 @@ public class GUI {
 	 * 
 	 */
 	public void showPersonalPage() {
+		currentPage = Page.PAGE_User;
+
 		dataPanel.clear();
 		myPersonalArea = new PersonalArea();
 		VerticalPanel vertPanel = new VerticalPanel();
@@ -271,6 +287,8 @@ public class GUI {
 	 * 
 	 */
 	public void showLoginPopup() {
+		Page lastPage = currentPage;
+		currentPage = Page.PAGE_Login;
 
 		Window.scrollTo(0, 0);
 		PopupPanel loginPanel = new PopupPanel(false);
@@ -282,6 +300,8 @@ public class GUI {
 		loginPanel.setPopupPosition(90, 104);
 		loginPanel.setWidth("250px");
 		loginPanel.show();
+
+		currentPage = lastPage;
 	}
 
 	/**
@@ -493,6 +513,8 @@ public class GUI {
 	 * 
 	 */
 	public void showRegisterPopup() {
+		Page lastPage = currentPage;
+		currentPage = Page.PAGE_Register;
 
 		Window.scrollTo(0, 0);
 		PopupPanel registerPanel = new PopupPanel(true);
@@ -505,6 +527,8 @@ public class GUI {
 		registerPanel.setPopupPosition(90, 104);
 		registerPanel.setWidth("250px");
 		registerPanel.show();
+
+		lastPage = currentPage;
 	}
 
 	/**
@@ -513,6 +537,7 @@ public class GUI {
 	 * 
 	 */
 	public void showImpressum() {
+		currentPage = Page.PAGE_Impressum;
 
 		Window.scrollTo(0, 0);
 		dataPanel.clear();
@@ -558,6 +583,8 @@ public class GUI {
 	 * 
 	 */
 	public void showContactForm() {
+		Page lastPage = currentPage;
+		currentPage = Page.PAGE_Contact;
 
 		Window.scrollTo(0, 0);
 		PopupPanel ppnlContact = new PopupPanel(false);
@@ -569,6 +596,8 @@ public class GUI {
 		ppnlContact.setPopupPosition(90, 104);
 		ppnlContact.setWidth("250px");
 		ppnlContact.show();
+
+		currentPage = lastPage;
 	}
 
 	/**
@@ -577,6 +606,9 @@ public class GUI {
 	 * 
 	 */
 	public void showCreateSnippetForm() {
+		Page lastPage = currentPage;
+		currentPage = Page.PAGE_CreateSnippet;
+
 		Window.scrollTo(0, 0);
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
 		ppnlSnippet.setStyleName("contactForm");
@@ -588,6 +620,7 @@ public class GUI {
 		ppnlSnippet.setWidth("450px");
 		ppnlSnippet.show();
 
+		currentPage = lastPage;
 	}
 
 	/**
@@ -598,8 +631,15 @@ public class GUI {
 	 * @param convertToLink
 	 *            link to be created
 	 */
+	@SuppressWarnings("unused")
 	public void showDownloadPopup(String message, String convertToLink) {
 
+		// TODO Implement me
+
+		// Currently unused
+
+		if (true)
+			return;
 		Window.scrollTo(0, 0);
 
 		if (message == null)
@@ -648,7 +688,12 @@ public class GUI {
 	 * @param snippetID
 	 *            Hash ID of the snippet the uploaded file belongs to
 	 */
+	@SuppressWarnings("unused")
 	public void showUploadSnippet(long snippetID) {
+		// TODO Implement me
+		// Currently this is not used
+		if (true)
+			return;
 
 		Window.scrollTo(0, 0);
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
@@ -689,4 +734,36 @@ public class GUI {
 		myTagArea.setEnabled(success);
 	}
 
+	/**
+	 * Refreshes the whole GUI
+	 */
+	public void refresh() {
+		switch (getCurrentPage()) {
+		case PAGE_Contact:
+		case PAGE_Login:
+		case PAGE_Register:
+		case PAGE_CreateSnippet:
+		case PAGE_Impressum:
+			break;
+		case PAGE_Snippet:
+		case PAGE_SnippetOfDay:
+			mySnipArea.refresh();
+			break;
+		case PAGE_User:
+			myPersonalArea.refresh();
+			break;
+		case PAGE_Search:
+			// Ignore, we don't do a new search
+			break;
+		}
+	}
+
+	/**
+	 * Gets the current page
+	 * 
+	 * @return the current displayed page
+	 */
+	public Page getCurrentPage() {
+		return currentPage;
+	}
 }

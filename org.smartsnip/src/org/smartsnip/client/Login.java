@@ -18,16 +18,16 @@ public class Login extends Composite {
 
 	private final PopupPanel parent;
 
-	private HorizontalPanel buttonPanel = new HorizontalPanel();
+	private final HorizontalPanel buttonPanel = new HorizontalPanel();
 	private VerticalPanel vertPanel = new VerticalPanel();
 	private Label lname = new Label("Username");
 	private TextBox name = new TextBox();
 	private Label lpw = new Label("Password");
 	private PasswordTextBox ptbPassword = new PasswordTextBox();
-	private Button login;
-	private Button close;
-	private Label lStatus = new Label("");
-	private Label lTitle;
+	private final Button login;
+	private final Button close;
+	private final Label lStatus = new Label("");
+	private final Label lTitle;
 
 	public Login(PopupPanel parent) {
 
@@ -48,7 +48,7 @@ public class Login extends Composite {
 				}
 			}
 		});
-		
+
 		login = new Button("Login");
 		login.addClickHandler(new ClickHandler() {
 			@Override
@@ -97,8 +97,9 @@ public class Login extends Composite {
 	 */
 	void loginSuccess() {
 		parent.hide();
+		Control.myGUI.refresh();
 	}
-	
+
 	private void login() {
 		login.setEnabled(false);
 		Control control = Control.getInstance();
