@@ -128,6 +128,12 @@ public class Control implements EntryPoint {
 		return "session.getCookie()";
 	}
 
+	/**
+	 * Changes the current active page
+	 * 
+	 * @param newPage
+	 *            new Page to be set
+	 */
 	public void changeSite(Page newPage) {
 		switch (newPage) {
 		case PAGE_Impressum:
