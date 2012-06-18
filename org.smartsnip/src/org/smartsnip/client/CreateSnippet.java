@@ -252,6 +252,14 @@ public class CreateSnippet extends Composite {
 
 	private void createSnippet() {
 
+		if (txtName.getText().length() > 50) {
+			lblStatus.setText("Title must not be longer then 50 letters");
+			return;
+		}
+		if (txtName.getText().length() > 300) {
+			lblStatus.setText("Description must not be longer then 300 letters");
+			return;
+		}
 		String name = txtName.getText();
 		String desc = txtDescription.getText();
 		String language;

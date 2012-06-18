@@ -356,6 +356,9 @@ public class GUI {
 	 * @return true if the user clicked YES, false if the user clicked NO
 	 */
 	public boolean showConfirmPopup(String message, String title) {
+		
+		Window.scrollTo(0, 0);
+		
 		if (message == null)
 			message = "";
 		if (title == null)
@@ -449,6 +452,9 @@ public class GUI {
 	 * 
 	 */
 	public void showErrorPopup(String message, final Throwable cause) {
+		
+		Window.scrollTo(0, 0);
+		
 		if (message == null)
 			message = "";
 		if (cause != null) {
