@@ -264,7 +264,7 @@ footer .gwt-Label, .gwt-Anchor {
 	border: 2px solid #e6e6e6;
 	padding: 40px;
 	background-color: #e6e6e6;
-	background-image: url("images/grau.png");
+	background-image: url("images/gw.png");
 	box-shadow:4px 4px 25px #666;
 }
 
@@ -380,7 +380,7 @@ footer .gwt-Label, .gwt-Anchor {
 	font-size:x-large;
 }
 
-.btEnCat {
+.btDisCat {
 	padding:1px;
 	margin:1px;
 	background-color:#a9c34a;
@@ -388,11 +388,11 @@ footer .gwt-Label, .gwt-Anchor {
 	border-radius:5px;
 }
 
-.btDisCat {
+.btEnCat {
 	padding:1px;
 	margin:1px;
 	background-color:#DEE8BA;
-	color:white;
+	color:black;
 	border-radius:5px;
 }
 
@@ -411,7 +411,7 @@ footer .gwt-Label, .gwt-Anchor {
 }
 
 
-.btEn {
+.btDis {
 	padding:2px;
 	margin:3px;
 	background-color:#a9c34a;
@@ -419,11 +419,11 @@ footer .gwt-Label, .gwt-Anchor {
 	border-radius:5px;
 }
 
-.btDis {
+.btEn {
 	padding:2px;
 	margin:3px;
 	background-color:#DEE8BA;
-	color:white;
+	color:black;
 	border-radius:5px;
 }
 
