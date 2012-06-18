@@ -16,6 +16,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the upload panel
+ *
+ */
 public class Upload extends Composite {
 
 	private final PopupPanel parent;
@@ -31,6 +40,11 @@ public class Upload extends Composite {
 	private final FileUpload fuUpload;
 	private final Label lStatus = new Label("");
 
+	/**
+	 * Initializes the upload
+	 * 
+	 * @param parent - the parent window
+	 */
 	public Upload(PopupPanel parent) {
 		this(parent, "upload", null);
 	}

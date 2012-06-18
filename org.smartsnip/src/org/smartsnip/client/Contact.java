@@ -11,6 +11,15 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the contact window
+ *
+ */
 public class Contact extends Composite {
 
 	private final PopupPanel parent;
@@ -26,6 +35,11 @@ public class Contact extends Composite {
 	private Button btnClose;
 	private Label lStatus = new Label("");
 
+	/**
+	 * Initializes the contact popup
+	 * 
+	 * @param parent - the parent window popup
+	 */
 	public Contact(PopupPanel parent) {
 
 		this.parent = parent;

@@ -19,7 +19,14 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ * A composed Widget to create a possibility to comment
+ *
+ */
 public class CommentArea extends Composite {
 
 	private final XSnippet snippet;
@@ -32,11 +39,14 @@ public class CommentArea extends Composite {
 	private Button btnSend;
 	private ScrollPanel scrPanel;
 
+	/**
+	 * Initializies the Widget
+	 * 
+	 * @param snip - a XSnippet
+	 */
 	public CommentArea(final XSnippet snip) {
 		myPanel = new VerticalPanel();
-		
 		this.snippet = snip;
-		
 		scrPanel = new ScrollPanel();
 		scrPanel.setStyleName("scrollComment");
 	
@@ -91,6 +101,13 @@ public class CommentArea extends Composite {
 
 	}
 
+	/**
+	 * 
+	 * Updates the whole widget
+	 * 
+	 * 
+	 * 
+	 */
 	public void update() {
 		lblComments.setText("Refreshing comments ... ");
 		

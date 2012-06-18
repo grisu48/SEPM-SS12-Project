@@ -747,10 +747,10 @@ public class GUI {
 			break;
 		case PAGE_Snippet:
 		case PAGE_SnippetOfDay:
-			mySnipArea.refresh();
+			mySnipArea.update();
 			break;
 		case PAGE_User:
-			myPersonalArea.refresh();
+			myPersonalArea.update();
 			break;
 		case PAGE_Search:
 			// Ignore, we don't do a new search

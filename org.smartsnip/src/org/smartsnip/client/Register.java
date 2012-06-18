@@ -14,6 +14,15 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the register popup
+ *
+ */
 public class Register extends Composite {
 
 	private final PopupPanel parent;
@@ -33,6 +42,11 @@ public class Register extends Composite {
 	private Label lStatus;
 	private Label lTitle;
 
+	/**
+	 * Initializes the popup
+	 * 
+	 * @param parent - the parent popup
+	 */
 	public Register(final PopupPanel parent) {
 		super();
 		this.parent = parent;
@@ -118,6 +132,11 @@ public class Register extends Composite {
 	}
 	
 	
+	/**
+	 * 
+	 * A method to send the register data to the server
+	 * 
+	 */
 	private void register() {
 		String password = pw1.getText();
 		if (password.isEmpty()) {

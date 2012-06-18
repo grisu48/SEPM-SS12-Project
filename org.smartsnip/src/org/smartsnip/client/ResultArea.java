@@ -11,11 +11,24 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the results of a snippet search
+ *
+ */
 public class ResultArea extends Composite {
 
 	private final CellList<XSnippet> myCellList;
 	private final VerticalPanel pnlVerticalMain;
 
+	/**
+	 * Initializes the result area
+	 * 
+	 */
 	public ResultArea() {
 
 		pnlVerticalMain = new VerticalPanel();
@@ -49,6 +62,11 @@ public class ResultArea extends Composite {
 		setStyleName("resultArea");
 	}
 
+	/**
+	 * Updates the result area
+	 * 
+	 * @param snippets a XSnippet list
+	 */
 	void update(List<XSnippet> snippets) {
 		if (snippets == null)
 			return;

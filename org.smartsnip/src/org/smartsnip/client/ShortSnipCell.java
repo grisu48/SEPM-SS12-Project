@@ -5,8 +5,21 @@ import org.smartsnip.shared.XSnippet;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A extendet class to display a preview of a snippet (as list item)
+ *
+ */
 public class ShortSnipCell extends AbstractCell<XSnippet> {
 
+	/**
+	 * 
+	 * The render method with creates the list item
+	 */
 	@Override
 	public void render(com.google.gwt.cell.client.Cell.Context context,
 			XSnippet snip, SafeHtmlBuilder sb) {

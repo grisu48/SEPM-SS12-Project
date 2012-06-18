@@ -10,6 +10,15 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the footer
+ *
+ */
 public class Footer extends Composite {
 
 	private final Grid footerGrid;
@@ -31,6 +40,10 @@ public class Footer extends Composite {
 	private final Anchor aAndroid;
 	private final Anchor aSnippet;
 
+	/**
+	 * Initializes the footer
+	 * 
+	 */
 	public Footer() {
 		footerGrid = new Grid(1, 3);
 		vertPanel1 = new VerticalPanel();

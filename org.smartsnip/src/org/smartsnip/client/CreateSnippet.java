@@ -26,6 +26,15 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the create snippet popup
+ *
+ */
 public class CreateSnippet extends Composite {
 
 	private final PopupPanel parent;
@@ -57,6 +66,12 @@ public class CreateSnippet extends Composite {
 	private final Button btCreate;
 	private final Button btCancel;
 
+	/**
+	 * 
+	 * Initializes the create snippet popup
+	 * @param parent - the parent popup window
+	 * @param buttonname - the name of the submit button
+	 */
 	public CreateSnippet(PopupPanel parent, String buttonname) {
 		this.parent = parent;
 

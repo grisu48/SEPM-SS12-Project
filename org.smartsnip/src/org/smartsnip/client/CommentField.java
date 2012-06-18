@@ -15,6 +15,14 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ * A composed Widget to display one single comment
+ *
+ */
 public class CommentField extends Composite {
 
 	private final XComment comment;
@@ -33,6 +41,11 @@ public class CommentField extends Composite {
 	private final Anchor anchUnvote;
 	private final Anchor anchEdit;
 
+	/**
+	 * Initializes the comment
+	 * 
+	 * @param myComment a XComment
+	 */
 	public CommentField(final XComment myComment) {
 		this.comment = myComment;
 
@@ -252,6 +265,9 @@ public class CommentField extends Composite {
 		anchRateNegative.setEnabled(enabled);
 	}
 
+	/**
+	 * Updats the comment
+	 */
 	public void update() {
 		IComment.Util.getInstance().getComment(comment.id,
 				new AsyncCallback<XComment>() {

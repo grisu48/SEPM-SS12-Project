@@ -8,6 +8,15 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * 
+ * 
+ * @author Felix
+ * 
+ *
+ * A composed Widget to display the rating
+ *
+ */
 public class Rating extends Composite {
 
 	private final VerticalPanel pnlVertical;

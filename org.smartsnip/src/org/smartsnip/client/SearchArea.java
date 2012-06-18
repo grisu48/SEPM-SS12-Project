@@ -18,6 +18,16 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 
+
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the main search area
+ *
+ */
 public class SearchArea extends Composite {
 
 	private final HorizontalPanel horPanel;
@@ -46,6 +56,10 @@ public class SearchArea extends Composite {
 		}
 	};
 
+	/**
+	 * Initializes the widget
+	 * 
+	 */
 	public SearchArea() {
 
 		control = Control.getInstance();
@@ -111,6 +125,9 @@ public class SearchArea extends Composite {
 		updateSuggestions();
 	}
 
+	/**
+	 * Fires the search (sends it to the server)
+	 */
 	public void fireSearch() {
 		searchButton.setEnabled(false);
 		Control.search.setSearchString(getSearchText());
@@ -128,6 +145,9 @@ public class SearchArea extends Composite {
 		searchButton.setEnabled(false);
 	}
 
+	/**
+	 * Updates the search area
+	 */
 	public void update() {
 		if (control.isLoggedIn()) {
 			btCreateSnippet.setVisible(true);
@@ -165,6 +185,11 @@ public class SearchArea extends Composite {
 
 	}
 
+	/**
+	 * Getter method to get the text out of the searchbox
+	 * 
+	 * @return the text which is currently in the suggestbox
+	 */
 	public String getSearchText() {
 		return searchSnippet.getText();
 	}

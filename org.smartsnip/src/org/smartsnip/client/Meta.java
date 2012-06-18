@@ -13,6 +13,16 @@ import com.google.gwt.user.client.ui.Image;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the meta navigation menu
+ *
+ */
 public class Meta extends Composite {
 
 	private final VerticalPanel pnlUser;
@@ -25,6 +35,9 @@ public class Meta extends Composite {
 	private Image icon;
 	private Control control;
 
+	/**
+	 * Initializes the menu
+	 */
 	public Meta() {
 
 		control = Control.getInstance();
@@ -97,6 +110,10 @@ public class Meta extends Composite {
 		update();
 	}
 
+	/**
+	 * Updates the menu
+	 * 
+	 */
 	public void update() {
 
 		user.setText(control.getUsername() + " | " + control.getUserMail());

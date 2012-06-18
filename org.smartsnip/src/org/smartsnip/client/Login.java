@@ -14,6 +14,15 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the Login popup
+ *
+ */
 public class Login extends Composite {
 
 	private final PopupPanel parent;
@@ -29,6 +38,10 @@ public class Login extends Composite {
 	private final Label lStatus = new Label("");
 	private final Label lTitle;
 
+	/**
+	 * Initializes the login popup
+	 * @param parent - the parent window
+	 */
 	public Login(PopupPanel parent) {
 
 		this.parent = parent;

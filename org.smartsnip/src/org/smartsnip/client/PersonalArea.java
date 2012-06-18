@@ -11,6 +11,15 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the personal information
+ *
+ */
 public class PersonalArea extends Composite {
 
 	private final Grid grid;
@@ -22,6 +31,10 @@ public class PersonalArea extends Composite {
 	private final Label lblOwnSnippets;
 	private final Label lblFavorites;
 
+	/**
+	 * Initializes the personal area
+	 * 
+	 */
 	public PersonalArea() {
 
 		grid = new Grid(2, 3);
@@ -53,11 +66,28 @@ public class PersonalArea extends Composite {
 
 	}
 
+	/**
+	 * Updates the personal area
+	 * 
+	 * @param worked - a boolean message if the update on the server was succesful
+	 */
 	public void update(boolean worked) {
 		myPersonalField.update(worked);
 		updateSnippets();
 	}
+	
+	/**
+	 * Updates the personal area without the personal data
+	 * 
+	 */
+	public void update() {
+		updateSnippets();
+	}
+	
 
+	/**
+	 * Updates the snippet lists
+	 */
 	public void updateSnippets() {
 		lblFavorites.setText("Getting favourites ... ");
 		ISession.Util.getInstance().getFavorites(
@@ -114,10 +144,5 @@ public class PersonalArea extends Composite {
 				});
 	}
 
-	/**
-	 * Refreshes the component
-	 */
-	public void refresh() {
-		updateSnippets();
-	}
+	
 }

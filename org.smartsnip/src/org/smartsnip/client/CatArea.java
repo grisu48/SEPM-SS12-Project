@@ -10,12 +10,26 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the Categories
+ *
+ */
 public class CatArea extends Composite {
 
 	private final VerticalPanel myPanel;
 	private final Label title;
 	private final List<Button> catButtons = new ArrayList<Button>();
 
+	/**
+	 * 
+	 * Initializes the widget
+	 * 
+	 */
 	public CatArea() {
 		myPanel = new VerticalPanel();
 		title = new Label("Categories");
@@ -26,6 +40,16 @@ public class CatArea extends Composite {
 		setStyleName("catArea");
 	}
 
+	
+	
+	/**
+	 * 
+	 * Updates the whole widget
+	 * 
+	 * 
+	 * @param  categories - a String List with all the categories to show
+	 * 
+	 */
 	public void update(List<String> categories) {
 		clear();
 

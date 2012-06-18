@@ -9,12 +9,26 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
+
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the status area
+ *
+ */
 public class StatusArea extends Composite {
 
 	private final DockPanel pnlBasis;
 	private final Label lblStatus;
 	private final ListBox lbSelectSort;
 
+	/**
+	 * Initializes the status area
+	 * 
+	 */
 	public StatusArea() {
 		pnlBasis = new DockPanel();
 		// pnlBasis.setWidth("400px");
@@ -56,6 +70,11 @@ public class StatusArea extends Composite {
 		setStyleName("statusArea");
 	}
 
+	/**
+	 * Sets the current status
+	 * 
+	 * @param status - a string
+	 */
 	public void setStatus(String status) {
 		lblStatus.setText(status);
 	}

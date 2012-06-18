@@ -10,12 +10,25 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
+
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display a tag area
+ *
+ */
 public class TagArea extends Composite {
 
 	private final FlowPanel myPanel;
 	private final ArrayList<Button> tagButtons;
 	private final Label title;
 
+	/**
+	 * Initializes the tag area
+	 */
 	public TagArea() {
 		myPanel = new FlowPanel();
 		tagButtons = new ArrayList<Button>();

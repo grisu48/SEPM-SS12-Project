@@ -9,6 +9,16 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the personal data
+ *
+ */
 public class PersonalField extends Composite {
 
 	private VerticalPanel pnlField;
@@ -24,6 +34,11 @@ public class PersonalField extends Composite {
 	private PasswordTextBox tbPW2;
 	private Button bChange;
 
+	/**
+	 * 
+	 * Initalizes the field with data
+	 * 
+	 */
 	public PersonalField() {
 		
 		Control control = Control.getInstance();
@@ -72,6 +87,11 @@ public class PersonalField extends Composite {
 
 	}
 
+	/**
+	 * Updates the field
+	 * 
+	 * @param worked - a boolean message if the update on the server worked
+	 */
 	public void update(boolean worked) {
 		if (worked)
 		bChange.setText("Password changed");

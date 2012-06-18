@@ -19,6 +19,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+/**
+ * 
+ * 
+ * @author Paul
+ * 
+ *
+ * A composed Widget to display the a snippet
+ *
+ */
 public class SnipArea extends Composite {
 
 	private final XSnippet snippet;
@@ -54,6 +63,11 @@ public class SnipArea extends Composite {
 		Control.prettyPrint();
 	};
 
+	/**
+	 * Initializes the widget
+	 * 
+	 * @param mySnip a XSnippet
+	 */
 	SnipArea(final XSnippet mySnip) {
 
 		snippet = mySnip;
@@ -419,11 +433,5 @@ public class SnipArea extends Composite {
 			return mySnip.owner;
 	}
 
-	/**
-	 * Refreshes the control
-	 */
-	public void refresh() {
-		update();
-	}
 
 }

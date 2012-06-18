@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Tree;
  * This panel is for the moderator only and provides access to the moderator
  * functions
  * 
+ * @author Paul
  * 
  */
 public class ModeratorArea extends Composite {

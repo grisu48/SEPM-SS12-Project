@@ -7,6 +7,15 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
 
+/**
+ * 
+ * 
+ * @author Felix
+ * 
+ *
+ * A composed Widget for the restricted search
+ *
+ */
 public class SearchToolbar extends Composite {
 
 	/** Main panel */
