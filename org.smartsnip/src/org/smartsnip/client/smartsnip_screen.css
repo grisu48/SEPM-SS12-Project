@@ -561,13 +561,12 @@ height: 80px;
 
 .snipHtml {
 	border-style:none;
-	max-width:680px;
-	overflow-x:hidden;
+	overflow-x:auto;
 }
 
 .scrollSnippet {
 	max-height:500px;
-	overflow-x:hidden;
+	overflow-x:auto;
 	overflow-y: auto;
 	margin-bottom:20px;
 }

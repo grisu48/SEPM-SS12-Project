@@ -5,6 +5,8 @@ import java.util.List;
 import org.smartsnip.shared.XSnippet;
 
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -34,11 +36,18 @@ public class ResultArea extends Composite {
 		pnlVerticalMain = new VerticalPanel();
 		ScrollPanel myPanel = new ScrollPanel();
 
-		pnlVerticalMain.add(myPanel);
-
+		
+		ShowMorePagerPanel pagerPanel = new ShowMorePagerPanel();
+		RangeLabelPager rangeLabelPager = new RangeLabelPager();
+		
 		ShortSnipCell myShortSnipCell = new ShortSnipCell();
 		myCellList = new CellList<XSnippet>(myShortSnipCell);
-
+		myCellList.setPageSize(10);
+		myCellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+	    myCellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+		
+		//rangeLabelPager.setDisplay(myCellList);
+		
 		// Add a selection model to handle user selection.
 		final SingleSelectionModel<XSnippet> selectionModel = new SingleSelectionModel<XSnippet>();
 		myCellList.setSelectionModel(selectionModel);
@@ -55,8 +64,14 @@ public class ResultArea extends Composite {
 				});
 
 		// myCellList.setRowData(0, TESTLIST);
-		myPanel.setHeight("400px");
-		myPanel.add(myCellList);
+		//myPanel.setHeight("400px");
+		//myPanel.add(myCellList);
+		
+		pagerPanel.setHeight("400px");
+		pagerPanel.setDisplay(myCellList);
+		//pagerPanel.add(myCellList);
+		pnlVerticalMain.add(pagerPanel);
+		//pnlVerticalMain.add(myPanel);
 		initWidget(pnlVerticalMain);
 		// Give the overall composite a style name.
 		setStyleName("resultArea");

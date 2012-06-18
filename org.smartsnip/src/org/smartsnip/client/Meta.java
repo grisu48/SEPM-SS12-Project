@@ -1,6 +1,7 @@
 package org.smartsnip.client;
 
 import org.smartsnip.shared.IModerator;
+import org.smartsnip.shared.IUser;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -124,7 +125,6 @@ public class Meta extends Composite {
 			login.setVisible(false);
 			register.setVisible(false);
 			logout.setVisible(true);
-			mod.setVisible(true);
 		} else {
 			user.setVisible(false);
 			icon.setVisible(false);
@@ -146,6 +146,21 @@ public class Meta extends Composite {
 			public void onFailure(Throwable caught) {
 			}
 		});
+		
+		/*
+		 * XXX todo felix
+		IUser.Util.getInstance().hasUnreadMessage(new AsyncCallback<Boolean>() {
+			if (result) {
+				icon.setUrl("/images/user2.png");
+			}
+			else {
+				icon.setUrl("/images/user1.png");
+			}
+			
+		//});
+		 * 
+		 * 
+		 */
 	}
 
 }
