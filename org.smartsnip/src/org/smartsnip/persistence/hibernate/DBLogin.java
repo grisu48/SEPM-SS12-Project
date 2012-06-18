@@ -21,12 +21,15 @@ import org.smartsnip.persistence.IPersistence;
 @Table(name = "Login")
 class DBLogin {
 
+	//TODO encapsulate the encryption-string in a secure container
+	private static final String encryptionString = "d2aefeac9dc661bc98eebd6cc12f0b82";
+	
 	@Id
 	@Column(name = "user_name", length = 20)
 	private String user;
 
 	@Column(name = "password", length = 255)
-	@ColumnTransformer(read = "aes_decrypt(password, 'd2aefeac9dc661bc98eebd6cc12f0b82')", write = "aes_encrypt(?, 'd2aefeac9dc661bc98eebd6cc12f0b82')")
+	@ColumnTransformer(read = "aes_decrypt(password, '" + encryptionString + "')", write = "aes_encrypt(?, '" + encryptionString + "')")
 	private String password;
 
 	@Column(name = "grant_login")
