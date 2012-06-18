@@ -248,6 +248,7 @@ public class GUI {
 		rightPanel.add(myTagArea);
 		rightPanel.add(mySearchToolbar);
 		dataPanel.add(leftPanel);
+		
 		dataPanel.add(rightPanel);
 
 	}
@@ -721,6 +722,9 @@ public class GUI {
 	 */
 	void onSearchStart() {
 		showSearchPage();
+		myCatArea.setVisible(false);
+		myTagArea.setVisible(false);
+		mySearchToolbar.setVisible(false);
 		myStatusArea.setStatus("Searching ... ");
 		mySearchArea.disableSearchButton();
 
@@ -735,6 +739,10 @@ public class GUI {
 	 * {@link GUI#initComponents}
 	 */
 	void onSearchDone(boolean success) {
+		myCatArea.setVisible(true);
+		myTagArea.setVisible(true);
+		mySearchToolbar.setVisible(true);
+		
 		mySearchToolbar.setEnabled(success);
 		myCatArea.setEnabled(success);
 		myTagArea.setEnabled(success);

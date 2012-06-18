@@ -22,9 +22,9 @@ public class SearchToolbar extends Composite {
 	private final HorizontalPanel pnlHorizontal = new HorizontalPanel();
 
 	/* Tools */
-	private final Button btnRestrict = new Button("Restrict all");
-	private final Button btnUnrestrict = new Button("Unrestrict all");
-	private final Button btnApply = new Button("Apply restricted search");
+	private final Button btnRestrict = new Button("Select all");
+	private final Button btnUnrestrict = new Button("Unselect all");
+	private final Button btnApply = new Button("Apply selected search");
 
 
 	public SearchToolbar() {
@@ -101,5 +101,11 @@ public class SearchToolbar extends Composite {
 		
 	}
 
+	/*
+	 * Changes the visibility
+	 */
+	public void setVisible(boolean b) {
+		pnlHorizontal.setVisible(b);
+	}
 
 }

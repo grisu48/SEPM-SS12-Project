@@ -132,5 +132,12 @@ public class CatArea extends Composite {
 		}
 
 	}
+	
+	/*
+	 * Changes the visibility
+	 */
+	public void setVisible(boolean b) {
+		myPanel.setVisible(b);
+	}
 
 }

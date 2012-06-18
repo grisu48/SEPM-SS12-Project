@@ -380,7 +380,7 @@ footer .gwt-Label, .gwt-Anchor {
 	font-size:x-large;
 }
 
-.btDisCat {
+.btEnCat {
 	padding:1px;
 	margin:1px;
 	background-color:#a9c34a;
@@ -388,7 +388,7 @@ footer .gwt-Label, .gwt-Anchor {
 	border-radius:5px;
 }
 
-.btEnCat {
+.btDisCat {
 	padding:1px;
 	margin:1px;
 	background-color:#DEE8BA;
@@ -411,7 +411,7 @@ footer .gwt-Label, .gwt-Anchor {
 }
 
 
-.btDis {
+.btEn {
 	padding:2px;
 	margin:3px;
 	background-color:#a9c34a;
@@ -419,7 +419,7 @@ footer .gwt-Label, .gwt-Anchor {
 	border-radius:5px;
 }
 
-.btEn {
+.btDis {
 	padding:2px;
 	margin:3px;
 	background-color:#DEE8BA;

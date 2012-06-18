@@ -133,4 +133,12 @@ public class TagArea extends Composite {
 
 	}
 
+	/*
+	 * Changes the visibility
+	 */
+	public void setVisible(boolean b) {
+		myPanel.setVisible(b);
+	}
+	
 }
+
