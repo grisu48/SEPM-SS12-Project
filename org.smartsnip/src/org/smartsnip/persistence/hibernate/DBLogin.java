@@ -26,7 +26,7 @@ class DBLogin {
 	private String user;
 
 	@Column(name = "password", length = 255)
-	@ColumnTransformer(read = "des_decrypt(password, 'd2aefeac9dc661bc98eebd6cc12f0b82')", write = "des_encrypt(?, 'd2aefeac9dc661bc98eebd6cc12f0b82')")
+	@ColumnTransformer(read = "aes_decrypt(password, 'd2aefeac9dc661bc98eebd6cc12f0b82')", write = "aes_encrypt(?, 'd2aefeac9dc661bc98eebd6cc12f0b82')")
 	private String password;
 
 	@Column(name = "grant_login")
