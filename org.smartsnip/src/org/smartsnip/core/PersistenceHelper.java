@@ -53,7 +53,7 @@ public class PersistenceHelper {
 	 * @param snippet the target snippet
 	 * @param code the code to set
 	 */
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings("deprecation") // FIXME deprecation
 	protected void setCodeOfSnippet(Snippet snippet, Code code) {
 		snippet.setCodeWithoutWriting(code);
 	}
@@ -112,6 +112,7 @@ public class PersistenceHelper {
 	 * @param language
 	 * @param snippet
 	 * @param version
+	 * @param downloadableSourceName 
 	 * @return an initialized Code object
 	 */
 	protected Code createCode(Long id, String code, String language,

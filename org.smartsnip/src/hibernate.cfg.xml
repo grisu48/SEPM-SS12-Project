@@ -66,7 +66,7 @@
 	
 	
     <!-- Echo all executed SQL to stdout -->
-    <property name="show_sql">true</property>
+    <property name="show_sql">false</property>
 
 	<!-- Disable new JDBC LOB creation Builder 4, it isn't supported by the DB driver -->
 	<property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
