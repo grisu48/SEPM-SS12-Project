@@ -142,7 +142,8 @@ public abstract class Code {
 	 *             Thrown if the code or if the language is empty
 	 */
 	// TODO add Version
-	public static Code createCode(String code, String language, Snippet owner) {
+	public static Code createCode(String code, String language, Snippet owner,
+			int version) {
 		if (code == null || language == null)
 			throw new NullPointerException();
 		if (code.isEmpty())
@@ -156,21 +157,21 @@ public abstract class Code {
 					"Cannot create code segment without a snippet");
 
 		language = language.trim();
-		
+
 		// build always a generic code object
-		Code result = new CodeGeneric(code, language, owner, null, 0);
-		
-//		language = language.trim().toLowerCase();
-//
-//		/* Here the language inspection takes place */
-//		Code result = null;
-//		if (language.equals("java")) { // Java object
-//			result = new CodeJava(code, owner, null, 0);
-//		}
-//
-//		// Failback: CodeText
-//		if (result == null)
-//			result = new CodeText(code, language, owner, null, 0);
+		Code result = new CodeGeneric(code, language, owner, null, version);
+
+		// language = language.trim().toLowerCase();
+		//
+		// /* Here the language inspection takes place */
+		// Code result = null;
+		// if (language.equals("java")) { // Java object
+		// result = new CodeJava(code, owner, null, 0);
+		// }
+		//
+		// // Failback: CodeText
+		// if (result == null)
+		// result = new CodeText(code, language, owner, null, 0);
 
 		addToDB(result);
 		return result;
@@ -196,8 +197,10 @@ public abstract class Code {
 	 *            The owner snippet of the code
 	 * @param id
 	 *            the identifier
-	 * @param version the version number of the code
-	 * @param downloadableSourceName the filename of the downloadable code
+	 * @param version
+	 *            the version number of the code
+	 * @param downloadableSourceName
+	 *            the filename of the downloadable code
 	 * @return The newly generated code object
 	 * @throws UnsupportedLanguageException
 	 *             Thrown if the given language is not supported
@@ -223,25 +226,25 @@ public abstract class Code {
 					"Cannot create code segment without a snippet");
 		if (downloadableSourceName != null) {
 			// FIXME downloadable code not implemented in the core
-//			this.downloadAbleSource = true;
+			// this.downloadAbleSource = true;
 		}
-		
+
 		language = language.trim();
-		
+
 		// build always a generic code object
 		Code result = new CodeGeneric(code, language, owner, null, 0);
 
-//		language = language.trim().toLowerCase();
-//
-//		/* Here the language inspection takes place */
-//		Code result = null;
-//		if (language.equals("java")) { // Java object
-//			result = new CodeJava(code, owner, id, version);
-//		}
-//
-//		// Failback mode: Use CodeText
-//		if (result == null)
-//			result = new CodeText(code, language, owner, id, version);
+		// language = language.trim().toLowerCase();
+		//
+		// /* Here the language inspection takes place */
+		// Code result = null;
+		// if (language.equals("java")) { // Java object
+		// result = new CodeJava(code, owner, id, version);
+		// }
+		//
+		// // Failback mode: Use CodeText
+		// if (result == null)
+		// result = new CodeText(code, language, owner, id, version);
 
 		/*
 		 * THIS METHOD IS CALLED FROM THE DB, DO NOT WRITE INTO THE DB!!

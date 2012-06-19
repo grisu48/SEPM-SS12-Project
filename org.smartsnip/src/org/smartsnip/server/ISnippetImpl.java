@@ -110,17 +110,7 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 	@Override
 	public void setCode(long id, String code) throws NoAccessException,
 			NotFoundException {
-		if (code == null || code.isEmpty())
-			return;
-
-		Snippet snippet = findSnippetThrowsException(id);
-		Session session = getSession();
-		if (!session.getPolicy().canEditSnippet(session, snippet))
-			throw new NoAccessException();
-
-		Code objCode = Code.createCode(code, snippet.getCode().getLanguage(),
-				snippet);
-		snippet.setCode(objCode);
+		editCode(id, code);
 	}
 
 	@Override
@@ -300,6 +290,34 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 		// Access guaranteed. Edit snippet
 		origin.edit(snippet); // Can throw a IllegalArgumentException
 
+	}
+
+	@Override
+	public void editCode(long snippedID, String code) throws NoAccessException,
+			NotFoundException {
+		if (code == null || code.isEmpty())
+			return;
+
+		Session session = getSession();
+		User user = session.getUser();
+		Snippet snippet = Snippet.getSnippet(snippedID);
+
+		if (snippet == null)
+			throw new NotFoundException();
+		if (!session.getPolicy().canEditSnippet(session, snippet))
+			throw new NoAccessException();
+		if (user == null)
+			throw new NoAccessException();
+
+		// Check if we really need a update
+		Code old = snippet.getCode();
+		if (old.code.equals(code))
+			return;
+
+		// Create new code object
+		Code newCode = Code.createCode(code, old.language, snippet,
+				(old.getVersion() + 1));
+		snippet.setCode(newCode);
 	}
 
 	@Override

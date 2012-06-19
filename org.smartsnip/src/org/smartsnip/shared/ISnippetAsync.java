@@ -6,7 +6,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ISnippetAsync {
 
-	void getComments(long snippet, int start, int count, AsyncCallback<List<XComment>> callback);
+	void getComments(long snippet, int start, int count,
+			AsyncCallback<List<XComment>> callback);
 
 	void getCommentCount(long snippet, AsyncCallback<Integer> callback);
 
@@ -26,8 +27,9 @@ public interface ISnippetAsync {
 
 	void addComment(long id, String comment, AsyncCallback<Void> callback);
 
-	void create(String name, String desc, String code, String language, String license, String category,
-			List<String> tags, AsyncCallback<Void> callback);
+	void create(String name, String desc, String code, String language,
+			String license, String category, List<String> tags,
+			AsyncCallback<Void> callback);
 
 	void addToFavorites(long id, AsyncCallback<Void> callback);
 
@@ -48,5 +50,7 @@ public interface ISnippetAsync {
 	void getSearchSuggestions(AsyncCallback<List<String>> callback);
 
 	void increaseViewCounter(long snippet, AsyncCallback<Void> callback);
+
+	void editCode(long snippedID, String code, AsyncCallback<Void> callback);
 
 }

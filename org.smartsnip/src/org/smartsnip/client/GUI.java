@@ -31,7 +31,7 @@ public class GUI {
 	 * 
 	 */
 	public enum Page {
-		PAGE_Impressum, PAGE_Login, PAGE_Register, PAGE_User, PAGE_Contact, PAGE_CreateSnippet, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet
+		PAGE_Impressum, PAGE_Login, PAGE_Register, PAGE_User, PAGE_Contact, PAGE_CreateSnippet, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet, PAGE_EditSnippet
 	}
 
 	/**
@@ -248,7 +248,7 @@ public class GUI {
 		rightPanel.add(myTagArea);
 		rightPanel.add(mySearchToolbar);
 		dataPanel.add(leftPanel);
-		
+
 		dataPanel.add(rightPanel);
 
 	}
@@ -357,9 +357,9 @@ public class GUI {
 	 * @return true if the user clicked YES, false if the user clicked NO
 	 */
 	public boolean showConfirmPopup(String message, String title) {
-		
+
 		Window.scrollTo(0, 0);
-		
+
 		if (message == null)
 			message = "";
 		if (title == null)
@@ -453,9 +453,9 @@ public class GUI {
 	 * 
 	 */
 	public void showErrorPopup(String message, final Throwable cause) {
-		
+
 		Window.scrollTo(0, 0);
-		
+
 		if (message == null)
 			message = "";
 		if (cause != null) {
@@ -608,6 +608,32 @@ public class GUI {
 	}
 
 	/**
+	 * shows the edit snippet popup
+	 * 
+	 * 
+	 */
+	public void showEditSnippetForm(final XSnippet snippet) {
+		if (snippet == null)
+			return;
+
+		Page lastPage = currentPage;
+		currentPage = Page.PAGE_EditSnippet;
+
+		Window.scrollTo(0, 0);
+		PopupPanel ppnlSnippet = new PopupPanel(true, true);
+		ppnlSnippet.setStyleName("contactForm");
+		ppnlSnippet.setTitle("Edit snippet");
+		EditSnippet newSnippet = new EditSnippet(ppnlSnippet, snippet);
+		ppnlSnippet.setWidget(newSnippet);
+		ppnlSnippet.setGlassEnabled(true);
+		ppnlSnippet.setPopupPosition(90, 104);
+		ppnlSnippet.setWidth("450px");
+		ppnlSnippet.show();
+
+		currentPage = lastPage;
+	}
+
+	/**
 	 * shows the create snippet popup
 	 * 
 	 * 
@@ -742,7 +768,7 @@ public class GUI {
 		myCatArea.setVisible(true);
 		myTagArea.setVisible(true);
 		mySearchToolbar.setVisible(true);
-		
+
 		mySearchToolbar.setEnabled(success);
 		myCatArea.setEnabled(success);
 		myTagArea.setEnabled(success);

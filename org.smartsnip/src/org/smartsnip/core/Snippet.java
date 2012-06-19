@@ -154,7 +154,8 @@ public class Snippet {
 		Snippet snippet = new Snippet(owner, name, description, null, category,
 				license, tags, null, 0, 0F);
 		addToDB(snippet);
-		snippet.code = Code.createCode(code, language, snippet);
+		// Create code object, with version 0 (begin)
+		snippet.code = Code.createCode(code, language, snippet, 0);
 
 		return snippet;
 	}
@@ -779,6 +780,8 @@ public class Snippet {
 	 * thrown If the given user is not found, a {@link IllegalArgumentException}
 	 * is thrown
 	 * 
+	 * <b>CAUTION</b> The code is not affected by this method!!</b>
+	 * 
 	 * @param snippet
 	 *            Data to be edited
 	 * @throws IllegalArgumentException
@@ -798,15 +801,7 @@ public class Snippet {
 		if (category == null)
 			throw new IllegalArgumentException("Illegal category: not found");
 
-		// Change code only if needed to!
-		if (!this.code.equals(snippet.code)) {
-			Code newCode = Code
-					.createCode(snippet.code, snippet.language, this);
-
-			// TODO Code history
-
-			this.code = newCode;
-		}
+		// NOTE: WE DO NOT CHANGE THE CODE HERE!!
 
 		/* Data is checked - Now set data */
 		this.name = snippet.title;

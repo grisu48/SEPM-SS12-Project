@@ -46,7 +46,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @return a list containing at most count number of comments of the snippet
 	 *         or null, if the snippet hash is not found
 	 */
-	public List<XComment> getComments(long snippet, int start, int count) throws NotFoundException;
+	public List<XComment> getComments(long snippet, int start, int count)
+			throws NotFoundException;
 
 	/**
 	 * @param snippet
@@ -80,7 +81,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown, if the access was denied by the server
 	 */
-	public void delete(long snippet) throws NoAccessException, NotFoundException;
+	public void delete(long snippet) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Rates a snippet, identified by it's hash code. If the rateing score is
@@ -93,7 +95,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public void rateSnippet(long id, int rate) throws NoAccessException, NotFoundException;
+	public void rateSnippet(long id, int rate) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Changes the description of a snippet, based on it's id hash. If the given
@@ -106,7 +109,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if you don't have the permission to edit the snippet
 	 */
-	public void setDescription(long id, String desc) throws NoAccessException, NotFoundException;
+	public void setDescription(long id, String desc) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Changes the code of a snippet, based on it's id hash. If the given
@@ -118,8 +122,12 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 *            new code of the snippet
 	 * @throws NoAccessException
 	 *             Thrown if you don't have the permission to edit the snippet
+	 * @deprecated Only supported for backward compatibility. Use
+	 *             {@link #editCode(long, String)} instant
 	 */
-	public void setCode(long id, String code) throws NoAccessException, NotFoundException;
+	@Deprecated
+	public void setCode(long id, String code) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Adds a tag to a given snippet. If the snippet is not found, nothing
@@ -132,7 +140,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access to tag the snippet
 	 */
-	public void addTag(long id, String tag) throws NoAccessException, NotFoundException;
+	public void addTag(long id, String tag) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Removes a tag to a given snippet. If the snippet is not found, nothing
@@ -145,7 +154,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access to tag the snippet
 	 */
-	public void removeTag(long id, String tag) throws NoAccessException, NotFoundException;
+	public void removeTag(long id, String tag) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Adds a comment to a snippet, identified by its hash id. If the comment is
@@ -158,7 +168,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public void addComment(long id, String comment) throws NoAccessException, NotFoundException;
+	public void addComment(long id, String comment) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Adds a snippet that is identified by the id to the favorites
@@ -168,7 +179,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the access is denied by the server
 	 */
-	public void addToFavorites(long id) throws NoAccessException, NotFoundException;
+	public void addToFavorites(long id) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Creates a new snippet with the given parameters.
@@ -179,12 +191,15 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws IllegalArgumentException
 	 *             Thrown if at least one argument is invalid
 	 */
-	public void create(String name, String desc, String code, String language, String license, String category,
-			List<String> tags) throws NoAccessException, IllegalArgumentException;
+	public void create(String name, String desc, String code, String language,
+			String license, String category, List<String> tags)
+			throws NoAccessException, IllegalArgumentException;
 
 	/**
 	 * Edits the given snippet (identified by the hash id) with the new data
 	 * 
+	 * <b>Caution</b> This method does <b>NOT</b> edit the snippet's code. Use
+	 * the method {@link #editCode(long, String)} for doing that
 	 * 
 	 * @param snippet
 	 *            Snippet data and hash id of the snippet to be edited
@@ -193,7 +208,23 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NotFoundException
 	 *             Thrown if the given snippet is not found
 	 */
-	public void edit(XSnippet snippet) throws NoAccessException, NotFoundException, IllegalArgumentException;
+	public void edit(XSnippet snippet) throws NoAccessException,
+			NotFoundException, IllegalArgumentException;
+
+	/**
+	 * Adds a new code to the snippet's code versioning system.
+	 * 
+	 * @param snippedID
+	 *            ID of the snippet
+	 * @param code
+	 *            Code to be added
+	 * @throws NoAccessException
+	 *             Thrown if the access to the server is denied
+	 * @throws NotFoundException
+	 *             Thrown, if the snippet is not found
+	 */
+	public void editCode(long snippedID, String code) throws NoAccessException,
+			NotFoundException;
 
 	/**
 	 * Retrieves a list of supported languages from the server
@@ -203,8 +234,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	public List<String> getSupportedLanguages();
 
 	/**
-	 * Retrieves a list of more supported languages from the server.
-	 * It is used to append the list of supported languages on demand.
+	 * Retrieves a list of more supported languages from the server. It is used
+	 * to append the list of supported languages on demand.
 	 * 
 	 * @return List of supported languages
 	 */
@@ -221,7 +252,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * 
 	 * @return true if a downloadable source is found
 	 */
-	public boolean hasDownloadableSource(long snippet_id) throws NotFoundException;
+	public boolean hasDownloadableSource(long snippet_id)
+			throws NotFoundException;
 
 	/**
 	 * Gets a download ticket for the source code.
@@ -230,7 +262,8 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public long getDownloadSourceTicket(long snippet_id) throws NotFoundException, NoAccessException;
+	public long getDownloadSourceTicket(long snippet_id)
+			throws NotFoundException, NoAccessException;
 
 	/**
 	 * Checks if the current session/user can edit a given snippet
