@@ -61,7 +61,7 @@ public class MemPersistence implements IPersistence {
 
 	private final HashMap<Snippet, List<Tag>> snippetTags = new HashMap<Snippet, List<Tag>>();
 
-	private final HashMap<User, List<Notification>> notifications = new HashMap<User, List<Notification>>();
+	private final HashMap<String, List<Notification>> notifications = new HashMap<String, List<Notification>>();
 
 	private final HashMap<Snippet, HashMap<Integer, Code>> allCodes = new HashMap<Snippet, HashMap<Integer, Code>>();
 
@@ -194,7 +194,7 @@ public class MemPersistence implements IPersistence {
 		if (notification == null)
 			return null;
 
-		User owner = notification.getOwner();
+		String owner = notification.getOwner();
 		List<Notification> notifications = this.notifications.get(owner);
 		if (notifications == null) {
 			notifications = new ArrayList<Notification>();
@@ -509,18 +509,18 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Notification> getNotifications(User user, boolean unreadOnly)
+	public List<Notification> getNotifications(String userName, boolean unreadOnly)
 			throws IOException {
 		checkFail();
 		// XXX This method is not yet needed and therefore not tested
 
-		if (user == null)
+		if (userName == null)
 			return null;
 
-		List<Notification> list = notifications.get(user);
+		List<Notification> list = notifications.get(userName);
 		if (list == null) {
 			list = new ArrayList<Notification>();
-			notifications.put(user, list);
+			notifications.put(userName, list);
 		}
 		if (unreadOnly) {
 			List<Notification> result = new ArrayList<Notification>();

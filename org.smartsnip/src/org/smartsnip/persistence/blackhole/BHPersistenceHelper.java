@@ -71,11 +71,11 @@ public class BHPersistenceHelper extends PersistenceHelper {
 
 	/**
 	 * @see org.smartsnip.core.PersistenceHelper#createNotification(java.lang.Long,
-	 *      org.smartsnip.core.User, java.lang.String, java.lang.Boolean,
+	 *      java.lang.String, java.lang.String, java.lang.Boolean,
 	 *      java.lang.String, java.lang.String, java.lang.Long)
 	 */
 	@Override
-	protected Notification createNotification(Long id, User owner,
+	protected Notification createNotification(Long id, String owner,
 			String message, Boolean read, String time, String source,
 			Long targetSnippet) {
 		// Auto-generated method stub

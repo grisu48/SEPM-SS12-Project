@@ -1006,8 +1006,8 @@ public interface IPersistence {
 	/**
 	 * Get all notifications belonging to the given user.
 	 * 
-	 * @param user
-	 *            the user to notify
+	 * @param userName
+	 *            the name of the user to notify
 	 * @param unreadOnly
 	 *            return only the notifications which are viewed the first time
 	 *            now
@@ -1015,7 +1015,7 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public List<Notification> getNotifications(User user, boolean unreadOnly)
+	public List<Notification> getNotifications(String userName, boolean unreadOnly)
 			throws IOException;
 
 	/**

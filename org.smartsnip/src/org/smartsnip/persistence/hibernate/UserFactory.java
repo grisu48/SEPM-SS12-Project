@@ -15,7 +15,6 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.smartsnip.core.Notification;
-import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
 import org.smartsnip.persistence.IPersistence;
 
@@ -178,7 +177,7 @@ public class UserFactory {
 
 			DBNotification entity = new DBNotification();
 			entity.setNotificationId(notification.getId());
-			entity.setUserName(notification.getOwner().getUsername());
+			entity.setUserName(notification.getOwner());
 			entity.setSnippetId(notification.getRefersToSnippet());
 			entity.setViewed(notification.isRead());
 			entity.setMessage(notification.getMessage());
@@ -221,7 +220,7 @@ public class UserFactory {
 				query = new DBQuery(session);
 				entity = new DBNotification();
 				entity.setNotificationId(notification.getId());
-				entity.setUserName(notification.getOwner().getUsername());
+				entity.setUserName(notification.getOwner());
 				entity.setSnippetId(notification.getRefersToSnippet());
 				entity.setViewed(notification.isRead());
 				entity.setMessage(notification.getMessage());
@@ -553,23 +552,21 @@ public class UserFactory {
 	}
 
 	/**
-	 * Implementation of {@link IPersistence#getNotifications(User, boolean)}
+	 * Implementation of {@link IPersistence#getNotifications(String, boolean)}
 	 * 
-	 * @param user
+	 * @param userName
 	 * @param unreadOnly
 	 * @return a list of notifications
 	 * @throws IOException
 	 * 
-	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getNotifications(org.smartsnip.core.User,
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getNotifications(java.lang.String,
 	 *      boolean)
 	 */
-	static List<Notification> getNotifications(User user, boolean unreadOnly)
+	static List<Notification> getNotifications(String userName, boolean unreadOnly)
 			throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		DBNotification entity;
-		DBSnippet snip;
-		Snippet snippet;
 		List<Notification> result = new ArrayList<Notification>();
 
 		Transaction tx = null;
@@ -578,30 +575,18 @@ public class UserFactory {
 			DBQuery query = new DBQuery(session);
 
 			entity = new DBNotification();
-			if (user == null || user.getUsername() == null
-					|| user.getUsername() == "") {
-				throw new IOException("empty argument userName is invalid");
-			}
-			entity.setUserName(user.getUsername());
+			entity.setUserName(userName);
 			if (unreadOnly) {
 				entity.setViewed(false);
 			}
 
 			List<DBNotification> entities = query.from(entity,
 					IPersistence.DB_DEFAULT);
-			for (DBNotification n : entities) {
-				if (n.getSnippetId() != null) {
-					snip = new DBSnippet();
-					snip.setSnippetId(n.getSnippetId());
-					snip = new DBQuery(session).fromSingle(snip,
-							DBQuery.QUERY_NOT_NULL);
-				} else {
-					snippet = null;
-				}
+			for (DBNotification notif : entities) {
 				result.add(helper.createNotification(
-						entity.getNotificationId(), user, entity.getMessage(),
-						entity.isViewed(), entity.getCreatedAt().toString(),
-						entity.getOrigin(), entity.getSnippetId()));
+						notif.getNotificationId(), userName, notif.getMessage(),
+						notif.isViewed(), notif.getCreatedAt().toString(),
+						notif.getOrigin(), notif.getSnippetId()));
 			}
 			tx.commit();
 		} catch (RuntimeException e) {
