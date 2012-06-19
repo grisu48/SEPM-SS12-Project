@@ -500,15 +500,15 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
-	 * @see org.smartsnip.persistence.IPersistence#getNotifications(org.smartsnip.core.User,
+	 * @see org.smartsnip.persistence.IPersistence#getNotifications(java.lang.String,
 	 *      boolean)
 	 */
 	@Override
-	public List<Notification> getNotifications(User user, boolean unreadOnly)
+	public List<Notification> getNotifications(String userName, boolean unreadOnly)
 			throws IOException {
 		checkFail();
 		List<Notification> list = new ArrayList<Notification>();
-		Notification not1 = this.helper.createNotification(1L, user,
+		Notification not1 = this.helper.createNotification(1L, userName,
 				"Some obscure things happened.", false, "12. 3. 2012, 13.00",
 				"unknown", null);
 		list.add(not1);

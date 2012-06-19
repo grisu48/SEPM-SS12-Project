@@ -166,7 +166,7 @@ public class SqlPersistenceTest {
 		codes.add(helper.createCode(4L, "/* test code to snippet 3 */", "_test_java", snip3, 7, null));
 		instance.writeCode(codes, IPersistence.DB_DEFAULT);
 		
-		Notification notif = helper.createNotification(1L, user1, "a test notification",
+		Notification notif = helper.createNotification(1L, user1.getUsername(), "a test notification",
 				false, "now", "source is unknown", snip1.getHashId());
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
 
