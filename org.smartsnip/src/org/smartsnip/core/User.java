@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.security.IHash;
 import org.smartsnip.security.MD5;
+import org.smartsnip.shared.XUser;
 
 // NOTE: TODO: Implement the notification system
 
@@ -525,6 +526,7 @@ public class User {
 		try {
 			Persistence.getInstance().addFavourite(snippet, this,
 					IPersistence.DB_NEW_ONLY);
+			favourites = Persistence.getInstance().getFavorited(this);
 		} catch (IOException e) {
 			log.warn(
 					"IOException writing favorite snippet (id="
@@ -547,6 +549,7 @@ public class User {
 		try {
 			Persistence.getInstance().removeFavourite(snippet, this,
 					IPersistence.DB_NEW_ONLY);
+			favourites = Persistence.getInstance().getFavorited(this);
 		} catch (IOException e) {
 			log.warn(
 					"IOException writing favorite snippet (id="
@@ -767,5 +770,32 @@ public class User {
 		if (state == UserState.moderator)
 			return true;
 		return false;
+	}
+
+	/**
+	 * Converts the {@link XUser.UserState} into a {@link UserState} and calls
+	 * afterwards {@link #setState(UserState)}
+	 * 
+	 * @param state
+	 *            to be converted
+	 */
+	public void setState(XUser.UserState state) {
+		switch (state) {
+		case administrator:
+			setState(UserState.administrator);
+			break;
+		case deleted:
+			setState(UserState.deleted);
+			break;
+		case moderator:
+			setState(UserState.moderator);
+			break;
+		case unvalidated:
+			setState(UserState.unvalidated);
+			break;
+		case validated:
+			setState(UserState.validated);
+			break;
+		}
 	}
 }

@@ -406,4 +406,24 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 			throw new NotFoundException("Snippet " + id + " cannot be found");
 		snippet.increaseViewCounter();
 	}
+
+	@Override
+	public void removeFavorite(long id) throws NotFoundException {
+		Session session = getSession();
+		Snippet snippet = Snippet.getSnippet(id);
+		if (snippet == null) {
+			// Snippet is not found
+			throw new NotFoundException("No snippet with id " + id + " found");
+		}
+
+		if (session.isLoggedIn()) {
+			User user = session.getUser();
+			if (user == null)
+				return;
+
+			user.removeFavorite(snippet);
+		} else {
+			session.removeFavorite(snippet);
+		}
+	}
 }

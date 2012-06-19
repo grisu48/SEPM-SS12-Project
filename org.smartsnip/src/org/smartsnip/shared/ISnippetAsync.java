@@ -33,6 +33,8 @@ public interface ISnippetAsync {
 
 	void addToFavorites(long id, AsyncCallback<Void> callback);
 
+	void removeFavorite(long id, AsyncCallback<Void> asyncCallback);
+
 	void edit(XSnippet snippet, AsyncCallback<Void> callback);
 
 	void getSupportedLanguages(AsyncCallback<List<String>> callback);

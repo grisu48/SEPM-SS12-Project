@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.core.User;
-import org.smartsnip.core.User.UserState;
 import org.smartsnip.shared.IModerator;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XSession;
+import org.smartsnip.shared.XUser;
 
 public class IModeratorImpl extends GWTSessionServlet implements IModerator {
 
@@ -64,7 +64,7 @@ public class IModeratorImpl extends GWTSessionServlet implements IModerator {
 	}
 
 	@Override
-	public void setUserState(String username, UserState state)
+	public void setUserState(String username, XUser.UserState state)
 			throws NotFoundException, NoAccessException {
 		if (username == null)
 			return;

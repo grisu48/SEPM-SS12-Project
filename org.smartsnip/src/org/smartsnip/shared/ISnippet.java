@@ -172,6 +172,16 @@ public interface ISnippet extends RemoteService, IsSerializable {
 			NotFoundException;
 
 	/**
+	 * Removes a snipped, identified by it's id from the favourites
+	 * 
+	 * @param id
+	 *            Hash id of the snippet to be removed
+	 * @throws NotFoundException
+	 *             Thrown if the snippet is not found
+	 */
+	void removeFavorite(long id) throws NotFoundException;
+
+	/**
 	 * Adds a snippet that is identified by the id to the favorites
 	 * 
 	 * @param id

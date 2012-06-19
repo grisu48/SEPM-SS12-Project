@@ -65,8 +65,12 @@ public class XSnippet implements IsSerializable, Cloneable {
 		this.isFavorite = isFavorite;
 	}
 
+	/**
+	 * Clones the current {@link XSnippet} object.
+	 * 
+	 * <b>DO NOT APPLY @OVERRIDE, OTHERWISE GWT WON'T WORK</b>
+	 */
 	@SuppressWarnings("unchecked")
-	@Override
 	public XSnippet clone() {
 		XSnippet clone = new XSnippet();
 

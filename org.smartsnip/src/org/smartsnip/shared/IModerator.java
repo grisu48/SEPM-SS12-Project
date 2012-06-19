@@ -2,8 +2,6 @@ package org.smartsnip.shared;
 
 import java.util.List;
 
-import org.smartsnip.core.User.UserState;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -65,6 +63,6 @@ public interface IModerator extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public void setUserState(String username, UserState state)
+	public void setUserState(String username, XUser.UserState state)
 			throws NotFoundException, NoAccessException;
 }
