@@ -23,11 +23,12 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 		if (snippet == null)
 			return null;
 
+		Session session = getSession();
 		List<Comment> comments = snippet.getComments();
 		comments = org.smartsnip.core.Util.cropList(comments, start, count);
 		List<XComment> result = new ArrayList<XComment>(comments.size());
 		for (Comment comment : comments)
-			result.add(comment.toXComment());
+			result.add(toXComment(comment, session));
 
 		return result;
 	}
@@ -168,7 +169,29 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 		if (comment == null)
 			throw new NotFoundException();
 
-		return comment.toXComment();
+		return toXComment(comment, getSession());
 	}
 
+	/**
+	 * Converts a given comment to a {@link XComment} object. Call this instant
+	 * of {@link Comment#toXComment()} to also apply the session-specific values
+	 * 
+	 * @param comment
+	 *            to be converted
+	 * @param session
+	 *            to apply the session specific values
+	 * @return converted {@link XComment} value
+	 */
+	static XComment toXComment(Comment comment, Session session) {
+		if (comment == null)
+			return null;
+		XComment result = comment.toXComment();
+		if (session != null) {
+			result.canDelete = session.getPolicy().canDeleteComment(session,
+					comment);
+			result.canEdit = session.getPolicy().canEditComment(session,
+					comment);
+		}
+		return result;
+	}
 }

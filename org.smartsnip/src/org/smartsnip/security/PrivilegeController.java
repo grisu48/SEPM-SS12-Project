@@ -4,7 +4,7 @@ import org.smartsnip.core.Category;
 import org.smartsnip.core.Comment;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
-import org.smartsnip.server.*;
+import org.smartsnip.server.Session;
 
 public class PrivilegeController {
 
@@ -70,6 +70,11 @@ public class PrivilegeController {
 		public boolean canEditCategory(Session session, Category category) {
 			return false;
 		}
+
+		@Override
+		public boolean canDeleteComment(Session session, Comment comment) {
+			return false;
+		}
 	};
 
 	/** Hard coded user access policy */
@@ -107,13 +112,15 @@ public class PrivilegeController {
 
 		@Override
 		public boolean canEditSnippet(Session session, Snippet snippet) {
-			if (!session.isLoggedIn()) return false;
+			if (!session.isLoggedIn())
+				return false;
 			return session.isLoggedInUser(snippet.getOwner());
 		}
 
 		@Override
 		public boolean canDeleteSnippet(Session session, Snippet snippet) {
-			if (!session.isLoggedIn()) return false;
+			if (!session.isLoggedIn())
+				return false;
 			return session.isLoggedInUser(snippet.getOwner());
 		}
 
@@ -129,14 +136,91 @@ public class PrivilegeController {
 
 		@Override
 		public boolean canEditComment(Session session, Comment comment) {
-			if (!session.isLoggedIn()) return false;
+			if (!session.isLoggedIn())
+				return false;
 			return session.isLoggedInUser(comment.owner);
 		}
 
 		@Override
 		public boolean canEditCategory(Session session, Category category) {
-			// TODO Currently not available!
+			// Not available for user
 			return false;
+		}
+
+		@Override
+		public boolean canDeleteComment(Session session, Comment comment) {
+			if (!session.isLoggedIn())
+				return false;
+			return session.isLoggedInUser(comment.owner);
+		}
+	};
+
+	/** Access policy for the moderator */
+	private static IAccessPolicy moderatorAccessPolicy = new IAccessPolicy() {
+
+		@Override
+		public boolean canTagSnippet(Session session, Snippet snippet) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canSearch(Session session) {
+			return true;
+		}
+
+		@Override
+		public boolean canRegister(Session session) {
+			return true;
+		}
+
+		@Override
+		public boolean canRateSnippet(Session session, Snippet snippet) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canLogin(Session session) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canEditUserData(Session session, User user) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canEditSnippet(Session session, Snippet snippet) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canEditComment(Session session, Comment comment) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canEditCategory(Session session, Category category) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canDeleteSnippet(Session session, Snippet snippet) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canCreateSnippet(Session session, Category category) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canComment(Session session) {
+			return session.isLoggedIn();
+		}
+
+		@Override
+		public boolean canDeleteComment(Session session, Comment comment) {
+			return session.isLoggedIn();
 		}
 	};
 
@@ -148,8 +232,14 @@ public class PrivilegeController {
 	 * @return the generated access policy
 	 */
 	public static IAccessPolicy getAccessPolicty(Session session) {
-		if (session == null) return guestAccessPolicy;
-		if (!session.isLoggedIn()) return guestAccessPolicy;
+		if (session == null)
+			return guestAccessPolicy;
+		if (!session.isLoggedIn())
+			return guestAccessPolicy;
+
+		User user = session.getUser();
+		if (user.isModerator())
+			return moderatorAccessPolicy;
 
 		return userAccessPolicy;
 	}

@@ -145,7 +145,7 @@ public class Session {
 	/**
 	 * @return the logged in user, or null if in guest account
 	 */
-	User getUser() {
+	public User getUser() {
 		return user;
 	}
 

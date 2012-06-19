@@ -9,7 +9,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -19,16 +21,23 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  * 
  * @author Paul
+ * @author Felix Niederwanger
  * 
- * A composed Widget to display one single comment
- *
+ *         A composed Widget to display one single comment
+ * 
  */
 public class CommentField extends Composite {
-
+	/** Current associated comment */
 	private final XComment comment;
+
+	/** Parent comment area this component belongs to */
+	final CommentArea parent;
+
+	private final FlowPanel flowMain;
 
 	private final HorizontalPanel horPanel;
 	private final HorizontalPanel horToolbar;
+	private final VerticalPanel pnlVertButtons;
 	private final HTMLPanel commentText;
 
 	private final VerticalPanel verPanel;
@@ -39,16 +48,23 @@ public class CommentField extends Composite {
 	private final Anchor anchRatePositive;
 	private final Anchor anchRateNegative;
 	private final Anchor anchUnvote;
-	private final Anchor anchEdit;
+
+	private final Button btnEdit;
+	private final Button btnDelete;
+
+	private boolean canRate = false;
 
 	/**
 	 * Initializes the comment
 	 * 
-	 * @param myComment a XComment
+	 * @param myComment
+	 *            a XComment
 	 */
-	public CommentField(final XComment myComment) {
+	public CommentField(final CommentArea parent, final XComment myComment) {
 		this.comment = myComment;
+		this.parent = parent;
 
+		flowMain = new FlowPanel();
 		horPanel = new HorizontalPanel();
 		commentText = new HTMLPanel(myComment.message);
 
@@ -61,11 +77,12 @@ public class CommentField extends Composite {
 		anchRatePositive = new Anchor("Vote positive");
 		anchRateNegative = new Anchor("Vote negative");
 		anchUnvote = new Anchor("Unvote");
-		anchEdit = new Anchor("Edit");
 		anchUnvote.setStyleName("toollink");
-		anchEdit.setStyleName("toollink");
+		btnEdit = new Button("Edit");
+		btnDelete = new Button("Delete");
 
 		horToolbar = new HorizontalPanel();
+		pnlVertButtons = new VerticalPanel();
 
 		anchRatePositive.setStyleName("toollink");
 		anchRatePositive.addClickHandler(new ClickHandler() {
@@ -141,6 +158,7 @@ public class CommentField extends Composite {
 					@Override
 					public void onSuccess(Boolean result) {
 						enableRatingLinks(true);
+						canRate = result;
 					}
 
 					@Override
@@ -149,29 +167,26 @@ public class CommentField extends Composite {
 						// TODO: Error handling??
 					}
 				});
-		anchEdit.setVisible(false);
-		anchEdit.addClickHandler(new ClickHandler() {
+
+		btnEdit.setVisible(comment.canEdit);
+		btnEdit.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO Implement me
-				Control.myGUI.showErrorPopup("Not yet implemented");
+				edit();
 			}
 		});
 
-		IComment.Util.getInstance().canEdit(comment.id,
-				new AsyncCallback<Boolean>() {
+		btnDelete.setVisible(comment.canDelete);
+		btnDelete.addClickHandler(new ClickHandler() {
 
-					@Override
-					public void onSuccess(Boolean result) {
-						anchEdit.setVisible(result);
-					}
+			@Override
+			public void onClick(ClickEvent event) {
+				delete();
+			}
+		});
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// Ignore
-					}
-				});
+		// XXX Ugly hack, that should be removed one day
 		IComment.Util.getInstance().canRate(comment.id,
 				new AsyncCallback<Boolean>() {
 
@@ -194,11 +209,18 @@ public class CommentField extends Composite {
 		horPanel.add(lblDate);
 		horPanel.add(lblRating);
 
+		pnlVertButtons.add(btnEdit);
+		pnlVertButtons.add(btnDelete);
+
 		verPanel.add(commentText);
 		verPanel.add(horPanel);
 		verPanel.add(horToolbar);
+		verPanel.add(pnlVertButtons);
 
-		initWidget(verPanel);
+		flowMain.add(verPanel);
+		flowMain.add(pnlVertButtons);
+
+		initWidget(flowMain);
 		// Give the overall composite a style name.
 		setStyleName("commentField");
 	}
@@ -221,12 +243,12 @@ public class CommentField extends Composite {
 		if (positiveVotes > 0) {
 			buffer.append("+");
 			buffer.append(positiveVotes);
-			
+
 		}
 		if (negativeVotes > 0) {
 			buffer.append("-");
 			buffer.append(negativeVotes);
-			
+
 		}
 
 		return buffer.toString();
@@ -266,7 +288,7 @@ public class CommentField extends Composite {
 	}
 
 	/**
-	 * Updats the comment
+	 * Updates the comment
 	 */
 	public void update() {
 		IComment.Util.getInstance().getComment(comment.id,
@@ -304,6 +326,57 @@ public class CommentField extends Composite {
 		lblDate.setText(getTimeString(comment.time));
 		lblRating.setText(getRatingString(comment.positiveVotes,
 				comment.negativeVotes));
+	}
+
+	/** Edit the comment */
+	private void edit() {
+		EditComment.startEditComment(comment);
+		parent.update();
+	}
+
+	/** Delete the comment */
+	private void delete() {
+		if (Control.myGUI
+				.showConfirmPopup(
+						"Are you sure, you want to delete the selected comment? (Undo NOT possible!)\n  "
+								+ comment.message, "Confirmation") == true) {
+			// Delete
+			disable();
+			IComment.Util.getInstance().delete(comment.id,
+					new AsyncCallback<Void>() {
+
+						@Override
+						public void onSuccess(Void result) {
+							// Is deleted
+							CommentField.this.setVisible(false);
+							parent.update();
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							// something went wrong ...
+							resetControls();
+						}
+					});
+		}
+	}
+
+	/** Disables all components */
+	private void disable() {
+		btnDelete.setEnabled(false);
+		btnEdit.setEnabled(false);
+		anchRateNegative.setEnabled(false);
+		anchRatePositive.setEnabled(false);
+		anchUnvote.setEnabled(false);
+	}
+
+	/** Resets the enabled status of all controls */
+	private void resetControls() {
+		btnDelete.setEnabled(comment.canDelete);
+		btnEdit.setEnabled(comment.canEdit);
+		anchRateNegative.setEnabled(canRate);
+		anchRatePositive.setEnabled(canRate);
+		anchUnvote.setEnabled(canRate);
 	}
 
 }

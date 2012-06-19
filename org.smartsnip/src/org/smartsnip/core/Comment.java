@@ -116,7 +116,7 @@ public class Comment {
 		if (snippet == null)
 			throw new IllegalArgumentException(
 					"Invalid snippet id: No such snippet found");
-		
+
 		// add the comment to the according snippet and persist it
 		snippet.addComment(comment);
 		comment.setCurrentSystemTime();
@@ -270,10 +270,9 @@ public class Comment {
 		if (newMessage == null || newMessage.isEmpty())
 			return;
 
-		// TODO: Message change history
-
 		this.message = newMessage;
 		setCurrentSystemTime();
+		refreshDB();
 	}
 
 	/**
@@ -355,8 +354,9 @@ public class Comment {
 	 * @return created serialisable comment object
 	 */
 	public XComment toXComment() {
-		return new XComment(owner, getHashID(), snippet, this.message,
-				this.chocolates, this.lemons, this.time);
+		XComment result = new XComment(owner, getHashID(), snippet,
+				this.message, this.chocolates, this.lemons, this.time);
+		return result;
 	}
 
 	/**
@@ -417,6 +417,22 @@ public class Comment {
 	 *            to be set
 	 */
 	public void setID(long key) {
+		// DO NOT CALL refreshDB()!!!
+		// This method is used by the persistence
 		this.id = key;
+	}
+
+	/**
+	 * Refreshes the current comment obj
+	 */
+	private synchronized void refreshDB() {
+		try {
+			Persistence.getInstance().writeComment(this,
+					IPersistence.DB_UPDATE_ONLY);
+		} catch (IOException e) {
+			System.err.println("IOException during writing comment (id="
+					+ this.id + "): " + e.getMessage());
+			e.printStackTrace(System.err);
+		}
 	}
 }

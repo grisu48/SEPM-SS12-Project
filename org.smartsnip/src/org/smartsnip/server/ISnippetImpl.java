@@ -35,8 +35,9 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 		List<Comment> comments = snip.getComments();
 		List<XComment> result = new ArrayList<XComment>(comments.size());
 
+		Session session = getSession();
 		for (Comment obj : comments)
-			result.add(obj.toXComment());
+			result.add(ICommentImpl.toXComment(obj, session));
 
 		return result;
 	}

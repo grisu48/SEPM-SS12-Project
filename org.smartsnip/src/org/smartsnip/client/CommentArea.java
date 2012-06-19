@@ -1,7 +1,6 @@
 package org.smartsnip.client;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.smartsnip.shared.ISnippet;
@@ -24,8 +23,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  * @author Paul
  * 
- * A composed Widget to create a possibility to comment
- *
+ *         A composed Widget to create a possibility to comment
+ * 
  */
 public class CommentArea extends Composite {
 
@@ -42,26 +41,25 @@ public class CommentArea extends Composite {
 	/**
 	 * Initializies the Widget
 	 * 
-	 * @param snip - a XSnippet
+	 * @param snip
+	 *            - a XSnippet
 	 */
 	public CommentArea(final XSnippet snip) {
 		myPanel = new VerticalPanel();
 		this.snippet = snip;
 		scrPanel = new ScrollPanel();
 		scrPanel.setStyleName("scrollComment");
-	
-		
-		
+
 		myPanel.setWidth("300px");
 		myPanel.setHeight("500px");
-		
+
 		vertComments = new VerticalPanel();
 		horPanel = new HorizontalPanel();
 
 		lblComments = new Label("");
 		lblComments.setStyleName("h4");
 		myPanel.add(lblComments);
-		
+
 		myComment = new TextArea();
 		// myComment.setStyleName("commentTxt");
 		btnSend = new Button("Send");
@@ -76,22 +74,21 @@ public class CommentArea extends Composite {
 				}
 				Control control = Control.getInstance();
 				String comment = myComment.getText();
-				if (comment.isEmpty()) return;
+				if (comment.isEmpty())
+					return;
 
 				lblComments.setText("Commenting ... ");
 				control.writeComment(comment, snip.hash);
 			}
 		});
-		
-		
+
 		horPanel.add(myComment);
 		horPanel.add(btnSend);
-		
+
 		scrPanel.add(vertComments);
-		
+
 		myPanel.add(scrPanel);
 		myPanel.add(horPanel);
-
 
 		initWidget(myPanel);
 		// Give the overall composite a style name.
@@ -110,35 +107,38 @@ public class CommentArea extends Composite {
 	 */
 	public void update() {
 		lblComments.setText("Refreshing comments ... ");
-		
 
-		ISnippet.Util.getInstance().getComments(snippet.hash, 0, 50, new AsyncCallback<List<XComment>>() {
+		ISnippet.Util.getInstance().getComments(snippet.hash, 0, 50,
+				new AsyncCallback<List<XComment>>() {
 
-			@Override
-			public void onSuccess(List<XComment> result) {
-				if (result == null) result = new ArrayList<XComment>();
+					@Override
+					public void onSuccess(List<XComment> result) {
+						if (result == null)
+							result = new ArrayList<XComment>();
 
-				vertComments.clear();
-				
-				
-				for (XComment i : result) {
-					vertComments.add(new CommentField(i));
-				}
-				int count = result.size();
-				lblComments.setText(count + " Comment" + (count == 1 ? "" : "s"));
-				
-				if (result.size() < 4) {
-					Label myLabel = new Label("Feel free to start commenting");
-					vertComments.add(myLabel);
-				}
-			}
+						vertComments.clear();
 
-			@Override
-			public void onFailure(Throwable caught) {
-				vertComments.add(new Label("CommentList is null"));
-				lblComments.setText("No comments");
-			}
-		});
+						for (XComment i : result) {
+							vertComments.add(new CommentField(CommentArea.this,
+									i));
+						}
+						int count = result.size();
+						lblComments.setText(count + " Comment"
+								+ (count == 1 ? "" : "s"));
+
+						if (result.size() < 4) {
+							Label myLabel = new Label(
+									"Feel free to start commenting");
+							vertComments.add(myLabel);
+						}
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						vertComments.add(new Label("CommentList is null"));
+						lblComments.setText("No comments");
+					}
+				});
 	}
 
 }

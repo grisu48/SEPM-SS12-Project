@@ -12,6 +12,8 @@ public class XComment implements IsSerializable {
 	public int negativeVotes;
 	public Date time;
 	public long id;
+	public boolean canEdit = false;
+	public boolean canDelete = false;
 
 	private XComment() {
 

@@ -4,7 +4,7 @@ import org.smartsnip.core.Category;
 import org.smartsnip.core.Comment;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
-import org.smartsnip.server.*;
+import org.smartsnip.server.Session;
 
 /**
  * Interface that is used for concrete access policies
@@ -138,4 +138,15 @@ public interface IAccessPolicy {
 	 * @return true if operation succeeds if denied false
 	 */
 	public boolean canEditCategory(Session session, Category category);
+
+	/**
+	 * Indicating if the given session can delete a given comment
+	 * 
+	 * @param session
+	 *            the call belongs to
+	 * @param comment
+	 *            to be checked
+	 * @return if operation succeeds if denied false
+	 */
+	public boolean canDeleteComment(Session session, Comment comment);
 }
