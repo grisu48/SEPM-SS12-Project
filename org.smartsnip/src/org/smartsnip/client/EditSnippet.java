@@ -327,8 +327,10 @@ public class EditSnippet extends Composite {
 
 			/* Edits the code, if needed to */
 			private void editCode() {
-				if (original.code.equals(code))
+				if (original.code.equals(code)) {
+					close();
 					return;
+				}
 
 				lblStatus.setText("Adding code to versioning history ...");
 				// Edit code

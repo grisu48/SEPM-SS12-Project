@@ -24,9 +24,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  * @author Paul
  * 
- *
- * A composed Widget to display the a snippet
- *
+ * 
+ *         A composed Widget to display the a snippet
+ * 
  */
 public class SnipArea extends Composite {
 
@@ -66,7 +66,8 @@ public class SnipArea extends Composite {
 	/**
 	 * Initializes the widget
 	 * 
-	 * @param mySnip a XSnippet
+	 * @param mySnip
+	 *            a XSnippet
 	 */
 	SnipArea(final XSnippet mySnip) {
 
@@ -99,7 +100,7 @@ public class SnipArea extends Composite {
 		anchUpload = new Anchor("Upload source");
 		anchDownload = new Anchor("Download source");
 		rating = new Rating(5);
-		btnFav = new Button("Add to Favourites");
+		btnFav = new Button("Favorites");
 		btnEdit = new Button("Edit");
 		btnDelete = new Button("Delete");
 		lblAverageRating = new Label("" + snippet.rating);
@@ -120,29 +121,55 @@ public class SnipArea extends Composite {
 		properties.setWidget(0, 4, new Label("Owner"));
 		properties.setWidget(1, 4, lblOwner);
 
+		btnFav.setText(snippet.isFavorite ? "Remove favorite" : "Add favorite");
 		btnFav.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				btnFav.setEnabled(false);
-				btnFav.setText("Adding to favorites ... ");
 
-				ISnippet.Util.getInstance().addToFavorites(snippet.hash,
-						new AsyncCallback<Void>() {
+				if (snippet.isFavorite) {
+					btnFav.setText("Removing favourite ... ");
 
-							@Override
-							public void onSuccess(Void result) {
-								snippet.isFavorite = true;
-								updateFavortiteStatus();
-							}
+					ISnippet.Util.getInstance().removeFavorite(snippet.hash,
+							new AsyncCallback<Void>() {
 
-							@Override
-							public void onFailure(Throwable caught) {
-								Control.myGUI.showErrorPopup(
-										"Error adding snippet to favorites",
-										caught);
-								btnFav.setEnabled(true);
-							}
-						});
+								@Override
+								public void onSuccess(Void result) {
+									snippet.isFavorite = false;
+									updateFavortiteStatus();
+								}
+
+								@Override
+								public void onFailure(Throwable caught) {
+									Control.myGUI
+											.showErrorPopup(
+													"Error removing snippet to favorites",
+													caught);
+									btnFav.setEnabled(true);
+								}
+							});
+				} else {
+					btnFav.setText("Adding favorites ... ");
+
+					ISnippet.Util.getInstance().addToFavorites(snippet.hash,
+							new AsyncCallback<Void>() {
+
+								@Override
+								public void onSuccess(Void result) {
+									snippet.isFavorite = true;
+									updateFavortiteStatus();
+								}
+
+								@Override
+								public void onFailure(Throwable caught) {
+									Control.myGUI
+											.showErrorPopup(
+													"Error adding snippet to favorites",
+													caught);
+									btnFav.setEnabled(true);
+								}
+							});
+				}
 			}
 		});
 
@@ -151,7 +178,8 @@ public class SnipArea extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO Implement me
+				Control.myGUI.showEditSnippetForm(snippet);
+				update();
 			}
 		});
 		btnDelete.setVisible(false);
@@ -165,7 +193,7 @@ public class SnipArea extends Composite {
 								"Confirm action") == false)
 					return;
 
-				// TODO Switch to new panel when finished
+				setDeleted();
 			}
 		});
 
@@ -298,7 +326,6 @@ public class SnipArea extends Composite {
 					public void onSuccess(Boolean result) {
 						btnEdit.setVisible(result);
 						btnDelete.setVisible(result);
-						// TODO Increment
 						anchUpload.setVisible(result);
 					}
 
@@ -363,6 +390,7 @@ public class SnipArea extends Composite {
 					@Override
 					public void onFailure(Throwable caught) {
 						// Ignore it
+
 					}
 				});
 	}
@@ -395,12 +423,12 @@ public class SnipArea extends Composite {
 	 * Updates the behaviour depending on favourites status
 	 */
 	private void updateFavortiteStatus() {
+		btnFav.setEnabled(true);
 		if (snippet.isFavorite) {
-			btnFav.setEnabled(false);
-			btnFav.setText("Favourited");
+			btnFav.setText("Remove favorite");
 		} else {
 			btnFav.setEnabled(true);
-			btnFav.setText("Add to favorites");
+			btnFav.setText("Add favorites");
 		}
 	}
 
@@ -433,5 +461,15 @@ public class SnipArea extends Composite {
 			return mySnip.owner;
 	}
 
-
+	/**
+	 * Disabled the whole control, when the snippet is deleted
+	 */
+	private void setDeleted() {
+		btnDelete.setEnabled(false);
+		btnEdit.setEnabled(false);
+		btnFav.setEnabled(false);
+		anchDownload.setEnabled(false);
+		anchUpload.setEnabled(false);
+		rating.setEnabled(false);
+	}
 }
