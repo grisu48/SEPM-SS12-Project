@@ -26,9 +26,6 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 	/** Serialisation ID */
 	private static final long serialVersionUID = -5691219932423526109L;
 
-	/** Assosciated session for this servlet call */
-	private Session session = null;
-
 	/**
 	 * Default constructor handles the session initialisation
 	 */
@@ -129,41 +126,30 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 	 * 
 	 * @return the session for this revlet object
 	 */
-	protected final Session getSession() {
-		if (session != null)
-			return session;
+	protected synchronized final Session getSession() {
+		Session session = null;
 
-		synchronized (this) {
-			/*
-			 * Thread-Saftey: This call MUST be executed once again in the
-			 * synchronized block!!
-			 */
-			if (session != null)
-				return session;
+		Cookie cookie = getCookie(ISession.cookie_Session_ID);
 
-			Cookie cookie = getCookie(ISession.cookie_Session_ID);
-
-			if (cookie == null) {
-				session = Session.createNewSession();
-				cookie = new Cookie(ISession.cookie_Session_ID,
-						session.getCookie());
-				addCookie(cookie);
-				Logging.printInfo("New Session (SID=" + cookie
-						+ ") attached. Host: " + getRemoteHost());
+		if (cookie == null) {
+			session = Session.createNewSession();
+			cookie = new Cookie(ISession.cookie_Session_ID, session.getCookie());
+			addCookie(cookie);
+			Logging.printInfo("New Session (SID=" + cookie
+					+ ") attached. Host: " + getRemoteHost());
+		} else {
+			/** TODO: Check handling if cookies are disabled in browser */
+			String sid = cookie.getValue();
+			if (sid == null) {
+				session = Session.getStaticGuestSession();
 			} else {
-				/** TODO: Check handling if cookies are disabled in browser */
-				String sid = cookie.getValue();
-				if (sid == null) {
-					session = Session.getStaticGuestSession();
-				} else {
-					session = Session.getSession(sid);
-				}
+				session = Session.getSession(sid);
 			}
-
-			// Does a activity on the running session
-			session.doActivity();
-			return session;
 		}
+
+		// Does a activity on the running session
+		session.doActivity();
+		return session;
 	}
 
 	public XServerStatus getServerStatus() {
@@ -194,7 +180,7 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 		if (cookie == null) {
 			Logging.printInfo("(" + getRemoteHost() + "): " + message);
 		} else {
-			String user = session.getUsername();
+			String user = getSession().getUsername();
 			if (user.equalsIgnoreCase("guest"))
 				Logging.printInfo("(SID=" + cookie + "): " + message);
 			else
@@ -218,7 +204,7 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 		if (cookie == null) {
 			Logging.printInfo("(" + getRemoteHost() + "): " + message);
 		} else {
-			String user = session.getUsername();
+			String user = getSession().getUsername();
 			if (user.equalsIgnoreCase("guest"))
 				Logging.printError("(SID=" + cookie + "): " + message);
 			else

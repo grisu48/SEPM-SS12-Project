@@ -12,6 +12,7 @@ import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSearch.SearchSorting;
+import org.smartsnip.shared.XSession;
 import org.smartsnip.shared.XSnippet;
 import org.smartsnip.shared.XUser;
 
@@ -228,5 +229,16 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	public List<XSnippet> getFavorites() {
 		Session session = getSession();
 		return toXSnippets(session.getFavorites());
+	}
+
+	@Override
+	public XSession getSessionInfo() {
+		XSession result = new XSession();
+		result.activeSessions = Session.getActiveSessionCount();
+		result.guestSessions = Session.getGuestSessionCount();
+		result.loggedInUsers = Session.getCurrentUserCount();
+		result.totalUsers = Session.getUserCount();
+
+		return result;
 	}
 }

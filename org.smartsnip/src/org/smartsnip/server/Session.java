@@ -57,21 +57,8 @@ public class Session {
 	private final List<ISessionObserver> observers = new ArrayList<ISessionObserver>();
 
 	/**
-	 * Implementation of the observer to serve the observers with the given
-	 * methods.
-	 * 
-	 * Each method of the interface is implemented to redirect the call to the
-	 * observers.
-	 * */
-
-	@Deprecated
-	private final ISessionObserver observable = new ISessionObserver() {
-
-	};
-
-	/**
 	 * If the session is not logged in, this list provides a kind of temporary
-	 * favorite list. Contains the hash id of the favorited snippets
+	 * Favourite list. Contains the hash id of the favorited snippets
 	 */
 	private transient final List<Long> favorites = new ArrayList<Long>();
 
@@ -793,5 +780,54 @@ public class Session {
 			return false;
 
 		return favorites.contains(snippet.getHashId());
+	}
+
+	/**
+	 * @return a list of all current sessions
+	 */
+	static synchronized List<Session> getSessions() {
+		return new ArrayList<Session>(storedSessions.values());
+	}
+
+	/**
+	 * @return the number of currently active sessions
+	 */
+	public static int getActiveSessionCount() {
+		List<Session> sessions = getSessions();
+		int counter = 0;
+
+		for (Session session : sessions)
+			if (session.isAlive())
+				counter++;
+
+		return counter;
+	}
+
+	/**
+	 * @return the number of currently active guest sessions
+	 */
+	public static int getGuestSessionCount() {
+		List<Session> sessions = getSessions();
+		int counter = 0;
+
+		for (Session session : sessions)
+			if (!session.isLoggedIn())
+				counter++;
+
+		return counter;
+	}
+
+	/**
+	 * @return number of currently logged in users
+	 */
+	public static int getCurrentUserCount() {
+		List<Session> sessions = getSessions();
+		int counter = 0;
+
+		for (Session session : sessions)
+			if (session.isLoggedIn())
+				counter++;
+
+		return counter;
 	}
 }

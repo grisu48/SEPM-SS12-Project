@@ -40,4 +40,6 @@ public interface ISessionAsync {
 	public void getUser(String username, AsyncCallback<XUser> callback);
 
 	void getFavorites(AsyncCallback<List<XSnippet>> callback);
+
+	void getSessionInfo(AsyncCallback<XSession> callback);
 }

@@ -160,6 +160,26 @@ public interface ISession extends RemoteService, IsSerializable {
 	 */
 	public String getSessionCookie();
 
-	public XUser getUser(String username);
+	/**
+	 * Gets the exchange user object of an user, that is identified by the
+	 * username
+	 * 
+	 * @param username
+	 *            Username of the user to be searched for
+	 * @return the {@link XUser} object for the found user
+	 * @throws NotFoundException
+	 *             Thrown if the given username is not found
+	 * @throw {@link NoAccessException} Thrown, if there was a service denial by
+	 *        the server
+	 */
+	public XUser getUser(String username) throws NotFoundException,
+			NoAccessException;
+
+	/**
+	 * Gets general informations about the sessions
+	 * 
+	 * @return {@link XSession} object from the server
+	 */
+	public XSession getSessionInfo();
 
 }
