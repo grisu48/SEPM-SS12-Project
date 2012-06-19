@@ -1,16 +1,17 @@
 package org.smartsnip.shared;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class XSnippet implements IsSerializable {
+public class XSnippet implements IsSerializable, Cloneable {
 	public String owner;
 	public long hash;
 	public String title;
 	public String description;
 	public String category;
-	public ArrayList<String> tags;
+	public List<String> tags;
 	public String code;
 	public String codeHTML;
 	public String language;
@@ -62,5 +63,42 @@ public class XSnippet implements IsSerializable {
 		this.license = license;
 		this.viewcount = viewcount;
 		this.isFavorite = isFavorite;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public XSnippet clone() {
+		XSnippet clone = new XSnippet();
+
+		clone.canDelete = canDelete;
+		clone.canEdit = canEdit;
+		clone.canRate = canRate;
+		clone.category = category;
+		clone.code = code;
+		clone.codeHTML = codeHTML;
+		clone.description = description;
+		clone.hash = hash;
+		clone.isFavorite = isFavorite;
+		clone.isOwn = isOwn;
+		clone.language = language;
+		clone.license = license;
+		clone.myRating = myRating;
+		clone.owner = owner;
+		clone.rating = rating;
+		clone.tags = cloneTags();
+		clone.title = title;
+		clone.viewcount = viewcount;
+
+		return clone;
+	}
+
+	/**
+	 * @return cloned tag list
+	 */
+	private List<String> cloneTags() {
+		List<String> clone = new ArrayList<String>(tags.size());
+		for (String tag : tags)
+			clone.add(tag);
+		return clone;
 	}
 }
