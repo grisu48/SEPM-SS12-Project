@@ -179,7 +179,7 @@ public class UserFactory {
 			DBNotification entity = new DBNotification();
 			entity.setNotificationId(notification.getId());
 			entity.setUserName(notification.getOwner().getUsername());
-			entity.setSnippetId(notification.getRefersToSnippet().getHashId());
+			entity.setSnippetId(notification.getRefersToSnippet());
 			entity.setViewed(notification.isRead());
 			entity.setMessage(notification.getMessage());
 			entity.setOrigin(notification.getSource());
@@ -222,8 +222,7 @@ public class UserFactory {
 				entity = new DBNotification();
 				entity.setNotificationId(notification.getId());
 				entity.setUserName(notification.getOwner().getUsername());
-				entity.setSnippetId(notification.getRefersToSnippet()
-						.getHashId());
+				entity.setSnippetId(notification.getRefersToSnippet());
 				entity.setViewed(notification.isRead());
 				entity.setMessage(notification.getMessage());
 				entity.setOrigin(notification.getSource());
@@ -596,27 +595,13 @@ public class UserFactory {
 					snip.setSnippetId(n.getSnippetId());
 					snip = new DBQuery(session).fromSingle(snip,
 							DBQuery.QUERY_NOT_NULL);
-
-					snippet = helper.createSnippet(entity.getSnippetId(),
-							entity.getUserName(), snip.getHeadline(), snip
-									.getDescription(), CategoryFactory
-									.fetchCategory(session, snip).getName(),
-							TagFactory.fetchTags(helper, session,
-									snip.getSnippetId()), CommentFactory
-									.fetchCommentIds(session,
-											snip.getSnippetId()),
-							SnippetFactory.fetchLicense(helper, session, snip)
-									.getShortDescr(), snip.getViewcount(), snip
-									.getRatingAverage());
-					helper.setCodeOfSnippet(snippet, CodeFactory
-							.fetchNewestCode(helper, session, snippet));
 				} else {
 					snippet = null;
 				}
 				result.add(helper.createNotification(
 						entity.getNotificationId(), user, entity.getMessage(),
 						entity.isViewed(), entity.getCreatedAt().toString(),
-						entity.getOrigin(), snippet));
+						entity.getOrigin(), entity.getSnippetId()));
 			}
 			tx.commit();
 		} catch (RuntimeException e) {

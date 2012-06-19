@@ -116,10 +116,11 @@ public class Comment {
 		if (snippet == null)
 			throw new IllegalArgumentException(
 					"Invalid snippet id: No such snippet found");
+		
+		// add the comment to the according snippet and persist it
 		snippet.addComment(comment);
 		comment.setCurrentSystemTime();
 
-		addToDB(comment);
 		snippet.refreshDB();
 
 		return comment;

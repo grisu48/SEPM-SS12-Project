@@ -167,7 +167,7 @@ public class SqlPersistenceTest {
 		instance.writeCode(codes, IPersistence.DB_DEFAULT);
 		
 		Notification notif = helper.createNotification(1L, user1, "a test notification",
-				false, "now", "source is unknown", snip1);
+				false, "now", "source is unknown", snip1.getHashId());
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
 
 		List<Comment> comments = new ArrayList<Comment>();

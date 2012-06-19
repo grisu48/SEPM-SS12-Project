@@ -31,7 +31,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.smartsnip.client.Rating;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
 import org.smartsnip.core.File;
@@ -45,8 +44,6 @@ import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.persistence.PersistenceFactory;
 import org.smartsnip.security.MD5;
 import org.smartsnip.shared.Pair;
-
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.IO;
 
 /**
  * Test cases for the database methods provided by the
@@ -204,7 +201,7 @@ public class SqlPersistenceImplTest {
 
 		Notification notif = helper
 				.createNotification(1L, user1, "a test notification", false,
-						"now", "source is unknown", snip1);
+						"now", "source is unknown", snip1.getHashId());
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
 
 		List<Comment> comments = new ArrayList<Comment>();
@@ -446,7 +443,7 @@ public class SqlPersistenceImplTest {
 		Long snipId = instance.writeSnippet(snip, IPersistence.DB_DEFAULT);
 		snip.id = snipId;
 		Notification notif = helper.createNotification(22L, user, "notif",
-				false, "now", "source", snip);
+				false, "now", "source", snip.getHashId());
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
 		System.out.println("Snippet Id = " + snipId);
 	}
