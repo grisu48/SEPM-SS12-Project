@@ -233,12 +233,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 
 	@Override
 	public XSession getSessionInfo() {
-		XSession result = new XSession();
-		result.activeSessions = Session.getActiveSessionCount();
-		result.guestSessions = Session.getGuestSessionCount();
-		result.loggedInUsers = Session.getCurrentUserCount();
-		result.totalUsers = Session.getUserCount();
-
-		return result;
+		Session session = getSession();
+		return session.toXSession();
 	}
 }

@@ -3,6 +3,7 @@ package org.smartsnip.core;
 import java.io.IOException;
 
 import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.shared.XNotification;
 
 public class Notification {
 
@@ -15,7 +16,7 @@ public class Notification {
 	 * This user is the owner of the notificaiton. The owner is always the
 	 * receiver of the notification
 	 */
-	private final User owner;
+	private final String owner;
 	/**
 	 * Message text
 	 */
@@ -45,7 +46,7 @@ public class Notification {
 	 * @param id
 	 *            Hash id of the item
 	 * @param owner
-	 *            Owner of the item
+	 *            Username of the owner of the item
 	 * @param message
 	 *            Notification message
 	 * @param read
@@ -58,7 +59,7 @@ public class Notification {
 	 *            If the notification refers to a snippet (the id of the
 	 *            snippet)
 	 */
-	Notification(Long id, User owner, String message, boolean read,
+	Notification(Long id, String owner, String message, boolean read,
 			String time, String source, Long refersToSnippet) {
 		super();
 		this.id = id;
@@ -89,7 +90,7 @@ public class Notification {
 	/**
 	 * @return the owner of the notification
 	 */
-	public User getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 
@@ -162,5 +163,24 @@ public class Notification {
 					+ this.getId() + "): " + ex.getMessage());
 			ex.printStackTrace(System.err);
 		}
+	}
+
+	/**
+	 * Converts this object to a {@link XNotification} object
+	 * 
+	 * @return the converted {@link XNotification} object
+	 */
+	public XNotification toXNotification() {
+		XNotification result = new XNotification();
+
+		result.id = id;
+		result.message = message;
+		result.owner = owner;
+		result.read = read;
+		result.refersToSnippet = refersToSnippet;
+		result.source = source;
+		result.time = time;
+
+		return result;
 	}
 }

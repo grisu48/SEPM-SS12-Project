@@ -99,6 +99,14 @@ public interface IUser extends RemoteService, IsSerializable {
 	@Deprecated
 	public List<XSnippet> getFavorites() throws NoAccessException;
 
-	public void setPassword(String pw1) throws NoAccessException;
+	/**
+	 * Sets the password for a user
+	 * 
+	 * @param password
+	 *            to be set to
+	 * @throws NoAccessException
+	 *             Thrown, if the server denies the access
+	 */
+	public void setPassword(String password) throws NoAccessException;
 
 }

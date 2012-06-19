@@ -15,6 +15,7 @@ import org.smartsnip.security.IAccessPolicy;
 import org.smartsnip.security.PrivilegeController;
 import org.smartsnip.shared.ISessionObserver;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.XSession;
 
 public class Session {
 	/** Session storage, each session is identified with the cookie string */
@@ -895,5 +896,26 @@ public class Session {
 				counter++;
 
 		return counter;
+	}
+
+	/**
+	 * Creates a {@link XSession} object out of this session
+	 * 
+	 * @return the created {@link XSession} object
+	 */
+	public XSession toXSession() {
+		XSession result = new XSession();
+
+		// Static value
+		result.activeSessions = Session.getActiveSessionCount();
+		result.guestSessions = Session.getGuestSessionCount();
+		result.loggedInUsers = Session.getCurrentUserCount();
+		result.totalUsers = Session.getUserCount();
+
+		// User variables
+		result.key = obfuscatedKey;
+		result.user = (isLoggedIn() ? user.getUsername() : null);
+
+		return result;
 	}
 }

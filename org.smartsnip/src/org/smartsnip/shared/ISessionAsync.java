@@ -42,4 +42,6 @@ public interface ISessionAsync {
 	void getFavorites(AsyncCallback<List<XSnippet>> callback);
 
 	void getSessionInfo(AsyncCallback<XSession> callback);
+
+	void getNotificationCount(boolean unreadOnly, AsyncCallback<Long> callback);
 }
