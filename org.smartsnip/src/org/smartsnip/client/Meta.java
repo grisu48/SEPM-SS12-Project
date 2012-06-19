@@ -1,7 +1,6 @@
 package org.smartsnip.client;
 
 import org.smartsnip.shared.IModerator;
-import org.smartsnip.shared.IUser;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -11,18 +10,16 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-
 import com.google.gwt.user.client.ui.VerticalPanel;
-
 
 /**
  * 
  * 
  * @author Paul
  * 
- *
- * A composed Widget to display the meta navigation menu
- *
+ * 
+ *         A composed Widget to display the meta navigation menu
+ * 
  */
 public class Meta extends Composite {
 
@@ -33,8 +30,8 @@ public class Meta extends Composite {
 	private final Anchor register;
 	private final Anchor logout;
 	private final Anchor mod;
-	private Image icon;
-	private Control control;
+	private final Image icon;
+	private final Control control;
 
 	/**
 	 * Initializes the menu
@@ -45,7 +42,7 @@ public class Meta extends Composite {
 		pnlUser = new VerticalPanel();
 		metaPanel = new HorizontalPanel();
 
-		icon = new Image("/images/user1.png");
+		icon = new Image(Control.baseURL + "/images/user1.png");
 		icon.setSize("35px", "35px");
 
 		user = new Anchor(Control.getInstance().getUsername());
@@ -60,7 +57,6 @@ public class Meta extends Composite {
 
 		mod = new Anchor("Moderate");
 		mod.setStyleName("mod");
-		mod.setVisible(false);
 		mod.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -146,20 +142,14 @@ public class Meta extends Composite {
 			public void onFailure(Throwable caught) {
 			}
 		});
-		
+
 		/*
-		 * XXX todo felix
-		IUser.Util.getInstance().hasUnreadMessage(new AsyncCallback<Boolean>() {
-			if (result) {
-				icon.setUrl("/images/user2.png");
-			}
-			else {
-				icon.setUrl("/images/user1.png");
-			}
-			
-		//});
+		 * XXX todo felix IUser.Util.getInstance().hasUnreadMessage(new
+		 * AsyncCallback<Boolean>() { if (result) {
+		 * icon.setUrl("/images/user2.png"); } else {
+		 * icon.setUrl("/images/user1.png"); }
 		 * 
-		 * 
+		 * //});
 		 */
 	}
 

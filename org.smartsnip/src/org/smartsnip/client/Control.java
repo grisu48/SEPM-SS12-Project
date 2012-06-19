@@ -12,6 +12,7 @@ import org.smartsnip.shared.XSnippet;
 import org.smartsnip.shared.XUser;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -27,6 +28,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * 
  */
 public class Control implements EntryPoint {
+	/** Base URL that should be before every resource */
+	public static final String baseURL = getBaseURL();
 
 	/** User currently logged in */
 	private final XUser user = new XUser("Guest", "noreal", "nomail");
@@ -529,5 +532,26 @@ public class Control implements EntryPoint {
 
 				});
 
+	}
+
+	/**
+	 * This method extracts the relative path out of the absolute URL, so that
+	 * only the structure on the server remains.
+	 * 
+	 * @return Gets the base URL path.
+	 */
+	private static String getBaseURL() {
+		String full = GWT.getModuleBaseURL();
+		String host = GWT.getHostPageBaseURL();
+		if (host.equals(full))
+			return host;
+
+		String url = full.substring(host.length());
+		if (url == "/" || url.isEmpty())
+			return "";
+		if (url.startsWith("/"))
+			url = url.substring(1);
+
+		return url;
 	}
 }

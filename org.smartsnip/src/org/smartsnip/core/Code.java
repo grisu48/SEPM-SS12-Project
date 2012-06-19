@@ -52,6 +52,8 @@ public abstract class Code {
 	public boolean equals(Code code) {
 		if (code == null)
 			return false;
+		if (code.version != this.version)
+			return false;
 		return this.code.equals(code.code);
 	}
 
