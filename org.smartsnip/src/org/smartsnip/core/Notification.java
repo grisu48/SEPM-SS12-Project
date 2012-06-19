@@ -1,21 +1,25 @@
 package org.smartsnip.core;
 
+import java.io.IOException;
+
+import org.smartsnip.persistence.IPersistence;
+
 public class Notification {
-	
+
 	/**
 	 * identifier
 	 */
-	private Long id;
-	
+	private final Long id;
+
 	/**
 	 * This user is the owner of the notificaiton. The owner is always the
 	 * receiver of the notification
 	 */
-	private User owner;
+	private final User owner;
 	/**
 	 * Message text
 	 */
-	private String message;
+	private final String message;
 	/**
 	 * True if the notification is read, otherwise false
 	 */
@@ -23,30 +27,39 @@ public class Notification {
 	/**
 	 * Time the notification was created
 	 */
-	private String time;
+	private final String time;
 	/**
 	 * Source of the notification
 	 */
-	private String source;
-	
+	private final String source;
+
 	/**
-	 * Snippet to which the notification refers.
-	 * Set null if the notification desn't refer to a snippet.
+	 * Snippet to which the notification refers. Set null if the notification
+	 * desn't refer to a snippet.
 	 */
-	private Snippet refersToSnippet;
+	private final Long refersToSnippet;
 
 	/**
 	 * Constructor for DB access
+	 * 
 	 * @param id
+	 *            Hash id of the item
 	 * @param owner
+	 *            Owner of the item
 	 * @param message
+	 *            Notification message
 	 * @param read
+	 *            Boolean, if the notification is read
 	 * @param time
+	 *            Timestamp (UNIX time)
 	 * @param source
+	 *            String to the source, that has sent this notification
 	 * @param refersToSnippet
+	 *            If the notification refers to a snippet (the id of the
+	 *            snippet)
 	 */
-	Notification(Long id, User owner, String message, boolean read, String time,
-			String source, Snippet refersToSnippet) {
+	Notification(Long id, User owner, String message, boolean read,
+			String time, String source, Long refersToSnippet) {
 		super();
 		this.id = id;
 		this.owner = owner;
@@ -58,9 +71,18 @@ public class Notification {
 	}
 
 	/**
+	 * @deprecated Use {@link #getHashId()} instant due to unique nomenclature
 	 * @return the id
 	 */
+	@Deprecated
 	public Long getId() {
+		return this.id;
+	}
+
+	/**
+	 * @return the hash id id
+	 */
+	public Long getHashId() {
 		return this.id;
 	}
 
@@ -80,9 +102,10 @@ public class Notification {
 	}
 
 	/**
-	 * @return the refersToSnippet
+	 * @return the long of the snippet, where the object belongs to or Null, if
+	 *         none
 	 */
-	public Snippet getRefersToSnippet() {
+	public Long getRefersToSnippet() {
 		return this.refersToSnippet;
 	}
 
@@ -111,6 +134,8 @@ public class Notification {
 	 * Marks the notification as read
 	 */
 	void markRead() {
+		if (read == true)
+			return;
 		read = true;
 		refreshDB();
 	}
@@ -119,6 +144,8 @@ public class Notification {
 	 * Marks the notification as unread
 	 */
 	void markUnread() {
+		if (read == false)
+			return;
 		read = false;
 		refreshDB();
 	}
@@ -127,6 +154,13 @@ public class Notification {
 	 * Invokes the refreshing czcle of the persistence
 	 */
 	protected synchronized void refreshDB() {
-		// TODO Implement me
+		try {
+			Persistence.getInstance().writeNotification(this,
+					IPersistence.DB_DEFAULT);
+		} catch (IOException ex) {
+			System.err.println("IOException during writing notification (id="
+					+ this.getId() + "): " + ex.getMessage());
+			ex.printStackTrace(System.err);
+		}
 	}
 }
