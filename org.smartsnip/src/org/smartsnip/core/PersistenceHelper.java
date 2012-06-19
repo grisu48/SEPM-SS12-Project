@@ -77,13 +77,13 @@ public class PersistenceHelper {
 	 * @param read
 	 * @param time
 	 * @param source
-	 * @param target
+	 * @param targetSnippet
 	 * @return an initialized Notification object
 	 */
 	protected Notification createNotification(Long id, User owner,
 			String message, Boolean read, String time, String source,
-			Snippet target) {
-		return new Notification(id, owner, message, read, time, source, target);
+			Long targetSnippet) {
+		return new Notification(id, owner, message, read, time, source, targetSnippet);
 	}
 
 	/**
