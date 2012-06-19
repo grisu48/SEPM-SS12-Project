@@ -161,6 +161,7 @@ public class Control implements EntryPoint {
 			myGUI.showSearchPage();
 			break;
 		case PAGE_Snippet:
+		case PAGE_EditSnippet:
 			// Ignore - we don't know witch snippet
 			break;
 		}

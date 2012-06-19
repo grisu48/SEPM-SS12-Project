@@ -31,9 +31,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  * @author Paul
  * 
- *
- * A composed Widget to display the create snippet popup
- *
+ * 
+ *         A composed Widget to display the create snippet popup
+ * 
  */
 public class CreateSnippet extends Composite {
 
@@ -69,8 +69,11 @@ public class CreateSnippet extends Composite {
 	/**
 	 * 
 	 * Initializes the create snippet popup
-	 * @param parent - the parent popup window
-	 * @param buttonname - the name of the submit button
+	 * 
+	 * @param parent
+	 *            - the parent popup window
+	 * @param buttonname
+	 *            - the name of the submit button
 	 */
 	public CreateSnippet(PopupPanel parent, String buttonname) {
 		this.parent = parent;
@@ -257,7 +260,8 @@ public class CreateSnippet extends Composite {
 			return;
 		}
 		if (txtName.getText().length() > 300) {
-			lblStatus.setText("Description must not be longer then 300 letters");
+			lblStatus
+					.setText("Description must not be longer then 300 letters");
 			return;
 		}
 		String name = txtName.getText();
@@ -288,7 +292,7 @@ public class CreateSnippet extends Composite {
 		// TODO Error messages
 		lblStatus.setText("");
 		if (name.isEmpty() || desc.isEmpty() || language.isEmpty()
-				|| code.isEmpty()) {
+				|| code.isEmpty() || cat.isEmpty()) {
 			lblStatus.setText("Some arguments are missing");
 			return;
 		}

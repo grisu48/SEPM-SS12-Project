@@ -56,7 +56,6 @@ public class EditSnippet extends Composite {
 	private final TextArea txtDescription;
 	private final TextArea txtCode;
 	private final ListBox lstLanguage;
-	private final List<String> moreLanguageList = null;
 	private final ListBox lstCategory;
 	private final ListBox lstLicense;
 	private final TextBox txtTag;
@@ -124,13 +123,6 @@ public class EditSnippet extends Composite {
 					public void onFailure(Throwable caught) {
 						// TODO Error handling
 						lblStatus.setText("Error fetching categories list");
-					}
-
-					/**
-					 * Selects the given category
-					 */
-					private void selectCategory() {
-						// TODO Write me!
 					}
 				});
 
@@ -234,67 +226,27 @@ public class EditSnippet extends Composite {
 		return string.substring(0, len);
 	}
 
-	private void createSnippet() {
-
-		String name = txtName.getText();
-		String desc = txtDescription.getText();
-		String language;
-		String code = txtCode.getText();
-		String cat;
-		String license;
-
-		if (lstLicense.getSelectedIndex() == -1) {
-			license = "";
-		} else {
-			license = lstLicense.getItemText(lstLicense.getSelectedIndex());
-		}
-
-		if (lstLanguage.getSelectedIndex() == -1) {
-			language = "";
-		} else {
-			language = lstLanguage.getItemText(lstLanguage.getSelectedIndex());
-		}
-
-		if (lstCategory.getSelectedIndex() == -1) {
-			cat = "";
-		} else {
-			cat = lstCategory.getItemText(lstCategory.getSelectedIndex());
-		}
-
-		// TODO Error messages
-		lblStatus.setText("");
-		if (name.isEmpty() || desc.isEmpty() || language.isEmpty()
-				|| code.isEmpty()) {
-			lblStatus.setText("Some arguments are missing");
-			return;
-		}
-
-		// TODO Category and Tags
-		btCreate.setEnabled(false);
-		lblStatus.setText("Creating snippet ... ");
-		ISnippet.Util.getInstance().create(name, desc, code, language, license,
-				cat, taglist, new AsyncCallback<Void>() {
-
-					@Override
-					public void onSuccess(Void result) {
-						lblStatus.setText("Success");
-						close();
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						btCreate.setEnabled(true);
-						if (caught == null)
-							lblStatus.setText("Error creating snippet");
-						else
-							lblStatus.setText("Error creating snippet: "
-									+ caught.getMessage());
-					}
-				});
-	}
-
 	private void close() {
 		this.parent.hide();
+	}
+
+	/**
+	 * Selects the given category
+	 */
+	private void selectCategory() {
+		int max = lstCategory.getItemCount();
+
+		for (int i = 0; i < max; i++) {
+			String current = lstCategory.getItemText(i);
+			if (current.equalsIgnoreCase(original.category)) {
+				lstCategory.setSelectedIndex(i);
+				return;
+			}
+		}
+
+		// Not found, add item
+		lstCategory.addItem(original.category);
+		lstCategory.setSelectedIndex(max);
 	}
 
 	public void addTag(final String tag) {
@@ -321,8 +273,94 @@ public class EditSnippet extends Composite {
 		pnlAddedTags.add(anchTag);
 	}
 
+	/**
+	 * This call edits the snippet with the given parameters in the controls,
+	 * and writes the edited snippet out
+	 */
 	private void editSnippet() {
-		// TODO Auto-generated method stub
+		/*
+		 * Important node Because of the code versioning, the code must be
+		 * handled separately!
+		 */
 
+		lblStatus.setText("");
+		final XSnippet snippet = original.clone();
+
+		final String name = txtName.getText();
+		final String desc = txtDescription.getText();
+		final String code = txtCode.getText();
+		final String cat;
+		final String license;
+
+		if (lstLicense.getSelectedIndex() == -1) {
+			license = "";
+		} else {
+			license = lstLicense.getItemText(lstLicense.getSelectedIndex());
+		}
+
+		if (lstCategory.getSelectedIndex() == -1) {
+			cat = "";
+		} else {
+			cat = lstCategory.getItemText(lstCategory.getSelectedIndex());
+		}
+
+		if (name.isEmpty() || desc.isEmpty() || code.isEmpty() || cat.isEmpty()) {
+			lblStatus.setText("Some arguments are missing");
+			return;
+		}
+
+		snippet.title = name;
+		snippet.description = desc;
+		snippet.category = cat;
+		snippet.license = license;
+
+		// TODO Category and Tags
+		btCreate.setEnabled(false);
+		lblStatus.setText("Editing snippet ... ");
+		ISnippet.Util.getInstance().edit(snippet, new AsyncCallback<Void>() {
+
+			@Override
+			public void onSuccess(Void result) {
+				lblStatus.setText("Success");
+				editCode();
+			}
+
+			/* Edits the code, if needed to */
+			private void editCode() {
+				if (original.code.equals(code))
+					return;
+
+				lblStatus.setText("Adding code to versioning history ...");
+				// Edit code
+				ISnippet.Util.getInstance().editCode(snippet.hash, code,
+						new AsyncCallback<Void>() {
+
+							@Override
+							public void onSuccess(Void result) {
+								close();
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								btCreate.setEnabled(true);
+								if (caught == null)
+									lblStatus.setText("Error creating code");
+								else
+									lblStatus.setText("Error creating code: "
+											+ caught.getMessage());
+							}
+						});
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				btCreate.setEnabled(true);
+				if (caught == null)
+					lblStatus.setText("Error creating snippet");
+				else
+					lblStatus.setText("Error creating snippet: "
+							+ caught.getMessage());
+			}
+		});
 	}
 }
