@@ -191,4 +191,14 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @return the number of notifications
 	 */
 	public long getNotificationCount(boolean unreadOnly);
+
+	/**
+	 * Gets the notifications, either all notifications, or unread only
+	 * notifications
+	 * 
+	 * @param unreadOnly
+	 *            if true only unread notifications should be fetched
+	 * @return the notifications
+	 */
+	public List<XNotification> getNotifications(boolean unreadOnly);
 }

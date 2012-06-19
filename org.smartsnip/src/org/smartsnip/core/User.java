@@ -39,7 +39,10 @@ public class User {
 
 	/** The logger for this class */
 	private static Logger log = Logger.getLogger(User.class);
-	
+
+	/** List of all notifications of the user, or null, if not yet loaded */
+	private List<Notification> notifications = null;
+
 	/**
 	 * Determines the status of the user, currently if the user has been
 	 * validated or not
@@ -66,7 +69,7 @@ public class User {
 	 *            the real name of the user. Can be null or empty.
 	 * @param email
 	 *            of the new user
-	 * @param state 
+	 * @param state
 	 * @param favorites
 	 *            Favorited snippets of the user. If null, a new list is created
 	 * 
@@ -125,8 +128,8 @@ public class User {
 		try {
 			return Persistence.instance.getUser(username);
 		} catch (IOException e) {
-			log.info("IOException during getting User \" " + username
-					+ "\":" + e.getMessage(), e);
+			log.info("IOException during getting User \" " + username + "\":"
+					+ e.getMessage(), e);
 			return null;
 		}
 	}
@@ -153,7 +156,8 @@ public class User {
 	 * 
 	 * @param username
 	 *            for the new user. Will be lower-cased
-	 * @param password the user's new password
+	 * @param password
+	 *            the user's new password
 	 * @param email
 	 *            for the user. Must be valid according to the
 	 *            isValidEmailAddress-Method
@@ -178,7 +182,8 @@ public class User {
 	 * 
 	 * @param username
 	 *            for the new user. Will be lower-cased
-	 * @param password the user's new password
+	 * @param password
+	 *            the user's new password
 	 * @param email
 	 *            for the user. Must be valid according to the
 	 *            isValidEmailAddress-Method
@@ -228,8 +233,11 @@ public class User {
 		deleteUser(getUser(username));
 	}
 
-	/** Sets the state of the user 
-	 * @param state */
+	/**
+	 * Sets the state of the user
+	 * 
+	 * @param state
+	 */
 	public synchronized void setState(UserState state) {
 		this.state = state;
 		refreshDB();
@@ -249,8 +257,8 @@ public class User {
 		try {
 			Persistence.instance.removeUser(user, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			log.warn("IOException during deleteUser(" + user.username
-					+ "): " + e.getMessage(), e);
+			log.warn("IOException during deleteUser(" + user.username + "): "
+					+ e.getMessage(), e);
 		}
 	}
 
@@ -289,7 +297,7 @@ public class User {
 			return Persistence.instance.verifyPassword(this, password);
 		} catch (IOException e) {
 			log.info("IOException during checking password for user \""
-							+ username + "\": " + e.getMessage(), e);
+					+ username + "\": " + e.getMessage(), e);
 			return false;
 		}
 
@@ -315,7 +323,7 @@ public class User {
 	 * 
 	 * @param email
 	 *            the email to set
-	 * @throws IllegalArgumentException 
+	 * @throws IllegalArgumentException
 	 */
 	public void setEmail(String email) throws IllegalArgumentException {
 		if (email.length() == 0)
@@ -361,8 +369,7 @@ public class User {
 		try {
 			return Persistence.instance.getUserCount();
 		} catch (IOException e) {
-			log.warn("IOException during getUserCount(): "
-					+ e.getMessage(), e);
+			log.warn("IOException during getUserCount(): " + e.getMessage(), e);
 			return -1;
 		}
 	}
@@ -373,7 +380,7 @@ public class User {
 	 * 
 	 * @param password
 	 *            the password to set
-	 * @throws IllegalArgumentException 
+	 * @throws IllegalArgumentException
 	 */
 	public synchronized void setPassword(String password)
 			throws IllegalArgumentException {
@@ -385,7 +392,8 @@ public class User {
 			Persistence.instance.writeLogin(this, password, true,
 					IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			log.warn("IOException during writing password for user \""
+			log.warn(
+					"IOException during writing password for user \""
 							+ this.getUsername() + "\": " + e.getMessage(), e);
 		}
 	}
@@ -421,8 +429,8 @@ public class User {
 		try {
 			return Persistence.getInstance().getUserSnippets(this);
 		} catch (IOException e) {
-			log.warn("IOException during getMySnippets("
-					+ this.getUsername() + "): " + e.getMessage(), e);
+			log.warn("IOException during getMySnippets(" + this.getUsername()
+					+ "): " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -440,7 +448,7 @@ public class User {
 					.getFavorited(this));
 		} catch (IOException e) {
 			log.warn("IOException during getting favorites for user \""
-							+ getUsername() + "\": " + e.getMessage(), e);
+					+ getUsername() + "\": " + e.getMessage(), e);
 		}
 
 		favourites = result;
@@ -475,8 +483,9 @@ public class User {
 		try {
 			Persistence.instance.writeUser(this, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			log.warn("IOException writing out user \"" + username
-					+ "\": " + e.getMessage(), e);
+			log.warn(
+					"IOException writing out user \"" + username + "\": "
+							+ e.getMessage(), e);
 		}
 	}
 
@@ -495,9 +504,10 @@ public class User {
 			Persistence.getInstance().addFavourite(snippet, this,
 					IPersistence.DB_NEW_ONLY);
 		} catch (IOException e) {
-			log.warn("IOException writing favorite snippet (id="
-					+ snippet.getHashId() + ") for user \"" + username + "\": "
-					+ e.getMessage(), e);
+			log.warn(
+					"IOException writing favorite snippet (id="
+							+ snippet.getHashId() + ") for user \"" + username
+							+ "\": " + e.getMessage(), e);
 		}
 	}
 
@@ -516,9 +526,10 @@ public class User {
 			Persistence.getInstance().removeFavourite(snippet, this,
 					IPersistence.DB_NEW_ONLY);
 		} catch (IOException e) {
-			log.warn("IOException writing favorite snippet (id="
-					+ snippet.getHashId() + ") for user \"" + username + "\": "
-					+ e.getMessage(), e);
+			log.warn(
+					"IOException writing favorite snippet (id="
+							+ snippet.getHashId() + ") for user \"" + username
+							+ "\": " + e.getMessage(), e);
 		}
 	}
 
@@ -560,8 +571,8 @@ public class User {
 		try {
 			Persistence.instance.writeUser(user, IPersistence.DB_NEW_ONLY);
 		} catch (IOException e) {
-			log.warn("IOException during adding user \" "
-					+ user.getUsername() + "\" to db: " + e.getMessage(), e);
+			log.warn("IOException during adding user \" " + user.getUsername()
+					+ "\" to db: " + e.getMessage(), e);
 		}
 	}
 
@@ -667,5 +678,58 @@ public class User {
 		// TODO Auto-generated method stub
 		// TODO Not yet implemented in persistence!
 		return -1;
+	}
+
+	/**
+	 * Gets the number of notifications, either of unread-only, if defined, or
+	 * or all notifications
+	 * 
+	 * @param unreadOnly
+	 *            Handle only unread notifications
+	 * @return the number of notifications or of unread notifications if flag is
+	 *         set
+	 */
+	public long getNotificationCount(boolean unreadOnly) {
+		return getNotifications(unreadOnly).size();
+	}
+
+	/**
+	 * Get all notifications of the user
+	 * 
+	 * @return all notifications of the user
+	 */
+	public synchronized List<Notification> getNotifications(boolean unreadOnly) {
+		List<Notification> notifications = getNotificationsFromCache();
+		if (!unreadOnly)
+			return notifications;
+
+		List<Notification> unreadNotifications = new ArrayList<Notification>();
+		for (Notification notification : notifications)
+			if (!notification.isRead())
+				unreadNotifications.add(notification);
+		return unreadNotifications;
+	}
+
+	/**
+	 * Gets the notifications out of the cache, if there or loads the
+	 * notifiactions into it
+	 * 
+	 * @return the notifications
+	 */
+	private List<Notification> getNotificationsFromCache() {
+		if (notifications != null)
+			return notifications;
+
+		try {
+			notifications = Persistence.getInstance().getNotifications(this,
+					false);
+		} catch (IOException e) {
+			System.err
+					.println("IOException during fetching notifications for user \""
+							+ this.username + "\": " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
+		return notifications;
 	}
 }

@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.core.Category;
+import org.smartsnip.core.Notification;
 import org.smartsnip.core.Search;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.XNotification;
 import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSearch.SearchSorting;
 import org.smartsnip.shared.XSession;
@@ -235,5 +237,30 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	public XSession getSessionInfo() {
 		Session session = getSession();
 		return session.toXSession();
+	}
+
+	@Override
+	public long getNotificationCount(boolean unreadOnly) {
+		Session session = getSession();
+		User user = session.getUser();
+		if (!session.isLoggedIn() || user == null)
+			return 0;
+
+		return user.getNotificationCount(unreadOnly);
+	}
+
+	@Override
+	public List<XNotification> getNotifications(boolean unreadOnly) {
+		Session session = getSession();
+		User user = session.getUser();
+		if (!session.isLoggedIn() || user == null)
+			return new ArrayList<XNotification>();
+
+		List<Notification> notifications = user.getNotifications(unreadOnly);
+		List<XNotification> result = new ArrayList<XNotification>(
+				notifications.size());
+		for (Notification notification : notifications)
+			result.add(notification.toXNotification());
+		return result;
 	}
 }
