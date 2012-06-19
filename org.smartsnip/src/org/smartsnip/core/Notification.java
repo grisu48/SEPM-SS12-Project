@@ -183,4 +183,47 @@ public class Notification {
 
 		return result;
 	}
+
+	/**
+	 * Creates a new notification
+	 * 
+	 * @param message
+	 *            Notification message
+	 * @param username
+	 *            Owner of the notification
+	 * @return the created notification
+	 */
+	public static Notification createNotification(String message,
+			String username) {
+		if (username == null || username.isEmpty())
+			return null;
+		if (message == null || message.isEmpty())
+			return null;
+
+		// NOTE: ID and TIME is set by database
+		Notification notification = new Notification(null, username, message,
+				false, null, "System", null);
+		addToDB(notification);
+		return notification;
+	}
+
+	/**
+	 * Adds a notification to the DB
+	 * 
+	 * @param notification
+	 *            to be added to the DB
+	 */
+	private static void addToDB(Notification notification) {
+		if (notification == null)
+			return;
+
+		try {
+			Persistence.getInstance().writeNotification(notification,
+					IPersistence.DB_NEW_ONLY);
+		} catch (IOException e) {
+			System.err.println("IOException creating new notification: "
+					+ e.getMessage());
+			e.printStackTrace(System.err);
+		}
+	}
 }

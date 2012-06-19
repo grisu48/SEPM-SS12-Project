@@ -41,7 +41,7 @@ public class User {
 	private static Logger log = Logger.getLogger(User.class);
 
 	/** List of all notifications of the user, or null, if not yet loaded */
-	private List<Notification> notifications = null;
+	private transient List<Notification> notifications = null;
 
 	/**
 	 * Determines the status of the user, currently if the user has been
@@ -239,7 +239,12 @@ public class User {
 	 * @param state
 	 */
 	public synchronized void setState(UserState state) {
+		if(this.state == state) return;
 		this.state = state;
+		
+		// Create notification for this process
+		Notification notification = Notification.createNotification("Your userstate is set to: " state.toString(), getUsername());
+		
 		refreshDB();
 	}
 
@@ -731,5 +736,19 @@ public class User {
 			return null;
 		}
 		return notifications;
+	}
+
+	/**
+	 * Checks if the user is moderator or higher
+	 * 
+	 * @return true if the user has moderator provileges
+	 */
+	public boolean isModerator() {
+		UserState state = getState();
+		if (state == UserState.administrator)
+			return true;
+		if (state == UserState.moderator)
+			return true;
+		return false;
 	}
 }
