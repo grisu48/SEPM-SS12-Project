@@ -49,7 +49,20 @@ public class User {
 	 * 
 	 */
 	public enum UserState {
-		unvalidated, validated, deleted, moderator, administrator
+		unvalidated("unvalidate"), validated("validated"), deleted("deleted"), moderator(
+				"moderator"), administrator("administrator");
+
+		/** Message for toString */
+		private final String message;
+
+		private UserState(String message) {
+			this.message = message;
+		}
+
+		@Override
+		public String toString() {
+			return message;
+		}
 	}
 
 	/**
@@ -239,12 +252,16 @@ public class User {
 	 * @param state
 	 */
 	public synchronized void setState(UserState state) {
-		if(this.state == state) return;
+		if (this.state == state)
+			return;
 		this.state = state;
-		
+
 		// Create notification for this process
-		Notification notification = Notification.createNotification("Your userstate is set to: " state.toString(), getUsername());
-		
+		String stateString = state.toString();
+		Notification.createNotification("Your userstate is set to: "
+				+ stateString, getUsername());
+		notifications = null; // Needs refresh
+
 		refreshDB();
 	}
 
@@ -726,8 +743,8 @@ public class User {
 			return notifications;
 
 		try {
-			notifications = Persistence.getInstance().getNotifications(this,
-					false);
+			notifications = Persistence.getInstance().getNotifications(
+					this.username, false);
 		} catch (IOException e) {
 			System.err
 					.println("IOException during fetching notifications for user \""
