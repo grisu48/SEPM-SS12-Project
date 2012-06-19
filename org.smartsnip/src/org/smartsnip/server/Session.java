@@ -3,6 +3,7 @@ package org.smartsnip.server;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Comment;
@@ -19,10 +20,22 @@ public class Session {
 	/** Session storage, each session is identified with the cookie string */
 	private static HashMap<String, Session> storedSessions = new HashMap<String, Session>();
 
+	/**
+	 * For security reasons, the moderators get different ID's for the sessions.
+	 * The COOKIE ID is not visible for the moderator, so that a new map from
+	 * moderator-session-id is needed.
+	 * 
+	 * This is exactly this {@link HashMap}.
+	 * */
+	private static HashMap<String, Session> obfuscatedSessions = new HashMap<String, Session>();
+
 	/** Cookie with that the session is identified */
 	private final String cookie;
 
-	private static final Session staticGuestSession = new Session("");
+	/** Obfuscated primary key, used for the moderator to identify a session */
+	private final String obfuscatedKey;
+
+	private static final Session staticGuestSession = new Session("", "");
 
 	/** State where the current session currently is in */
 	private SessionState state = SessionState.active;
@@ -107,8 +120,9 @@ public class Session {
 	/**
 	 * Session must be created with the static Session factory method.
 	 */
-	private Session(String cookie) {
+	private Session(String cookie, String obfuscated) {
 		this.cookie = cookie;
+		this.obfuscatedKey = obfuscated;
 		this.policy = PrivilegeController.getGuestAccessPolicty();
 	}
 
@@ -153,6 +167,25 @@ public class Session {
 	 */
 	boolean isInactive() {
 		return getState() == SessionState.inactive;
+	}
+
+	/**
+	 * Gets the session that is assigned to an obfuscated key.
+	 * 
+	 * If no such session exists, null is returned
+	 * 
+	 * @param obfuscatedKey
+	 *            the session is assigned to.
+	 * @return the session associated to the obfuscated key, or null, if not
+	 *         existing
+	 */
+	public static Session getObfuscatedSession(String obfuscatedKey) {
+		if (obfuscatedKey == null)
+			return null;
+
+		synchronized (obfuscatedSessions) {
+			return obfuscatedSessions.get(obfuscatedKey);
+		}
 	}
 
 	/**
@@ -225,11 +258,34 @@ public class Session {
 		if (cookie == null || cookie.length() == 0)
 			throw new NullPointerException(
 					"Cannot create session with null cookie");
-		Session newSession = new Session(cookie);
+		Session newSession;
+		synchronized (obfuscatedSessions) {
+			String obfuscated = assignNewObfuscatedKey();
+			newSession = new Session(cookie, obfuscated);
+		}
 		synchronized (storedSessions) {
 			storedSessions.put(cookie, newSession);
 		}
 		return newSession;
+	}
+
+	/**
+	 * Creates a new obfuscated key.
+	 * 
+	 * <b>Caution</b>This method does not reserver the new key, so it is
+	 * recommended to call this method within a <b>synchronized<b> block for
+	 * {@value #obfuscatedSessions}
+	 * 
+	 * @return the new obfuscated key
+	 */
+	private static String assignNewObfuscatedKey() {
+		Random rnd = new Random();
+		String key;
+
+		do
+			key = Long.toString(rnd.nextLong());
+		while (obfuscatedSessions.containsKey(key));
+		return key;
 	}
 
 	/**
@@ -408,9 +464,9 @@ public class Session {
 			if (getState() == SessionState.deleted)
 				throw new IllegalStateException();
 			long delay = System.currentTimeMillis() - this.lastActivityTime;
-			if (delay > this.deleteDelay) {
+			if (delay > deleteDelay) {
 				deleteSession();
-			} else if (delay > this.inactiveDelay) {
+			} else if (delay > inactiveDelay) {
 				inactivateSession();
 			} else if (getState() != SessionState.active) {
 				reactivateSession();
@@ -426,7 +482,10 @@ public class Session {
 			this.state = SessionState.deleted;
 		}
 		synchronized (storedSessions) {
-			storedSessions.remove(this);
+			storedSessions.remove(this.cookie);
+		}
+		synchronized (obfuscatedSessions) {
+			obfuscatedSessions.remove(this.obfuscatedKey);
 		}
 	}
 
@@ -524,6 +583,13 @@ public class Session {
 		result.append((char) ('a' + rnd));
 
 		return result.toString();
+	}
+
+	/**
+	 * @return the obfuscated key for the session
+	 */
+	public String getObfuscatedKey() {
+		return obfuscatedKey;
 	}
 
 	/**
