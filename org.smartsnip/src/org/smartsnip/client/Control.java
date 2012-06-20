@@ -25,6 +25,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * controls the GUI and on the other side it is responsible for the
  * communication with the server
  * 
+ * @author Paul
+ * @author Felix Niederwanger
  * 
  */
 public class Control implements EntryPoint {
@@ -48,13 +50,11 @@ public class Control implements EntryPoint {
 	public static final Search search = new Search();
 
 	/** Session proxy object, used for RPC in GWT */
-	public final static ISessionAsync proxySession = ISession.Util
-			.getInstance();
+	public final static ISessionAsync proxySession = ISession.Util.getInstance();
 	/** Snippet proxy object, used for RPC in GWT */
-	public final static ISnippetAsync proxySnippet = ISnippet.Util
-			.getInstance();
+	public final static ISnippetAsync proxySnippet = ISnippet.Util.getInstance();
 	/** Main GUI distributor */
-	public final static GUI myGUI = new GUI();
+	public final static GUI myGUI = GUI.getInstance();
 
 	private Control() {
 	}
@@ -87,8 +87,7 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				myGUI.showTestPopup("Error getting session cookie: "
-						+ caught.getMessage());
+				myGUI.showMessagePopup("Error getting session cookie: " + caught.getMessage());
 			}
 
 			@Override
@@ -96,7 +95,7 @@ public class Control implements EntryPoint {
 				if (cookie == null) {
 					// Static Guest session if browser does not
 					// supports cookies
-					myGUI.showTestPopup("Null-Cookie returned");
+					myGUI.showMessagePopup("Null-Cookie returned");
 					return;
 				}
 				Cookies.setCookie(COOKIE_SESSION, cookie);
@@ -104,10 +103,6 @@ public class Control implements EntryPoint {
 
 			}
 		});
-		myGUI.getReady();
-
-		// No contents yet added here
-		// myGUI.showTestPopup("Currently no contents here ... ");
 	}
 
 	/**
@@ -146,17 +141,8 @@ public class Control implements EntryPoint {
 		case PAGE_Impressum:
 			myGUI.showImpressum();
 			break;
-		case PAGE_Register:
-			myGUI.showRegisterPopup();
-			break;
 		case PAGE_User:
 			myGUI.showPersonalPage();
-			break;
-		case PAGE_Contact:
-			myGUI.showContactForm();
-			break;
-		case PAGE_CreateSnippet:
-			myGUI.showCreateSnippetForm();
 			break;
 		case PAGE_SnippetOfDay:
 			showSnippetOfDay();
@@ -168,8 +154,13 @@ public class Control implements EntryPoint {
 			myGUI.showBlankPage();
 			break;
 		case PAGE_Snippet:
-		case PAGE_EditSnippet:
 			// Ignore - we don't know witch snippet
+			break;
+		case PAGE_Notifications:
+			myGUI.showNotificationPage();
+			break;
+		case PAGE_Moderator:
+			myGUI.showModeratorPage();
 			break;
 		}
 	}
@@ -205,7 +196,7 @@ public class Control implements EntryPoint {
 			myGUI.showCreateSnippetForm();
 			break;
 		case 'm':
-			myGUI.showModPage();
+			myGUI.showModeratorPage();
 			break;
 		default:
 		}
@@ -223,43 +214,13 @@ public class Control implements EntryPoint {
 	}
 
 	/**
-	 * Calls a login on the server
+	 * Change the internal state, if the session is logged in
 	 * 
-	 * @param String
-	 *            the username
-	 * @param String
-	 *            the password
-	 * 
+	 * @param isLoggedin
+	 *            if logged in true
 	 */
-	public void login(final String user, final String pw, final Login login) {
-
-		try {
-			proxySession.login(user, pw, new AsyncCallback<Boolean>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					if (caught instanceof NoAccessException) {
-						login.loginFailure("Wrong username/password");
-						return;
-					}
-
-					handleException("Error doing the login", caught);
-
-				}
-
-				@Override
-				public void onSuccess(Boolean result) {
-					if (result) {
-						login.loginSuccess();
-						refresh();
-					} else {
-						login.loginFailure("Access denial");
-					}
-				}
-			});
-		} catch (NoAccessException e) {
-			login.loginFailure("Access denial");
-		}
+	void changeLoginState(boolean isLoggedin) {
+		this.loggedIn = isLoggedin;
 	}
 
 	/**
@@ -273,28 +234,25 @@ public class Control implements EntryPoint {
 	 *            the password
 	 * 
 	 */
-	public void register(final String user, final String mail, final String pw,
-			final Register register) {
+	public void register(final String user, final String mail, final String pw, final Register register) {
 		if (user.isEmpty() || mail.isEmpty() || pw.isEmpty())
 			return;
 
-		proxySession.registerNewUser(user, pw, mail,
-				new AsyncCallback<Boolean>() {
+		proxySession.registerNewUser(user, pw, mail, new AsyncCallback<Boolean>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						if (caught instanceof NoAccessException) {
-							register.registerFailure("Access denied");
-						} else
-							register.registerFailure("Unknown error: "
-									+ caught.getMessage());
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				if (caught instanceof NoAccessException) {
+					register.registerFailure("Access denied");
+				} else
+					register.registerFailure("Unknown error: " + caught.getMessage());
+			}
 
-					@Override
-					public void onSuccess(Boolean result) {
-						register.registerSuccess();
-					}
-				});
+			@Override
+			public void onSuccess(Boolean result) {
+				register.registerSuccess();
+			}
+		});
 	}
 
 	/**
@@ -339,9 +297,11 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onSuccess(Boolean result) {
+				if (result == null)
+					return;
+
 				loggedIn = result;
-				myGUI.myMeta.update();
-				myGUI.mySearchArea.update();
+				myGUI.refresh();
 			}
 		});
 
@@ -388,6 +348,7 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onSuccess(Void result) {
+				changeLoginState(false);
 				refresh();
 				myGUI.myMeta.update();
 				myGUI.showSearchPage();
@@ -420,8 +381,7 @@ public class Control implements EntryPoint {
 						myGUI.showErrorPopup("Access denied.");
 
 				} else
-					myGUI.showErrorPopup("Creation of new comment failed",
-							caught);
+					myGUI.showErrorPopup("Creation of new comment failed", caught);
 			}
 
 			@Override
@@ -446,11 +406,9 @@ public class Control implements EntryPoint {
 				if (caught instanceof NoAccessException) {
 					myGUI.showErrorPopup("Access denial", caught);
 				} else if (caught instanceof NotFoundException) {
-					myGUI.showErrorPopup("Snippet cannot be found by server",
-							caught);
+					myGUI.showErrorPopup("Snippet cannot be found by server", caught);
 				} else {
-					myGUI.showErrorPopup("Adding snippet to favorites failed",
-							caught);
+					myGUI.showErrorPopup("Adding snippet to favorites failed", caught);
 				}
 			}
 
@@ -495,19 +453,18 @@ public class Control implements EntryPoint {
 	public void setPassword(String pw1, String pw2) {
 		if (pw1.equals(pw2)) {
 
-			IUser.Util.getInstance().setPassword(pw1,
-					new AsyncCallback<Void>() {
+			IUser.Util.getInstance().setPassword(pw1, new AsyncCallback<Void>() {
 
-						@Override
-						public void onSuccess(Void result) {
-							myGUI.myPersonalArea.update(true);
-						}
+				@Override
+				public void onSuccess(Void result) {
+					myGUI.myPersonalArea.update(true);
+				}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							myGUI.myPersonalArea.update(false);
-						}
-					});
+				@Override
+				public void onFailure(Throwable caught) {
+					myGUI.myPersonalArea.update(false);
+				}
+			});
 
 		} else {
 			myGUI.myPersonalArea.update(false);
@@ -520,20 +477,19 @@ public class Control implements EntryPoint {
 	 * 
 	 */
 	public void showSnippetOfDay() {
-		ISnippet.Util.getInstance().getSnippetOfDay(
-				new AsyncCallback<XSnippet>() {
+		ISnippet.Util.getInstance().getSnippetOfDay(new AsyncCallback<XSnippet>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						myGUI.showErrorPage("Login failed", caught);
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				myGUI.showErrorPage("Login failed", caught);
+			}
 
-					@Override
-					public void onSuccess(XSnippet result) {
-						changeToSnipPage(result);
-					}
+			@Override
+			public void onSuccess(XSnippet result) {
+				changeToSnipPage(result);
+			}
 
-				});
+		});
 
 	}
 
@@ -576,5 +532,14 @@ public class Control implements EntryPoint {
 	 */
 	public static String getSessionCookie() {
 		return sessionCookie;
+	}
+
+	/**
+	 * Is called after the login succeeds
+	 */
+	public void onLogin(final String username) {
+		loggedIn = true;
+		myGUI.refreshMeta();
+		myGUI.refresh();
 	}
 }

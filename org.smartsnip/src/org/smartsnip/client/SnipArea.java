@@ -130,45 +130,37 @@ public class SnipArea extends Composite {
 				if (snippet.isFavorite) {
 					btnFav.setText("Removing favourite ... ");
 
-					ISnippet.Util.getInstance().removeFavorite(snippet.hash,
-							new AsyncCallback<Void>() {
+					ISnippet.Util.getInstance().removeFavorite(snippet.hash, new AsyncCallback<Void>() {
 
-								@Override
-								public void onSuccess(Void result) {
-									snippet.isFavorite = false;
-									updateFavortiteStatus();
-								}
+						@Override
+						public void onSuccess(Void result) {
+							snippet.isFavorite = false;
+							updateFavortiteStatus();
+						}
 
-								@Override
-								public void onFailure(Throwable caught) {
-									Control.myGUI
-											.showErrorPopup(
-													"Error removing snippet to favorites",
-													caught);
-									btnFav.setEnabled(true);
-								}
-							});
+						@Override
+						public void onFailure(Throwable caught) {
+							Control.myGUI.showErrorPopup("Error removing snippet to favorites", caught);
+							btnFav.setEnabled(true);
+						}
+					});
 				} else {
 					btnFav.setText("Adding favorites ... ");
 
-					ISnippet.Util.getInstance().addToFavorites(snippet.hash,
-							new AsyncCallback<Void>() {
+					ISnippet.Util.getInstance().addToFavorites(snippet.hash, new AsyncCallback<Void>() {
 
-								@Override
-								public void onSuccess(Void result) {
-									snippet.isFavorite = true;
-									updateFavortiteStatus();
-								}
+						@Override
+						public void onSuccess(Void result) {
+							snippet.isFavorite = true;
+							updateFavortiteStatus();
+						}
 
-								@Override
-								public void onFailure(Throwable caught) {
-									Control.myGUI
-											.showErrorPopup(
-													"Error adding snippet to favorites",
-													caught);
-									btnFav.setEnabled(true);
-								}
-							});
+						@Override
+						public void onFailure(Throwable caught) {
+							Control.myGUI.showErrorPopup("Error adding snippet to favorites", caught);
+							btnFav.setEnabled(true);
+						}
+					});
 				}
 			}
 		});
@@ -187,10 +179,7 @@ public class SnipArea extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				if (Control.myGUI
-						.showConfirmPopup(
-								"Really delete this snippet?\nThis action cannot be undone!",
-								"Confirm action") == false)
+				if (Control.myGUI.showConfirmPopup("Really delete this snippet?\nThis action cannot be undone!", "Confirm action") == false)
 					return;
 
 				setDeleted();
@@ -209,26 +198,24 @@ public class SnipArea extends Composite {
 			public void rate(final int rate) {
 				rating.setEnabled(false);
 
-				ISnippet.Util.getInstance().rateSnippet(snippet.hash, rate,
-						new AsyncCallback<Void>() {
+				ISnippet.Util.getInstance().rateSnippet(snippet.hash, rate, new AsyncCallback<Void>() {
 
-							@Override
-							public void onSuccess(Void result) {
-								rating.setEnabled(true);
-								rating.setRatingStatus(rate);
-								lblAverageRating.setText("Getting rating ... ");
-								update();
-							}
+					@Override
+					public void onSuccess(Void result) {
+						rating.setEnabled(true);
+						rating.setRatingStatus(rate);
+						lblAverageRating.setText("Getting rating ... ");
+						update();
+					}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								rating.setEnabled(false);
-								Control.myGUI.showErrorPopup("Rating failed",
-										caught);
+					@Override
+					public void onFailure(Throwable caught) {
+						rating.setEnabled(false);
+						Control.myGUI.showErrorPopup("Rating failed", caught);
 
-								caught.printStackTrace(System.err);
-							}
-						});
+						caught.printStackTrace(System.err);
+					}
+				});
 			}
 		});
 		anchUpload.setVisible(false);
@@ -248,47 +235,39 @@ public class SnipArea extends Composite {
 			public void onClick(ClickEvent event) {
 				anchDownload.setEnabled(false);
 
-				ISnippet.Util.getInstance().getDownloadSourceTicket(
-						snippet.hash, new AsyncCallback<Long>() {
+				ISnippet.Util.getInstance().getDownloadSourceTicket(snippet.hash, new AsyncCallback<Long>() {
 
-							@Override
-							public void onSuccess(Long result) {
-								// Got the download link
-								Control.myGUI
-										.showDownloadPopup(
-												"Downloadticket received ... \nClick on the following link to download ... ",
-												convertToLink(result));
-							}
+					@Override
+					public void onSuccess(Long result) {
+						// Got the download link
+						Control.myGUI.showDownloadPopup("Downloadticket received ... \nClick on the following link to download ... ",
+								convertToLink(result));
+					}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								anchDownload.setEnabled(true);
-								if (caught == null)
-									return;
-								if (caught instanceof NoAccessException) {
-									Control.myGUI.showErrorPopup(
-											"Access denied", caught);
-								} else if (caught instanceof NotFoundException) {
-									Control.myGUI
-											.showErrorPopup(
-													"Snippet hash id not found",
-													caught);
-								} else
-									Control.myGUI.showErrorPopup("Error",
-											caught);
-							}
+					@Override
+					public void onFailure(Throwable caught) {
+						anchDownload.setEnabled(true);
+						if (caught == null)
+							return;
+						if (caught instanceof NoAccessException) {
+							Control.myGUI.showErrorPopup("Access denied", caught);
+						} else if (caught instanceof NotFoundException) {
+							Control.myGUI.showErrorPopup("Snippet hash id not found", caught);
+						} else
+							Control.myGUI.showErrorPopup("Error", caught);
+					}
 
-							/* Converts the download ticket into a link */
-							private String convertToLink(long id) {
+					/* Converts the download ticket into a link */
+					private String convertToLink(long id) {
 
-								String result = GWT.getHostPageBaseURL();
-								if (!result.endsWith("/"))
-									result += "/";
+						String result = GWT.getHostPageBaseURL();
+						if (!result.endsWith("/"))
+							result += "/";
 
-								result += "downloader?ticket=" + id;
-								return result;
-							}
-						});
+						result += "downloader?ticket=" + id;
+						return result;
+					}
+				});
 			}
 		});
 
@@ -300,47 +279,41 @@ public class SnipArea extends Composite {
 				requestDownload();
 			}
 		});
-		ISnippet.Util.getInstance().hasDownloadableSource(snippet.hash,
-				new AsyncCallback<Boolean>() {
+		ISnippet.Util.getInstance().hasDownloadableSource(snippet.hash, new AsyncCallback<Boolean>() {
 
-					@Override
-					public void onSuccess(Boolean result) {
-						if (result) {
-							anchDownload
-									.setTitle("Click here to request a download ticket");
-							anchDownload.setEnabled(true);
-						} else {
-							anchDownload
-									.setTitle("This snippet does not have any downloadable source");
-							anchDownload.setEnabled(false);
-						}
-					}
+			@Override
+			public void onSuccess(Boolean result) {
+				if (result) {
+					anchDownload.setTitle("Click here to request a download ticket");
+					anchDownload.setEnabled(true);
+				} else {
+					anchDownload.setTitle("This snippet does not have any downloadable source");
+					anchDownload.setEnabled(false);
+				}
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						anchDownload.setTitle("Error"
-								+ (caught == null ? "" : ": "
-										+ caught.getMessage()));
-						anchDownload.setEnabled(false);
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				anchDownload.setTitle("Error" + (caught == null ? "" : ": " + caught.getMessage()));
+				anchDownload.setEnabled(false);
+			}
+		});
 
-		ISnippet.Util.getInstance().canEdit(snippet.hash,
-				new AsyncCallback<Boolean>() {
+		ISnippet.Util.getInstance().canEdit(snippet.hash, new AsyncCallback<Boolean>() {
 
-					@Override
-					public void onSuccess(Boolean result) {
-						btnEdit.setVisible(result);
-						btnDelete.setVisible(result);
-						anchUpload.setVisible(result);
-					}
+			@Override
+			public void onSuccess(Boolean result) {
+				btnEdit.setVisible(result);
+				btnDelete.setVisible(result);
+				anchUpload.setVisible(result);
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// Something went wrong ...
-						// TODO: Error handling ...
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				// Something went wrong ...
+				// TODO: Error handling ...
+			}
+		});
 
 		horPanel.add(btnFav);
 		horPanel.add(btnDelete);
@@ -366,46 +339,48 @@ public class SnipArea extends Composite {
 	 * Reloads the snippet and updates the component
 	 */
 	public void update() {
-		ISnippet.Util.getInstance().getSnippet(snippet.hash,
-				new AsyncCallback<XSnippet>() {
+		ISnippet.Util.getInstance().getSnippet(snippet.hash, new AsyncCallback<XSnippet>() {
 
-					@Override
-					public void onSuccess(XSnippet result) {
-						if (result == null)
-							return;
-						if (result.hash != snippet.hash)
-							return;
+			@Override
+			public void onSuccess(XSnippet result) {
+				if (result == null)
+					return;
+				if (result.hash != snippet.hash)
+					return;
 
-						// Copy properties
-						snippet.title = result.title;
-						snippet.description = result.description;
-						snippet.code = result.code;
-						snippet.category = result.category;
-						snippet.codeHTML = result.codeHTML;
-						snippet.isFavorite = result.isFavorite;
-						snippet.language = result.language;
-						snippet.license = result.license;
-						snippet.owner = result.owner;
-						snippet.viewcount = result.viewcount;
-						snippet.tags = result.tags;
-						snippet.rating = result.rating;
+				// Copy properties
+				snippet.title = result.title;
+				snippet.description = result.description;
+				snippet.code = result.code;
+				snippet.category = result.category;
+				snippet.codeHTML = result.codeHTML;
+				snippet.isFavorite = result.isFavorite;
+				snippet.language = result.language;
+				snippet.license = result.license;
+				snippet.owner = result.owner;
+				snippet.viewcount = result.viewcount;
+				snippet.tags = result.tags;
+				snippet.rating = result.rating;
 
-						updateComponents();
-					}
+				snippet.canDelete = result.canDelete;
+				snippet.canEdit = result.canEdit;
+				snippet.canRate = result.canRate;
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// Ignore it
+				SnipArea.this.updateComponents();
+			}
 
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				// Ignore it
+
+			}
+		});
 	}
 
 	/**
 	 * Updates all components
 	 */
 	private void updateComponents() {
-		updateFavortiteStatus();
 		String msgTitle = snippet.title;
 		if (snippet.isOwn)
 			msgTitle += " (own snippet)";
@@ -422,6 +397,8 @@ public class SnipArea extends Composite {
 		btnDelete.setVisible(snippet.canDelete);
 		updateFavortiteStatus();
 		rating.setEnabled(snippet.canRate);
+
+		updateFavortiteStatus();
 
 	}
 

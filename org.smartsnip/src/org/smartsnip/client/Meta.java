@@ -1,6 +1,9 @@
 package org.smartsnip.client;
 
 import org.smartsnip.shared.IModerator;
+import org.smartsnip.shared.ISession;
+import org.smartsnip.shared.IUser;
+import org.smartsnip.shared.XUser;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,7 +18,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 /**
  * 
  * 
+ * 
  * @author Paul
+ * @author Felix Niederwanger
  * 
  * 
  *         A composed Widget to display the meta navigation menu
@@ -33,7 +38,7 @@ public class Meta extends Composite {
 	private final Image icon;
 	private final Control control;
 
-	private NotificationIcon notificationIcon;
+	private final NotificationIcon notificationIcon;
 
 	/**
 	 * Initializes the menu
@@ -43,14 +48,17 @@ public class Meta extends Composite {
 		control = Control.getInstance();
 		pnlUser = new VerticalPanel();
 		metaPanel = new HorizontalPanel();
+		mod = new Anchor("Moderator");
+		login = new Anchor(" > Login");
+		user = new Anchor("Guest");
+		register = new Anchor(" > Register");
+		logout = new Anchor(" > Logout");
 
 		notificationIcon = new NotificationIcon();
 
 		icon = new Image(Control.baseURL + "/images/user1.png");
 		icon.setSize("35px", "35px");
 
-		user = new Anchor(Control.getInstance().getUsername());
-		user.setStyleName("user");
 		user.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -59,8 +67,6 @@ public class Meta extends Composite {
 
 		});
 
-		mod = new Anchor("Moderate");
-		mod.setStyleName("mod");
 		mod.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -69,7 +75,6 @@ public class Meta extends Composite {
 
 		});
 
-		login = new Anchor(" > Login");
 		login.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -78,7 +83,6 @@ public class Meta extends Composite {
 
 		});
 
-		register = new Anchor(" > Register");
 		register.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -87,7 +91,6 @@ public class Meta extends Composite {
 
 		});
 
-		logout = new Anchor(" > Logout");
 		logout.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -105,58 +108,127 @@ public class Meta extends Composite {
 		metaPanel.add(notificationIcon);
 		metaPanel.add(logout);
 
+		// Default visibility
+		changeToolbarVisibility(false);
+
 		initWidget(metaPanel);
+
+		applyStyles();
+	}
+
+	private void applyStyles() {
+		mod.setStyleName("mod");
+		user.setStyleName("user");
 
 		// Give the overall composite a style name.
 		setStyleName("meta");
-		update();
 	}
 
-	/**
-	 * Updates the menu
-	 * 
-	 */
+	/** Update */
 	public void update() {
-
-		user.setText(control.getUsername() + " | " + control.getUserMail());
-
-		if (control.isLoggedIn()) {
-			user.setVisible(true);
-			icon.setVisible(true);
-			login.setVisible(false);
-			register.setVisible(false);
-			logout.setVisible(true);
-		} else {
-			user.setVisible(false);
-			icon.setVisible(false);
-			login.setVisible(true);
-			register.setVisible(true);
-			pnlUser.setVisible(false);
-			logout.setVisible(false);
-			mod.setVisible(false);
-		}
-
-		notificationIcon.update();
-		IModerator.Util.getInstance().isModerator(new AsyncCallback<Boolean>() {
+		ISession.Util.getInstance().isLoggedIn(new AsyncCallback<Boolean>() {
 
 			@Override
 			public void onSuccess(Boolean result) {
-				mod.setVisible(result);
+				if (result == null) {
+					onFailure(new IllegalArgumentException("NUll returned"));
+					return;
+				}
+
+				update(result);
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
+				// TODO Possible error handling!
 			}
 		});
 
-		/*
-		 * XXX todo felix IUser.Util.getInstance().hasUnreadMessage(new
-		 * AsyncCallback<Boolean>() { if (result) {
-		 * icon.setUrl("/images/user2.png"); } else {
-		 * icon.setUrl("/images/user1.png"); }
-		 * 
-		 * //});
-		 */
 	}
 
+	/**
+	 * Second step for the update cycle. Called after the callback for isLogged
+	 * in has been received
+	 * 
+	 * @param isLoggedin
+	 *            indicating if the current session is logged in or not
+	 */
+	private void update(final boolean isLoggedin) {
+		changeToolbarVisibility(isLoggedin);
+		if (isLoggedin) {
+			user.setText("Fetching user data ... ");
+			IUser.Util.getInstance().getMe(new AsyncCallback<XUser>() {
+
+				@Override
+				public void onSuccess(XUser result) {
+					if (result == null)
+						return;
+
+					user.setText(result.realname + " | " + result.email);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					user.setText("<< Error fetching Userdata >>");
+				}
+			});
+			IModerator.Util.getInstance().isModerator(new AsyncCallback<Boolean>() {
+
+				@Override
+				public void onSuccess(Boolean result) {
+					if (result == null)
+						return;
+					boolean isModerator = result;
+					mod.setVisible(isModerator);
+
+					if (isModerator)
+						icon.setUrl(Control.baseURL + "/images/moderator.png");
+					else
+						icon.setUrl(Control.baseURL + "/images/user.png");
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+				}
+			});
+		} else {
+			// If not logged in
+			user.setText("Guest");
+			icon.setUrl(Control.baseURL + "/images/guest.png");
+		}
+	}
+
+	/**
+	 * Changes the visibility state of the toolbar elements based on the login
+	 * status
+	 * 
+	 * @param loggedIn
+	 *            login status
+	 */
+	private void changeToolbarVisibility(final boolean loggedIn) {
+		// With the visibility this frak is not working
+		// FRAKKING GWT!!!
+
+		// XXX Ugly hack to get rid of the visibility problem
+		metaPanel.clear();
+
+		metaPanel.add(icon);
+		metaPanel.add(user);
+
+		if (!loggedIn) {
+			metaPanel.add(login);
+			metaPanel.add(register);
+		} else {
+			metaPanel.add(mod);
+			metaPanel.add(notificationIcon);
+			metaPanel.add(logout);
+		}
+
+		// login.setVisible(!loggedIn);
+		// register.setVisible(!loggedIn);
+		// logout.setVisible(loggedIn);
+		// notificationIcon.setVisible(loggedIn);
+		// if (!loggedIn)
+		// mod.setVisible(false);
+	}
 }

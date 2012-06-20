@@ -29,13 +29,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  */
 public class GUI {
+	private static final GUI instance = new GUI();
 
 	/**
 	 * Enumeration of all available pages
 	 * 
 	 */
 	public enum Page {
-		PAGE_Impressum, PAGE_Register, PAGE_User, PAGE_Contact, PAGE_CreateSnippet, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet, PAGE_EditSnippet, PAGE_Blank
+		PAGE_Impressum, PAGE_User, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet, PAGE_Blank, PAGE_Notifications, PAGE_Moderator
 	}
 
 	/**
@@ -66,21 +67,21 @@ public class GUI {
 		}
 	}
 
+	/* Components of the GUI */
 	// visible in package, Control can modify
 	ResultArea myResultArea = null;
 	StatusArea myStatusArea = null;
 	CatArea myCatArea = null;
 	TagArea myTagArea = null;
 	CommentArea myCommentArea = null;
-	Meta myMeta = null;
-	Footer myFooter = null;
+	final Meta myMeta;
+	final Footer myFooter;
 	SnipArea mySnipArea = null;
 	PersonalArea myPersonalArea = null;
-	SearchArea mySearchArea = null;
+	final SearchArea mySearchArea;
 	ModeratorArea myModeratorArea = null;
-	SearchToolbar mySearchToolbar = null;
-
-	Control control = Control.getInstance();
+	final SearchToolbar mySearchToolbar;
+	NotificationsArea myNotifications = null;
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -90,6 +91,11 @@ public class GUI {
 	HorizontalPanel dataPanel = new HorizontalPanel();
 	// Create footerPanel
 	SimplePanel footerPanel = new SimplePanel();
+
+	/* END of Components of the GUI */
+
+	/** For easy access to the control */
+	private final Control control = Control.getInstance();
 
 	/** The current displayed page */
 	private Page currentPage = Page.PAGE_SnippetOfDay;
@@ -106,9 +112,9 @@ public class GUI {
 
 		@Override
 		public void onSuccess(XSearch result) {
-			String status = result.totalresults + " results in "
-					+ convertSearchTime(Control.search.getSearchTime());
+			String status = result.totalresults + " results in " + convertSearchTime(Control.search.getSearchTime());
 			updateSearchPage(result, status);
+			onSearchDone(true);
 		}
 
 		@Override
@@ -118,6 +124,7 @@ public class GUI {
 				status += ": " + caught.getMessage();
 
 			updateSearchPage(null, status);
+			onSearchDone(false);
 		}
 
 		/**
@@ -147,74 +154,29 @@ public class GUI {
 	};
 
 	/**
-	 * Start the GUI
-	 * 
+	 * Instantiates a GUI element. Singleton, therefore private constructor
 	 */
-	public void getReady() {
-		// Adds a personalized CSS-File
+	private GUI() {
 		Resources.INSTANCE.css().ensureInjected();
 		Resources.INSTANCE.cssPrettify().ensureInjected();
-
-		// Get the updated userdata
-		Control control = Control.getInstance();
-		control.refresh();
-
-		// Create the Page
-		initComponents();
-		createBasicPage();
-		// showSearchPage();
-		// showImpressum();
-
-		control.showSnippetOfDay();
-
-		// showPersonalPage();
-		// showLoginPopup();
-		// showRegisterPopup();
-		// showTestPopup();
-
-		// Register the search callback
+		// Add search callback
 		Control.search.addCallback(searchAsynCallback);
-	}
 
-	/** Create components */
-	private void initComponents() {
 		mySearchToolbar = new SearchToolbar();
 		myCatArea = new CatArea();
 		myTagArea = new TagArea();
+		myMeta = new Meta();
+		mySearchArea = new SearchArea();
+		myFooter = new Footer();
 
-		// Add a handler that is called, when a search is done
-		Control.search.addCallback(new AsyncCallback<XSearch>() {
-
-			@Override
-			public void onSuccess(XSearch result) {
-				onSearchDone(true);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				onSearchDone(false);
-			}
-		});
-	}
-
-	/**
-	 * Preparing the basics widgets for the GUI
-	 * 
-	 */
-	public void createBasicPage() {
+		footerPanel.setWidth("100%");
+		footerPanel.add(myFooter);
 
 		// Fill userPanel
-		myMeta = new Meta();
 		userPanel.add(myMeta);
 
 		// Fill searchPanel
-		mySearchArea = new SearchArea();
 		searchPanel.add(mySearchArea);
-
-		// Fill footerPanel
-		myFooter = new Footer();
-		footerPanel.setWidth("100%");
-		footerPanel.add(myFooter);
 
 		// Fix Panels to divs
 		RootPanel.get("user").add(userPanel);
@@ -222,9 +184,7 @@ public class GUI {
 		RootPanel.get("data").add(dataPanel);
 		RootPanel.get("footer").add(footerPanel);
 
-		// Sets Cursor
-		// z.B. ewSymbolTextBox.setFocus(true);
-
+		control.showSnippetOfDay();
 	}
 
 	/**
@@ -292,35 +252,25 @@ public class GUI {
 	 * 
 	 */
 	public void showLoginPopup() {
-		// Do not change current page
-
-		Window.scrollTo(0, 0);
-		PopupPanel loginPanel = new PopupPanel(true, true);
-		loginPanel.setStyleName("Login");
-		loginPanel.setTitle("Login");
-		Login login = new Login(loginPanel);
-		loginPanel.setWidget(login);
-		loginPanel.setGlassEnabled(true);
-		loginPanel.setPopupPosition(90, 104);
-		loginPanel.setWidth("250px");
-		loginPanel.show();
+		// Does not change current page
+		Login.showLoginPopup();
 	}
 
 	/**
-	 * shows a test popup
+	 * Show a primitive {@link PopupPanel} with a given message
 	 * 
-	 * @param String
-	 *            the titlee of the popup
+	 * @param message
+	 *            Message to be displayed
 	 * 
 	 */
-	public void showTestPopup(String test) {
+	public void showMessagePopup(String message) {
 
 		final PopupPanel loginPanel = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
 
-		loginPanel.setTitle(test);
+		loginPanel.setTitle(message);
 		VerticalPanel vertPanel = new VerticalPanel();
-		Label lname = new Label(test);
+		Label lname = new Label(message);
 		vertPanel.add(lname);
 		vertPanel.add(close);
 		loginPanel.setWidget(vertPanel);
@@ -530,9 +480,6 @@ public class GUI {
 	 * 
 	 */
 	public void showRegisterPopup() {
-		Page lastPage = currentPage;
-		currentPage = Page.PAGE_Register;
-
 		Window.scrollTo(0, 0);
 		PopupPanel registerPanel = new PopupPanel(true);
 
@@ -544,8 +491,6 @@ public class GUI {
 		registerPanel.setPopupPosition(90, 104);
 		registerPanel.setWidth("250px");
 		registerPanel.show();
-
-		lastPage = currentPage;
 	}
 
 	/**
@@ -622,12 +567,9 @@ public class GUI {
 	public void showErrorPage(final String message, final Throwable cause) {
 		final BlankPage page = showBlankPage();
 
-		final Label lblTitle = new Label(
-				(message == null || message.isEmpty() ? "An error occured"
-						: message));
+		final Label lblTitle = new Label((message == null || message.isEmpty() ? "An error occured" : message));
 		final HTML html = new HTML("<p>Well, this is embrassing</p>\n<hr>");
-		final Label lblMessage = new Label((cause == null ? "Unknown error"
-				: cause.getMessage()));
+		final Label lblMessage = new Label((cause == null ? "Unknown error" : cause.getMessage()));
 		final Anchor anchTrace = new Anchor("Print traceback");
 		anchTrace.addClickHandler(new ClickHandler() {
 
@@ -673,9 +615,6 @@ public class GUI {
 	 * 
 	 */
 	public void showContactForm() {
-		Page lastPage = currentPage;
-		currentPage = Page.PAGE_Contact;
-
 		Window.scrollTo(0, 0);
 		PopupPanel ppnlContact = new PopupPanel(false);
 		ppnlContact.setStyleName("contactForm");
@@ -686,8 +625,6 @@ public class GUI {
 		ppnlContact.setPopupPosition(90, 104);
 		ppnlContact.setWidth("250px");
 		ppnlContact.show();
-
-		currentPage = lastPage;
 	}
 
 	/**
@@ -699,9 +636,6 @@ public class GUI {
 		if (snippet == null)
 			return;
 
-		Page lastPage = currentPage;
-		currentPage = Page.PAGE_EditSnippet;
-
 		Window.scrollTo(0, 0);
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
 		ppnlSnippet.setStyleName("contactForm");
@@ -712,8 +646,6 @@ public class GUI {
 		ppnlSnippet.setPopupPosition(90, 104);
 		ppnlSnippet.setWidth("450px");
 		ppnlSnippet.show();
-
-		currentPage = lastPage;
 	}
 
 	/**
@@ -722,9 +654,6 @@ public class GUI {
 	 * 
 	 */
 	public void showCreateSnippetForm() {
-		Page lastPage = currentPage;
-		currentPage = Page.PAGE_CreateSnippet;
-
 		Window.scrollTo(0, 0);
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
 		ppnlSnippet.setStyleName("contactForm");
@@ -735,8 +664,6 @@ public class GUI {
 		ppnlSnippet.setPopupPosition(90, 104);
 		ppnlSnippet.setWidth("450px");
 		ppnlSnippet.show();
-
-		currentPage = lastPage;
 	}
 
 	/**
@@ -788,11 +715,20 @@ public class GUI {
 	}
 
 	/**
+	 * Shows the notifications page
+	 */
+	public void showNotificationPage() {
+		dataPanel.clear();
+		myNotifications = new NotificationsArea();
+		dataPanel.add(myNotifications);
+	}
+
+	/**
 	 * shows the moderator page
 	 * 
 	 * 
 	 */
-	public void showModPage() {
+	public void showModeratorPage() {
 		dataPanel.clear();
 		myModeratorArea = new ModeratorArea();
 		dataPanel.add(myModeratorArea);
@@ -834,18 +770,26 @@ public class GUI {
 	 * Refreshes the whole GUI
 	 */
 	public void refresh() {
-		switch (getCurrentPage()) {
-		case PAGE_Contact:
-		case PAGE_Register:
-		case PAGE_CreateSnippet:
+		switch (currentPage) {
+		case PAGE_Blank:
 		case PAGE_Impressum:
 			break;
 		case PAGE_Snippet:
 		case PAGE_SnippetOfDay:
-			mySnipArea.update();
+			// May occur during loading of first page!
+			if (mySnipArea != null)
+				mySnipArea.update();
+			if (myCommentArea != null)
+				myCommentArea.update();
 			break;
 		case PAGE_User:
 			myPersonalArea.update();
+			break;
+		case PAGE_Moderator:
+			myModeratorArea.update();
+			break;
+		case PAGE_Notifications:
+			myNotifications.update();
 			break;
 		case PAGE_Search:
 			// Ignore, we don't do a new search
@@ -860,5 +804,17 @@ public class GUI {
 	 */
 	public Page getCurrentPage() {
 		return currentPage;
+	}
+
+	/** Makes a refresh on the meta */
+	public void refreshMeta() {
+		myMeta.update();
+	}
+
+	/**
+	 * @return the singleton instance
+	 */
+	public static GUI getInstance() {
+		return instance;
 	}
 }

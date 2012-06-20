@@ -29,7 +29,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 /**
  * 
  * 
+ * 
  * @author Paul
+ * @author Felix Niederwanger
  * 
  * 
  *         A composed Widget to display the create snippet popup
@@ -110,9 +112,7 @@ public class CreateSnippet extends Composite {
 			@Override
 			public void onChange(ChangeEvent event) {
 				if (lstLanguage.getSelectedIndex() != -1
-						&& lstLanguage.getItemText(
-								lstLanguage.getSelectedIndex())
-								.equalsIgnoreCase(ISnippet.moreLanguages)) {
+						&& lstLanguage.getItemText(lstLanguage.getSelectedIndex()).equalsIgnoreCase(ISnippet.moreLanguages)) {
 					lstLanguage.removeItem(lstLanguage.getSelectedIndex());
 					for (String lang : moreLanguageList)
 						lstLanguage.addItem(lang);
@@ -120,63 +120,58 @@ public class CreateSnippet extends Composite {
 			}
 		});
 
-		ISnippet.Util.getInstance().getSupportedLanguages(
-				new AsyncCallback<List<String>>() {
+		ISnippet.Util.getInstance().getSupportedLanguages(new AsyncCallback<List<String>>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						lblStatus
-								.setText("Error retrieving supported languages");
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				lblStatus.setText("Error retrieving supported languages");
+			}
 
-					@Override
-					public void onSuccess(List<String> result) {
-						if (result == null)
-							return;
-						for (String lang : result)
-							lstLanguage.addItem(lang);
-					}
-				});
+			@Override
+			public void onSuccess(List<String> result) {
+				if (result == null)
+					return;
+				for (String lang : result)
+					lstLanguage.addItem(lang);
+			}
+		});
 
-		ISnippet.Util.getInstance().getMoreLanguages(
-				new AsyncCallback<List<String>>() {
+		ISnippet.Util.getInstance().getMoreLanguages(new AsyncCallback<List<String>>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						lblStatus
-								.setText("Error retrieving supported languages");
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				lblStatus.setText("Error retrieving supported languages");
+			}
 
-					@Override
-					public void onSuccess(List<String> result) {
-						if (result != null) {
-							moreLanguageList = result;
-						} else {
-							moreLanguageList = new ArrayList<String>(0);
-						}
-					}
-				});
+			@Override
+			public void onSuccess(List<String> result) {
+				if (result != null) {
+					moreLanguageList = result;
+				} else {
+					moreLanguageList = new ArrayList<String>(0);
+				}
+			}
+		});
 
-		ICategory.Util.getInstance().getCategories(null,
-				new AsyncCallback<List<XCategory>>() {
+		ICategory.Util.getInstance().getCategories(null, new AsyncCallback<List<XCategory>>() {
 
-					@Override
-					public void onSuccess(List<XCategory> result) {
-						if (result == null) {
-							return;
-						}
+			@Override
+			public void onSuccess(List<XCategory> result) {
+				if (result == null) {
+					return;
+				}
 
-						for (XCategory category : result) {
-							lstCategory.addItem(category.name);
-						}
-					}
+				for (XCategory category : result) {
+					lstCategory.addItem(category.name);
+				}
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Error handling
-						lblStatus.setText("Error fetching categories list");
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Error handling
+				lblStatus.setText("Error fetching categories list");
+			}
+		});
 
 		txtTag = new TextBox();
 		txtTag.setStyleName("txtTag");
@@ -260,8 +255,7 @@ public class CreateSnippet extends Composite {
 			return;
 		}
 		if (txtName.getText().length() > 300) {
-			lblStatus
-					.setText("Description must not be longer then 300 letters");
+			lblStatus.setText("Description must not be longer then 300 letters");
 			return;
 		}
 		String name = txtName.getText();
@@ -291,8 +285,7 @@ public class CreateSnippet extends Composite {
 
 		// TODO Error messages
 		lblStatus.setText("");
-		if (name.isEmpty() || desc.isEmpty() || language.isEmpty()
-				|| code.isEmpty() || cat.isEmpty()) {
+		if (name.isEmpty() || desc.isEmpty() || language.isEmpty() || code.isEmpty() || cat.isEmpty()) {
 			lblStatus.setText("Some arguments are missing");
 			return;
 		}
@@ -300,25 +293,23 @@ public class CreateSnippet extends Composite {
 		// TODO Category and Tags
 		btCreate.setEnabled(false);
 		lblStatus.setText("Creating snippet ... ");
-		ISnippet.Util.getInstance().create(name, desc, code, language, license,
-				cat, taglist, new AsyncCallback<Void>() {
+		ISnippet.Util.getInstance().create(name, desc, code, language, license, cat, taglist, new AsyncCallback<Void>() {
 
-					@Override
-					public void onSuccess(Void result) {
-						lblStatus.setText("Success");
-						close();
-					}
+			@Override
+			public void onSuccess(Void result) {
+				lblStatus.setText("Success");
+				close();
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						btCreate.setEnabled(true);
-						if (caught == null)
-							lblStatus.setText("Error creating snippet");
-						else
-							lblStatus.setText("Error creating snippet: "
-									+ caught.getMessage());
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				btCreate.setEnabled(true);
+				if (caught == null)
+					lblStatus.setText("Error creating snippet");
+				else
+					lblStatus.setText("Error creating snippet: " + caught.getMessage());
+			}
+		});
 	}
 
 	private void close() {

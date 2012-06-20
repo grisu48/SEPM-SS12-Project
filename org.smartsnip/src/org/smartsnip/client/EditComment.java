@@ -52,8 +52,8 @@ public class EditComment {
 		this.comment = comment;
 
 		lblOwner.setText("Owner: " + comment.owner);
-		lblLemons.setText("Owner: " + comment.owner);
-		lblChocolates.setText("Owner: " + comment.owner);
+		lblLemons.setText("Positive votes: " + comment.positiveVotes);
+		lblChocolates.setText("Negative votes: " + comment.negativeVotes);
 		txtComment.setText(comment.message);
 
 		if (!comment.canEdit)
@@ -148,26 +148,25 @@ public class EditComment {
 		btnApply.setEnabled(false);
 
 		lblStatus.setText("Editing ... ");
-		IComment.Util.getInstance().edit(comment.id, newComment,
-				new AsyncCallback<Void>() {
+		IComment.Util.getInstance().edit(comment.id, newComment, new AsyncCallback<Void>() {
 
-					@Override
-					public void onSuccess(Void result) {
-						lblStatus.setText("Success");
-						close();
-					}
+			@Override
+			public void onSuccess(Void result) {
+				lblStatus.setText("Success");
+				close();
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						resetButtons();
-						if (caught == null)
-							lblStatus.setText("Failed (unknown error");
-						else if (caught instanceof NoAccessException)
-							lblStatus.setText("Access denied");
-						else
-							lblStatus.setText("Failed: " + caught.getMessage());
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				resetButtons();
+				if (caught == null)
+					lblStatus.setText("Failed (unknown error");
+				else if (caught instanceof NoAccessException)
+					lblStatus.setText("Access denied");
+				else
+					lblStatus.setText("Failed: " + caught.getMessage());
+			}
+		});
 	}
 
 	/** Resets the buttons */
@@ -182,36 +181,31 @@ public class EditComment {
 		btnDelete.setEnabled(false);
 		btnApply.setEnabled(false);
 
-		if (Control.myGUI
-				.showConfirmPopup(
-						"Do you really want to delete this comment?\nA undo is NOT possible!",
-						"Confirm action") == false) {
+		if (Control.myGUI.showConfirmPopup("Do you really want to delete this comment?\nA undo is NOT possible!", "Confirm action") == false) {
 			resetButtons();
 			return;
 		} else {
 			// Delete
 			lblStatus.setText("Deleting ... ");
-			IComment.Util.getInstance().delete(comment.id,
-					new AsyncCallback<Void>() {
+			IComment.Util.getInstance().delete(comment.id, new AsyncCallback<Void>() {
 
-						@Override
-						public void onSuccess(Void result) {
-							lblStatus.setText("Success");
-							close();
-						}
+				@Override
+				public void onSuccess(Void result) {
+					lblStatus.setText("Success");
+					close();
+				}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							resetButtons();
-							if (caught == null)
-								lblStatus.setText("Failed (unknown error");
-							else if (caught instanceof NoAccessException)
-								lblStatus.setText("Access denied");
-							else
-								lblStatus.setText("Failed: "
-										+ caught.getMessage());
-						}
-					});
+				@Override
+				public void onFailure(Throwable caught) {
+					resetButtons();
+					if (caught == null)
+						lblStatus.setText("Failed (unknown error");
+					else if (caught instanceof NoAccessException)
+						lblStatus.setText("Access denied");
+					else
+						lblStatus.setText("Failed: " + caught.getMessage());
+				}
+			});
 		}
 	}
 }
