@@ -24,7 +24,7 @@ public class XSnippet implements IsSerializable, Cloneable {
 	public int myRating;
 	public boolean isOwn;
 	public boolean canRate;
-	protected long codeID;
+	public long codeID;
 
 	/** Used by GWT */
 	private XSnippet() {

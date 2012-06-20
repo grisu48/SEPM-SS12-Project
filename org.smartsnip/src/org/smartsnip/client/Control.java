@@ -45,9 +45,11 @@ public class Control implements EntryPoint {
 	public static final Search search = new Search();
 
 	/** Session proxy object, used for RPC in GWT */
-	public final static ISessionAsync proxySession = ISession.Util.getInstance();
+	public final static ISessionAsync proxySession = ISession.Util
+			.getInstance();
 	/** Snippet proxy object, used for RPC in GWT */
-	public final static ISnippetAsync proxySnippet = ISnippet.Util.getInstance();
+	public final static ISnippetAsync proxySnippet = ISnippet.Util
+			.getInstance();
 	/** Main GUI distributor */
 	public final static GUI myGUI = new GUI();
 
@@ -82,7 +84,8 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				myGUI.showTestPopup("Error getting session cookie: " + caught.getMessage());
+				myGUI.showTestPopup("Error getting session cookie: "
+						+ caught.getMessage());
 			}
 
 			@Override
@@ -138,9 +141,6 @@ public class Control implements EntryPoint {
 		switch (newPage) {
 		case PAGE_Impressum:
 			myGUI.showImpressum();
-			break;
-		case PAGE_Login:
-			myGUI.showLoginPopup();
 			break;
 		case PAGE_Register:
 			myGUI.showRegisterPopup();
@@ -269,24 +269,28 @@ public class Control implements EntryPoint {
 	 *            the password
 	 * 
 	 */
-	public void register(final String user, final String mail, final String pw, final Register register) {
-		if (user.isEmpty() || mail.isEmpty() || pw.isEmpty()) return;
+	public void register(final String user, final String mail, final String pw,
+			final Register register) {
+		if (user.isEmpty() || mail.isEmpty() || pw.isEmpty())
+			return;
 
-		proxySession.registerNewUser(user, pw, mail, new AsyncCallback<Boolean>() {
+		proxySession.registerNewUser(user, pw, mail,
+				new AsyncCallback<Boolean>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				if (caught instanceof NoAccessException) {
-					register.registerFailure("Access denied");
-				} else
-					register.registerFailure("Unknown error: " + caught.getMessage());
-			}
+					@Override
+					public void onFailure(Throwable caught) {
+						if (caught instanceof NoAccessException) {
+							register.registerFailure("Access denied");
+						} else
+							register.registerFailure("Unknown error: "
+									+ caught.getMessage());
+					}
 
-			@Override
-			public void onSuccess(Boolean result) {
-				register.registerSuccess();
-			}
-		});
+					@Override
+					public void onSuccess(Boolean result) {
+						register.registerSuccess();
+					}
+				});
 	}
 
 	/**
@@ -347,7 +351,8 @@ public class Control implements EntryPoint {
 
 			@Override
 			public void onSuccess(XUser result) {
-				if (result == null || result.username.isEmpty()) user.username = "Guest";
+				if (result == null || result.username.isEmpty())
+					user.username = "Guest";
 				else {
 					user.username = result.username;
 					user.email = result.email;
@@ -395,7 +400,8 @@ public class Control implements EntryPoint {
 	 * @param long the hash of the current snippet
 	 */
 	public void writeComment(String comment, long hash) {
-		if (comment == null || comment.isEmpty()) return;
+		if (comment == null || comment.isEmpty())
+			return;
 
 		ISnippetAsync snippetProxy = ISnippet.Util.getInstance();
 
@@ -404,12 +410,14 @@ public class Control implements EntryPoint {
 			@Override
 			public void onFailure(Throwable caught) {
 				if (caught instanceof NoAccessException) {
-					if (!isLoggedIn()) myGUI.showErrorPopup("You must login first");
+					if (!isLoggedIn())
+						myGUI.showErrorPopup("You must login first");
 					else
 						myGUI.showErrorPopup("Access denied.");
 
 				} else
-					myGUI.showErrorPopup("Creation of new comment failed", caught);
+					myGUI.showErrorPopup("Creation of new comment failed",
+							caught);
 			}
 
 			@Override
@@ -434,9 +442,11 @@ public class Control implements EntryPoint {
 				if (caught instanceof NoAccessException) {
 					myGUI.showErrorPopup("Access denial", caught);
 				} else if (caught instanceof NotFoundException) {
-					myGUI.showErrorPopup("Snippet cannot be found by server", caught);
+					myGUI.showErrorPopup("Snippet cannot be found by server",
+							caught);
 				} else {
-					myGUI.showErrorPopup("Adding snippet to favorites failed", caught);
+					myGUI.showErrorPopup("Adding snippet to favorites failed",
+							caught);
 				}
 			}
 
@@ -481,18 +491,19 @@ public class Control implements EntryPoint {
 	public void setPassword(String pw1, String pw2) {
 		if (pw1.equals(pw2)) {
 
-			IUser.Util.getInstance().setPassword(pw1, new AsyncCallback<Void>() {
+			IUser.Util.getInstance().setPassword(pw1,
+					new AsyncCallback<Void>() {
 
-				@Override
-				public void onSuccess(Void result) {
-					myGUI.myPersonalArea.update(true);
-				}
+						@Override
+						public void onSuccess(Void result) {
+							myGUI.myPersonalArea.update(true);
+						}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					myGUI.myPersonalArea.update(false);
-				}
-			});
+						@Override
+						public void onFailure(Throwable caught) {
+							myGUI.myPersonalArea.update(false);
+						}
+					});
 
 		} else {
 			myGUI.myPersonalArea.update(false);
@@ -505,19 +516,20 @@ public class Control implements EntryPoint {
 	 * 
 	 */
 	public void showSnippetOfDay() {
-		ISnippet.Util.getInstance().getSnippetOfDay(new AsyncCallback<XSnippet>() {
+		ISnippet.Util.getInstance().getSnippetOfDay(
+				new AsyncCallback<XSnippet>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				myGUI.showErrorPage("Login failed", caught);
-			}
+					@Override
+					public void onFailure(Throwable caught) {
+						myGUI.showErrorPage("Login failed", caught);
+					}
 
-			@Override
-			public void onSuccess(XSnippet result) {
-				changeToSnipPage(result);
-			}
+					@Override
+					public void onSuccess(XSnippet result) {
+						changeToSnipPage(result);
+					}
 
-		});
+				});
 
 	}
 
@@ -528,14 +540,18 @@ public class Control implements EntryPoint {
 	 * @return Gets the base URL path.
 	 */
 	private static String getBaseURL() {
-		if (isDevelopmentMode()) return "";
+		if (isDevelopmentMode())
+			return "";
 		String full = GWT.getModuleBaseURL();
 		String host = GWT.getHostPageBaseURL();
-		if (host.equals(full)) return host;
+		if (host.equals(full))
+			return host;
 
 		String url = full.substring(host.length());
-		if (url == "/" || url.isEmpty()) return "";
-		if (url.startsWith("/")) url = url.substring(1);
+		if (url == "/" || url.isEmpty())
+			return "";
+		if (url.startsWith("/"))
+			url = url.substring(1);
 
 		return url;
 	}

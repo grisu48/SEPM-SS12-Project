@@ -237,11 +237,10 @@ public class SnipArea extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				Control.myGUI.showUploadSnippet(snippet.hash);
+				UploadCode.show(snippet.codeID);
 			}
 		});
 
-		anchDownload.setVisible(false);
 		anchDownload.setStyleName("toollink");
 		anchDownload.addClickHandler(new ClickHandler() {
 
@@ -294,6 +293,13 @@ public class SnipArea extends Composite {
 		});
 
 		anchDownload.setEnabled(false);
+		anchDownload.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				requestDownload();
+			}
+		});
 		ISnippet.Util.getInstance().hasDownloadableSource(snippet.hash,
 				new AsyncCallback<Boolean>() {
 
@@ -305,7 +311,7 @@ public class SnipArea extends Composite {
 							anchDownload.setEnabled(true);
 						} else {
 							anchDownload
-									.setTitle("This snippet does not support any downloadable source");
+									.setTitle("This snippet does not have any downloadable source");
 							anchDownload.setEnabled(false);
 						}
 					}
@@ -471,5 +477,10 @@ public class SnipArea extends Composite {
 		anchDownload.setEnabled(false);
 		anchUpload.setEnabled(false);
 		rating.setEnabled(false);
+	}
+
+	/** Requests a download */
+	private void requestDownload() {
+
 	}
 }

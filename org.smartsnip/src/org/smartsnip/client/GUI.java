@@ -35,7 +35,7 @@ public class GUI {
 	 * 
 	 */
 	public enum Page {
-		PAGE_Impressum, PAGE_Login, PAGE_Register, PAGE_User, PAGE_Contact, PAGE_CreateSnippet, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet, PAGE_EditSnippet, PAGE_Blank
+		PAGE_Impressum, PAGE_Register, PAGE_User, PAGE_Contact, PAGE_CreateSnippet, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet, PAGE_EditSnippet, PAGE_Blank
 	}
 
 	/**
@@ -106,14 +106,16 @@ public class GUI {
 
 		@Override
 		public void onSuccess(XSearch result) {
-			String status = result.totalresults + " results in " + convertSearchTime(Control.search.getSearchTime());
+			String status = result.totalresults + " results in "
+					+ convertSearchTime(Control.search.getSearchTime());
 			updateSearchPage(result, status);
 		}
 
 		@Override
 		public void onFailure(Throwable caught) {
 			String status = "Search failed";
-			if (caught != null) status += ": " + caught.getMessage();
+			if (caught != null)
+				status += ": " + caught.getMessage();
 
 			updateSearchPage(null, status);
 		}
@@ -128,9 +130,11 @@ public class GUI {
 		 *         milliseconds
 		 */
 		private String convertSearchTime(long millis) {
-			if (millis < 0) return "- " + convertSearchTime(-millis);
+			if (millis < 0)
+				return "- " + convertSearchTime(-millis);
 
-			if (millis < 1000) return millis + " ms";
+			if (millis < 1000)
+				return millis + " ms";
 			int tenthSeconds = (int) (millis / 100); // 10th-seconds
 														// ("Zehntelsekunden")
 			if (tenthSeconds < 100) {
@@ -257,7 +261,7 @@ public class GUI {
 	 * shows the snippet page
 	 * 
 	 */
-	public void showSnipPage(XSnippet snip) {
+	public void showSnipPage(final XSnippet snip) {
 		currentPage = Page.PAGE_Snippet;
 
 		dataPanel.clear();
@@ -288,11 +292,10 @@ public class GUI {
 	 * 
 	 */
 	public void showLoginPopup() {
-		Page lastPage = currentPage;
-		currentPage = Page.PAGE_Login;
+		// Do not change current page
 
 		Window.scrollTo(0, 0);
-		PopupPanel loginPanel = new PopupPanel(false);
+		PopupPanel loginPanel = new PopupPanel(true, true);
 		loginPanel.setStyleName("Login");
 		loginPanel.setTitle("Login");
 		Login login = new Login(loginPanel);
@@ -301,8 +304,6 @@ public class GUI {
 		loginPanel.setPopupPosition(90, 104);
 		loginPanel.setWidth("250px");
 		loginPanel.show();
-
-		currentPage = lastPage;
 	}
 
 	/**
@@ -360,8 +361,10 @@ public class GUI {
 
 		Window.scrollTo(0, 0);
 
-		if (message == null) message = "";
-		if (title == null) title = "";
+		if (message == null)
+			message = "";
+		if (title == null)
+			title = "";
 
 		final PopupPanel confirmPopup = new PopupPanel(true, true);
 		Button btnYes = new Button("<b>Yes</b>");
@@ -414,7 +417,8 @@ public class GUI {
 	 */
 	@Deprecated
 	public void showErrorPopup(String message) {
-		if (message == null || message.isEmpty()) return;
+		if (message == null || message.isEmpty())
+			return;
 
 		final PopupPanel errorPopup = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
@@ -453,10 +457,12 @@ public class GUI {
 
 		Window.scrollTo(0, 0);
 
-		if (message == null) message = "";
+		if (message == null)
+			message = "";
 		if (cause != null) {
 			String causeMessage = cause.getMessage();
-			if (causeMessage != null) message = message + "\n" + cause.getMessage();
+			if (causeMessage != null)
+				message = message + "\n" + cause.getMessage();
 		}
 
 		final PopupPanel errorPopup = new PopupPanel(true, true);
@@ -490,7 +496,8 @@ public class GUI {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				if (enabled) return;
+				if (enabled)
+					return;
 				enabled = true;
 
 				// Show more details
@@ -500,9 +507,18 @@ public class GUI {
 			}
 
 			private void printErrorTrace() {
-				lblErrorTrace.setText("Not yet implemented, unfortunately ");
+				final StringBuffer buffer = new StringBuffer();
+				cause.printStackTrace(new PrintStream(new OutputStream() {
 
-				// TODO Print error stack trace
+					// CAUTION: Here NO OVERRIDE annotiation!
+					// Will cause GWT to not work!
+					public void write(int character) throws IOException {
+						buffer.append((char) character);
+					}
+				}));
+				String trace = buffer.toString();
+
+				lblErrorTrace.setText(trace);
 
 			}
 		});
@@ -606,9 +622,12 @@ public class GUI {
 	public void showErrorPage(final String message, final Throwable cause) {
 		final BlankPage page = showBlankPage();
 
-		final Label lblTitle = new Label((message == null || message.isEmpty() ? "An error occured" : message));
+		final Label lblTitle = new Label(
+				(message == null || message.isEmpty() ? "An error occured"
+						: message));
 		final HTML html = new HTML("<p>Well, this is embrassing</p>\n<hr>");
-		final Label lblMessage = new Label((cause == null ? "Unknown error" : cause.getMessage()));
+		final Label lblMessage = new Label((cause == null ? "Unknown error"
+				: cause.getMessage()));
 		final Anchor anchTrace = new Anchor("Print traceback");
 		anchTrace.addClickHandler(new ClickHandler() {
 
@@ -617,7 +636,8 @@ public class GUI {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				if (!enabled) return;
+				if (!enabled)
+					return;
 				enabled = true;
 				anchTrace.setText("Getting traceback ... ");
 				anchTrace.setEnabled(false);
@@ -676,7 +696,8 @@ public class GUI {
 	 * 
 	 */
 	public void showEditSnippetForm(final XSnippet snippet) {
-		if (snippet == null) return;
+		if (snippet == null)
+			return;
 
 		Page lastPage = currentPage;
 		currentPage = Page.PAGE_EditSnippet;
@@ -733,11 +754,14 @@ public class GUI {
 
 		// Currently unused
 
-		if (true) return;
+		if (true)
+			return;
 		Window.scrollTo(0, 0);
 
-		if (message == null) message = "";
-		if (convertToLink == null || convertToLink.isEmpty()) return;
+		if (message == null)
+			message = "";
+		if (convertToLink == null || convertToLink.isEmpty())
+			return;
 
 		final PopupPanel popup = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
@@ -772,31 +796,6 @@ public class GUI {
 		dataPanel.clear();
 		myModeratorArea = new ModeratorArea();
 		dataPanel.add(myModeratorArea);
-	}
-
-	/**
-	 * shows upload window
-	 * 
-	 * @param snippetID
-	 *            Hash ID of the snippet the uploaded file belongs to
-	 */
-	@SuppressWarnings("unused")
-	public void showUploadSnippet(long snippetID) {
-		// TODO Implement me
-		// Currently this is not used
-		if (true) return;
-
-		Window.scrollTo(0, 0);
-		PopupPanel ppnlSnippet = new PopupPanel(true, true);
-		ppnlSnippet.setStyleName("uploadForm");
-		ppnlSnippet.setTitle("Upload Snippet");
-		Upload myUpload = new Upload(ppnlSnippet, "upload", "snip_id=" + snippetID);
-		ppnlSnippet.setWidget(myUpload);
-		ppnlSnippet.setGlassEnabled(true);
-		ppnlSnippet.setPopupPosition(90, 104);
-		ppnlSnippet.setWidth("250px");
-		ppnlSnippet.show();
-
 	}
 
 	/**
@@ -837,7 +836,6 @@ public class GUI {
 	public void refresh() {
 		switch (getCurrentPage()) {
 		case PAGE_Contact:
-		case PAGE_Login:
 		case PAGE_Register:
 		case PAGE_CreateSnippet:
 		case PAGE_Impressum:

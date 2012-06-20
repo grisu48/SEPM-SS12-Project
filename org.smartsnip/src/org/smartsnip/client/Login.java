@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  * @author Paul
  * 
- *
- * A composed Widget to display the Login popup
- *
+ * 
+ *         A composed Widget to display the Login popup
+ * 
  */
 public class Login extends Composite {
 
@@ -40,7 +40,9 @@ public class Login extends Composite {
 
 	/**
 	 * Initializes the login popup
-	 * @param parent - the parent window
+	 * 
+	 * @param parent
+	 *            - the parent window
 	 */
 	public Login(PopupPanel parent) {
 
