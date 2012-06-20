@@ -60,6 +60,7 @@ public class UserFactory {
 			entity.setFullName(user.getRealName());
 			entity.setEmail(user.getEmail());
 			entity.setUserState(user.getState());
+			entity.setLastLogin(user.getDBSafeUserLastLogin());
 
 			query.write(entity, flags);
 			tx.commit();
@@ -100,6 +101,7 @@ public class UserFactory {
 				entity.setFullName(user.getRealName());
 				entity.setEmail(user.getEmail());
 				entity.setUserState(user.getState());
+				entity.setLastLogin(user.getDBSafeUserLastLogin());
 
 				query.write(entity, flags);
 			}
@@ -373,8 +375,10 @@ public class UserFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return helper.createUser(entity.getUserName(), entity.getFullName(),
-				entity.getEmail(), entity.getUserState(), entity.getLastLogin());
+		return helper
+				.createUser(entity.getUserName(), entity.getFullName(),
+						entity.getEmail(), entity.getUserState(),
+						entity.getLastLogin());
 	}
 
 	/**
@@ -410,8 +414,52 @@ public class UserFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return helper.createUser(entity.getUserName(), entity.getFullName(),
-				entity.getEmail(), entity.getUserState(), entity.getLastLogin());
+		return helper
+				.createUser(entity.getUserName(), entity.getFullName(),
+						entity.getEmail(), entity.getUserState(),
+						entity.getLastLogin());
+	}
+
+	/**
+	 * Implementation of {@link IPersistence#getAllUsers(Integer, Integer)}
+	 * 
+	 * @param start
+	 * @param count
+	 * @return a list of users of the given range
+	 * @throws IOException
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllUsers(Integer,
+	 *      Integer)
+	 */
+	static List<User> getAllUsers(Integer start, Integer count)
+			throws IOException {
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		DBUser entity;
+		List<User> result = new ArrayList<User>();
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			entity = new DBUser();
+
+			List<DBUser> entities = query.from(entity, start, count,
+					IPersistence.DB_DEFAULT);
+			for (DBUser user : entities) {
+				result.add(helper.createUser(user.getUserName(),
+						user.getFullName(), user.getEmail(),
+						user.getUserState(), user.getLastLogin()));
+			}
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return result;
 	}
 
 	/**
@@ -562,8 +610,8 @@ public class UserFactory {
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getNotifications(java.lang.String,
 	 *      boolean)
 	 */
-	static List<Notification> getNotifications(String userName, boolean unreadOnly)
-			throws IOException {
+	static List<Notification> getNotifications(String userName,
+			boolean unreadOnly) throws IOException {
 		Session session = DBSessionFactory.open();
 		SqlPersistenceHelper helper = new SqlPersistenceHelper();
 		DBNotification entity;
@@ -583,10 +631,10 @@ public class UserFactory {
 			List<DBNotification> entities = query.from(entity,
 					IPersistence.DB_DEFAULT);
 			for (DBNotification notif : entities) {
-				result.add(helper.createNotification(
-						notif.getNotificationId(), userName, notif.getMessage(),
-						notif.isViewed(), notif.getCreatedAt().toString(),
-						notif.getOrigin(), notif.getSnippetId()));
+				result.add(helper.createNotification(notif.getNotificationId(),
+						userName, notif.getMessage(), notif.isViewed(), notif
+								.getCreatedAt().toString(), notif.getOrigin(),
+						notif.getSnippetId()));
 			}
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -628,10 +676,5 @@ public class UserFactory {
 			DBSessionFactory.close(session);
 		}
 		return result;
-	}
-
-	static List<User> getAllUsers(Integer start, Integer count) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

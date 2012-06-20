@@ -4,6 +4,7 @@
  */
 package org.smartsnip.core;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -50,10 +51,13 @@ public class PersistenceHelper {
 	 * Helper method for the persistence layer to set the Code object after
 	 * creating a snippet within the initialization process.
 	 * 
-	 * @param snippet the target snippet
-	 * @param code the code to set
+	 * @param snippet
+	 *            the target snippet
+	 * @param code
+	 *            the code to set
 	 */
-	@SuppressWarnings("deprecation") // FIXME deprecation
+	@SuppressWarnings("deprecation")
+	// FIXME deprecation
 	protected void setCodeOfSnippet(Snippet snippet, Code code) {
 		snippet.setCodeWithoutWriting(code);
 	}
@@ -83,7 +87,8 @@ public class PersistenceHelper {
 	protected Notification createNotification(Long id, String owner,
 			String message, Boolean read, String time, String source,
 			Long targetSnippet) {
-		return new Notification(id, owner, message, read, time, source, targetSnippet);
+		return new Notification(id, owner, message, read, time, source,
+				targetSnippet);
 	}
 
 	/**
@@ -112,12 +117,13 @@ public class PersistenceHelper {
 	 * @param language
 	 * @param snippetId
 	 * @param version
-	 * @param downloadableSourceName 
+	 * @param downloadableSourceName
 	 * @return an initialized Code object
 	 */
 	protected Code createCode(Long id, String code, String language,
 			Long snippetId, int version, String downloadableSourceName) {
-		return Code.createCodeDB(code, language, snippetId, id, version, downloadableSourceName);
+		return Code.createCodeDB(code, language, snippetId, id, version,
+				downloadableSourceName);
 	}
 
 	/**

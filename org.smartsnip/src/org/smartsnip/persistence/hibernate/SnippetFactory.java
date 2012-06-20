@@ -749,7 +749,7 @@ public class SnippetFactory {
 			DBSnippet entity = new DBSnippet();
 			Snippet snippet;
 
-			for (Iterator<DBSnippet> iterator = query.iterate(entity,
+			for (Iterator<DBSnippet> iterator = query.iterate(entity, start, count,
 					DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 				entity = iterator.next();
 

@@ -110,8 +110,8 @@ public class User {
 		this.realName = realName;
 		this.email = email;
 		this.state = state;
-		if (lastLogin != null && lastLogin.before(new Date(950000000000L))) {
-		this.lastLogin = lastLogin;
+		if (lastLogin != null && lastLogin.after(new Date(950000000000L))) {
+			this.lastLogin = lastLogin;
 		} else {
 			this.lastLogin = null;
 		}
@@ -517,6 +517,20 @@ public class User {
 	}
 
 	/**
+	 * Database safe getter. {@code null} values are mapped to a date before
+	 * 1.1.2000.
+	 * 
+	 * @return the lastLogin
+	 */
+	public Date getDBSafeUserLastLogin() {
+		Date result = this.lastLogin;
+		if (result == null) {
+			result = new Date(940000000000L);
+		}
+		return result;
+	}
+
+	/**
 	 * @param lastLogin
 	 *            the lastLogin to set
 	 */
@@ -857,9 +871,16 @@ public class User {
 			start = 0;
 		if (count < 1)
 			count = 1;
-
-		// TODO Implement me
-		return null;
+		List<User> users;
+		try {
+			users = Persistence.instance.getAllUsers(start, count);
+		} catch (IOException e) {
+			System.err.println("IOException during fetching  all users : "
+					+ e.getMessage());
+			e.printStackTrace(System.err);
+			users = new ArrayList<User>();
+		}
+		return users;
 	}
 
 	/**
