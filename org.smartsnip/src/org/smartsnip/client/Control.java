@@ -5,7 +5,6 @@ import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.ISessionAsync;
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.ISnippetAsync;
-import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XSnippet;
@@ -440,36 +439,6 @@ public class Control implements EntryPoint {
 
 			}
 		});
-	}
-
-	/**
-	 * writes a new password on the server
-	 * 
-	 * @param String
-	 *            new Password
-	 * @param String
-	 *            new Password
-	 */
-	public void setPassword(String pw1, String pw2) {
-		if (pw1.equals(pw2)) {
-
-			IUser.Util.getInstance().setPassword(pw1, new AsyncCallback<Void>() {
-
-				@Override
-				public void onSuccess(Void result) {
-					myGUI.myPersonalArea.update(true);
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					myGUI.myPersonalArea.update(false);
-				}
-			});
-
-		} else {
-			myGUI.myPersonalArea.update(false);
-		}
-
 	}
 
 	/**

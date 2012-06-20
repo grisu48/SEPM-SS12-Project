@@ -9,30 +9,32 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-
 /**
  * 
  * 
  * @author Paul
  * 
- *
- * A composed Widget to display the personal data
- *
+ * 
+ *         A composed Widget to display the personal data
+ * 
  */
 public class PersonalField extends Composite {
 
-	private VerticalPanel pnlField;
-	private Label lTitle;
-	private Label lname;
-	private TextBox name;
-	private Label lmail;
-	private TextBox mail;
-	private Label lHeader;
-	private Label lpassword1;
-	private PasswordTextBox tbPW1;
-	private Label lpassword2;
-	private PasswordTextBox tbPW2;
-	private Button bChange;
+	/* Components */
+	private final VerticalPanel rootPanel;
+	private final Label lblTitle;
+	private final Label lblName;
+	private final TextBox txtName;
+	private final Label lblEMail;
+	private final TextBox txtEMail;
+	private final Label lblPasswordHeader;
+	private final Label lpassword1;
+	private final PasswordTextBox tbPW1;
+	private final Label lpassword2;
+	private final PasswordTextBox tbPW2;
+	private final Button bChange;
+
+	/* End of Components */
 
 	/**
 	 * 
@@ -40,21 +42,24 @@ public class PersonalField extends Composite {
 	 * 
 	 */
 	public PersonalField() {
-		
-		Control control = Control.getInstance();
-		
-		pnlField = new VerticalPanel();
-		lTitle = new Label("Personal Information");
-		lTitle.setStyleName("personalTitle");
-		name = new TextBox();
-		name.setText(control.getUsername());
-		mail = new TextBox();
-		mail.setText(control.getUserMail());
+
+		final Control control = Control.getInstance();
+
+		if (control.isLoggedIn()) {
+
+		}
+
+		rootPanel = new VerticalPanel();
+		lblTitle = new Label("Personal Information");
+		txtName = new TextBox();
+		txtName.setText(control.getUsername());
+		txtEMail = new TextBox();
+		txtEMail.setText(control.getUserMail());
 		tbPW1 = new PasswordTextBox();
 		tbPW2 = new PasswordTextBox();
-		lname = new Label("Username");
-		lmail = new Label("Mail adress");
-		lHeader = new Label("Password");
+		lblName = new Label("Username");
+		lblEMail = new Label("Mail adress");
+		lblPasswordHeader = new Label("Password");
 		lpassword1 = new Label("Change Password");
 		lpassword2 = new Label("Confirm Password");
 		bChange = new Button("Change Password");
@@ -62,41 +67,40 @@ public class PersonalField extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				Control control = Control.getInstance();
-				control.setPassword(tbPW1.getText(), tbPW2.getText());
+
+				// TODO Set password
 			}
 
 		});
-		
-		pnlField.add(lTitle);
-		pnlField.add(lname);
-		pnlField.add(name);
-		pnlField.add(lmail);
-		pnlField.add(mail);
-		pnlField.add(lHeader);
-		pnlField.add(lpassword1);
-		pnlField.add(tbPW1);
-		pnlField.add(lpassword2);
-		pnlField.add(tbPW2);
-		pnlField.add(bChange);
-		
 
+		rootPanel.add(lblTitle);
+		rootPanel.add(lblName);
+		rootPanel.add(txtName);
+		rootPanel.add(lblEMail);
+		rootPanel.add(txtEMail);
+		rootPanel.add(lblPasswordHeader);
+		rootPanel.add(lpassword1);
+		rootPanel.add(tbPW1);
+		rootPanel.add(lpassword2);
+		rootPanel.add(tbPW2);
+		rootPanel.add(bChange);
 
-		initWidget(pnlField);
-		// Give the overall composite a style name.
-		setStyleName("personalField");
-
+		initWidget(rootPanel);
+		applyStyles();
 	}
 
-	/**
-	 * Updates the field
-	 * 
-	 * @param worked - a boolean message if the update on the server worked
-	 */
-	public void update(boolean worked) {
-		if (worked)
-		bChange.setText("Password changed");
-		else
-		bChange.setText("Password change failed");	
+	/** Applies all the styles */
+	private void applyStyles() {
+
+		lblTitle.setStyleName("personalTitle");
+		// Give the overall composite a style name.
+		setStyleName("personalField");
+	}
+
+	/** Updates the component */
+	public void update() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

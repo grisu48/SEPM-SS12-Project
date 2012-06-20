@@ -16,12 +16,13 @@ import com.google.gwt.user.client.ui.Label;
  * 
  * @author Paul
  * 
- *
- * A composed Widget to display the personal information
- *
+ * 
+ *         A composed Widget to display the personal information
+ * 
  */
 public class PersonalArea extends Composite {
 
+	/* Controls */
 	private final Grid grid;
 	private final PersonalField myPersonalField;
 	private final ResultArea raOwn;
@@ -30,6 +31,8 @@ public class PersonalArea extends Composite {
 	// private final Label lblMyPersonalArea;
 	private final Label lblOwnSnippets;
 	private final Label lblFavorites;
+
+	/* End of controls */
 
 	/**
 	 * Initializes the personal area
@@ -40,8 +43,8 @@ public class PersonalArea extends Composite {
 		grid = new Grid(2, 3);
 		// This is needed as placeholder
 		// lblMyPersonalArea = new Label("");
-		lblOwnSnippets = new Label("My created snippets");
-		lblFavorites = new Label("Favourites");
+		lblOwnSnippets = new Label("My snippets");
+		lblFavorites = new Label("Favorites");
 		myPersonalField = new PersonalField();
 
 		raOwn = new ResultArea();
@@ -67,82 +70,60 @@ public class PersonalArea extends Composite {
 	}
 
 	/**
-	 * Updates the personal area
-	 * 
-	 * @param worked - a boolean message if the update on the server was succesful
-	 */
-	public void update(boolean worked) {
-		myPersonalField.update(worked);
-		updateSnippets();
-	}
-	
-	/**
 	 * Updates the personal area without the personal data
 	 * 
 	 */
 	public void update() {
+		myPersonalField.update();
 		updateSnippets();
 	}
-	
 
 	/**
 	 * Updates the snippet lists
 	 */
 	public void updateSnippets() {
 		lblFavorites.setText("Getting favourites ... ");
-		ISession.Util.getInstance().getFavorites(
-				new AsyncCallback<List<XSnippet>>() {
+		ISession.Util.getInstance().getFavorites(new AsyncCallback<List<XSnippet>>() {
 
-					@Override
-					public void onSuccess(List<XSnippet> result) {
-						if (result == null) {
-							onFailure(new IllegalArgumentException(
-									"Server returned null"));
-							return;
-						}
-						lblFavorites.setText("Favourites (" + result.size()
-								+ ")");
-						raFav.update(result);
-					}
+			@Override
+			public void onSuccess(List<XSnippet> result) {
+				if (result == null) {
+					onFailure(new IllegalArgumentException("Server returned null"));
+					return;
+				}
+				lblFavorites.setText("Favourites (" + result.size() + ")");
+				raFav.update(result);
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						if (caught == null)
-							lblFavorites
-									.setText("Favourites: Unknown error - Please try again");
-						else
-							lblFavorites.setText("Error fetching favourites: "
-									+ caught.getMessage());
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				if (caught == null)
+					lblFavorites.setText("Favourites: Unknown error - Please try again");
+				else
+					lblFavorites.setText("Error fetching favourites: " + caught.getMessage());
+			}
+		});
 		lblOwnSnippets.setText("Getting own snippets ... ");
-		IUser.Util.getInstance().getSnippets(
-				new AsyncCallback<List<XSnippet>>() {
+		IUser.Util.getInstance().getSnippets(new AsyncCallback<List<XSnippet>>() {
 
-					@Override
-					public void onSuccess(List<XSnippet> result) {
-						if (result == null) {
-							onFailure(new IllegalArgumentException(
-									"Server returned null"));
-							return;
-						}
-						lblOwnSnippets.setText("My created snippets ("
-								+ result.size() + ")");
-						raOwn.update(result);
-					}
+			@Override
+			public void onSuccess(List<XSnippet> result) {
+				if (result == null) {
+					onFailure(new IllegalArgumentException("Server returned null"));
+					return;
+				}
+				lblOwnSnippets.setText("My created snippets (" + result.size() + ")");
+				raOwn.update(result);
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						if (caught == null)
-							lblOwnSnippets
-									.setText("Own snippets: Unknown error - Please try again");
-						else
-							lblOwnSnippets
-									.setText("Error fetching own snippets: "
-											+ caught.getMessage());
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				if (caught == null)
+					lblOwnSnippets.setText("Own snippets: Unknown error - Please try again");
+				else
+					lblOwnSnippets.setText("Error fetching own snippets: " + caught.getMessage());
+			}
+		});
 	}
 
-	
 }

@@ -674,7 +674,6 @@ public class GUI {
 	 * @param convertToLink
 	 *            link to be created
 	 */
-	@SuppressWarnings("unused")
 	public void showDownloadPopup(String message, String convertToLink) {
 
 		// TODO Implement me
