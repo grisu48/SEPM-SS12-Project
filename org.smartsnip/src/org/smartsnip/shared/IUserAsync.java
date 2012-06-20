@@ -20,4 +20,6 @@ public interface IUserAsync {
 
 	void setPassword(String pw1, AsyncCallback<Void> callback);
 
+	void getUsers(int start, int count, AsyncCallback<List<XUser>> callback);
+
 }

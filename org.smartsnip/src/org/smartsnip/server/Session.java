@@ -198,25 +198,56 @@ public class Session {
 	 * If the cookie is null or empty, the default static guest session for a
 	 * cookie-blocking account is activated
 	 * 
+	 * The result is null, if the session associated with the cookie is expired
+	 * 
+	 * This method calls {@link #getSession(String, boolean)} with the default
+	 * value true for autoCreateNew.
+	 * 
 	 * @param cookie
 	 *            Used for session identification
 	 * @return Session identified by the cookie
 	 */
 	public static Session getSession(String cookie) {
+		return getSession(cookie, true);
+	}
+
+	/**
+	 * Gets the session that is associated with the given cookie. If the session
+	 * exists, the return value is exactly this given session. If there is no
+	 * session associated with the cookies, the method will create a new session
+	 * and return it, if the autoCreateNew boolean is set to true. If this is
+	 * false and the session does not exists, the return value is null
+	 * 
+	 * If the cookie is null or empty, the default static guest session for a
+	 * cookie-blocking account is activated
+	 * 
+	 * The result can in all cases be null. If autoCreateNew is set, and the
+	 * session of the cookie is expired, the result is null
+	 * 
+	 * @param cookie
+	 *            Used for session identification
+	 * @param autoCreateNew
+	 *            Indicates if a new session is automatically created, if the
+	 *            session does not exists
+	 * @return Session identified by the cookie
+	 */
+	public static Session getSession(String cookie, boolean autoCreateNew) {
 		if (cookie == null || cookie.length() == 0)
 			return getStaticGuestSession();
 
 		synchronized (storedSessions) {
 			Session result = storedSessions.get(cookie);
 			if (result == null) {
-				result = createNewSession(cookie);
+				if (autoCreateNew)
+					result = createNewSession(cookie);
+				else
+					return null;
 			} else if (result.isDead()) {
 				storedSessions.remove(cookie);
 				result = null;
 			}
 			return result;
 		}
-
 	}
 
 	/**

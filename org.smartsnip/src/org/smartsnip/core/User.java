@@ -817,4 +817,38 @@ public class User {
 			break;
 		}
 	}
+
+	/**
+	 * Gets a subset of the list of all users
+	 * 
+	 * @param start
+	 *            Start index for the subset
+	 * @param count
+	 *            Maximum number of users to fetch
+	 * @return List of {@link User} of the system
+	 */
+	public static List<User> getUsers(int start, int count) {
+		if (start < 0)
+			start = 0;
+		if (count < 1)
+			count = 1;
+
+		// TODO Implement me
+		return null;
+	}
+
+	/**
+	 * Creates a {@link XUser} object
+	 * 
+	 * @return the creates {@link XUser} object for this {@link User}
+	 */
+	public XUser toXUser() {
+		XUser result = new XUser();
+
+		result.username = getUsername();
+		result.email = getEmail();
+		result.realname = getRealName();
+
+		return result;
+	}
 }

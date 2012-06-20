@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.persistence.IPersistence;
-import org.smartsnip.shared.XCategory;
 import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
@@ -600,8 +599,6 @@ public class Snippet {
 	 * @return
 	 */
 	synchronized public XSnippet toXSnippet() {
-		XCategory category = new XCategory("Root", "Desc", "",
-				new ArrayList<String>());
 		XSnippet result = new XSnippet(owner, id, this.getName(), description,
 				this.category, new ArrayList<String>(getStringTags()),
 				code.getCode(), code.getHashID(), code.getFormattedHTML(),

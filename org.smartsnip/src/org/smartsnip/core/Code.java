@@ -261,7 +261,7 @@ public abstract class Code {
 	 */
 	@Deprecated
 	public long getID() {
-		return id;
+		return getHashID();
 	}
 
 	/**

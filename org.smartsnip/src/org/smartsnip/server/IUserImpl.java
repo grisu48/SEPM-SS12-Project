@@ -1,11 +1,13 @@
 package org.smartsnip.server;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.core.User;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XSnippet;
+import org.smartsnip.shared.XUser;
 
 /**
  * This is the implementation of the {@link org.smartsnip.shared.IUser}
@@ -98,6 +100,21 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 			throw new NoAccessException();
 
 		user.setPassword(password);
+	}
+
+	@Override
+	public List<XUser> getUsers(int start, int count) throws NoAccessException {
+		Session session = getSession();
+		if (!session.isLoggedIn())
+			throw new NoAccessException();
+
+		List<User> users = User.getUsers(start, count);
+		if (users == null)
+			return null; // Something went wrong ...
+		List<XUser> result = new ArrayList<XUser>(users.size());
+		for (User user : users)
+			result.add(user.toXUser());
+		return result;
 	}
 
 }

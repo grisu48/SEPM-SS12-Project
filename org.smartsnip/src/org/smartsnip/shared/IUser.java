@@ -109,4 +109,16 @@ public interface IUser extends RemoteService, IsSerializable {
 	 */
 	public void setPassword(String password) throws NoAccessException;
 
+	/**
+	 * Gets a subset of the list of all users of the system
+	 * 
+	 * @param start
+	 *            Start index of the subset
+	 * @param count
+	 *            Maximum number of users
+	 * @return List of {@link XUser}
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
+	 */
+	public List<XUser> getUsers(int start, int count) throws NoAccessException;
 }

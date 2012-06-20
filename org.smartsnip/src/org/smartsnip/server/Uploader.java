@@ -18,6 +18,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.smartsnip.client.UploadCode;
 import org.smartsnip.core.Code;
+import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.NotFoundException;
 
 /**
  * This servlet accepts uploaded files from {@link UploadCode} and puts them
@@ -72,6 +74,8 @@ public class Uploader extends SessionServlet {
 
 		// Code ID if set
 		final long codeID;
+		final Session session;
+		final Code code;
 		boolean fileReceived = false;
 		try {
 
@@ -82,8 +86,34 @@ public class Uploader extends SessionServlet {
 			if (sessionCookie == null || sessionCookie.isEmpty())
 				throw new RuntimeException("Session ID not set");
 
-			codeID = Long.parseLong(codeIDParam);
+			session = Session.getSession(sessionCookie, false);
 
+			// TODO Uncomment needed lines for access denial
+
+			// Get Code object and check if it existing
+			codeID = Long.parseLong(codeIDParam);
+			// code = Code.getCode(codeID);
+			code = null;
+			// if (code == null)
+			// throw new NotFoundException("Code object with id " + codeID +
+			// " cannot be found.");
+
+			// Check session access policy
+			if (session == null)
+				throw new NoAccessException("No session associated");
+			// if (!session.isLoggedIn()
+			// || !session.getPolicy().canEditSnippet(session,
+			// code.snippet))
+			// throw new NoAccessException("Session policy denies the access");
+
+		} catch (NotFoundException e) {
+			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			resp.getWriter().print("Object not found: " + e.getMessage());
+			return;
+		} catch (NoAccessException e) {
+			resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			resp.getWriter().print("Access denied: " + e.getMessage());
+			return;
 		} catch (RuntimeException e) {
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			resp.getWriter().print("Error: " + e.getMessage());
@@ -125,8 +155,10 @@ public class Uploader extends SessionServlet {
 						resp.flushBuffer();
 						// Done, the file has been downloaded, now apply the
 						// thing
-						Code.writeCodeFile(codeID, fileName);
-						File deleteFile = new File(fileName);
+						Code.writeCodeFile(codeID,
+								uploadedFile.getAbsolutePath());
+						File deleteFile = new File(
+								uploadedFile.getAbsolutePath());
 						if (!deleteFile.delete()) {
 							deleteFile.deleteOnExit();
 							System.err
