@@ -110,7 +110,11 @@ public class User {
 		this.realName = realName;
 		this.email = email;
 		this.state = state;
+		if (lastLogin != null && lastLogin.before(new Date(950000000000L))) {
 		this.lastLogin = lastLogin;
+		} else {
+			this.lastLogin = null;
+		}
 	}
 
 	/**
