@@ -3,6 +3,7 @@ package org.smartsnip.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.smartsnip.core.Logging;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
@@ -26,6 +27,8 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 
 		if (user == null || !session.getPolicy().canEditUserData(session, user))
 			throw new NoAccessException();
+
+		Logging.printInfo("Sets his new email to " + newAddress);
 		user.setEmail(newAddress);
 	}
 
@@ -37,6 +40,7 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 		if (user == null || !session.getPolicy().canEditUserData(session, user))
 			throw new NoAccessException();
 
+		Logging.printInfo("Sets his new realname to " + newName);
 		user.setRealName(newName);
 	}
 
@@ -97,6 +101,7 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 		if (user == null || !session.getPolicy().canEditUserData(session, user))
 			throw new NoAccessException();
 
+		Logging.printInfo("Sets a new password");
 		user.setPassword(password);
 	}
 

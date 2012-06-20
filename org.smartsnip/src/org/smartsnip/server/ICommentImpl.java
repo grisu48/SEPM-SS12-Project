@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.core.Comment;
+import org.smartsnip.core.Logging;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.IComment;
@@ -17,8 +18,7 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 	private static final long serialVersionUID = 5843093547608960627L;
 
 	@Override
-	public List<XComment> getComments(long snippethash, int start, int count)
-			throws NoAccessException {
+	public List<XComment> getComments(long snippethash, int start, int count) throws NoAccessException {
 		Snippet snippet = Snippet.getSnippet(snippethash);
 		if (snippet == null)
 			return null;
@@ -45,6 +45,7 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 		if (comment == null)
 			return;
 
+		Logging.printInfo("Votes positive on comment " + commentID);
 		comment.votePositive(user);
 	}
 
@@ -60,6 +61,7 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 		if (comment == null)
 			return;
 
+		Logging.printInfo("Votes negative on comment " + commentID);
 		comment.voteNegative(user);
 	}
 
@@ -75,12 +77,12 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 		if (comment == null)
 			return;
 
+		Logging.printInfo("Unvotes on comment " + commentID);
 		comment.unvote(user);
 	}
 
 	@Override
-	public void edit(long commentID, String newMessage)
-			throws NoAccessException {
+	public void edit(long commentID, String newMessage) throws NoAccessException {
 		Session session = getSession();
 		Comment comment = Comment.getComment(commentID);
 		if (comment == null)
@@ -91,6 +93,7 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 		if (user == null)
 			throw new NoAccessException();
 
+		Logging.printInfo("Editing comment wit id " + commentID);
 		comment.edit(newMessage);
 	}
 
@@ -106,6 +109,7 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 		if (user == null)
 			throw new NoAccessException();
 
+		Logging.printInfo("Deleting comment wit id " + commentID);
 		comment.delete();
 	}
 
@@ -163,8 +167,7 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 	}
 
 	@Override
-	public XComment getComment(long commentID) throws NotFoundException,
-			NoAccessException {
+	public XComment getComment(long commentID) throws NotFoundException, NoAccessException {
 		Comment comment = Comment.getComment(commentID);
 		if (comment == null)
 			throw new NotFoundException();
@@ -187,10 +190,8 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 			return null;
 		XComment result = comment.toXComment();
 		if (session != null) {
-			result.canDelete = session.getPolicy().canDeleteComment(session,
-					comment);
-			result.canEdit = session.getPolicy().canEditComment(session,
-					comment);
+			result.canDelete = session.getPolicy().canDeleteComment(session, comment);
+			result.canEdit = session.getPolicy().canEditComment(session, comment);
 		}
 		return result;
 	}

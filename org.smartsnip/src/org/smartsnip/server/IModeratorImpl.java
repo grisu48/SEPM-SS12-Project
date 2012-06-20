@@ -3,6 +3,7 @@ package org.smartsnip.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.smartsnip.core.Logging;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.IModerator;
 import org.smartsnip.shared.NoAccessException;
@@ -44,8 +45,7 @@ public class IModeratorImpl extends GWTSessionServlet implements IModerator {
 	}
 
 	@Override
-	public void closeSession(String key) throws NotFoundException,
-			NoAccessException {
+	public void closeSession(String key) throws NotFoundException, NoAccessException {
 		if (key == null)
 			return;
 
@@ -60,12 +60,14 @@ public class IModeratorImpl extends GWTSessionServlet implements IModerator {
 		if (targetSession == null)
 			throw new NotFoundException();
 
+		User targetSessionUser = targetSession.getUser();
+		Logging.printInfo("MODERATOR: Terminating session for: "
+				+ (targetSessionUser == null ? "Guest session" : targetSessionUser.getUsername()));
 		targetSession.deleteSession();
 	}
 
 	@Override
-	public void setUserState(String username, XUser.UserState state)
-			throws NotFoundException, NoAccessException {
+	public void setUserState(String username, XUser.UserState state) throws NotFoundException, NoAccessException {
 		if (username == null)
 			return;
 
@@ -80,6 +82,7 @@ public class IModeratorImpl extends GWTSessionServlet implements IModerator {
 		if (targetUser == null)
 			throw new NotFoundException();
 
+		Logging.printInfo("MODERATOR: Setting state of user \"" + targetUser.username + "\" to " + state);
 		targetUser.setState(state);
 	}
 
