@@ -1,13 +1,15 @@
 package org.smartsnip.client;
 
+import org.smartsnip.client.GUI.Page;
 import org.smartsnip.shared.ISession;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
 
 /**
@@ -33,6 +35,14 @@ public class NotificationIcon extends Composite {
 	/** Initialises a new NotififactionIcon */
 	public NotificationIcon() {
 		btnNotifications = new Button("");
+
+		btnNotifications.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				Control.getInstance().changeSite(Page.PAGE_Notifications);
+			}
+		});
 
 		/* CSS hack, so that we have a button with text and graphics */
 		btnNotifications.setPixelSize(10, 10);
@@ -75,8 +85,9 @@ public class NotificationIcon extends Composite {
 	 * */
 	private void refreshComponent() {
 		boolean newArrived = (newNotifications > 0);
-
-		btnNotifications.setText(newNotifications + "");
-		btnNotifications.setEnabled(newArrived);
+		if (newArrived)
+			btnNotifications.setText(newNotifications + "");
+		else
+			btnNotifications.setText("");
 	}
 }
