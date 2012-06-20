@@ -24,6 +24,7 @@ public class XSnippet implements IsSerializable, Cloneable {
 	public int myRating;
 	public boolean isOwn;
 	public boolean canRate;
+	protected long codeID;
 
 	/** Used by GWT */
 	private XSnippet() {
@@ -31,7 +32,7 @@ public class XSnippet implements IsSerializable, Cloneable {
 	}
 
 	public XSnippet(String owner, long hash, String title, String description,
-			String category, ArrayList<String> tags, String code,
+			String category, ArrayList<String> tags, String code, long codeID,
 			String codeHTML, String language, String license, int viewcount) {
 		this.owner = owner;
 		this.hash = hash;
@@ -48,7 +49,7 @@ public class XSnippet implements IsSerializable, Cloneable {
 	}
 
 	public XSnippet(String owner, long hash, String title, String description,
-			String category, ArrayList<String> tags, String code,
+			String category, ArrayList<String> tags, String code, long codeID,
 			String codeHTML, String language, String license, int viewcount,
 			boolean isFavorite) {
 		this.owner = owner;
@@ -79,6 +80,7 @@ public class XSnippet implements IsSerializable, Cloneable {
 		clone.canRate = canRate;
 		clone.category = category;
 		clone.code = code;
+		clone.codeID = codeID;
 		clone.codeHTML = codeHTML;
 		clone.description = description;
 		clone.hash = hash;
