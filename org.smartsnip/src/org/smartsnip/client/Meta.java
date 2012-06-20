@@ -33,6 +33,8 @@ public class Meta extends Composite {
 	private final Image icon;
 	private final Control control;
 
+	private NotificationIcon notificationIcon;
+
 	/**
 	 * Initializes the menu
 	 */
@@ -41,6 +43,8 @@ public class Meta extends Composite {
 		control = Control.getInstance();
 		pnlUser = new VerticalPanel();
 		metaPanel = new HorizontalPanel();
+
+		notificationIcon = new NotificationIcon();
 
 		icon = new Image(Control.baseURL + "/images/user1.png");
 		icon.setSize("35px", "35px");
@@ -98,6 +102,7 @@ public class Meta extends Composite {
 		metaPanel.add(login);
 		metaPanel.add(register);
 		metaPanel.add(mod);
+		metaPanel.add(notificationIcon);
 		metaPanel.add(logout);
 
 		initWidget(metaPanel);
@@ -131,6 +136,7 @@ public class Meta extends Composite {
 			mod.setVisible(false);
 		}
 
+		notificationIcon.update();
 		IModerator.Util.getInstance().isModerator(new AsyncCallback<Boolean>() {
 
 			@Override

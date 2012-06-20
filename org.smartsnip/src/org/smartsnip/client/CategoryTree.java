@@ -75,13 +75,15 @@ public class CategoryTree extends Composite {
 
 			@Override
 			public void execute() {
-				// TODO Implement me
+				close();
+				addNewCategory();
 			}
 		});
 		private final MenuItem popupEdit = new MenuItem("Edit", false, new Command() {
 
 			@Override
 			public void execute() {
+				close();
 				item.edit();
 			}
 		});
@@ -89,6 +91,7 @@ public class CategoryTree extends Composite {
 
 			@Override
 			public void execute() {
+				close();
 				if (Control.myGUI.showConfirmPopup("Really delete the category " + item.category.name + "?") == true) {
 					item.delete();
 				}
@@ -128,6 +131,12 @@ public class CategoryTree extends Composite {
 			popupPanel.show();
 
 		}
+
+		/** Close the popup menu */
+		private void close() {
+			popupPanel.hide();
+		}
+
 	}
 
 	/** Extended tree item for categories */
@@ -143,9 +152,17 @@ public class CategoryTree extends Composite {
 		/** Child categories or null, if not yet fetched */
 		private List<CategoryTreeItem> subCategories = null;
 
+		/** Subitem is needed so that a item is shown as expandable */
+		private final TreeItem fetchItem = new TreeItem("Fetching ... ");
+
 		/** Initialises a extended tree item for the category */
 		private CategoryTreeItem(XCategory category) {
 			this.category = category;
+
+			if (category == null) super.setText("Root");
+			else
+				super.setText(category.name);
+			super.addItem(fetchItem);
 		}
 
 		/** Fetches the subchildren */
@@ -155,38 +172,42 @@ public class CategoryTree extends Composite {
 
 			setStatus("Fetching children ... ");
 			fetching = true;
-			ICategory.Util.getInstance().getCategories(category.name, new AsyncCallback<List<XCategory>>() {
+			ICategory.Util.getInstance().getCategories((category == null ? null : category.name),
+					new AsyncCallback<List<XCategory>>() {
 
-				@Override
-				public void onSuccess(List<XCategory> result) {
-					fetching = false;
-					if (result == null) {
-						onFailure(new IllegalArgumentException("Null returned"));
-						return;
-					}
-					setStatus("");
+						@Override
+						public void onSuccess(List<XCategory> result) {
+							fetching = false;
+							if (result == null) {
+								onFailure(new IllegalArgumentException("Null returned"));
+								return;
+							}
+							setStatus("");
 
-					CategoryTreeItem parent = CategoryTreeItem.this;
-					subCategories = new ArrayList<CategoryTreeItem>();
-					for (XCategory childCategory : result) {
-						CategoryTreeItem child = new CategoryTreeItem(childCategory);
-						parent.addItem(child);
-						subCategories.add(child);
-					}
-				}
+							CategoryTreeItem parent = CategoryTreeItem.this;
+							parent.removeItem(fetchItem);
+							subCategories = new ArrayList<CategoryTreeItem>();
+							for (XCategory childCategory : result) {
+								CategoryTreeItem child = new CategoryTreeItem(childCategory);
+								parent.addItem(child);
+								subCategories.add(child);
+							}
+						}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					fetching = false;
-					String message;
-					if (caught instanceof NoAccessException) message = "Access denial";
-					else if (caught instanceof NotFoundException) message = "Not found";
-					else
-						message = caught.getMessage();
+						@Override
+						public void onFailure(Throwable caught) {
+							fetching = false;
+							String message;
+							if (caught instanceof NoAccessException) message = "Access denial";
+							else if (caught instanceof NotFoundException) message = "Not found";
+							else
+								message = caught.getMessage();
 
-					setStatus(message);
-				}
-			});
+							setStatus(message);
+							fetching = false;
+							fetched = false;
+						}
+					});
 
 			fetched = true;
 		}
@@ -198,9 +219,13 @@ public class CategoryTree extends Composite {
 		 *            status message to be set
 		 */
 		private void setStatus(String text) {
-			if (text == null || text.isEmpty()) super.setText(category.name);
-			else
+			if (text == null || text.isEmpty()) {
+				super.setText(category.name);
+				fetchItem.setText("Fetching ... ");
+			} else {
 				super.setText(category.name + "(" + text + ")");
+				fetchItem.setText(text);
+			}
 		}
 
 		/**
@@ -277,6 +302,8 @@ public class CategoryTree extends Composite {
 
 		pnlVertCategories.add(lblCategories);
 		pnlVertCategories.add(treeCategories);
+
+		treeCategories.addItem(new CategoryTreeItem(null));
 
 		initWidget(pnlVertCategories);
 	}
@@ -376,5 +403,12 @@ public class CategoryTree extends Composite {
 				return result;
 			}
 		});
+	}
+
+	/**
+	 * Shows a dialog for adding a new category
+	 */
+	private static void addNewCategory() {
+		// TODO Implement me
 	}
 }

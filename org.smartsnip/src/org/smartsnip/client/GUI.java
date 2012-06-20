@@ -1,5 +1,9 @@
 package org.smartsnip.client;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSnippet;
 
@@ -31,7 +35,7 @@ public class GUI {
 	 * 
 	 */
 	public enum Page {
-		PAGE_Impressum, PAGE_Login, PAGE_Register, PAGE_User, PAGE_Contact, PAGE_CreateSnippet, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet, PAGE_EditSnippet
+		PAGE_Impressum, PAGE_Login, PAGE_Register, PAGE_User, PAGE_Contact, PAGE_CreateSnippet, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet, PAGE_EditSnippet, PAGE_Blank
 	}
 
 	/**
@@ -102,16 +106,14 @@ public class GUI {
 
 		@Override
 		public void onSuccess(XSearch result) {
-			String status = result.totalresults + " results in "
-					+ convertSearchTime(Control.search.getSearchTime());
+			String status = result.totalresults + " results in " + convertSearchTime(Control.search.getSearchTime());
 			updateSearchPage(result, status);
 		}
 
 		@Override
 		public void onFailure(Throwable caught) {
 			String status = "Search failed";
-			if (caught != null)
-				status += ": " + caught.getMessage();
+			if (caught != null) status += ": " + caught.getMessage();
 
 			updateSearchPage(null, status);
 		}
@@ -126,11 +128,9 @@ public class GUI {
 		 *         milliseconds
 		 */
 		private String convertSearchTime(long millis) {
-			if (millis < 0)
-				return "- " + convertSearchTime(-millis);
+			if (millis < 0) return "- " + convertSearchTime(-millis);
 
-			if (millis < 1000)
-				return millis + " ms";
+			if (millis < 1000) return millis + " ms";
 			int tenthSeconds = (int) (millis / 100); // 10th-seconds
 														// ("Zehntelsekunden")
 			if (tenthSeconds < 100) {
@@ -360,10 +360,8 @@ public class GUI {
 
 		Window.scrollTo(0, 0);
 
-		if (message == null)
-			message = "";
-		if (title == null)
-			title = "";
+		if (message == null) message = "";
+		if (title == null) title = "";
 
 		final PopupPanel confirmPopup = new PopupPanel(true, true);
 		Button btnYes = new Button("<b>Yes</b>");
@@ -416,8 +414,7 @@ public class GUI {
 	 */
 	@Deprecated
 	public void showErrorPopup(String message) {
-		if (message == null || message.isEmpty())
-			return;
+		if (message == null || message.isEmpty()) return;
 
 		final PopupPanel errorPopup = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
@@ -456,12 +453,10 @@ public class GUI {
 
 		Window.scrollTo(0, 0);
 
-		if (message == null)
-			message = "";
+		if (message == null) message = "";
 		if (cause != null) {
 			String causeMessage = cause.getMessage();
-			if (causeMessage != null)
-				message = message + "\n" + cause.getMessage();
+			if (causeMessage != null) message = message + "\n" + cause.getMessage();
 		}
 
 		final PopupPanel errorPopup = new PopupPanel(true, true);
@@ -495,8 +490,7 @@ public class GUI {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				if (enabled)
-					return;
+				if (enabled) return;
 				enabled = true;
 
 				// Show more details
@@ -585,6 +579,75 @@ public class GUI {
 	}
 
 	/**
+	 * Show new blank page without any contents
+	 * 
+	 * @return The created {@link BlankPage}
+	 */
+	public BlankPage showBlankPage() {
+		currentPage = Page.PAGE_Blank;
+
+		dataPanel.clear();
+		BlankPage page = new BlankPage();
+		dataPanel.add(page);
+		return page;
+	}
+
+	/**
+	 * Shows a page created from an error
+	 * 
+	 * The page itself is a creates {@link BlankPage}, so that also the current
+	 * page is set to {@link Page#PAGE_Blank}
+	 * 
+	 * @param message
+	 *            Message to be displayed
+	 * @param cause
+	 *            Throwable of the error to be displayed
+	 */
+	public void showErrorPage(final String message, final Throwable cause) {
+		final BlankPage page = showBlankPage();
+
+		final Label lblTitle = new Label((message == null || message.isEmpty() ? "An error occured" : message));
+		final HTML html = new HTML("<p>Well, this is embrassing</p>\n<hr>");
+		final Label lblMessage = new Label((cause == null ? "Unknown error" : cause.getMessage()));
+		final Anchor anchTrace = new Anchor("Print traceback");
+		anchTrace.addClickHandler(new ClickHandler() {
+
+			/** If the link is enabled */
+			boolean enabled = true;
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if (!enabled) return;
+				enabled = true;
+				anchTrace.setText("Getting traceback ... ");
+				anchTrace.setEnabled(false);
+
+				final StringBuffer buffer = new StringBuffer();
+				cause.printStackTrace(new PrintStream(new OutputStream() {
+
+					// NO @OVERRIDE annotation here !!!
+					// (carefull with save actions)
+					public void write(int character) throws IOException {
+						// TODO Format (newlines, ecc)
+
+						buffer.append((char) character);
+					}
+				}));
+				String trace = buffer.toString();
+
+				final HTML traceHTML = new HTML("<p>" + trace + "</p>");
+				page.add(traceHTML);
+			}
+		});
+
+		page.add(lblTitle);
+		page.add(html);
+		page.add(lblMessage);
+		page.add(anchTrace);
+
+	}
+
+	/**
 	 * shows the contact form
 	 * 
 	 * 
@@ -613,8 +676,7 @@ public class GUI {
 	 * 
 	 */
 	public void showEditSnippetForm(final XSnippet snippet) {
-		if (snippet == null)
-			return;
+		if (snippet == null) return;
 
 		Page lastPage = currentPage;
 		currentPage = Page.PAGE_EditSnippet;
@@ -671,14 +733,11 @@ public class GUI {
 
 		// Currently unused
 
-		if (true)
-			return;
+		if (true) return;
 		Window.scrollTo(0, 0);
 
-		if (message == null)
-			message = "";
-		if (convertToLink == null || convertToLink.isEmpty())
-			return;
+		if (message == null) message = "";
+		if (convertToLink == null || convertToLink.isEmpty()) return;
 
 		final PopupPanel popup = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
@@ -725,15 +784,13 @@ public class GUI {
 	public void showUploadSnippet(long snippetID) {
 		// TODO Implement me
 		// Currently this is not used
-		if (true)
-			return;
+		if (true) return;
 
 		Window.scrollTo(0, 0);
 		PopupPanel ppnlSnippet = new PopupPanel(true, true);
 		ppnlSnippet.setStyleName("uploadForm");
 		ppnlSnippet.setTitle("Upload Snippet");
-		Upload myUpload = new Upload(ppnlSnippet, "upload", "snip_id="
-				+ snippetID);
+		Upload myUpload = new Upload(ppnlSnippet, "upload", "snip_id=" + snippetID);
 		ppnlSnippet.setWidget(myUpload);
 		ppnlSnippet.setGlassEnabled(true);
 		ppnlSnippet.setPopupPosition(90, 104);
