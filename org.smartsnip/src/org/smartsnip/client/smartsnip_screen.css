@@ -595,3 +595,14 @@ height: 80px;
 	width: 350px;
 }
 
+.popup {
+  background-color: gray;
+  border-color: gray gray gray gray;
+  border-width: 1px 3px 3px 1px;
+  border-style: solid solid solid solid;
+}
+ 
+.popup-item {
+  font-weight: normal;
+  font-size: 80%;
+}
