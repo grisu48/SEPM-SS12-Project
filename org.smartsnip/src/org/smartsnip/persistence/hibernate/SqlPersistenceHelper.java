@@ -96,14 +96,14 @@ public class SqlPersistenceHelper extends PersistenceHelper {
 
 	/**
 	 * @see org.smartsnip.core.PersistenceHelper#createCode(java.lang.Long,
-	 *      java.lang.String, java.lang.String, org.smartsnip.core.Snippet, int,
+	 *      java.lang.String, java.lang.String, java.lang.Long, int,
 	 *      java.lang.String)
 	 */
 	@Override
 	protected Code createCode(Long id, String code, String language,
-			Snippet snippet, int version, String downloadableSourceName) {
+			Long snippetId, int version, String downloadableSourceName) {
 		// Auto-generated method stub
-		return super.createCode(id, code, language, snippet, version,
+		return super.createCode(id, code, language, snippetId, version,
 				downloadableSourceName);
 	}
 
@@ -120,13 +120,13 @@ public class SqlPersistenceHelper extends PersistenceHelper {
 	/**
 	 * @see org.smartsnip.core.PersistenceHelper#createUser(java.lang.String,
 	 *      java.lang.String, java.lang.String,
-	 *      org.smartsnip.core.User.UserState)
+	 *      org.smartsnip.core.User.UserState, java.util.Date)
 	 */
 	@Override
 	protected User createUser(String username, String realName, String email,
-			UserState state) {
+			UserState state, Date lastLogin) {
 		// Auto-generated method stub
-		return super.createUser(username, realName, email, state);
+		return super.createUser(username, realName, email, state, lastLogin);
 	}
 
 	/**

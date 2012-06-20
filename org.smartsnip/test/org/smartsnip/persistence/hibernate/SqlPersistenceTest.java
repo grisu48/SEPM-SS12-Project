@@ -87,11 +87,11 @@ public class SqlPersistenceTest {
 		// write some objects into the DB
 		log.trace("Preparing some persistent test objects");
 		User user1 = helper.createUser("_test_user_1", "a test user",
-				"one@test.org", UserState.unvalidated);
+				"one@test.org", UserState.unvalidated, new Date());
 		User user2 = helper.createUser("_test_user_2", "another test user",
-				"two@test.org", UserState.validated);
+				"two@test.org", UserState.validated, new Date());
 		User user3 = helper.createUser("_test_user_3", "third test user",
-				"three@test.org", UserState.validated);
+				"three@test.org", UserState.validated, new Date());
 		instance.writeUser(user1, IPersistence.DB_DEFAULT);
 		instance.writeUser(user2, IPersistence.DB_DEFAULT);
 		instance.writeUser(user3, IPersistence.DB_DEFAULT);
@@ -160,10 +160,10 @@ public class SqlPersistenceTest {
 		builder.append("{\n\t\tSystem.out.println(\"Number = \" + i);\n\t}\n}\n");
 
 		List<Code> codes = new ArrayList<Code>();
-		codes.add(helper.createCode(1L, "/* test code incomplete */\n", "_test_java", snip1, 1, null));
-		codes.add(helper.createCode(2L, builder.toString(), "_test_java", snip1, 2, null));
-		codes.add(helper.createCode(3L, "/* test code to snippet 2 */", "_test_java", snip2, 0, null));
-		codes.add(helper.createCode(4L, "/* test code to snippet 3 */", "_test_java", snip3, 7, null));
+		codes.add(helper.createCode(1L, "/* test code incomplete */\n", "_test_java", snip1.getHashId(), 1, null));
+		codes.add(helper.createCode(2L, builder.toString(), "_test_java", snip1.getHashId(), 2, null));
+		codes.add(helper.createCode(3L, "/* test code to snippet 2 */", "_test_java", snip2.getHashId(), 0, null));
+		codes.add(helper.createCode(4L, "/* test code to snippet 3 */", "_test_java", snip3.getHashId(), 7, null));
 		instance.writeCode(codes, IPersistence.DB_DEFAULT);
 		
 		Notification notif = helper.createNotification(1L, user1.getUsername(), "a test notification",

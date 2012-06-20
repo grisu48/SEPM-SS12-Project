@@ -176,7 +176,7 @@ public class UserFactory {
 			DBQuery query = new DBQuery(session);
 
 			DBNotification entity = new DBNotification();
-			entity.setNotificationId(notification.getId());
+			entity.setNotificationId(notification.getHashId());
 			entity.setUserName(notification.getOwner());
 			entity.setSnippetId(notification.getRefersToSnippet());
 			entity.setViewed(notification.isRead());
@@ -219,7 +219,7 @@ public class UserFactory {
 			for (Notification notification : notifications) {
 				query = new DBQuery(session);
 				entity = new DBNotification();
-				entity.setNotificationId(notification.getId());
+				entity.setNotificationId(notification.getHashId());
 				entity.setUserName(notification.getOwner());
 				entity.setSnippetId(notification.getRefersToSnippet());
 				entity.setViewed(notification.isRead());
@@ -327,7 +327,7 @@ public class UserFactory {
 			DBQuery query = new DBQuery(session);
 
 			DBNotification entity = new DBNotification();
-			entity.setNotificationId(notification.getId());
+			entity.setNotificationId(notification.getHashId());
 
 			query.remove(entity, flags);
 			tx.commit();
@@ -374,7 +374,7 @@ public class UserFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createUser(entity.getUserName(), entity.getFullName(),
-				entity.getEmail(), entity.getUserState());
+				entity.getEmail(), entity.getUserState(), entity.getLastLogin());
 	}
 
 	/**
@@ -411,7 +411,7 @@ public class UserFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createUser(entity.getUserName(), entity.getFullName(),
-				entity.getEmail(), entity.getUserState());
+				entity.getEmail(), entity.getUserState(), entity.getLastLogin());
 	}
 
 	/**
@@ -536,7 +536,7 @@ public class UserFactory {
 				entity = iterator.next();
 				user = helper.createUser(entity.getUserName(),
 						entity.getFullName(), entity.getEmail(),
-						entity.getUserState());
+						entity.getUserState(), entity.getLastLogin());
 				result.add(user);
 			}
 
@@ -628,5 +628,10 @@ public class UserFactory {
 			DBSessionFactory.close(session);
 		}
 		return result;
+	}
+
+	static List<User> getAllUsers(Integer start, Integer count) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

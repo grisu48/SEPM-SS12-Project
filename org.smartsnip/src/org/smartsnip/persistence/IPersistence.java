@@ -505,7 +505,7 @@ public interface IPersistence {
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a bitwise or connection.
-	 * @return the actual value of Comment.vote_sum
+	 * TODO @return the actual value of Comment.vote_sum
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -525,7 +525,7 @@ public interface IPersistence {
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a bitwise or connection.
-	 * @return the actual value of {@code Comment.vote_sum}
+	 * TODO @return the actual value of {@code Comment.vote_sum}
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -545,7 +545,7 @@ public interface IPersistence {
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a bitwise or connection.
-	 * @return the actual value of Comment.vote_sum
+	 * TODO @return the actual value of Comment.vote_sum
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
@@ -687,7 +687,7 @@ public interface IPersistence {
 	 */
 	public void removeTag(Tag tag, int flags) throws IOException;
 
-	// TODO add method: method to cleanup the database
+	// TODO add method: method to cleanup the database (if needed)
 	// /**
 	// * Remove all unused tags.
 	// * @param flags
@@ -795,6 +795,21 @@ public interface IPersistence {
 	 *             at a problem retrieving the data
 	 */
 	public User getUserByEmail(String email) throws IOException;
+
+	/**
+	 * Get all users.
+	 * 
+	 * @param start
+	 *            the starting index of the results set, null or 0 for start at
+	 *            the first index
+	 * @param count
+	 *            the number of entries, null if no upper limit is wanted
+	 * @return a list of all users
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public List<User> getAllUsers(Integer start, Integer count)
+			throws IOException;
 
 	/**
 	 * Get the password string related to the user. This method is deprecated
@@ -1015,8 +1030,8 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem retrieving the data
 	 */
-	public List<Notification> getNotifications(String userName, boolean unreadOnly)
-			throws IOException;
+	public List<Notification> getNotifications(String userName,
+			boolean unreadOnly) throws IOException;
 
 	/**
 	 * Get all code fragments of a given snippet.
@@ -1027,6 +1042,16 @@ public interface IPersistence {
 	 *             at a problem retrieving the data
 	 */
 	public List<Code> getCodes(Snippet snippet) throws IOException;
+
+	/**
+	 * Get a code object by it's id.
+	 * 
+	 * @param codeId
+	 *            the id
+	 * @return the code object
+	 * @throws IOException
+	 */
+	public Code getCode(Long codeId) throws IOException;
 
 	/**
 	 * Get a file with the source code.

@@ -264,10 +264,10 @@ public class SnippetFactory {
 			DBRating entity = new DBRating();
 			Long snipId = null;
 			String userName = null;
-			if(snippet != null) {
+			if (snippet != null) {
 				snipId = snippet.getHashId();
 			}
-			if(user != null) {
+			if (user != null) {
 				user.getUsername();
 			}
 			entity.setRatingId(snipId, userName);
@@ -378,8 +378,8 @@ public class SnippetFactory {
 				tagNames = new ArrayList<String>();
 				DBRelTagSnippet tagRef = new DBRelTagSnippet();
 				tagRef.setTagSnippetId(snippet.getHashId(), null);
-				for (Iterator<DBRelTagSnippet> itr = query.iterate(tagRef, IPersistence.DB_DEFAULT); itr
-						.hasNext();) {
+				for (Iterator<DBRelTagSnippet> itr = query.iterate(tagRef,
+						IPersistence.DB_DEFAULT); itr.hasNext();) {
 					tagNames.add(itr.next().getTagSnippetId().getTagName());
 				}
 				query.reset();
@@ -463,8 +463,8 @@ public class SnippetFactory {
 			Snippet snippet;
 			entity.setOwner(owner.getUsername());
 
-			for (Iterator<DBSnippet> iterator = query.iterate(entity, DBQuery.QUERY_CACHEABLE); iterator
-					.hasNext();) {
+			for (Iterator<DBSnippet> iterator = query.iterate(entity,
+					DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 				entity = iterator.next();
 
 				snippet = helper.createSnippet(entity.getSnippetId(), owner
@@ -516,8 +516,8 @@ public class SnippetFactory {
 
 			DBSnippet snip;
 			DBQuery snipQuery;
-			for (Iterator<DBFavourite> iterator = query.iterate(entity, IPersistence.DB_DEFAULT); iterator
-					.hasNext();) {
+			for (Iterator<DBFavourite> iterator = query.iterate(entity,
+					IPersistence.DB_DEFAULT); iterator.hasNext();) {
 				entity = iterator.next();
 				snip = new DBSnippet();
 				Snippet snippet;
@@ -581,8 +581,8 @@ public class SnippetFactory {
 				query = new DBQuery(session);
 				entity = new DBRelTagSnippet();
 				entity.setTagSnippetId(null, tag.toString());
-				for (Iterator<DBRelTagSnippet> itr = query.iterate(entity, DBQuery.QUERY_CACHEABLE); itr
-						.hasNext();) {
+				for (Iterator<DBRelTagSnippet> itr = query.iterate(entity,
+						DBQuery.QUERY_CACHEABLE); itr.hasNext();) {
 					snippetIds.add(itr.next().getTagSnippetId().getSnippetId());
 				}
 			}
@@ -591,7 +591,8 @@ public class SnippetFactory {
 				snip = new DBSnippet();
 				snip.setSnippetId(id);
 				query = new DBQuery(session);
-				snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_CACHEABLE);
+				snip = query.fromSingle(snip, DBQuery.QUERY_NOT_NULL
+						| DBQuery.QUERY_CACHEABLE);
 
 				snippet = helper.createSnippet(snip.getSnippetId(),
 						snip.getOwner(), snip.getHeadline(),
@@ -646,15 +647,16 @@ public class SnippetFactory {
 			DBQuery query = new DBQuery(session);
 			DBCategory cat = new DBCategory();
 			cat.setName(category.getName());
-			cat = query.fromSingle(cat, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_CACHEABLE);
+			cat = query.fromSingle(cat, DBQuery.QUERY_NOT_NULL
+					| DBQuery.QUERY_CACHEABLE);
 
 			query = new DBQuery(session);
 			DBSnippet entity = new DBSnippet();
 			Snippet snippet;
 			entity.setCategoryId(cat.getCategoryId());
 
-			for (Iterator<DBSnippet> iterator = query.iterate(entity, DBQuery.QUERY_CACHEABLE); iterator
-					.hasNext();) {
+			for (Iterator<DBSnippet> iterator = query.iterate(entity,
+					DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 				entity = iterator.next();
 
 				snippet = helper.createSnippet(entity.getSnippetId(), entity
@@ -699,22 +701,7 @@ public class SnippetFactory {
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
-			DBSnippet entity = new DBSnippet();
-			entity.setSnippetId(id);
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_CACHEABLE);
-
-			result = helper
-					.createSnippet(entity.getSnippetId(), entity.getOwner(),
-							entity.getHeadline(), entity.getDescription(),
-							CategoryFactory.fetchCategory(session, entity)
-									.getName(), TagFactory.fetchTags(helper,
-									session, entity.getSnippetId()),
-							CommentFactory.fetchCommentIds(session,
-									entity.getSnippetId()),
-							fetchLicense(helper, session, entity)
-									.getShortDescr(), entity.getViewcount(),
-							entity.getRatingAverage());
+			result = fetchSnippet(helper, session, id);
 			helper.setCodeOfSnippet(result,
 					CodeFactory.fetchNewestCode(helper, session, result));
 			tx.commit();
@@ -751,7 +738,8 @@ public class SnippetFactory {
 		List<Snippet> result = new ArrayList<Snippet>(initialSize);
 
 		// set the sorting order
-		addSortingCriteria(session.createCriteria(DBSnippet.class), sortingOrder);
+		addSortingCriteria(session.createCriteria(DBSnippet.class),
+				sortingOrder);
 
 		Transaction tx = null;
 		try {
@@ -761,8 +749,8 @@ public class SnippetFactory {
 			DBSnippet entity = new DBSnippet();
 			Snippet snippet;
 
-			for (Iterator<DBSnippet> iterator = query.iterate(entity, DBQuery.QUERY_CACHEABLE); iterator
-					.hasNext();) {
+			for (Iterator<DBSnippet> iterator = query.iterate(entity,
+					DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 				entity = iterator.next();
 
 				snippet = helper.createSnippet(entity.getSnippetId(), entity
@@ -815,7 +803,8 @@ public class SnippetFactory {
 			tx = session.beginTransaction();
 			DBQuery query = new DBQuery(session);
 			DBSnippet entity = new DBSnippet();
-			double offset = (query.count(entity, IPersistence.DB_DEFAULT).doubleValue() - 0.5) * random;
+			double offset = (query.count(entity, IPersistence.DB_DEFAULT)
+					.doubleValue() - 0.5) * random;
 			query.reset();
 			List<DBSnippet> snips = query.from(entity,
 					new Double(offset).intValue(), 1, IPersistence.DB_DEFAULT);
@@ -864,7 +853,8 @@ public class SnippetFactory {
 			DBQuery query = new DBQuery(session);
 			entity = new DBLicense();
 			entity.setShortDescr(shortDescription);
-			entity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE | DBQuery.QUERY_CACHEABLE);
+			entity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE
+					| DBQuery.QUERY_CACHEABLE);
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -899,8 +889,8 @@ public class SnippetFactory {
 			entity.setRatingId(snippet.getHashId(), null);
 
 			DBUser dbUser;
-			for (Iterator<DBRating> iterator = query.iterate(entity, IPersistence.DB_DEFAULT); iterator
-					.hasNext();) {
+			for (Iterator<DBRating> iterator = query.iterate(entity,
+					IPersistence.DB_DEFAULT); iterator.hasNext();) {
 				entity = iterator.next();
 
 				query.reset();
@@ -910,8 +900,8 @@ public class SnippetFactory {
 
 				result.add(new Pair<User, Integer>(helper.createUser(
 						dbUser.getUserName(), dbUser.getFullName(),
-						dbUser.getEmail(), dbUser.getUserState()), entity
-						.getValue()));
+						dbUser.getEmail(), dbUser.getUserState(),
+						dbUser.getLastLogin()), entity.getValue()));
 			}
 
 			tx.commit();
@@ -982,7 +972,8 @@ public class SnippetFactory {
 
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
 
-		addSortingCriteria(session.createCriteria(DBSnippet.class), sortingOrder);
+		addSortingCriteria(session.createCriteria(DBSnippet.class),
+				sortingOrder);
 
 		Transaction tx = null;
 		try {
@@ -1079,6 +1070,36 @@ public class SnippetFactory {
 	}
 
 	/**
+	 * Helper method to fetch a snippet.
+	 * 
+	 * @param helper
+	 *            the PersisteceHelper object to create the tags
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @param id
+	 *            the snippet id
+	 * @return the Snippet with no code inserted
+	 */
+	static Snippet fetchSnippet(SqlPersistenceHelper helper, Session session,
+			Long id) {
+		Snippet result;
+		DBQuery query = new DBQuery(session);
+		DBSnippet entity = new DBSnippet();
+		entity.setSnippetId(id);
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+				| DBQuery.QUERY_CACHEABLE);
+
+		result = helper.createSnippet(entity.getSnippetId(), entity.getOwner(),
+				entity.getHeadline(), entity.getDescription(), CategoryFactory
+						.fetchCategory(session, entity).getName(), TagFactory
+						.fetchTags(helper, session, entity.getSnippetId()),
+				CommentFactory.fetchCommentIds(session, entity.getSnippetId()),
+				fetchLicense(helper, session, entity).getShortDescr(), entity
+						.getViewcount(), entity.getRatingAverage());
+		return result;
+	}
+
+	/**
 	 * Helper method to fetch a license from a snippet.
 	 * 
 	 * @param helper
@@ -1094,7 +1115,8 @@ public class SnippetFactory {
 		DBQuery query = new DBQuery(session);
 		DBLicense entity = new DBLicense();
 		entity.setLicenseId(snippet.getLicenseId());
-		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_CACHEABLE);
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+				| DBQuery.QUERY_CACHEABLE);
 		return entity;
 	}
 

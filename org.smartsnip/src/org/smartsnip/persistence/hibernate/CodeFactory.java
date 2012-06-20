@@ -50,7 +50,7 @@ public class CodeFactory {
 
 			DBCode entity = new DBCode();
 			entity.setCodeId(code.getHashID()); // codeId is read-only
-			entity.setSnippetId(code.getSnippet().getHashId());
+			entity.setSnippetId(code.getSnippetId());
 			entity.setLanguage(code.getLanguage());
 			entity.setFile(code.getCode());
 			entity.setVersion(code.getVersion());
@@ -90,7 +90,7 @@ public class CodeFactory {
 				query = new DBQuery(session);
 				entity = new DBCode();
 				entity.setCodeId(code.getHashID()); // codeId is read-only
-				entity.setSnippetId(code.getSnippet().getHashId());
+				entity.setSnippetId(code.getSnippetId());
 				entity.setLanguage(code.getLanguage());
 				entity.setFile(code.getCode());
 				entity.setVersion(code.getVersion());
@@ -270,6 +270,41 @@ public class CodeFactory {
 		}
 		return result;
 	}
+	
+	/**
+	 * Implementation of {@link IPersistence#getCode(Long)}
+	 * @param codeId
+	 * @return the code object
+	 * @throws IOException 
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getCode(java.lang.Long)
+	 */
+	static Code getCode(Long codeId) throws IOException {
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		DBCode entity;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			entity = new DBCode();
+			entity.setCodeId(codeId);
+
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return helper.createCode(entity.getCodeId(), entity.getFile(),
+				entity.getLanguage(), entity.getSnippetId(), entity.getVersion(),
+				entity.getFileName());
+	}
 
 	/**
 	 * Implementation of {@link IPersistence#getCodeFile(Long)}
@@ -412,7 +447,7 @@ public class CodeFactory {
 				DBQuery.QUERY_CACHEABLE); itr.hasNext();) {
 			entity = itr.next();
 			result.add(helper.createCode(entity.getCodeId(), entity.getFile(),
-					entity.getLanguage(), snippet, entity.getVersion(),
+					entity.getLanguage(), snippet.getHashId(), entity.getVersion(),
 					entity.getFileName()));
 		}
 		return result;
@@ -441,7 +476,7 @@ public class CodeFactory {
 		Code result = null;
 		if (entity != null) {
 			result = helper.createCode(entity.getCodeId(), entity.getFile(),
-					entity.getLanguage(), snippet, entity.getVersion(),
+					entity.getLanguage(), snippet.getHashId(), entity.getVersion(),
 					entity.getFileName());
 		}
 		return result;

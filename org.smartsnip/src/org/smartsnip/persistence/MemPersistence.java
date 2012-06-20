@@ -63,7 +63,7 @@ public class MemPersistence implements IPersistence {
 
 	private final HashMap<String, List<Notification>> notifications = new HashMap<String, List<Notification>>();
 
-	private final HashMap<Snippet, HashMap<Integer, Code>> allCodes = new HashMap<Snippet, HashMap<Integer, Code>>();
+	private final HashMap<Long, HashMap<Integer, Code>> allCodes = new HashMap<Long, HashMap<Integer, Code>>();
 
 	private final Tree<Category> categoryTree = new Tree<Category>();
 
@@ -222,12 +222,12 @@ public class MemPersistence implements IPersistence {
 			return null;
 		int key = code.hashCode();
 
-		Snippet snippet = code.snippet;
-		HashMap<Integer, Code> codes = allCodes.get(snippet);
+		Long snippetId = code.getSnippetId();
+		HashMap<Integer, Code> codes = allCodes.get(snippetId);
 		if (codes == null) {
 			codes = new HashMap<Integer, Code>();
 			codes.put(key, code);
-			allCodes.put(snippet, codes);
+			allCodes.put(snippetId, codes);
 		} else
 			codes.put(key, code);
 
@@ -538,10 +538,10 @@ public class MemPersistence implements IPersistence {
 		if (snippet == null)
 			return null;
 
-		HashMap<Integer, Code> codes = allCodes.get(snippet);
+		HashMap<Integer, Code> codes = allCodes.get(snippet.getHashId());
 		if (codes == null) {
 			codes = new HashMap<Integer, Code>();
-			allCodes.put(snippet, codes);
+			allCodes.put(snippet.getHashId(), codes);
 		}
 		return new ArrayList<Code>(codes.values());
 	}
@@ -956,8 +956,8 @@ public class MemPersistence implements IPersistence {
 		if (code == null)
 			return;
 
-		Snippet snippet = code.snippet;
-		HashMap<Integer, Code> codeHistory = allCodes.get(snippet);
+		Long snippetId = code.getSnippetId();
+		HashMap<Integer, Code> codeHistory = allCodes.get(snippetId);
 		codeHistory.remove(code.getHashID());
 	}
 
@@ -1079,6 +1079,21 @@ public class MemPersistence implements IPersistence {
 		return this.codeFiles.get(codeId);
 	}
 
+	@Override
+	public List<User> getAllUsers(Integer start, Integer count)
+			throws IOException {
+		checkFail();
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Code getCode(Long codeId) throws IOException {
+		checkFail();
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	public void close() throws IOException {
 		this.fail = true;

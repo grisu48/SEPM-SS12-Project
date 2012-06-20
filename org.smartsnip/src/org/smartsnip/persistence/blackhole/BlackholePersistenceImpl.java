@@ -32,9 +32,9 @@ public class BlackholePersistenceImpl implements IPersistence {
 	private BHPersistenceHelper helper = new BHPersistenceHelper();
 
 	private User staticUser1 = this.helper.createUser("nobody", "blabla",
-			"nobody@anonymus.org", User.UserState.validated);
+			"nobody@anonymus.org", User.UserState.validated, new Date());
 	private User staticUser2 = this.helper.createUser("bin_da", "asdfgh",
-			"bd@finger.net", User.UserState.validated);
+			"bd@finger.net", User.UserState.validated, new Date());
 	private Code staticCode = this.helper.createCode(1L,
 			"/* There's nothing interesting to know.*/", "java", null, 0, null);
 
@@ -333,7 +333,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	public User getUser(String nick) throws IOException {
 		checkFail();
 		User result = this.helper.createUser(nick, "blabla", nick
-				+ "@anonymus.org", User.UserState.validated);
+				+ "@anonymus.org", User.UserState.validated, new Date());
 		return result;
 	}
 
@@ -344,7 +344,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 	public User getUserByEmail(String email) throws IOException {
 		checkFail();
 		User result = this.helper.createUser("nobody", "some anonymous writer",
-				email, User.UserState.validated);
+				email, User.UserState.validated, new Date());
 		return result;
 	}
 
@@ -386,9 +386,9 @@ public class BlackholePersistenceImpl implements IPersistence {
 		checkFail();
 		List<User> list = new ArrayList<User>();
 		list.add(this.helper.createUser("nobody", "blabla",
-				"nobody@anonymus.org", User.UserState.validated));
+				"nobody@anonymus.org", User.UserState.validated, new Date()));
 		list.add(this.helper.createUser("bin_da", "asdfgh", "bd@finger.net",
-				User.UserState.validated));
+				User.UserState.validated, new Date()));
 		return list;
 	}
 
@@ -889,6 +889,29 @@ public class BlackholePersistenceImpl implements IPersistence {
 			content[i] = data;
 		}
 		return helper.createCodeFile("testfile.bin", content);
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getAllUsers(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public List<User> getAllUsers(Integer start, Integer count)
+			throws IOException {
+		checkFail();
+		List<User> result = new ArrayList<User>(1000);
+		for (int i = 0; i < 1000; ++i) {
+			result.add(getUser("User_" + i));
+		}
+		return result;
+	}
+
+	/**
+	 * @see org.smartsnip.persistence.IPersistence#getCode(java.lang.Long)
+	 */
+	@Override
+	public Code getCode(Long codeId) throws IOException {
+		checkFail();
+		return staticCode;
 	}
 
 	/**

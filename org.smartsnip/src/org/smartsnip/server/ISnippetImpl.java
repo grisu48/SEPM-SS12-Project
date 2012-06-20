@@ -316,7 +316,7 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 			return;
 
 		// Create new code object
-		Code newCode = Code.createCode(code, old.language, snippet,
+		Code newCode = Code.createCode(code, old.language, snippet.id,
 				(old.getVersion() + 1));
 		snippet.setCode(newCode);
 	}

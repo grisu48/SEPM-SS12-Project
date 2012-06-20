@@ -116,11 +116,11 @@ public class SqlPersistenceImplTest {
 		// write some objects into the DB
 		log.trace("Preparing some persistent test objects");
 		User user1 = helper.createUser("_test_user_1", "a test user",
-				"one@test.org", UserState.unvalidated);
+				"one@test.org", UserState.unvalidated, new Date());
 		User user2 = helper.createUser("_test_user_2", "another test user",
-				"two@test.org", UserState.validated);
+				"two@test.org", UserState.validated, new Date());
 		User user3 = helper.createUser("_test_user_3", "third test user",
-				"three@test.org", UserState.validated);
+				"three@test.org", UserState.validated, new Date());
 		instance.writeUser(user1, IPersistence.DB_DEFAULT);
 		instance.writeUser(user2, IPersistence.DB_DEFAULT);
 		instance.writeUser(user3, IPersistence.DB_DEFAULT);
@@ -190,13 +190,13 @@ public class SqlPersistenceImplTest {
 
 		List<Code> codes = new ArrayList<Code>();
 		codes.add(helper.createCode(1L, "/* test code incomplete */\n",
-				"_test_java", snip1, 1, null));
+				"_test_java", snip1.getHashId(), 1, null));
 		codes.add(helper.createCode(2L, builder.toString(), "_test_java",
-				snip1, 2, null));
+				snip1.getHashId(), 2, null));
 		codes.add(helper.createCode(3L, "/* test code to snippet 2 */",
-				"_test_java", snip2, 0, null));
+				"_test_java", snip2.getHashId(), 0, null));
 		codes.add(helper.createCode(4L, "/* test code to snippet 3 */",
-				"_test_java", snip3, 7, null));
+				"_test_java", snip3.getHashId(), 7, null));
 		instance.writeCode(codes, IPersistence.DB_DEFAULT);
 
 		Notification notif = helper
@@ -260,7 +260,7 @@ public class SqlPersistenceImplTest {
 	@Test
 	public void testWriteUserUserInt() throws Throwable {
 		User user = helper.createUser("_test_somebody", "the test user",
-				"sbd@test.org", UserState.validated);
+				"sbd@test.org", UserState.validated, new Date());
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
 
 		Session session = DBSessionFactory.open();
@@ -305,11 +305,11 @@ public class SqlPersistenceImplTest {
 	@Test
 	public void testWriteUserListOfUserInt() throws Throwable {
 		List<User> users = new ArrayList<User>();
-		users.add(helper.createUser("sick", "sick guy", "sick@guy.org", null));
-		users.add(helper.createUser("sie", "she bang", "she@bang", null));
-		users.add(helper.createUser("he", "he man", "er@bla", null));
-		users.add(helper.createUser("samson", "samie blu", "heini@bla", null));
-		users.add(helper.createUser("xxx", "anonymus", "anon@ym", null));
+		users.add(helper.createUser("sick", "sick guy", "sick@guy.org", null, new Date()));
+		users.add(helper.createUser("sie", "she bang", "she@bang", null, new Date()));
+		users.add(helper.createUser("he", "he man", "er@bla", null, new Date()));
+		users.add(helper.createUser("samson", "samie blu", "heini@bla", null, new Date()));
+		users.add(helper.createUser("xxx", "anonymus", "anon@ym", null, new Date()));
 		instance.writeUser(users, IPersistence.DB_DEFAULT);
 	}
 
@@ -406,7 +406,7 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testWriteNotificationNotificationInt() throws Throwable {
-		User user = helper.createUser("sulu", "su lu", "su@bla", null);
+		User user = helper.createUser("sulu", "su lu", "su@bla", null, new Date());
 		Category par = helper.createCategory("bla", "viel bla bla", null);
 		Category cat = helper.createCategory("blabla", "noch mehr bla bla",
 				"bla");
@@ -419,7 +419,7 @@ public class SqlPersistenceImplTest {
 		Snippet snip = helper.createSnippet(7L, user.getUsername(),
 				"more stupid", "something else stupid stuff", cat.getName(),
 				tags, null, null, 0, 0F);
-		Code code = helper.createCode(1L, "code", "language", snip, 0, null);
+		Code code = helper.createCode(1L, "code", "language", snip.getHashId(), 0, null);
 		helper.setCodeOfSnippet(snip, code);
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
 		instance.writeTag(tags, IPersistence.DB_DEFAULT);
@@ -853,7 +853,7 @@ public class SqlPersistenceImplTest {
 	public void testVerifyPassword() throws Throwable {
 		// write password
 		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
-				User.UserState.validated);
+				User.UserState.validated, new Date());
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
 		instance.writeLogin(user, "blabla", true, IPersistence.DB_DEFAULT);
 
@@ -897,7 +897,7 @@ public class SqlPersistenceImplTest {
 	public void testUpdateLogin() throws Throwable {
 		// write password
 		User user = helper.createUser("pwdUpdateTester", "bbb", "aaa@ccc.dd",
-				User.UserState.validated);
+				User.UserState.validated, new Date());
 		instance.writeUser(user, IPersistence.DB_DEFAULT);
 		instance.writeLogin(user, "old_pass", true, IPersistence.DB_DEFAULT);
 		// update the written password
@@ -1165,7 +1165,7 @@ public class SqlPersistenceImplTest {
 			}
 		}
 		File codeFile = helper.createCodeFile(name, content);
-		Code code = helper.createCode(1L, "to test", "java", test_snip2, 1,
+		Code code = helper.createCode(1L, "to test", "java", test_snip2.getHashId(), 1,
 				null);
 		Long codeId = instance.writeCode(code, IPersistence.DB_DEFAULT);
 		instance.writeCodeFile(codeId, codeFile, IPersistence.DB_DEFAULT);

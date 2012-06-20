@@ -110,14 +110,14 @@ public class PersistenceHelper {
 	 * @param id
 	 * @param code
 	 * @param language
-	 * @param snippet
+	 * @param snippetId
 	 * @param version
 	 * @param downloadableSourceName 
 	 * @return an initialized Code object
 	 */
 	protected Code createCode(Long id, String code, String language,
-			Snippet snippet, int version, String downloadableSourceName) {
-		return Code.createCodeDB(code, language, snippet, id, version, downloadableSourceName);
+			Long snippetId, int version, String downloadableSourceName) {
+		return Code.createCodeDB(code, language, snippetId, id, version, downloadableSourceName);
 	}
 
 	/**
@@ -138,12 +138,13 @@ public class PersistenceHelper {
 	 * @param realName
 	 * @param email
 	 * @param state
+	 * @param lastLogin
 	 * @return an initialized User object
 	 */
 	protected User createUser(String username, String realName, String email,
-			User.UserState state) {
+			User.UserState state, Date lastLogin) {
 
-		return new User(username, realName, email, state, null);//FIXME
+		return new User(username, realName, email, state, lastLogin);
 	}
 
 	/**

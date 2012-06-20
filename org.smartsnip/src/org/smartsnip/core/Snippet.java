@@ -154,7 +154,7 @@ public class Snippet {
 				license, tags, null, 0, 0F);
 		addToDB(snippet);
 		// Create code object, with version 0 (begin)
-		snippet.code = Code.createCode(code, language, snippet, 0);
+		snippet.code = Code.createCode(code, language, snippet.id, 0);
 
 		return snippet;
 	}

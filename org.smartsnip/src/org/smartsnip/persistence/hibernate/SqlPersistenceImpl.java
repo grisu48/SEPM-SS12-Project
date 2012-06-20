@@ -404,6 +404,15 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getAllUsers(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public List<User> getAllUsers(Integer start, Integer count)
+			throws IOException {
+		return UserFactory.getAllUsers(start, count);
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getPassword(org.smartsnip.core.User)
 	 */
 	@Override
@@ -557,6 +566,12 @@ public class SqlPersistenceImpl implements IPersistence {
 	@Override
 	public List<Code> getCodes(Snippet snippet) throws IOException {
 		return CodeFactory.getCodes(snippet);
+	}
+
+
+	@Override
+	public Code getCode(Long codeId) throws IOException {
+		return CodeFactory.getCode(codeId);
 	}
 
 	/**

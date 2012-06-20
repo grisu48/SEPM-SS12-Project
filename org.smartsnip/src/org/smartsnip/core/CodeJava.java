@@ -13,14 +13,15 @@ public class CodeJava extends Code {
 	 * 
 	 * @param code
 	 *            Java code of the snippet
-	 * @param snippet
+	 * @param snippetId
 	 *            Owner snippet
-	 * @param ID
+	 * @param id
 	 *            of the code object. If null, it has not been assigned form the
 	 *            persistence yet
+	 * @param version the version number
 	 */
-	CodeJava(String code, Snippet snippet, Long id, int version) {
-		super(code, language, snippet, id, version);
+	CodeJava(String code, Long snippetId, Long id, int version) {
+		super(code, language, snippetId, id, version);
 	}
 
 	@Override

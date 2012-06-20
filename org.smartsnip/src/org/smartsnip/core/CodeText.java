@@ -20,14 +20,15 @@ public class CodeText extends Code {
 	 *            Java code of the snippet
 	 * @param language
 	 *            Language of this code item
-	 * @param snippet
+	 * @param snippetId
 	 *            Owner snippet
-	 * @param ID
+	 * @param id
 	 *            of the code object. If null, it has not been assigned form the
 	 *            persistence yet
+	 * @param version the version number
 	 */
-	CodeText(String code, String language, Snippet snippet, Long id, int version) {
-		super(code, language, snippet, id, version);
+	CodeText(String code, String language, Long snippetId, Long id, int version) {
+		super(code, language, snippetId, id, version);
 
 		this.language = language;
 	}

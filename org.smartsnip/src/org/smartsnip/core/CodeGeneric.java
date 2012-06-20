@@ -38,7 +38,7 @@ public class CodeGeneric extends Code {
 	 *            Code of the snippet
 	 * @param language
 	 *            Language of this code item
-	 * @param snippet
+	 * @param snippetId
 	 *            Owner snippet
 	 * @param id
 	 *            of the code object. If null, it has not been assigned form the
@@ -46,9 +46,9 @@ public class CodeGeneric extends Code {
 	 * @param version
 	 *            the version of the code
 	 */
-	public CodeGeneric(String code, String language, Snippet snippet, Long id,
+	public CodeGeneric(String code, String language, Long snippetId, Long id,
 			int version) {
-		super(code, language, snippet, id, version);
+		super(code, language, snippetId, id, version);
 		this.language = language;
 	}
 

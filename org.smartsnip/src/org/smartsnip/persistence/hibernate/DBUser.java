@@ -4,12 +4,16 @@
  */
 package org.smartsnip.persistence.hibernate;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -48,6 +52,10 @@ class DBUser {
 	@Column(name = "email", length = 255)
 	private String email;
 
+	@Column(name = "last_login")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastLogin;
+	
 	@Column(name = "user_state")
 	@Enumerated(EnumType.STRING)
 	private User.UserState userState;
@@ -97,6 +105,20 @@ class DBUser {
 	}
 
 	/**
+	 * @return the lastLogin
+	 */
+	public Date getLastLogin() {
+		return this.lastLogin;
+	}
+
+	/**
+	 * @param lastLogin the lastLogin to set
+	 */
+	public void setLastLogin(Date lastLogin) {
+		this.lastLogin = lastLogin;
+	}
+
+	/**
 	 * @param email
 	 *            the email to set
 	 */
@@ -129,7 +151,13 @@ class DBUser {
 		result = prime * result
 				+ ((this.email == null) ? 0 : this.email.hashCode());
 		result = prime * result
+				+ ((this.fullName == null) ? 0 : this.fullName.hashCode());
+		result = prime * result
+				+ ((this.lastLogin == null) ? 0 : this.lastLogin.hashCode());
+		result = prime * result
 				+ ((this.userName == null) ? 0 : this.userName.hashCode());
+		result = prime * result
+				+ ((this.userState == null) ? 0 : this.userState.hashCode());
 		return result;
 	}
 
@@ -150,10 +178,22 @@ class DBUser {
 				return false;
 		} else if (!this.email.equals(other.email))
 			return false;
+		if (this.fullName == null) {
+			if (other.fullName != null)
+				return false;
+		} else if (!this.fullName.equals(other.fullName))
+			return false;
+		if (this.lastLogin == null) {
+			if (other.lastLogin != null)
+				return false;
+		} else if (!this.lastLogin.equals(other.lastLogin))
+			return false;
 		if (this.userName == null) {
 			if (other.userName != null)
 				return false;
 		} else if (!this.userName.equals(other.userName))
+			return false;
+		if (this.userState != other.userState)
 			return false;
 		return true;
 	}

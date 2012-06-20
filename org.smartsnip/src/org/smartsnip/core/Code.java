@@ -4,13 +4,19 @@ import java.io.IOException;
 
 import org.smartsnip.persistence.IPersistence;
 
+/**
+ * 
+ * @author Felix Niederwanger
+ * @author littlelion
+ * 
+ */
 public abstract class Code {
 	/** Concrete code */
 	public final String code;
 	/** Code language */
 	public final String language;
 	/** Owner snippet of the code object */
-	public final Snippet snippet;
+	public final Long snippetId;
 	/** Version of this code object, auto incrementing */
 	private final int version;
 
@@ -26,13 +32,13 @@ public abstract class Code {
 	 * 
 	 * @param code
 	 * @param language
-	 * @param snippet
+	 * @param snippetId
 	 * @param id
 	 *            of the object. If null, the id has not been assigned from the
 	 *            persistence yet
 	 * @param version
 	 */
-	Code(String code, String language, Snippet snippet, Long id, int version) {
+	Code(String code, String language, Long snippetId, Long id, int version) {
 		if (code.length() == 0)
 			throw new IllegalArgumentException(
 					"Cannot create snippet with no code");
@@ -40,7 +46,7 @@ public abstract class Code {
 			throw new IllegalArgumentException("No coding language defined");
 		this.code = formatCode(code);
 		this.language = language;
-		this.snippet = snippet;
+		this.snippetId = snippetId;
 		this.version = version;
 
 		// If the id is null, it has not been assigned from the peristence yet
@@ -144,7 +150,7 @@ public abstract class Code {
 	 *             Thrown if the code or if the language is empty
 	 */
 	// TODO add Version
-	public static Code createCode(String code, String language, Snippet owner,
+	public static Code createCode(String code, String language, Long ownerSnippetId,
 			int version) {
 		if (code == null || language == null)
 			throw new NullPointerException();
@@ -154,26 +160,14 @@ public abstract class Code {
 		if (language.isEmpty())
 			throw new IllegalArgumentException(
 					"Cannot create code object with no language");
-		if (owner == null)
+		if (ownerSnippetId == null)
 			throw new NullPointerException(
 					"Cannot create code segment without a snippet");
 
 		language = language.trim();
 
 		// build always a generic code object
-		Code result = new CodeGeneric(code, language, owner, null, version);
-
-		// language = language.trim().toLowerCase();
-		//
-		// /* Here the language inspection takes place */
-		// Code result = null;
-		// if (language.equals("java")) { // Java object
-		// result = new CodeJava(code, owner, null, 0);
-		// }
-		//
-		// // Failback: CodeText
-		// if (result == null)
-		// result = new CodeText(code, language, owner, null, 0);
+		Code result = new CodeGeneric(code, language, ownerSnippetId, null, version);
 
 		addToDB(result);
 		return result;
@@ -195,7 +189,7 @@ public abstract class Code {
 	 * @param language
 	 *            Coding language. It must be supported by the system, otherwise
 	 *            a new {@link UnsupportedLanguageException} is thrown.
-	 * @param owner
+	 * @param ownerSnippetId
 	 *            The owner snippet of the code
 	 * @param id
 	 *            the identifier
@@ -214,7 +208,7 @@ public abstract class Code {
 	 *             Thrown if the code or if the language is empty
 	 */
 	public static Code createCodeDB(String code, String language,
-			Snippet owner, long id, int version, String downloadableSourceName) {
+			Long ownerSnippetId, Long id, int version, String downloadableSourceName) {
 		if (code == null || language == null)
 			throw new NullPointerException();
 		if (code.isEmpty())
@@ -223,7 +217,7 @@ public abstract class Code {
 		if (language.isEmpty())
 			throw new IllegalArgumentException(
 					"Cannot create code object with no language");
-		if (owner == null)
+		if (ownerSnippetId == null)
 			throw new NullPointerException(
 					"Cannot create code segment without a snippet");
 		if (downloadableSourceName != null) {
@@ -234,7 +228,7 @@ public abstract class Code {
 		language = language.trim();
 
 		// build always a generic code object
-		Code result = new CodeGeneric(code, language, owner, null, 0);
+		Code result = new CodeGeneric(code, language, ownerSnippetId, null, 0);
 
 		// language = language.trim().toLowerCase();
 		//
@@ -291,7 +285,24 @@ public abstract class Code {
 	 * @return the associated snippet to the code
 	 */
 	public Snippet getSnippet() {
-		return snippet;
+		if (this.snippetId == null) {
+			return null;
+		}
+		try {
+			return Persistence.instance.getSnippet(snippetId);
+		} catch (IOException e) {
+			System.err.println("IOException reading snippet object with id="
+					+ this.snippetId + ": " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
+	}
+
+	/**
+	 * @return the snippetId
+	 */
+	public Long getSnippetId() {
+		return this.snippetId;
 	}
 
 	/**
