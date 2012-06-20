@@ -20,8 +20,7 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 	private static final long serialVersionUID = -6793875859564213616L;
 
 	@Override
-	public void setEmail(String newAddress) throws NoAccessException,
-			IllegalArgumentException {
+	public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException {
 		Session session = getSession();
 		User user = session.getUser();
 
@@ -42,8 +41,7 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 	}
 
 	@Override
-	public boolean login(String username, String password)
-			throws NoAccessException {
+	public boolean login(String username, String password) throws NoAccessException {
 		Session session = getSession();
 
 		if (session.isLoggedIn())
@@ -115,6 +113,14 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 		for (User user : users)
 			result.add(user.toXUser());
 		return result;
+	}
+
+	@Override
+	public XUser getMe() {
+		User user = getSession().getUser();
+		if (user == null)
+			return null;
+		return user.toXUser();
 	}
 
 }

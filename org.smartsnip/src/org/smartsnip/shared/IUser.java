@@ -45,8 +45,7 @@ public interface IUser extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the login process fails
 	 */
-	public boolean login(String username, String password)
-			throws NoAccessException;
+	public boolean login(String username, String password) throws NoAccessException;
 
 	/**
 	 * Logs the session out
@@ -63,8 +62,7 @@ public interface IUser extends RemoteService, IsSerializable {
 	 * @throws IllegalArgumentException
 	 *             Thrown, if the given email adress is invalid
 	 */
-	public void setEmail(String newAddress) throws NoAccessException,
-			IllegalArgumentException;
+	public void setEmail(String newAddress) throws NoAccessException, IllegalArgumentException;
 
 	/**
 	 * Sets the new real name of the logged in user
@@ -121,4 +119,10 @@ public interface IUser extends RemoteService, IsSerializable {
 	 *             Thrown if the server denies the access
 	 */
 	public List<XUser> getUsers(int start, int count) throws NoAccessException;
+
+	/**
+	 * @return {@link XUser} object of the user, that is currently logged in or
+	 *         null, if a guest session
+	 */
+	public XUser getMe();
 }

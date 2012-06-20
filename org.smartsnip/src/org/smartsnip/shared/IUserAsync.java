@@ -22,4 +22,6 @@ public interface IUserAsync {
 
 	void getUsers(int start, int count, AsyncCallback<List<XUser>> callback);
 
+	void getMe(AsyncCallback<XUser> callback);
+
 }

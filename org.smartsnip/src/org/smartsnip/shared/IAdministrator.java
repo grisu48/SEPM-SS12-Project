@@ -1,5 +1,6 @@
 package org.smartsnip.shared;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -11,9 +12,22 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * 
  * @author Felix Niederwanger
  */
-@RemoteServiceRelativePath("category")
+@RemoteServiceRelativePath("administrator")
 public interface IAdministrator extends RemoteService, IsSerializable,
 		IModerator {
+
+	/** This class provides easy access to the proxy object */
+	public static class Util {
+		private static IAdministratorAsync instance = null;
+
+		/** Get the proxy object instance */
+		public static IAdministratorAsync getInstance() {
+			if (instance == null) {
+				instance = GWT.create(IAdministrator.class);
+			}
+			return instance;
+		}
+	}
 
 	/**
 	 * Checks if the current user is administrator
@@ -36,4 +50,17 @@ public interface IAdministrator extends RemoteService, IsSerializable,
 	 */
 	public void setPassword(String username, String password)
 			throws NotFoundException, NoAccessException;
+
+	/**
+	 * Delete a user from the system
+	 * 
+	 * @param username
+	 *            Username of the user that should be deleted
+	 * @throws NotFoundException
+	 *             Thrown if the user is not found
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
+	 */
+	void deleteUser(String username) throws NotFoundException,
+			NoAccessException;
 }

@@ -19,21 +19,18 @@ public interface ISessionAsync {
 
 	public void getSnippetCount(AsyncCallback<Integer> callback);
 
-	public void login(String username, String password,
-			AsyncCallback<Boolean> callback) throws NoAccessException;
+	public void login(String username, String password, AsyncCallback<Boolean> callback);
 
 	public void logout(@SuppressWarnings("rawtypes") AsyncCallback callback);
 
 	public void isLoggedIn(AsyncCallback<Boolean> callback);
 
-	void doSearch(String searchString, List<String> tags,
-			List<String> categories, SearchSorting sorting, int start,
-			int count, int id, AsyncCallback<XSearch> callback);
+	void doSearch(String searchString, List<String> tags, List<String> categories, SearchSorting sorting, int start, int count, int id,
+			AsyncCallback<XSearch> callback);
 
 	void getServerStatus(AsyncCallback<XServerStatus> callback);
 
-	void registerNewUser(String username, String password, String email,
-			AsyncCallback<Boolean> callback);
+	void registerNewUser(String username, String password, String email, AsyncCallback<Boolean> callback);
 
 	void getSessionCookie(AsyncCallback<String> callback);
 
@@ -45,6 +42,5 @@ public interface ISessionAsync {
 
 	void getNotificationCount(boolean unreadOnly, AsyncCallback<Long> callback);
 
-	void getNotifications(boolean unreadOnly,
-			AsyncCallback<List<XNotification>> callback);
+	void getNotifications(boolean unreadOnly, AsyncCallback<List<XNotification>> callback);
 }

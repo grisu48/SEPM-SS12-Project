@@ -15,4 +15,6 @@ public interface IAdministratorAsync extends IModeratorAsync {
 	void setPassword(String username, String password,
 			AsyncCallback<Void> callback);
 
+	void deleteUser(String username, AsyncCallback<Void> asyncCallback);
+
 }

@@ -1,40 +1,33 @@
 package org.smartsnip.client;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.smartsnip.shared.ICategory;
+import org.smartsnip.shared.IAdministrator;
 import org.smartsnip.shared.IModerator;
+import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.NotFoundException;
-import org.smartsnip.shared.XCategory;
 import org.smartsnip.shared.XSession;
+import org.smartsnip.shared.XUser;
+import org.smartsnip.shared.XUser.UserState;
 
-import com.google.gwt.dev.util.collect.HashMap;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.OpenEvent;
-import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MenuBar;
-import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sun.corba.se.impl.encoding.CodeSetConversion.BTCConverter;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * This panel is for the moderator only and provides access to the moderator
@@ -44,6 +37,8 @@ import com.sun.corba.se.impl.encoding.CodeSetConversion.BTCConverter;
  * 
  */
 public class ModeratorArea extends Composite {
+	/** Maximum number of users per page */
+	private final int USERS_PER_PAGE = 50;
 
 	/** Selected page */
 	private enum Page {
@@ -79,7 +74,6 @@ public class ModeratorArea extends Composite {
 	public ModeratorArea() {
 
 		tabPanel = new TabPanel();
-		tabPanel.setAnimationEnabled(true);
 
 		tabPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 
@@ -194,8 +188,10 @@ public class ModeratorArea extends Composite {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				if (caught == null) lblSessions.setText("Unknown error while updating");
-				else if (caught instanceof NoAccessException) lblSessions.setText("Update failed: Access denied");
+				if (caught == null)
+					lblSessions.setText("Unknown error while updating");
+				else if (caught instanceof NoAccessException)
+					lblSessions.setText("Update failed: Access denied");
 				else
 					lblSessions.setText("Update failed: " + caught.getMessage());
 
@@ -232,11 +228,12 @@ public class ModeratorArea extends Composite {
 
 							@Override
 							public void onFailure(Throwable caught) {
-								if (caught == null) lblStatus.setText("Closing failed");
-								else if (caught instanceof NoAccessException) lblStatus
-										.setText("Closing failed: Access denial");
-								else if (caught instanceof NotFoundException) lblStatus
-										.setText("Closing failed: Session not found");
+								if (caught == null)
+									lblStatus.setText("Closing failed");
+								else if (caught instanceof NoAccessException)
+									lblStatus.setText("Closing failed: Access denial");
+								else if (caught instanceof NotFoundException)
+									lblStatus.setText("Closing failed: Session not found");
 								else
 									lblStatus.setText("Closing failed: " + caught.getMessage());
 
@@ -271,7 +268,226 @@ public class ModeratorArea extends Composite {
 	 * Updates the users page
 	 */
 	private void updateUsers() {
-		// TODO Auto-generated method stub
+		lblUsers.setText("Updating ... ");
+		pnlVertUsers.clear();
+		pnlVertUsers.add(lblUsers);
 
+		IAdministrator.Util.getInstance().isAdministrator(new AsyncCallback<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean result) {
+				updateForeignUsers(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				if (caught == null)
+					lblUsers.setText("Error fetching admin status: Unknown error");
+				else if (caught instanceof NoAccessException)
+					lblUsers.setText("Error fetching admin status: Access denied");
+				else
+					lblUsers.setText("Error fetching admin status: " + caught.getMessage());
+			}
+		});
+	}
+
+	/**
+	 * Second call for {@link #updateUsers()} after the first async callback has
+	 * benn received
+	 * 
+	 * @param amIAdmin
+	 *            indicating if I am administrator
+	 */
+	private void updateForeignUsers(final boolean amIAdmin) {
+		IUser.Util.getInstance().getUsers(0, USERS_PER_PAGE, new AsyncCallback<List<XUser>>() {
+
+			@Override
+			public void onSuccess(List<XUser> result) {
+				if (result == null) {
+					onFailure(new IllegalArgumentException("Null returned"));
+					return;
+				}
+
+				final int users = result.size();
+				final Grid grid = new Grid(users, 7);
+
+				int row = 0;
+				for (XUser user : result) {
+					Widget[] widgets = createUserControls(user);
+					for (int i = 0; i < 7; i++)
+						grid.setWidget(row, i, widgets[i]);
+					row++;
+				}
+
+				lblUsers.setText("Fetched " + users + " users");
+			}
+
+			/**
+			 * Creates aan array, allows the control for each user The array is
+			 * suited for a 7-dim grid, that is in onSuccess used and defined.
+			 * These two methods are coupled!
+			 * 
+			 * @param user
+			 *            For witch the controls are created
+			 * @return component array
+			 */
+			private Widget[] createUserControls(final XUser user) {
+				// Widgets:
+				// 0 - Username
+				// 1 - Realname
+				// 2 - Email
+				// 3 - Last login
+				// 4 - Delte Button
+				// 5 - Set State List
+				// 6 - Set Password button
+				final Label lblUsername = new Label(user.username);
+				final Label lblRealName = new Label(user.realname);
+				final Label lblEmail = new Label(user.email);
+				// TODO: Use DateFormat.format
+				final Label lblLastLogin = new Label(user.lastLoginTime.toLocaleString());
+				final Button btnDelete = new Button("Delete");
+				final ListBox lstState = new ListBox();
+				fillListBoxWithUserStates(lstState);
+				final Button btnSetPassword = new Button("Set password");
+				btnSetPassword.setVisible(amIAdmin);
+				btnSetPassword.setVisible(amIAdmin);
+
+				final Widget[] result = new Widget[7];
+				result[0] = lblUsername;
+				result[1] = lblRealName;
+				result[2] = lblEmail;
+				result[3] = lblLastLogin;
+				result[4] = btnDelete;
+				result[5] = lstState;
+				result[6] = btnSetPassword;
+
+				btnDelete.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!amIAdmin) {
+							Control.myGUI.showMessagePopup("Access denied");
+							return;
+						}
+						if (Control.myGUI.showConfirmPopup("Do you really want do delete user " + user.username + "?") == true) {
+							btnDelete.setEnabled(false);
+							btnDelete.setText("Deleting ... ");
+							IAdministrator.Util.getInstance().deleteUser(user.username, new AsyncCallback<Void>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+									btnDelete.setText("Retry");
+									Control.myGUI.showErrorPopup("An error occured while deleting user " + user.username, caught);
+								}
+
+								@Override
+								public void onSuccess(Void result) {
+									// Update users all components will be
+									// erased
+									updateUsers();
+								}
+							});
+						}
+					}
+				});
+				btnSetPassword.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!amIAdmin) {
+							Control.myGUI.showMessagePopup("Access denied");
+							return;
+						}
+
+						// TODO Implement me
+					}
+				});
+				lstState.addChangeHandler(new ChangeHandler() {
+
+					@Override
+					public void onChange(ChangeEvent event) {
+						final UserState state = String2UserState(lstState.getItemText(lstState.getSelectedIndex()));
+						if (state == null)
+							return;
+
+						final AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+
+							@Override
+							public void onSuccess(Void result) {
+								// Perfect - The userstate is set
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								Control.myGUI.showErrorPopup("Error while setting the userstate of user " + user.username + " to "
+										+ UserState2String(state), caught);
+							}
+						};
+
+						if (amIAdmin)
+							IAdministrator.Util.getInstance().setUserState(user.username, state, callback);
+						else
+							IModerator.Util.getInstance().setUserState(user.username, state, callback);
+					}
+				});
+
+				return result;
+
+			}
+
+			/** Fills a listbox with user states */
+			private void fillListBoxWithUserStates(ListBox listbox) {
+				if (listbox == null)
+					return;
+				listbox.addItem(UserState2String(UserState.unvalidated)); // 0
+				listbox.addItem(UserState2String(UserState.validated)); // 1
+				listbox.addItem(UserState2String(UserState.moderator)); // 2
+				listbox.addItem(UserState2String(UserState.administrator)); // 3
+				listbox.addItem(UserState2String(UserState.deleted)); // 4
+			}
+
+			private String UserState2String(XUser.UserState state) {
+				switch (state) {
+				case administrator:
+					return "Administrator";
+				case deleted:
+					return "Deleted";
+				case moderator:
+					return "Moderator";
+				case unvalidated:
+					return "Unvalidated";
+				default:
+					return "User";
+				}
+			}
+
+			private UserState String2UserState(String string) {
+				if (string == null)
+					return null;
+				string = string.toLowerCase();
+				if (string.equals("administrator"))
+					return UserState.administrator;
+				else if (string.equals("moderator"))
+					return UserState.moderator;
+				else if (string.equals("unvalidated"))
+					return UserState.unvalidated;
+				else if (string.equals("user"))
+					return UserState.validated;
+				else if (string.equals("deleted"))
+					return UserState.deleted;
+				else
+					return null;
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				if (caught == null)
+					lblUsers.setText("Error fetching users: Unknown error");
+				else if (caught instanceof NoAccessException)
+					lblUsers.setText("Error fetching users: Access denied");
+				else
+					lblUsers.setText("Error fetching users: " + caught.getMessage());
+			}
+		});
 	}
 }
