@@ -139,13 +139,19 @@ public class User {
 			return null;
 		username = username.toLowerCase();
 
+		User result;
 		try {
-			return Persistence.instance.getUser(username);
+			result = Persistence.instance.getUser(username);
 		} catch (IOException e) {
 			log.info("IOException during getting User \" " + username + "\":"
 					+ e.getMessage(), e);
 			return null;
 		}
+
+		// If the user is deleted, do not return anything
+		if (result.getState() == UserState.deleted)
+			return null;
+		return result;
 	}
 
 	/**
@@ -277,6 +283,7 @@ public class User {
 		if (user == null)
 			return;
 
+		user.setState(UserState.deleted);
 		try {
 			Persistence.instance.removeUser(user, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
@@ -768,6 +775,18 @@ public class User {
 		if (state == UserState.administrator)
 			return true;
 		if (state == UserState.moderator)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Checks if the user is administrator
+	 * 
+	 * @return true if the user has administrative provileges
+	 */
+	public boolean isAdministrator() {
+		UserState state = getState();
+		if (state == UserState.administrator)
 			return true;
 		return false;
 	}

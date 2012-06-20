@@ -11,7 +11,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -33,7 +32,7 @@ public class CommentField extends Composite {
 	/** Parent comment area this component belongs to */
 	final CommentArea parent;
 
-	private final FlowPanel flowMain;
+	private final HorizontalPanel horPnlMain;
 
 	private final HorizontalPanel horPanel;
 	private final HorizontalPanel horToolbar;
@@ -64,7 +63,7 @@ public class CommentField extends Composite {
 		this.comment = myComment;
 		this.parent = parent;
 
-		flowMain = new FlowPanel();
+		horPnlMain = new HorizontalPanel();
 		horPanel = new HorizontalPanel();
 		commentText = new HTMLPanel(myComment.message);
 
@@ -217,10 +216,10 @@ public class CommentField extends Composite {
 		verPanel.add(horToolbar);
 		verPanel.add(pnlVertButtons);
 
-		flowMain.add(verPanel);
-		flowMain.add(pnlVertButtons);
+		horPnlMain.add(verPanel);
+		horPnlMain.add(pnlVertButtons);
 
-		initWidget(flowMain);
+		initWidget(horPnlMain);
 		// Give the overall composite a style name.
 		setStyleName("commentField");
 	}

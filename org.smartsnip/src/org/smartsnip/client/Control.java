@@ -541,6 +541,8 @@ public class Control implements EntryPoint {
 	 * @return Gets the base URL path.
 	 */
 	private static String getBaseURL() {
+		if (isDevelopmentMode())
+			return "";
 		String full = GWT.getModuleBaseURL();
 		String host = GWT.getHostPageBaseURL();
 		if (host.equals(full))
@@ -554,4 +556,12 @@ public class Control implements EntryPoint {
 
 		return url;
 	}
+
+	/**
+	 * @return checks if currently running in development mode
+	 */
+	private static boolean isDevelopmentMode() {
+		return !GWT.isScript() && GWT.isClient();
+	}
+
 }
