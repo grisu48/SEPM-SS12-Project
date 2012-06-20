@@ -28,6 +28,12 @@ public class BlankPage extends Composite {
 		this.mainPanel = panel;
 
 		initWidget(mainPanel);
+		applyStyles();
+	}
+
+	/** Apply styles */
+	private void applyStyles() {
+
 	}
 
 	/**

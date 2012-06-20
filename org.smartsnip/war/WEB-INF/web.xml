@@ -74,6 +74,17 @@
   </servlet-mapping>
   
   
+  <servlet>
+    <servlet-name>Administrator</servlet-name>
+    <servlet-class>org.smartsnip.server.IAdministratorImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>Administrator</servlet-name>
+    <url-pattern>/org_smartsnip/administrator</url-pattern>
+  </servlet-mapping>
+  
+  
   
   
   <!-- ==== NON-GWT servlets ======================================= -->
