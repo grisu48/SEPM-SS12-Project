@@ -70,8 +70,7 @@ public class CommentField extends Composite {
 		verPanel = new VerticalPanel();
 		lblOwner = new Label(myComment.owner);
 		lblDate = new Label(getTimeString(myComment.time));
-		lblRating = new Label(getRatingString(myComment.positiveVotes,
-				myComment.negativeVotes));
+		lblRating = new Label(getRatingString(myComment.positiveVotes, myComment.negativeVotes));
 
 		anchRatePositive = new Anchor("Vote positive");
 		anchRateNegative = new Anchor("Vote negative");
@@ -89,20 +88,19 @@ public class CommentField extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				enableRatingLinks(false);
-				IComment.Util.getInstance().votePositive(comment.id,
-						new AsyncCallback<Void>() {
+				IComment.Util.getInstance().votePositive(comment.id, new AsyncCallback<Void>() {
 
-							@Override
-							public void onSuccess(Void result) {
-								enableRatingLinks(true);
-								update();
-							}
+					@Override
+					public void onSuccess(Void result) {
+						enableRatingLinks(true);
+						update();
+					}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								enableRatingLinks(true);
-							}
-						});
+					@Override
+					public void onFailure(Throwable caught) {
+						enableRatingLinks(true);
+					}
+				});
 			}
 		});
 		anchRateNegative.setStyleName("toollink");
@@ -111,20 +109,19 @@ public class CommentField extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				enableRatingLinks(false);
-				IComment.Util.getInstance().voteNegative(comment.id,
-						new AsyncCallback<Void>() {
+				IComment.Util.getInstance().voteNegative(comment.id, new AsyncCallback<Void>() {
 
-							@Override
-							public void onSuccess(Void result) {
-								enableRatingLinks(true);
-								update();
-							}
+					@Override
+					public void onSuccess(Void result) {
+						enableRatingLinks(true);
+						update();
+					}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								enableRatingLinks(true);
-							}
-						});
+					@Override
+					public void onFailure(Throwable caught) {
+						enableRatingLinks(true);
+					}
+				});
 			}
 		});
 
@@ -134,38 +131,36 @@ public class CommentField extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				enableRatingLinks(false);
-				IComment.Util.getInstance().unvote(comment.id,
-						new AsyncCallback<Void>() {
-
-							@Override
-							public void onSuccess(Void result) {
-								enableRatingLinks(true);
-								update();
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								enableRatingLinks(true);
-							}
-						});
-			}
-		});
-		enableRatingLinks(false);
-		IComment.Util.getInstance().canComment(comment.id,
-				new AsyncCallback<Boolean>() {
+				IComment.Util.getInstance().unvote(comment.id, new AsyncCallback<Void>() {
 
 					@Override
-					public void onSuccess(Boolean result) {
+					public void onSuccess(Void result) {
 						enableRatingLinks(true);
-						canRate = result;
+						update();
 					}
 
 					@Override
 					public void onFailure(Throwable caught) {
-						// Something went wrong
-						// TODO: Error handling??
+						enableRatingLinks(true);
 					}
 				});
+			}
+		});
+		enableRatingLinks(false);
+		IComment.Util.getInstance().canComment(comment.id, new AsyncCallback<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean result) {
+				enableRatingLinks(true);
+				canRate = result;
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// Something went wrong
+				// TODO: Error handling??
+			}
+		});
 
 		btnEdit.setVisible(comment.canEdit);
 		btnEdit.addClickHandler(new ClickHandler() {
@@ -186,19 +181,18 @@ public class CommentField extends Composite {
 		});
 
 		// XXX Ugly hack, that should be removed one day
-		IComment.Util.getInstance().canRate(comment.id,
-				new AsyncCallback<Boolean>() {
+		IComment.Util.getInstance().canRate(comment.id, new AsyncCallback<Boolean>() {
 
-					@Override
-					public void onSuccess(Boolean result) {
-						enableRatingLinks(result);
-					}
+			@Override
+			public void onSuccess(Boolean result) {
+				enableRatingLinks(result);
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// Ignore
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				// Ignore
+			}
+		});
 
 		horToolbar.add(anchUnvote);
 		horToolbar.add(anchRatePositive);
@@ -220,6 +214,14 @@ public class CommentField extends Composite {
 		horPnlMain.add(pnlVertButtons);
 
 		initWidget(horPnlMain);
+
+		applyStyles();
+	}
+
+	/** Apply style sheets */
+	private void applyStyles() {
+		btnDelete.setStyleName("gwt-Button-Small");
+		btnEdit.setStyleName("gwt-Button-Small");
 		// Give the overall composite a style name.
 		setStyleName("commentField");
 	}
@@ -234,8 +236,7 @@ public class CommentField extends Composite {
 	 * @return the string that should be displayed
 	 */
 	private String getRatingString(int positiveVotes, int negativeVotes) {
-		if (positiveVotes == 0 && negativeVotes == 0)
-			return "No votes";
+		if (positiveVotes == 0 && negativeVotes == 0) return "No votes";
 
 		StringBuffer buffer = new StringBuffer("");
 
@@ -260,21 +261,17 @@ public class CommentField extends Composite {
 	 * @return
 	 */
 	private String getTimeString(Date time) {
-		if (time == null)
-			return "";
+		if (time == null) return "";
 		long diff = System.currentTimeMillis() - time.getTime();
 
 		int days = (int) (diff / (1000 * 60 * 60 * 24));
-		if (days > 2)
-			return days + " days ago";
+		if (days > 2) return days + " days ago";
 
 		int hours = (int) (diff / (1000 * 60 * 60));
-		if (hours > 1)
-			return hours + " hours ago";
+		if (hours > 1) return hours + " hours ago";
 
 		int minutes = (int) (diff / (1000 * 60));
-		if (minutes > 2)
-			return minutes + " minutes ago";
+		if (minutes > 2) return minutes + " minutes ago";
 
 		return "A moment ago ...";
 
@@ -290,31 +287,28 @@ public class CommentField extends Composite {
 	 * Updates the comment
 	 */
 	public void update() {
-		IComment.Util.getInstance().getComment(comment.id,
-				new AsyncCallback<XComment>() {
+		IComment.Util.getInstance().getComment(comment.id, new AsyncCallback<XComment>() {
 
-					@Override
-					public void onSuccess(XComment result) {
-						if (result == null)
-							return;
-						if (result.id != comment.id)
-							return;
+			@Override
+			public void onSuccess(XComment result) {
+				if (result == null) return;
+				if (result.id != comment.id) return;
 
-						comment.message = result.message;
-						comment.negativeVotes = result.negativeVotes;
-						comment.owner = result.owner;
-						comment.positiveVotes = result.positiveVotes;
-						comment.snippet = result.snippet;
-						comment.time = result.time;
+				comment.message = result.message;
+				comment.negativeVotes = result.negativeVotes;
+				comment.owner = result.owner;
+				comment.positiveVotes = result.positiveVotes;
+				comment.snippet = result.snippet;
+				comment.time = result.time;
 
-						updateComponents();
-					}
+				updateComponents();
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// Ignore
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				// Ignore
+			}
+		});
 	}
 
 	/**
@@ -323,8 +317,7 @@ public class CommentField extends Composite {
 	private void updateComponents() {
 		lblOwner.setText(comment.owner);
 		lblDate.setText(getTimeString(comment.time));
-		lblRating.setText(getRatingString(comment.positiveVotes,
-				comment.negativeVotes));
+		lblRating.setText(getRatingString(comment.positiveVotes, comment.negativeVotes));
 	}
 
 	/** Edit the comment */
@@ -335,28 +328,26 @@ public class CommentField extends Composite {
 
 	/** Delete the comment */
 	private void delete() {
-		if (Control.myGUI
-				.showConfirmPopup(
-						"Are you sure, you want to delete the selected comment? (Undo NOT possible!)\n  "
-								+ comment.message, "Confirmation") == true) {
+		if (Control.myGUI.showConfirmPopup(
+				"Are you sure, you want to delete the selected comment? (Undo NOT possible!)\n  " + comment.message,
+				"Confirmation") == true) {
 			// Delete
 			disable();
-			IComment.Util.getInstance().delete(comment.id,
-					new AsyncCallback<Void>() {
+			IComment.Util.getInstance().delete(comment.id, new AsyncCallback<Void>() {
 
-						@Override
-						public void onSuccess(Void result) {
-							// Is deleted
-							CommentField.this.setVisible(false);
-							parent.update();
-						}
+				@Override
+				public void onSuccess(Void result) {
+					// Is deleted
+					CommentField.this.setVisible(false);
+					parent.update();
+				}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							// something went wrong ...
-							resetControls();
-						}
-					});
+				@Override
+				public void onFailure(Throwable caught) {
+					// something went wrong ...
+					resetControls();
+				}
+			});
 		}
 	}
 

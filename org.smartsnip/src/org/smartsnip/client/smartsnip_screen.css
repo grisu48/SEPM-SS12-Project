@@ -128,6 +128,15 @@ background-repeat:repeat-y;
 }
 
 
+.gwt-Button-Small { 
+	padding:2px;
+	margin:5px;
+	background-image:none;
+	background-color:#a9c34a;
+	color:white;
+}
+
+
 .gwt-Label, .gwt-Anchor {
 	display:block;
 	margin:3px 3px 3px 3px;
@@ -595,6 +604,9 @@ height: 80px;
 	width: 350px;
 }
 
+
+
+/* Styles for a popup menu */
 .popup {
   background-color: gray;
   border-color: gray gray gray gray;
