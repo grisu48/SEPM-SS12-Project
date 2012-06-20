@@ -327,21 +327,6 @@ public class SqlPersistenceImplTest {
 
 	/**
 	 * Test method for
-	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeLogin(User, String, Boolean, int)}
-	 * .
-	 * 
-	 * @throws Throwable
-	 */
-	@Test
-	public void testWriteLogin() throws Throwable {
-		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
-				User.UserState.validated);
-		instance.writeUser(user, IPersistence.DB_DEFAULT);
-		instance.writeLogin(user, "blabla", true, IPersistence.DB_DEFAULT);
-	}
-
-	/**
-	 * Test method for
 	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeSnippet(org.smartsnip.core.Snippet, int)}
 	 * .
 	 * 
@@ -858,18 +843,26 @@ public class SqlPersistenceImplTest {
 	/**
 	 * Test method for
 	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#verifyPassword(org.smartsnip.core.User, java.lang.String)}
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeLogin(User, String, Boolean, int)}
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#isLoginGranted(User)}
 	 * .
 	 * 
 	 * @throws Throwable
 	 */
 	@Test
 	public void testVerifyPassword() throws Throwable {
+		// write password
 		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
 				User.UserState.validated);
+		instance.writeUser(user, IPersistence.DB_DEFAULT);
+		instance.writeLogin(user, "blabla", true, IPersistence.DB_DEFAULT);
+
+		// read it ...
 		assertTrue(instance.verifyPassword(user, "blabla"));
 		assertFalse(instance.verifyPassword(user, " blabla"));
 		assertFalse(instance.verifyPassword(user, "blabla "));
 		assertFalse(instance.verifyPassword(user, "blabaa"));
+		assertTrue(instance.isLoginGranted(user));
 
 		Session session = DBSessionFactory.open();
 		DBQuery query = new DBQuery(session);
@@ -901,10 +894,60 @@ public class SqlPersistenceImplTest {
 	 * @throws Throwable
 	 */
 	@Test
-	public void testIsLoginGranted() throws Throwable {
-		User user = helper.createUser("pwdTester", "aaa", "bbb@ccc.dd",
+	public void testUpdateLogin() throws Throwable {
+		// write password
+		User user = helper.createUser("pwdUpdateTester", "bbb", "aaa@ccc.dd",
 				User.UserState.validated);
-		assertTrue(instance.isLoginGranted(user));
+		instance.writeUser(user, IPersistence.DB_DEFAULT);
+		instance.writeLogin(user, "old_pass", true, IPersistence.DB_DEFAULT);
+		// update the written password
+		instance.writeLogin(user, "new_pass", true, IPersistence.DB_DEFAULT);
+
+		// read it ...
+//		assertTrue(instance.verifyPassword(user, "new_pass"));
+
+		Session session = DBSessionFactory.open();
+		DBQuery query = new DBQuery(session);
+		DBLogin entity = new DBLogin();
+		entity.setUser("pwdTester");
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
+				| DBQuery.QUERY_UNIQUE_RESULT);
+//		assertEquals(entity.getPassword(), "blabla");
+		
+		// test on constraint-violations
+		boolean violatedConstraits = false;
+		Set<ConstraintViolation<User>> constraintViolations = validator
+				.validate(user);
+		for (Iterator<ConstraintViolation<User>> itr = constraintViolations
+				.iterator(); itr.hasNext();) {
+			log.error("Constraint Violation: " + itr.next().getMessage());
+			violatedConstraits = true;
+		}
+		if (violatedConstraits) {
+			fail("Constraint Violations occured! See log file");
+		}
+
+		// test the update query
+//		entity.setPassword("changed_password");
+//		query.reset();
+//		query.update(entity, IPersistence.DB_DEFAULT);
+//		query.addParameter("user_name", "pwdUpdateTester");
+//		query.addParameter("password", "bla");
+//		query.initialize();
+//		org.hibernate.Query hQuery = query.buildCustomQuery("select aes_decrypt(password, 'd2aefeac9dc661bc98eebd6cc12f0b82') from DBLogin where user_name = :user_name", IPersistence.DB_DEFAULT);
+//		List<String> str = hQuery.list();
+//		query.reset();
+		System.out.println("///////////////////////////////////////////");
+		Transaction tx = session.beginTransaction();
+		org.hibernate.Query uQuery = session.createQuery("update DBLogin set password = aes_encrypt(:pwd, 'd2aefeac9dc661bc98eebd6cc12f0b82') where user_name = :usr");
+		uQuery.setParameter("pwd", "newer_pass");
+		uQuery.setParameter("usr", "pwdUpdateTester");
+		uQuery.executeUpdate();
+		
+//		session.update(entity);
+		tx.commit();
+		System.out.println("///////////////////////////////////////////");
+		session.close();
 	}
 
 	/**

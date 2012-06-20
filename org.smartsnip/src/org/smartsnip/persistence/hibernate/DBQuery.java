@@ -10,6 +10,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.persistence.Column;
@@ -26,6 +28,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.NaturalId;
 
 /**
@@ -105,6 +108,23 @@ class DBQuery {
 	 * the query.
 	 */
 	static final int QUERY_CACHEABLE = 8192;
+
+	/**
+	 * Set this flag to use the transformation string of the
+	 * {@link org.hibernate.annotations.ColumnTransformer} annotation in this
+	 * query.
+	 */
+	private static final int COLUMN_TRANSFORMER = 16384;
+
+	/**
+	 * Set this flag to use the write transformation string of the
+	 * {@link org.hibernate.annotations.ColumnTransformer} annotation in this
+	 * query. This flag contains the {@link #COLUMN_TRANSFORMER} flag, so it is
+	 * not necessary to add both flags.
+	 */
+	// don't use the value 32768 for a flag
+	private static final int COLUMN_TRANSFORMER_WRITE = 49152;
+
 	/**
 	 * the session which owns this query
 	 */
@@ -137,6 +157,11 @@ class DBQuery {
 	 * parameter is defined in the select clause it must be added to this list.
 	 */
 	private List<Pair<String, Object>> selectParameters = new ArrayList<Pair<String, Object>>();
+
+	/**
+	 * Contains all {@link ColumnTransformer} attached to a parameter.
+	 */
+	private Map<String, ColumnTransformer> transformers = new TreeMap<String, ColumnTransformer>();
 
 	/**
 	 * Contains the region of the query cache in which the query is to store. If
@@ -213,9 +238,17 @@ class DBQuery {
 	 * Concatenate the parameters to a HQL update query.
 	 * 
 	 * @param targetEntity
+	 * @param flags
+	 *            Set the {@link #COLUMN_TRANSFORMER} if and only if the
+	 *            {@link Query#executeUpdate()} method is used.
 	 * @return the update query string
 	 */
-	private String buildUpdateQueryString(String targetEntity) {
+	private String buildUpdateQueryString(String targetEntity, int flags) {
+		int modFlags = flags;
+		if (hasFlag(flags, COLUMN_TRANSFORMER)) {
+			// use write transformer
+			modFlags = flags | COLUMN_TRANSFORMER_WRITE;
+		}
 		StringBuilder builder = new StringBuilder();
 		boolean comma = false;
 		builder.append("update ").append(targetEntity).append(" set ");
@@ -223,7 +256,9 @@ class DBQuery {
 			if (comma) {
 				builder.append(", ");
 			}
-			builder.append(p.first).append(" = :").append(p.first);
+
+			builder.append(p.first).append(" = ")
+					.append(buildTransformedParameter(p.first, modFlags));
 			comma = true;
 		}
 		if (!comma)
@@ -236,28 +271,64 @@ class DBQuery {
 	}
 
 	/**
+	 * Build the parameter where possible transformer strings are considered.
+	 * 
+	 * @param parameter
+	 *            the parameter
+	 * @param flags
+	 *            Set the {@link #COLUMN_TRANSFORMER} flag if the transformer is
+	 *            to consider. Use the {@link # COLUMN_TRANSFORMER_WRITE} flag
+	 *            for parameters which are to write.
+	 * @return the transformer String
+	 */
+	private String buildTransformedParameter(String parameter, int flags) {
+		String result = parameter;
+		if (hasFlag(flags, COLUMN_TRANSFORMER) && this.transformers.containsKey(parameter)) {
+			if (hasFlag(flags, COLUMN_TRANSFORMER_WRITE)
+					&& !this.transformers.get(parameter).write().isEmpty()) {
+				result = this.transformers.get(parameter).write();
+				result = result.replace("?", " :" + parameter);
+			} else if (!this.transformers.get(parameter).read().isEmpty()) {
+				result = this.transformers.get(parameter).read();
+			}
+		} else {
+			result = ":" + parameter;
+		}
+		return result;
+	}
+
+	/**
 	 * Concatenate the where parameters to a HQL where clause.
 	 * 
-	 * @param notEmpty
-	 *            If the flag {@code #QUERY_NOT_EMPTY} an empty where clause is rejected. Use
-	 *            the constants {@link #QUERY_NOT_EMPTY} or
-	 *            {@link #QUERY_EMPTY_VALID}.
+	 * @param flags
+	 *            If the flag {@code #QUERY_NOT_EMPTY} an empty where clause is
+	 *            rejected. Use the constants {@link #QUERY_NOT_EMPTY} or
+	 *            {@link #QUERY_EMPTY_VALID}. Set the
+	 *            {@link #COLUMN_TRANSFORMER} if and only if the
+	 *            {@link Query#executeUpdate()} method is used.
 	 * @return the where clause or an empty string if no where parameter is set
 	 *         and the notEmpty flag is set to {@link #QUERY_EMPTY_VALID}
 	 */
-	private String buildWhereClause(int notEmpty) {
+	private String buildWhereClause(int flags) {
 		boolean valid = false;
+		int modFlags = flags;
+		if (hasFlag(flags, COLUMN_TRANSFORMER)) {
+			// use read transformer
+			modFlags = flags & ~COLUMN_TRANSFORMER_WRITE;
+		}
 		StringBuilder builder = new StringBuilder("where ");
 		for (Pair<Vector<String>, Object> p : this.whereParameters) {
 			if (valid) {
 				builder.append("and ");
 			}
-			builder.append(p.first.get(0)).append(" :").append(p.first.get(1))
+			builder.append(p.first.get(0))
+					.append(" ")
+					.append(buildTransformedParameter(p.first.get(1), modFlags))
 					.append(" ").append(p.first.get(2)).append(" ");
 			valid = true;
 		}
 		if (!valid) {
-			if (hasFlag(notEmpty, QUERY_NOT_EMPTY)) {
+			if (hasFlag(flags, QUERY_NOT_EMPTY)) {
 				throw new IllegalArgumentException(
 						"Malformed query: no where clause defined.");
 			} else {
@@ -271,15 +342,21 @@ class DBQuery {
 	 * Concatenate the where parameters including the list of parameters to a
 	 * HQL where clause.
 	 * 
-	 * @param notEmpty
-	 *            If the flag {@code #QUERY_NOT_EMPTY} is present an empty where clause is rejected. Use
-	 *            the constants {@link #QUERY_NOT_EMPTY} or
-	 *            {@link #QUERY_EMPTY_VALID}.
+	 * @param flags
+	 *            If the flag {@code #QUERY_NOT_EMPTY} is present an empty where
+	 *            clause is rejected. Use the constants {@link #QUERY_NOT_EMPTY}
+	 *            or {@link #QUERY_EMPTY_VALID}. Set the
+	 *            {@link #COLUMN_TRANSFORMER} if and only if the
+	 *            {@link Query#executeUpdate()} method is used.
 	 * @return the where clause or an empty string if no where parameter is set
 	 *         and the notEmpty flag is set to {@link #QUERY_EMPTY_VALID}
 	 */
-	private String buildWhereFromAllParameters(int notEmpty) {
+	private String buildWhereFromAllParameters(int flags) {
 		boolean valid = false;
+		int modFlags = flags;
+		if (hasFlag(flags, COLUMN_TRANSFORMER)) {
+			modFlags = flags | COLUMN_TRANSFORMER_WRITE;
+		}
 		StringBuilder builder = new StringBuilder(
 				buildWhereClause(QUERY_EMPTY_VALID));
 		if (builder.length() > 0) {
@@ -291,10 +368,12 @@ class DBQuery {
 			} else {
 				builder.append("where ");
 			}
-			builder.append(p.first).append(" = :").append(p.first).append(" ");
+			builder.append(p.first).append(" = ")
+					.append(buildTransformedParameter(p.first, modFlags))
+					.append(" ");
 			valid = true;
 			if (!valid) {
-				if (hasFlag(notEmpty, QUERY_NOT_EMPTY)) {
+				if (hasFlag(flags, QUERY_NOT_EMPTY)) {
 					throw new IllegalArgumentException(
 							"Malformed query: no where clause defined.");
 				} else {
@@ -310,8 +389,8 @@ class DBQuery {
 	 * 
 	 * @param targetEntity
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return the update query defined by parameters and where clauses
 	 */
 	private Query buildUpdateQuery(Object targetEntity, int flags) {
@@ -320,8 +399,8 @@ class DBQuery {
 					+ targetEntity.getClass().getSimpleName()
 					+ " is not initialized.");
 		}
-		Query result = this.session.createQuery(this
-				.buildUpdateQueryString(targetEntity.getClass().getName()));
+		Query result = this.session.createQuery(this.buildUpdateQueryString(
+				targetEntity.getClass().getName(), flags));
 		for (Pair<String, Object> p : this.parameters) {
 			result.setParameter(p.first, p.second);
 		}
@@ -348,8 +427,8 @@ class DBQuery {
 	 *            parameter are considered. Use constant
 	 *            {@link #QUERY_ALL_PARAMETERS} or
 	 *            {@link #QUERY_WHERE_PARAMETERS_ONLY}. Add the
-	 *            {@link #QUERY_CACHEABLE} flag to store this query in
-	 *            the assigned cache.
+	 *            {@link #QUERY_CACHEABLE} flag to store this query in the
+	 *            assigned cache.
 	 * @return the update query defined by parameters and where clauses
 	 */
 	private Query buildFromQuery(Object targetEntity, int flags) {
@@ -435,6 +514,9 @@ class DBQuery {
 				if ((parameter = getColumnName(targetEntity, m)) != null
 						&& ((value = m.invoke(targetEntity, (Object[]) null)) != null || hasFlag(
 								flags, IPersistence.DB_FORCE_NULL_VALUES))) {
+					if (hasFlag(flags, COLUMN_TRANSFORMER)) {
+						addColumnTransformer(targetEntity, parameter, m);
+					}
 					// Id, NatuarlId or EmbeddedId cannot be forced to null
 					if (hasAnnotationAndField(Id.class, targetEntity,
 							parameter, m)) {
@@ -503,6 +585,31 @@ class DBQuery {
 		return result;
 	}
 
+	/**
+	 * Tests the method and the field on the presence of a
+	 * {@link org.hibernate.annotations.ColumnTransformer} annotation and adds
+	 * it to the {@link #transformers} map.
+	 * 
+	 * @param object
+	 *            the object to test
+	 * @param field
+	 *            the name of the field
+	 * @param method
+	 *            the name of the targeted getter method.
+	 */
+	private void addColumnTransformer(Object object, String field, Method method) {
+		ColumnTransformer annotation;
+		try {
+			if ((annotation = method.getAnnotation(ColumnTransformer.class)) != null) {
+				transformers.put(field, annotation);
+			} else if ((annotation = object.getClass().getDeclaredField(field)
+					.getAnnotation(ColumnTransformer.class)) != null) {
+				transformers.put(field, annotation);
+			}
+		} catch (NoSuchFieldException ignored) {
+		}
+	}
+
 	// /** //XXX delete if not needed
 	// * Tests the method and the field on the presence of a
 	// * {@link javax.persistence.Column} annotation and fetches the {@code
@@ -547,12 +654,13 @@ class DBQuery {
 	 * 
 	 * @param targetEntity
 	 * @param flags
-	 *            If the flag {@code #QUERY_NOT_NULL} is present the query fails on a null result. This
-	 *            method fails with a {@link NullPointerException} if the key
-	 *            results to null and the flag {@link #QUERY_NOT_NULL} is set.
-	 *            The constant {@link #QUERY_UNIQUE_RESULT} is the default for
-	 *            this method. Add the {@link #QUERY_CACHEABLE} flag to
-	 *            store this query in the assigned cache.
+	 *            If the flag {@code #QUERY_NOT_NULL} is present the query fails
+	 *            on a null result. This method fails with a
+	 *            {@link NullPointerException} if the key results to null and
+	 *            the flag {@link #QUERY_NOT_NULL} is set. The constant
+	 *            {@link #QUERY_UNIQUE_RESULT} is the default for this method.
+	 *            Add the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return the primary key (Id).
 	 */
 	private Serializable getKey(Object targetEntity, int flags) {
@@ -681,9 +789,10 @@ class DBQuery {
 	 * @param embeddedId
 	 *            the embedded id as {@link Serializable} object
 	 * @param flags
-	 *            If sthe flag {@code #QUERY_NOT_NULL} is present the query fails on a null result. Use
-	 *            constants {@link #QUERY_NOT_NULL} or {@link #QUERY_NULLABLE}.
-	 *            The constant {@link #QUERY_UNIQUE_RESULT} is ignored.
+	 *            If sthe flag {@code #QUERY_NOT_NULL} is present the query
+	 *            fails on a null result. Use constants {@link #QUERY_NOT_NULL}
+	 *            or {@link #QUERY_NULLABLE}. The constant
+	 *            {@link #QUERY_UNIQUE_RESULT} is ignored.
 	 * @throws NullPointerException
 	 *             if a field contains null.
 	 * @see #getParameters(Object, int)
@@ -758,10 +867,12 @@ class DBQuery {
 	 * @return the primary key (Id) of the entity
 	 */
 	Serializable update(Object targetEntity, int flags) {
-		Serializable key = getParameters(targetEntity, flags);
+		Serializable key = getParameters(targetEntity, flags
+				| COLUMN_TRANSFORMER);
 		if (!this.parameters.isEmpty()) {
 			key = getKey(targetEntity, QUERY_NOT_NULL);
-			if (buildUpdateQuery(targetEntity, flags).executeUpdate() < 1) {
+			if (buildUpdateQuery(targetEntity, flags | COLUMN_TRANSFORMER)
+					.executeUpdate() < 1) {
 				throw new HibernateException("failed to update entity with key"
 						+ key);
 			}
@@ -799,10 +910,11 @@ class DBQuery {
 	 * @return the primary key (Id) of the entity
 	 */
 	Serializable insertOrUpdate(Object targetEntity, int flags) {
-		Serializable key = getParameters(targetEntity, flags);
+		Serializable key = getParameters(targetEntity, flags
+				| COLUMN_TRANSFORMER);
 		if ((key = getKey(targetEntity, QUERY_NULLABLE)) != null) {
 			if (!this.parameters.isEmpty()) {
-				if (buildUpdateQuery(targetEntity, flags).executeUpdate() < 1) {
+				if (buildUpdateQuery(targetEntity, flags | COLUMN_TRANSFORMER).executeUpdate() < 1) {
 					throw new HibernateException(
 							"failed to update entity with key" + key);
 				}
@@ -854,7 +966,7 @@ class DBQuery {
 	 */
 	Serializable remove(Object targetEntity, int flags) {
 		Serializable key = getParameters(targetEntity,
-				IPersistence.DB_FORCE_NULL_VALUES);
+				IPersistence.DB_FORCE_NULL_VALUES | COLUMN_TRANSFORMER);
 		if (key == null) {
 			throw new HibernateException("remove query needs a serializable Id");
 		}
@@ -887,28 +999,30 @@ class DBQuery {
 							"DB_NO_DELETE flag detected but no disable strategy available for "
 									+ targetEntity.getClass().getSimpleName(),
 							cause);
-				} else if (buildUpdateQuery(targetEntity, flags)
-						.executeUpdate() < 1) {
+				} else if (buildUpdateQuery(targetEntity,
+						flags | COLUMN_TRANSFORMER).executeUpdate() < 1) {
 					throw new HibernateException(
 							"failed to update entity with key" + key.toString());
 				}
 			} else { // IPersistence.DB_DEFAULT case
 				if (disable == null || cause != null) {
-					if (buildDeleteQuery(targetEntity, flags).executeUpdate() < 1) {
+					if (buildDeleteQuery(targetEntity,
+							flags | COLUMN_TRANSFORMER).executeUpdate() < 1) {
 						throw new HibernateException(
 								"failed to delete entity with key: "
 										+ key.toString());
 					}
 					key = null;
-				} else if (buildUpdateQuery(targetEntity, flags)
-						.executeUpdate() < 1) {
+				} else if (buildUpdateQuery(targetEntity,
+						flags | COLUMN_TRANSFORMER).executeUpdate() < 1) {
 					throw new HibernateException(
 							"failed to update entity with key" + key.toString());
 				}
 			}
 
 		} else { // DB_FORCE_DELETE case
-			if (buildDeleteQuery(targetEntity, flags).executeUpdate() < 1) {
+			if (buildDeleteQuery(targetEntity, flags | COLUMN_TRANSFORMER)
+					.executeUpdate() < 1) {
 				throw new HibernateException(
 						"failed to delete entity with key: " + key.toString());
 			}
@@ -922,8 +1036,8 @@ class DBQuery {
 	 * 
 	 * @param targetEntity
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return the delete query defined by the where clauses
 	 */
 	private Query buildDeleteQuery(Object targetEntity, int flags) {
@@ -932,8 +1046,8 @@ class DBQuery {
 					+ targetEntity.getClass().getSimpleName()
 					+ " is not initialized.");
 		}
-		Query result = this.session.createQuery(this
-				.buildDeleteQueryString(targetEntity.getClass().getName()));
+		Query result = this.session.createQuery(this.buildDeleteQueryString(
+				targetEntity.getClass().getName(), flags));
 		for (Pair<Vector<String>, Object> w : this.whereParameters) {
 			result.setParameter(w.first.get(1), w.second);
 		}
@@ -951,12 +1065,15 @@ class DBQuery {
 	 * Concatenate the where-parameters to a HQL delete query.
 	 * 
 	 * @param targetEntity
+	 * @param flags
+	 *            Set the {@link #COLUMN_TRANSFORMER} if and only if the
+	 *            {@link Query#executeUpdate()} method is used.
 	 * @return the delete query
 	 */
-	private String buildDeleteQueryString(String targetEntity) {
+	private String buildDeleteQueryString(String targetEntity, int flags) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("delete ").append(targetEntity).append(" ");
-		builder.append(buildWhereClause(QUERY_NOT_EMPTY));
+		builder.append(buildWhereClause(flags | QUERY_NOT_EMPTY));
 		log.trace(builder.toString());
 		return builder.toString();
 	}
@@ -967,18 +1084,20 @@ class DBQuery {
 	 * @param targetEntity
 	 *            the entity to delete
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 */
 	void delete(Object targetEntity, int flags) {
-		Serializable key = getParameters(targetEntity, IPersistence.DB_DEFAULT);
+		Serializable key = getParameters(targetEntity, IPersistence.DB_DEFAULT
+				| COLUMN_TRANSFORMER);
 		if (key == null) {
 			throw new HibernateException("delete query needs a serializable Id");
 		}
 		log.assertLog(key != null, "The primary key of " + targetEntity
 				+ " must not be null.");
 
-		if (buildDeleteQuery(targetEntity, flags).executeUpdate() < 1) {
+		if (buildDeleteQuery(targetEntity, flags | COLUMN_TRANSFORMER)
+				.executeUpdate() < 1) {
 			throw new HibernateException("failed to delete entity with key"
 					+ key.toString());
 		}
@@ -991,8 +1110,8 @@ class DBQuery {
 	 *            The entity to fetch as prototype. Set all fields to null which
 	 *            aren't to use as query parameter.
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return a list of entities of type {@code <T>}
 	 */
 	<T> List<T> from(T targetEntity, int flags) {
@@ -1015,8 +1134,8 @@ class DBQuery {
 	 * @param count
 	 *            max. number of results to fetch
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return a list of entities of type {@code <T>}
 	 */
 	<T> List<T> from(T targetEntity, Integer start, Integer count, int flags) {
@@ -1045,8 +1164,8 @@ class DBQuery {
 	 *            on a null result. Use the constants {@link #QUERY_NOT_NULL},
 	 *            {@link #QUERY_NULLABLE} and {@link #QUERY_UNIQUE_RESULT}. Use
 	 *            a bitwise or to set multiple flags. Add the
-	 *            {@link #QUERY_CACHEABLE} flag to store this query in
-	 *            the assigned cache.
+	 *            {@link #QUERY_CACHEABLE} flag to store this query in the
+	 *            assigned cache.
 	 * @return a single entity of type {@code <T>}
 	 * @throws NullPointerException
 	 *             if the query results to null and the {@link #QUERY_NOT_NULL}
@@ -1070,10 +1189,10 @@ class DBQuery {
 	 * @param query
 	 *            a ready to perform query
 	 * @param flags
-	 *            If the flag {@code #QUERY_NOT_NULL} is present the query fails on a null result. Use
-	 *            the constants {@link #QUERY_NOT_NULL}, {@link #QUERY_NULLABLE}
-	 *            and {@link #QUERY_UNIQUE_RESULT}. Use a bitwise or to set
-	 *            multiple flags.
+	 *            If the flag {@code #QUERY_NOT_NULL} is present the query fails
+	 *            on a null result. Use the constants {@link #QUERY_NOT_NULL},
+	 *            {@link #QUERY_NULLABLE} and {@link #QUERY_UNIQUE_RESULT}. Use
+	 *            a bitwise or to set multiple flags.
 	 * @return a single object according to the query result
 	 * @throws NullPointerException
 	 *             if the query results to null and the {@link #QUERY_NOT_NULL}
@@ -1106,8 +1225,8 @@ class DBQuery {
 	 *            The entity to fetch as prototype. Set all fields to null which
 	 *            aren't to use as query parameter.
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return an iterator of type {@code <T>}
 	 */
 	<T> Iterator<T> iterate(T targetEntity, int flags) {
@@ -1130,8 +1249,8 @@ class DBQuery {
 	 * @param count
 	 *            max. number of results to fetch
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return an iterator of type {@code <T>}
 	 */
 	<T> Iterator<T> iterate(T targetEntity, Integer start, Integer count,
@@ -1163,8 +1282,8 @@ class DBQuery {
 	 *            {@link #addSelectParameter(String, Object)} with equal
 	 *            parameter strings declared.
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return a list of results according to the select string
 	 */
 	List<?> select(Object targetEntity, String selectString, int flags) {
@@ -1191,8 +1310,8 @@ class DBQuery {
 	 * @param count
 	 *            max. number of results to fetch
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return a list of results according to the select string
 	 */
 	List<?> select(Object targetEntity, String selectString, Integer start,
@@ -1261,9 +1380,9 @@ class DBQuery {
 	 *            including them which aren't declared as where parameter are
 	 *            considered. Use constant {@link #QUERY_ALL_PARAMETERS} or
 	 *            {@link #QUERY_WHERE_PARAMETERS_ONLY}. Add the
-	 *            {@link #QUERY_CACHEABLE} flag to store this query in
-	 *            the assigned cache. Add the {@link #QUERY_CACHEABLE}
-	 *            flag to store this query in the assigned cache.
+	 *            {@link #QUERY_CACHEABLE} flag to store this query in the
+	 *            assigned cache. Add the {@link #QUERY_CACHEABLE} flag to store
+	 *            this query in the assigned cache.
 	 * @return the select query
 	 */
 	private Query buildSelectQuery(Object targetEntity, String selectString,
@@ -1304,8 +1423,8 @@ class DBQuery {
 	 * @param targetEntity
 	 *            the entity to count
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return the number of entries
 	 */
 	Long count(Object targetEntity, int flags) {
@@ -1327,8 +1446,8 @@ class DBQuery {
 	 * @param count
 	 *            max. number of results to fetch
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return a list of entities
 	 */
 	List<?> customQueryRead(String queryString, Integer start, Integer count,
@@ -1359,12 +1478,12 @@ class DBQuery {
 	 *            parameters-list must be equal to the parameters in the query
 	 *            string.
 	 * @param flags
-	 *            If the flag {@code #QUERY_NOT_NULL} is present the query fails on a null result. Use
-	 *            the constants {@link #QUERY_NOT_NULL}, {@link #QUERY_NULLABLE}
-	 *            and {@link #QUERY_UNIQUE_RESULT}. Use a bitwise or to set
-	 *            multiple flags. Add the
-	 *            {@link #QUERY_CACHEABLE} flag to store this query in
-	 *            the assigned cache.
+	 *            If the flag {@code #QUERY_NOT_NULL} is present the query fails
+	 *            on a null result. Use the constants {@link #QUERY_NOT_NULL},
+	 *            {@link #QUERY_NULLABLE} and {@link #QUERY_UNIQUE_RESULT}. Use
+	 *            a bitwise or to set multiple flags. Add the
+	 *            {@link #QUERY_CACHEABLE} flag to store this query in the
+	 *            assigned cache.
 	 * @return a single entity
 	 * @throws NullPointerException
 	 *             if the query results to null and the {@link #QUERY_NOT_NULL}
@@ -1386,15 +1505,17 @@ class DBQuery {
 	/**
 	 * Perform a query with a custom HQL query string. The parameters must be
 	 * set with {@link #addParameter(String, Object)} before calling this method
-	 * . Call {@link #initialize()} after adding the parameters.
+	 * . Call {@link #initialize()} after adding the parameters. The column
+	 * transformer doesn't work for this query, so it is necessary to insert the
+	 * transformation string directly into the query string.
 	 * 
 	 * @param queryString
 	 *            must be a valid HQL query. The parameters in the
 	 *            parameters-list must be equal to the parameters in the query
 	 *            string.
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return the number of modified rows.
 	 */
 	int customQueryWrite(String queryString, int flags) {
@@ -1419,8 +1540,8 @@ class DBQuery {
 	 *            parameters-list must be equal to the parameters in the query
 	 *            string.
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return the query ready to perform
 	 */
 	Query buildCustomQuery(String queryString, int flags) {
@@ -1456,8 +1577,8 @@ class DBQuery {
 	 * @param count
 	 *            max. number of results to fetch
 	 * @param flags
-	 *            Set the {@link #QUERY_CACHEABLE} flag to store this
-	 *            query in the assigned cache.
+	 *            Set the {@link #QUERY_CACHEABLE} flag to store this query in
+	 *            the assigned cache.
 	 * @return a list of entities of type {@code <T>}
 	 */
 	Iterator<?> customIterator(String queryString, Integer start,
