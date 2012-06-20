@@ -18,15 +18,14 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 
-
 /**
  * 
  * 
  * @author Paul
  * 
- *
- * A composed Widget to display the main search area
- *
+ * 
+ *         A composed Widget to display the main search area
+ * 
  */
 public class SearchArea extends Composite {
 
@@ -37,7 +36,6 @@ public class SearchArea extends Composite {
 	private final Button searchButton;
 	private final Button btCreateSnippet;
 	private final Control control;
-	private String status;
 
 	/** Search duration timer */
 	private final long searchDuration = 0L;
@@ -161,27 +159,25 @@ public class SearchArea extends Composite {
 	 * Refreshes the suggestions in the search field
 	 */
 	public void updateSuggestions() {
-		ISnippet.Util.getInstance().getSearchSuggestions(
-				new AsyncCallback<List<String>>() {
+		ISnippet.Util.getInstance().getSearchSuggestions(new AsyncCallback<List<String>>() {
 
-					@Override
-					public void onSuccess(List<String> result) {
-						final int maxSuggestions = 10;
-						int count = 0;
+			@Override
+			public void onSuccess(List<String> result) {
+				final int maxSuggestions = 10;
+				int count = 0;
 
-						oracle.clear();
-						for (String suggestion : result) {
-							oracle.add(suggestion);
-							if (count++ > maxSuggestions)
-								break;
-						}
+				oracle.clear();
+				for (String suggestion : result) {
+					oracle.add(suggestion);
+					if (count++ > maxSuggestions) break;
+				}
 
-					}
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
 
 	}
 

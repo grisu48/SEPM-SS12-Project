@@ -40,10 +40,8 @@ public class Search {
 		@Override
 		public void onSuccess(final XSearch result) {
 			// Check matching ID
-			if (result == null)
-				return;
-			if (result.id != getID())
-				return;
+			if (result == null) return;
+			if (result.id != getID()) return;
 
 			searchTime = System.currentTimeMillis() - time;
 
@@ -90,8 +88,8 @@ public class Search {
 		int searchID = getNextID(); // Get next search ID. This call causes
 									// previous search procedures to be ignored
 
-		ISession.Util.getInstance().doSearch(searchString, tags, categories,
-				sorting, start, count, searchID, observableCallback);
+		ISession.Util.getInstance().doSearch(searchString, tags, categories, sorting, start, count, searchID,
+				observableCallback);
 	}
 
 	/**
@@ -127,11 +125,9 @@ public class Search {
 	 *            to be added
 	 */
 	public void addTag(String tag) {
-		if (tag == null || tag.isEmpty())
-			return;
+		if (tag == null || tag.isEmpty()) return;
 
-		if (containsTag(tag))
-			return;
+		if (containsTag(tag)) return;
 		tags.add(tag);
 	}
 
@@ -143,13 +139,11 @@ public class Search {
 	 *            to be removed
 	 */
 	public void removeTag(String tag) {
-		if (tag == null || tag.isEmpty())
-			return;
+		if (tag == null || tag.isEmpty()) return;
 
 		List<String> removeList = new ArrayList<String>();
 		for (String cTag : tags)
-			if (cTag.equalsIgnoreCase(tag))
-				removeList.add(cTag);
+			if (cTag.equalsIgnoreCase(tag)) removeList.add(cTag);
 
 		for (String remove : removeList)
 			tags.remove(remove);
@@ -165,11 +159,9 @@ public class Search {
 	 *         the given tag is null also false is returned
 	 */
 	public boolean containsTag(String tag) {
-		if (tag == null)
-			return false;
+		if (tag == null) return false;
 		for (String cTag : tags)
-			if (cTag.equalsIgnoreCase(tag))
-				return true;
+			if (cTag.equalsIgnoreCase(tag)) return true;
 		return false;
 	}
 
@@ -180,11 +172,9 @@ public class Search {
 	 *            to be added
 	 */
 	public void addCategory(String category) {
-		if (category == null || category.isEmpty())
-			return;
+		if (category == null || category.isEmpty()) return;
 
-		if (containsCategory(category))
-			return;
+		if (containsCategory(category)) return;
 		tags.add(category);
 	}
 
@@ -196,13 +186,11 @@ public class Search {
 	 *            to be removed
 	 */
 	public void removeCategory(String category) {
-		if (category == null || category.isEmpty())
-			return;
+		if (category == null || category.isEmpty()) return;
 
 		List<String> removeList = new ArrayList<String>();
 		for (String ccategory : categories)
-			if (ccategory.equalsIgnoreCase(category))
-				removeList.add(category);
+			if (ccategory.equalsIgnoreCase(category)) removeList.add(category);
 
 		for (String remove : removeList)
 			categories.remove(remove);
@@ -226,11 +214,9 @@ public class Search {
 	 *         If the category is null also false is returned
 	 */
 	public boolean containsCategory(String category) {
-		if (category == null)
-			return false;
+		if (category == null) return false;
 		for (String ccategory : categories)
-			if (ccategory.equalsIgnoreCase(category))
-				return true;
+			if (ccategory.equalsIgnoreCase(category)) return true;
 		return false;
 	}
 
@@ -242,8 +228,7 @@ public class Search {
 	 *            to be set. If null all existing categories will be erased
 	 */
 	public void setCategories(List<String> categories) {
-		if (categories == null)
-			categories = new ArrayList<String>();
+		if (categories == null) categories = new ArrayList<String>();
 		this.categories = categories;
 	}
 
@@ -255,8 +240,7 @@ public class Search {
 	 *            to be set. If null all existing tags will be erased
 	 */
 	public void setTags(List<String> tags) {
-		if (tags == null)
-			tags = new ArrayList<String>();
+		if (tags == null) tags = new ArrayList<String>();
 		this.tags = tags;
 	}
 
@@ -275,10 +259,8 @@ public class Search {
 	 *            to be added
 	 */
 	public void addCallback(AsyncCallback<XSearch> callback) {
-		if (callback == null)
-			return;
-		if (callbacks.contains(callback))
-			return;
+		if (callback == null) return;
+		if (callbacks.contains(callback)) return;
 		callbacks.add(callback);
 	}
 
@@ -290,8 +272,7 @@ public class Search {
 	 *            to be removed
 	 */
 	public void removeCallback(AsyncCallback<XSearch> callback) {
-		if (callback == null)
-			return;
+		if (callback == null) return;
 		while (callbacks.contains(callback))
 			callbacks.remove(callback);
 	}
@@ -351,8 +332,7 @@ public class Search {
 	 * @param searchString
 	 *            to be set
 	 */
-	public void search(String searchString, List<String> tags,
-			List<String> categories) {
+	public void search(String searchString, List<String> tags, List<String> categories) {
 		setTags(tags);
 		setCategories(categories);
 		setSearchString(searchString);
@@ -367,8 +347,7 @@ public class Search {
 	 *            new start index. If less than zero, 0 is set
 	 */
 	public void setStartIndex(int start) {
-		if (start < 0)
-			start = 0;
+		if (start < 0) start = 0;
 		this.start = start;
 	}
 
@@ -380,8 +359,7 @@ public class Search {
 	 *            new maximum number of search results. Is always at least 5
 	 */
 	public void setSearchResultCounts(int count) {
-		if (count < 5)
-			count = 5;
+		if (count < 5) count = 5;
 		this.count = count;
 	}
 }

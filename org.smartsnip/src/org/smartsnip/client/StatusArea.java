@@ -9,15 +9,14 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
-
 /**
  * 
  * 
  * @author Paul
  * 
- *
- * A composed Widget to display the status area
- *
+ * 
+ *         A composed Widget to display the status area
+ * 
  */
 public class StatusArea extends Composite {
 
@@ -73,7 +72,8 @@ public class StatusArea extends Composite {
 	/**
 	 * Sets the current status
 	 * 
-	 * @param status - a string
+	 * @param status
+	 *            - a string
 	 */
 	public void setStatus(String status) {
 		lblStatus.setText(status);
