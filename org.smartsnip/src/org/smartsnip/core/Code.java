@@ -304,19 +304,44 @@ public abstract class Code {
 	/**
 	 * @return the downloadable source or null, if not existing
 	 */
-	public String getDownloadableSource() {
+	public Byte[] getDownloadableSource() {
 		if (!hasDownloadableSource())
 			return null;
 
-		// TODO get downloadable source from persistence
-		return "";
+		try {
+			File file = Persistence.getInstance().getCodeFile(this.id);
+			return file.getContent();
+
+		} catch (IOException e) {
+			System.err
+					.println("IOException during getting source from code (id="
+							+ this.id + "): " + e.getMessage());
+			e.printStackTrace(System.err);
+
+			return null;
+		}
 	}
 
 	/**
 	 * Adds a source code file to this code segment
 	 */
 	public void applySourceCode(String filename) throws IOException {
-		// TODO Auto-generated method stub
+		writeCodeFile(this.id, filename);
+	}
 
+	/**
+	 * Writes a file to a code object
+	 * 
+	 * @param codeID
+	 *            id of the code object
+	 * @param fileName
+	 *            File to be written
+	 */
+	public static void writeCodeFile(long codeID, String filename)
+			throws IOException {
+
+		File file = new File(File.getContents(filename), filename);
+		Persistence.getInstance().writeCodeFile(codeID, file,
+				IPersistence.DB_DEFAULT);
 	}
 }

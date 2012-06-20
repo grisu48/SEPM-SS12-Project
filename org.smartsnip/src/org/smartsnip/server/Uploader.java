@@ -16,14 +16,25 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
+import org.smartsnip.client.UploadCode;
+import org.smartsnip.core.Code;
 
+/**
+ * This servlet accepts uploaded files from {@link UploadCode} and puts them
+ * into the code object, that is given with the argument "codeID"
+ * 
+ * The servlet listens on "upload" and is defined in the file web.xml
+ * 
+ * @author Felix Niederwanger.
+ * 
+ */
 public class Uploader extends SessionServlet {
 
 	/** Serialisation ID */
 	private static final long serialVersionUID = 6158787027931799617L;
 
 	private final static String UPLOAD_DIRECTORY = System
-			.getProperty("user.home");
+			.getProperty("java.io.tmpdir");
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -59,20 +70,40 @@ public class Uploader extends SessionServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		// process only multipart requests
+		// Code ID if set
+		final long codeID;
+		boolean fileReceived = false;
+		try {
+
+			String codeIDParam = req.getParameter("codeID");
+			String sessionCookie = req.getParameter("session");
+			if (codeIDParam == null || codeIDParam.isEmpty())
+				throw new RuntimeException("codeID not set");
+			if (sessionCookie == null || sessionCookie.isEmpty())
+				throw new RuntimeException("Session ID not set");
+
+			codeID = Long.parseLong(codeIDParam);
+
+		} catch (RuntimeException e) {
+			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			resp.getWriter().print("Error: " + e.getMessage());
+			return;
+		}
+
+		// process only multipart requests (Must be set on client!!)
 		if (ServletFileUpload.isMultipartContent(req)) {
 
 			// Create a factory for disk-based file items
 			FileItemFactory factory = new DiskFileItemFactory();
-
-			// Create a new file upload handler
 			ServletFileUpload upload = new ServletFileUpload(factory);
 
 			// Parse the request
 			try {
 				@SuppressWarnings("unchecked")
 				List<FileItem> items = upload.parseRequest(req);
+
 				for (FileItem item : items) {
+					req.getAttribute("codeID");
 					// process only file upload - discard other form item types
 					if (item.isFormField())
 						continue;
@@ -84,28 +115,58 @@ public class Uploader extends SessionServlet {
 					}
 
 					File uploadedFile = new File(UPLOAD_DIRECTORY, fileName);
+					if (uploadedFile.exists())
+						uploadedFile.delete(); // We are in the temp directory!
+
 					if (uploadedFile.createNewFile()) {
 						item.write(uploadedFile);
-						resp.setStatus(HttpServletResponse.SC_CREATED);
-						resp.getWriter().print(
-								"The file was created successfully.");
+						resp.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+						resp.getWriter().print("File successfully received");
 						resp.flushBuffer();
-						System.out
-								.println("File \"" + fileName + "\" received");
+						// Done, the file has been downloaded, now apply the
+						// thing
+						Code.writeCodeFile(codeID, fileName);
+						File deleteFile = new File(fileName);
+						if (!deleteFile.delete()) {
+							deleteFile.deleteOnExit();
+							System.err
+									.println("Code for code obj received, but file cannot be deleted!");
+						} else {
+							System.out.println("Code for code object " + codeID
+									+ " received.");
+						}
+
+						resp.getWriter().print("File successfully received");
+						fileReceived = true;
+						break; // Do NOT accept more files
+
 					} else
 						throw new IOException(
 								"The file already exists in repository.");
 				}
+
+				// OK, if the request has been handled
+				if (fileReceived) {
+					resp.setStatus(HttpServletResponse.SC_OK);
+					resp.getWriter().print("Upload transaction completed");
+				} else {
+					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+					resp.getWriter().print(
+							"No file received for setting source code");
+					return;
+				}
 			} catch (Exception e) {
+				resp.getWriter().print("Error: " + e.getMessage());
+
 				resp.sendError(
 						HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"An error occurred while creating the file : "
+						"An error occurred while loading the file : "
 								+ e.getMessage());
 			}
 
 		} else {
 			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
-					"Request contents type is not supported by the servlet.");
+					"Request contents type is not supported by the uploader servlet.");
 		}
 	}
 

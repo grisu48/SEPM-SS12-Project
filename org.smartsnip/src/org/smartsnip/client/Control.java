@@ -31,6 +31,9 @@ public class Control implements EntryPoint {
 	/** Base URL that should be before every resource */
 	public static final String baseURL = getBaseURL();
 
+	/** Stored session cookie */
+	private static String sessionCookie = "";
+
 	/** User currently logged in */
 	private final XUser user = new XUser("Guest", "noreal", "nomail");
 	/** Indicating if logged in */
@@ -97,6 +100,7 @@ public class Control implements EntryPoint {
 					return;
 				}
 				Cookies.setCookie(COOKIE_SESSION, cookie);
+				sessionCookie = cookie;
 
 			}
 		});
@@ -111,7 +115,7 @@ public class Control implements EntryPoint {
 	 * 
 	 * @return the session ID of the current session
 	 */
-	static String getSessionID() throws NoAccessException {
+	static String getSessionID() {
 		String sid = Cookies.getCookie(COOKIE_SESSION);
 		if (sid == null) {
 			sid = createNewSession();
@@ -563,4 +567,14 @@ public class Control implements EntryPoint {
 		return !GWT.isScript() && GWT.isClient();
 	}
 
+	/**
+	 * <b>CAUTION</b> This call goes well after the callback of
+	 * {@link ISession#getSessionCookie()}, so you must be sure, that this
+	 * happens before your request the session cookie
+	 * 
+	 * @return the session cookie, that is initialised after the first startup
+	 */
+	public static String getSessionCookie() {
+		return sessionCookie;
+	}
 }

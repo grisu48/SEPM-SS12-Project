@@ -1,5 +1,7 @@
 package org.smartsnip.client;
 
+import org.smartsnip.server.Uploader;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -9,13 +11,18 @@ import com.google.gwt.user.client.ui.FormHandler;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormSubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormSubmitEvent;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
- * Version 2 of the Upload Popup to upload a source file to a code object
+ * Version 2 of the Upload Popup to upload a source file to a code object.
+ * 
+ * The request is sent to the {@link Uploader} servlet "upload" with the
+ * argument "codeID". This is hard-coded an defined as the protocol for the
+ * uploader
  * 
  * @author Felix Niederwanger
  * 
@@ -61,7 +68,11 @@ public class UploadCode extends PopupPanel {
 
 			@Override
 			public void onSubmitComplete(FormSubmitCompleteEvent event) {
-				close();
+				vertMain.clear();
+				vertMain.add(new HTML(event.getResults()));
+				vertMain.add(btnCancel);
+				btnCancel.setText("Close");
+				btnCancel.setEnabled(true);
 			}
 
 			@Override
@@ -85,7 +96,8 @@ public class UploadCode extends PopupPanel {
 				/* This part is there for the transmission */
 				form.setEncoding(FormPanel.ENCODING_MULTIPART);
 				form.setMethod(FormPanel.METHOD_POST);
-				form.setAction("upload?codeID=" + codeID);
+				form.setAction("upload?codeID=" + codeID + "&session="
+						+ Control.getSessionCookie());
 				form.submit();
 
 			}
