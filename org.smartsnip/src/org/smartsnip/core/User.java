@@ -2,6 +2,7 @@ package org.smartsnip.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -34,6 +35,9 @@ public class User {
 
 	/** State of the user */
 	private UserState state = UserState.unvalidated;
+
+	/** Timestamp of the user's last login */
+	private Date lastLogin = null;
 
 	/** Caches favourite snippets */
 	private List<Snippet> favourites = null;
@@ -84,13 +88,14 @@ public class User {
 	 * @param email
 	 *            of the new user
 	 * @param state
-	 * @param favorites
-	 *            Favorited snippets of the user. If null, a new list is created
-	 * 
+	 * @param lastLogin
+	 *            the time the user has logged in or {@code null} if the user
+	 *            never logged in.
 	 * @throws IllegalArgumentException
 	 *             Thrown if one of the arguments is null or empty
 	 */
-	User(String username, String realName, String email, UserState state) {
+	User(String username, String realName, String email, UserState state,
+			Date lastLogin) {
 		if (username == null || username.isEmpty())
 			throw new IllegalArgumentException(
 					"Cannot create user with empty username");
@@ -105,6 +110,7 @@ public class User {
 		this.realName = realName;
 		this.email = email;
 		this.state = state;
+		this.lastLogin = lastLogin;
 	}
 
 	/**
@@ -497,6 +503,21 @@ public class User {
 		}
 		return result;
 
+	}
+
+	/**
+	 * @return the lastLogin
+	 */
+	public Date getLastLogin() {
+		return this.lastLogin;
+	}
+
+	/**
+	 * @param lastLogin
+	 *            the lastLogin to set
+	 */
+	public void setLastLogin(Date lastLogin) {
+		this.lastLogin = lastLogin;
 	}
 
 	/**

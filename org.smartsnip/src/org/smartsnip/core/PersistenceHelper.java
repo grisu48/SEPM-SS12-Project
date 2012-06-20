@@ -143,7 +143,7 @@ public class PersistenceHelper {
 	protected User createUser(String username, String realName, String email,
 			User.UserState state) {
 
-		return new User(username, realName, email, state);
+		return new User(username, realName, email, state, null);//FIXME
 	}
 
 	/**
