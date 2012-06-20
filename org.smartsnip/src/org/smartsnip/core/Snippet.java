@@ -810,6 +810,9 @@ public class Snippet {
 		this.description = snippet.description;
 		this.license = snippet.license;
 
+		// Invalidate all chaches
+		invalidateCache();
+
 		/* Write out */
 		refreshDB();
 	}
@@ -887,5 +890,13 @@ public class Snippet {
 			return (snippet.getHashId() == this.getHashId());
 		} else
 			return false;
+	}
+
+	/**
+	 * Invalidate all chached values so that they have to be fetched the next
+	 * time they are needed
+	 */
+	private void invalidateCache() {
+		averageRating = null;
 	}
 }
