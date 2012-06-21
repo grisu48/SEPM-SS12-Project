@@ -235,4 +235,21 @@ public class Notification {
 			e.printStackTrace(System.err);
 		}
 	}
+
+	/**
+	 * Gets a notification by it's id
+	 * 
+	 * @param id
+	 *            id of the notification to be fetched
+	 * @return the {@link Notification} of null, if not existing
+	 */
+	public static Notification get(long id) {
+		try {
+			return Persistence.getInstance().getNotification(id);
+		} catch (IOException e) {
+			System.err.println("IOException during fetching of notification " + id + ": " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
+	}
 }
