@@ -1127,7 +1127,7 @@ public class SqlPersistenceImplTest {
 	public void testGetCodes() throws Throwable {
 		List<Code> cod = instance.getCodes(test_snip1);
 		for (Code c : cod) {
-			System.err.println("Code: " + c.getHashID() + " Version = "
+			System.err.println("Code: " + c.getHashID() + " SnippetId: " + c.getSnippetId() + " Version = "
 					+ c.getVersion() + " Data: " + c.getCode());
 		}
 	}

@@ -27,8 +27,8 @@ public class CodeText extends Code {
 	 *            persistence yet
 	 * @param version the version number
 	 */
-	CodeText(String code, String language, Long snippetId, Long id, int version) {
-		super(code, language, snippetId, id, version);
+	CodeText(String code, String language, Long snippetId, Long id, int version, boolean downloadAbleSource) {
+		super(code, language, snippetId, id, version, downloadAbleSource);
 
 		this.language = language;
 	}

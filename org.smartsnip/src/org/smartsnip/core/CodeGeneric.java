@@ -47,8 +47,8 @@ public class CodeGeneric extends Code {
 	 *            the version of the code
 	 */
 	public CodeGeneric(String code, String language, Long snippetId, Long id,
-			int version) {
-		super(code, language, snippetId, id, version);
+			int version, boolean downloadAbleSource) {
+		super(code, language, snippetId, id, version, downloadAbleSource);
 		this.language = language;
 	}
 

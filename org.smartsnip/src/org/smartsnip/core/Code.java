@@ -23,7 +23,7 @@ public abstract class Code {
 
 	/** If the code has a downloadable source */
 	// TODO Implement downloadable source
-	private final boolean downloadAbleSource = false;
+	private boolean downloadAbleSource = false;
 
 	/** Identifier of this code segment */
 	private long id = 0L;
@@ -38,8 +38,9 @@ public abstract class Code {
 	 *            of the object. If null, the id has not been assigned from the
 	 *            persistence yet
 	 * @param version
+	 * @param downloadAbleSource indicates this code has a downloadable source
 	 */
-	Code(String code, String language, Long snippetId, Long id, int version) {
+	Code(String code, String language, Long snippetId, Long id, int version, boolean downloadAbleSource) {
 		if (code.length() == 0)
 			throw new IllegalArgumentException("Cannot create snippet with no code");
 		if (language.length() == 0)
@@ -48,6 +49,7 @@ public abstract class Code {
 		this.language = language;
 		this.snippetId = snippetId;
 		this.version = version;
+		this.downloadAbleSource = downloadAbleSource;
 
 		// If the id is null, it has not been assigned from the peristence yet
 		if (id != null) {
@@ -149,7 +151,6 @@ public abstract class Code {
 	 * @throws IllegalArgumentException
 	 *             Thrown if the code or if the language is empty
 	 */
-	// TODO add Version
 	public static Code createCode(String code, String language, Long ownerSnippetId, int version) {
 		if (code == null || language == null)
 			throw new NullPointerException();
@@ -163,7 +164,7 @@ public abstract class Code {
 		language = language.trim();
 
 		// build always a generic code object
-		Code result = new CodeGeneric(code, language, ownerSnippetId, null, version);
+		Code result = new CodeGeneric(code, language, ownerSnippetId, ownerSnippetId, version, false);
 
 		addToDB(result);
 		return result;
@@ -212,27 +213,15 @@ public abstract class Code {
 			throw new IllegalArgumentException("Cannot create code object with no language");
 		if (ownerSnippetId == null)
 			throw new NullPointerException("Cannot create code segment without a snippet");
+		boolean downloadAbleSource = false;
 		if (downloadableSourceName != null) {
-			// FIXME downloadable code not implemented in the core
-			// this.downloadAbleSource = true;
+			downloadAbleSource = true;
 		}
 
 		language = language.trim();
 
 		// build always a generic code object
-		Code result = new CodeGeneric(code, language, ownerSnippetId, null, 0);
-
-		// language = language.trim().toLowerCase();
-		//
-		// /* Here the language inspection takes place */
-		// Code result = null;
-		// if (language.equals("java")) { // Java object
-		// result = new CodeJava(code, owner, id, version);
-		// }
-		//
-		// // Failback mode: Use CodeText
-		// if (result == null)
-		// result = new CodeText(code, language, owner, id, version);
+		Code result = new CodeGeneric(code, language, ownerSnippetId, id, version, downloadAbleSource);
 
 		/*
 		 * THIS METHOD IS CALLED FROM THE DB, DO NOT WRITE INTO THE DB!!

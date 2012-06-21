@@ -501,7 +501,7 @@ INSERT INTO `Language` (`language`, `highlighter`, `is_default`) VALUES
   ("C#", "cs", FALSE),
   ("F#", "fs", FALSE),
   ("XQuery", "xquery", FALSE),
-  ("Prolog", NULL, FALSE)
+  ("Prolog", NULL, FALSE),
   ("Pseudocode", NULL, FALSE)
 ;
 

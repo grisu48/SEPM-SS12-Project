@@ -19,9 +19,10 @@ public class CodeJava extends Code {
 	 *            of the code object. If null, it has not been assigned form the
 	 *            persistence yet
 	 * @param version the version number
+	 * @param downloadAbleSource 
 	 */
-	CodeJava(String code, Long snippetId, Long id, int version) {
-		super(code, language, snippetId, id, version);
+	CodeJava(String code, Long snippetId, Long id, int version, boolean downloadAbleSource) {
+		super(code, language, snippetId, id, version, downloadAbleSource);
 	}
 
 	@Override
