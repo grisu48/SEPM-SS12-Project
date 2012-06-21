@@ -563,7 +563,7 @@ public class CommentFactory {
 			entity = iterator.next();
 			result.add(helper.createComment(entity.getUserName(),
 					entity.getSnippetId(), entity.getMessage(),
-					entity.getSnippetId(), entity.getCreatedAt(),
+					entity.getCommentId(), entity.getCreatedAt(),
 					entity.getPosVotes(), entity.getNegVotes()));
 		}
 		return result;
