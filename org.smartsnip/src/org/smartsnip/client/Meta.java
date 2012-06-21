@@ -7,6 +7,7 @@ import org.smartsnip.shared.XUser;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -28,6 +29,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class Meta extends Composite {
 
+	/* Controls */
+
 	private final VerticalPanel pnlUser;
 	private final HorizontalPanel metaPanel;
 	private final Anchor user;
@@ -40,15 +43,31 @@ public class Meta extends Composite {
 
 	private final NotificationIcon notificationIcon;
 
+	/* End of controls */
+
+	/** To prevent too much updates we store the current logged in flag */
+	private final boolean loggedInFlag = false;
+
+	private final Timer refresh = new Timer() {
+
+		@Override
+		public void run() {
+			update();
+		}
+	};
+
 	/**
 	 * Initializes the menu
 	 */
 	public Meta() {
 
+		// Add a refresh timer
+		refresh.schedule(5000);
+
 		control = Control.getInstance();
 		pnlUser = new VerticalPanel();
 		metaPanel = new HorizontalPanel();
-		mod = new Anchor("Moderator");
+		mod = new Anchor("> Moderator");
 		login = new Anchor(" > Login");
 		user = new Anchor("Guest");
 		register = new Anchor(" > Register");
@@ -99,14 +118,12 @@ public class Meta extends Composite {
 
 		});
 
+		// Assume we are not logged in
 		metaPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		metaPanel.add(icon);
 		metaPanel.add(user);
 		metaPanel.add(login);
 		metaPanel.add(register);
-		metaPanel.add(mod);
-		metaPanel.add(notificationIcon);
-		metaPanel.add(logout);
 
 		// Default visibility
 		changeToolbarVisibility(false);
@@ -155,16 +172,16 @@ public class Meta extends Composite {
 	 */
 	private void update(final boolean isLoggedin) {
 		changeToolbarVisibility(isLoggedin);
+
 		if (isLoggedin) {
-			user.setText("Fetching user data ... ");
 			IUser.Util.getInstance().getMe(new AsyncCallback<XUser>() {
 
 				@Override
 				public void onSuccess(XUser result) {
 					if (result == null)
-						return;
-
-					user.setText(result.realname + " | " + result.email);
+						user.setText("Guest");
+					else
+						user.setText(result.realname + " | " + result.email);
 				}
 
 				@Override
@@ -196,6 +213,7 @@ public class Meta extends Composite {
 			user.setText("Guest");
 			icon.setUrl(Control.baseURL + "/images/guest.png");
 		}
+		notificationIcon.update();
 	}
 
 	/**
@@ -206,6 +224,9 @@ public class Meta extends Composite {
 	 *            login status
 	 */
 	private void changeToolbarVisibility(final boolean loggedIn) {
+		if (loggedInFlag == loggedIn)
+			return;
+
 		// With the visibility this frak is not working
 		// FRAKKING GWT!!!
 
