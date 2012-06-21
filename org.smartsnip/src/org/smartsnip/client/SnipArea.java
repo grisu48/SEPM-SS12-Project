@@ -395,7 +395,7 @@ public class SnipArea extends Composite {
 
 		btnEdit.setVisible(snippet.canEdit);
 		btnDelete.setVisible(snippet.canDelete);
-		updateFavortiteStatus();
+		anchUpload.setVisible(snippet.canEdit);
 		rating.setEnabled(snippet.canRate);
 
 		updateFavortiteStatus();

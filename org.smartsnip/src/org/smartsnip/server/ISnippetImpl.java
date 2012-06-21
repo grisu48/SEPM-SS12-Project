@@ -377,7 +377,6 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 		if (snippet == null)
 			throw new NotFoundException("Snippet " + id + " cannot be found");
 		snippet.increaseViewCounter();
-		System.out.println("Viewcounter for snippet " + id + " increased");
 	}
 
 	@Override
