@@ -110,4 +110,20 @@ public interface ICategory extends RemoteService {
 	 *             Thrown if at least one argument is invalid
 	 */
 	public void createCategory(XCategory category) throws NoAccessException, IllegalArgumentException;
+
+	/**
+	 * Edits the category given with the name, with the new data
+	 * 
+	 * @param name
+	 *            category name to be edited
+	 * @param newData
+	 *            new data to be set
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
+	 * @throws NotFoundException
+	 *             Thrown if the given category name is not found
+	 * @throws IllegalArgumentException
+	 *             Thrown if an argument was invalid
+	 */
+	public void edit(String name, XCategory newData) throws NoAccessException, NotFoundException, IllegalArgumentException;
 }

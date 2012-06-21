@@ -37,11 +37,9 @@ public class Category {
 		if (name == null || description == null)
 			throw new NullPointerException();
 		if (name.length() == 0)
-			throw new IllegalArgumentException(
-					"Empty category name not allowed");
+			throw new IllegalArgumentException("Empty category name not allowed");
 		if (description.length() == 0)
-			throw new IllegalArgumentException(
-					"Empty category description not allowed");
+			throw new IllegalArgumentException("Empty category description not allowed");
 
 		this.name = name;
 		this.description = description;
@@ -65,8 +63,7 @@ public class Category {
 	 * @throws IOException
 	 *             Thrown if occuring during access to IPersistence
 	 */
-	public synchronized static Category createCategory(String name,
-			String description, String parent) throws IOException {
+	public synchronized static Category createCategory(String name, String description, String parent) throws IOException {
 		Category category = new Category(name, description, parent);
 		addToDB(category);
 		return category;
@@ -87,8 +84,7 @@ public class Category {
 			return Persistence.instance.getCategory(name);
 
 		} catch (IOException e) {
-			System.err.println("IOException during getCategory(" + name + "): "
-					+ e.getMessage());
+			System.err.println("IOException during getCategory(" + name + "): " + e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -101,8 +97,7 @@ public class Category {
 		try {
 			List<Category> result = new ArrayList<Category>();
 
-			List<Category> categories = Persistence.getInstance()
-					.getAllCategories();
+			List<Category> categories = Persistence.getInstance().getAllCategories();
 
 			if (categories != null)
 				for (Category category : categories) {
@@ -112,8 +107,7 @@ public class Category {
 			return result;
 
 		} catch (IOException e) {
-			System.err.println("IOException during getCategories(): "
-					+ e.getMessage());
+			System.err.println("IOException during getCategories(): " + e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -135,8 +129,7 @@ public class Category {
 			return null;
 		try {
 			List<Category> result = new ArrayList<Category>();
-			List<Category> categories = Persistence.instance
-					.getSubcategories(prnt);
+			List<Category> categories = Persistence.instance.getSubcategories(prnt);
 
 			for (Category category : categories) {
 				result.add(category);
@@ -144,8 +137,7 @@ public class Category {
 
 			return result;
 		} catch (IOException e) {
-			System.err.println("IOException during getCategories("
-					+ prnt.getName() + "): " + e.getMessage());
+			System.err.println("IOException during getCategories(" + prnt.getName() + "): " + e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -229,8 +221,7 @@ public class Category {
 		try {
 			Persistence.instance.writeCategory(this, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			System.err.println("IOException during refreshDB of Category "
-					+ name + ": " + e.getMessage());
+			System.err.println("IOException during refreshDB of Category " + name + ": " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -243,8 +234,7 @@ public class Category {
 	 * @throws IOException
 	 *             The {@link IOException} of IPersistence is not caught
 	 */
-	protected synchronized static void addToDB(Category category)
-			throws IOException {
+	protected synchronized static void addToDB(Category category) throws IOException {
 		if (category == null)
 			return;
 
@@ -279,8 +269,7 @@ public class Category {
 		try {
 			return Persistence.instance.getCategoryCount();
 		} catch (IOException e) {
-			System.err.println(e.getMessage()
-					+ " while getting category count: ");
+			System.err.println(e.getMessage() + " while getting category count: ");
 			e.printStackTrace(System.err);
 			return -1;
 		}
@@ -335,8 +324,7 @@ public class Category {
 			return (category != null);
 
 		} catch (IOException e) {
-			System.err.println("IOException checking existence of category \""
-					+ name + "\": " + e.getMessage());
+			System.err.println("IOException checking existence of category \"" + name + "\": " + e.getMessage());
 			e.printStackTrace(System.err);
 			return false;
 		}
@@ -354,8 +342,7 @@ public class Category {
 		try {
 			return Persistence.instance.getSubcategories(this);
 		} catch (IOException e) {
-			System.err.println("IOException getting subcategories of "
-					+ this.name);
+			System.err.println("IOException getting subcategories of " + this.name);
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -429,8 +416,7 @@ public class Category {
 		try {
 			return Persistence.instance.getSnippets(this, start, count);
 		} catch (IOException e) {
-			System.err.println(e.getMessage()
-					+ " while getting category count: ");
+			System.err.println(e.getMessage() + " while getting category count: ");
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -460,5 +446,33 @@ public class Category {
 	 */
 	public String getParentName() {
 		return this.parent;
+	}
+
+	/**
+	 * Sets the data to the new data. Throws {@link IllegalArgumentException} if
+	 * an argument is invalid
+	 * 
+	 * @param newData
+	 *            new data to be set. If null, ignored
+	 * @throws IllegalArgumentException
+	 *             Thrown if the new data is invalid (with message)
+	 */
+	public void edit(XCategory newData) {
+		if (newData == null)
+			return;
+
+		boolean isSomethingSet = false;
+
+		if (newData.description != null)
+			this.description = newData.description;
+		if (newData.parent != null) {
+			Category parent = Category.getCategory(newData.parent);
+			if (parent == null)
+				throw new IllegalArgumentException("Parent not existing");
+
+			// OK
+			this.parent = newData.parent;
+		}
+		refreshDB();
 	}
 }

@@ -22,4 +22,6 @@ public interface ICategoryAsync {
 
 	void getAllCategories(AsyncCallback<List<XCategory>> callback);
 
+	void edit(String name, XCategory newData, AsyncCallback<Void> callback);
+
 }

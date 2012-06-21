@@ -76,7 +76,8 @@ public class CategoryTree extends Composite {
 			@Override
 			public void execute() {
 				close();
-				addNewCategory();
+
+				Category.showCreateCategoryPopup();
 			}
 		});
 		private final MenuItem popupEdit = new MenuItem("Edit", false, new Command() {
@@ -244,25 +245,9 @@ public class CategoryTree extends Composite {
 			return fetched;
 		}
 
-		/**
-		 * Sets the name of this category item
-		 * 
-		 * @param name
-		 *            new name
-		 */
-		public void editName(String name) {
-			if (name == null || name.isEmpty())
-				return;
-			if (name.equals(category.name))
-				return;
-
-			// TODO Implement me!
-		}
-
 		/** Shows the edit dialog for a category */
 		public void edit() {
-			// TODO Auto-generated method stub
-
+			Category.showEditCategoryPopup(category);
 		}
 
 		/**
@@ -418,12 +403,5 @@ public class CategoryTree extends Composite {
 				return result;
 			}
 		});
-	}
-
-	/**
-	 * Shows a dialog for adding a new category
-	 */
-	private static void addNewCategory() {
-		// TODO Implement me
 	}
 }

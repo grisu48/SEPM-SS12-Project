@@ -9,6 +9,7 @@ import org.smartsnip.core.Persistence;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.shared.ICategory;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XCategory;
 import org.smartsnip.shared.XSnippet;
 
@@ -129,8 +130,7 @@ public class ICategoryImpl extends GWTSessionServlet implements ICategory {
 		}
 
 		Session session = getSession();
-		// TODO Security policy and check arguments
-		if (!session.isLoggedIn())
+		if (!session.isLoggedIn() || !session.getPolicy().canEditCategory(session, parent))
 			throw new NoAccessException();
 
 		try {
@@ -158,6 +158,24 @@ public class ICategoryImpl extends GWTSessionServlet implements ICategory {
 			return null;
 		}
 
+	}
+
+	@Override
+	public void edit(String name, XCategory newData) throws NoAccessException, NotFoundException, IllegalArgumentException {
+		if (name == null || name.isEmpty())
+			throw new IllegalArgumentException("Category name not set");
+		if (newData == null)
+			throw new IllegalArgumentException("New data not set");
+
+		Category category = Category.getCategory(name);
+		if (category == null)
+			throw new NotFoundException();
+
+		Session session = getSession();
+		if (!session.isLoggedIn() || !session.getPolicy().canEditCategory(session, category))
+			throw new NoAccessException();
+
+		category.edit(newData);
 	}
 
 }

@@ -10,10 +10,10 @@ public class XCategory implements IsSerializable {
 	public String parent;
 	public List<String> subcategories;
 
-	private XCategory() {
-		
+	public XCategory() {
+
 	}
-	
+
 	public XCategory(String name, String description, String parent, List<String> subcategories) {
 		this.name = name;
 		this.description = description;
