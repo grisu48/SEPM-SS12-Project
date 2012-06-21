@@ -40,6 +40,10 @@ public class CodeHistoryPage extends Composite {
 	private final Panel rootPanel = new VerticalPanel();
 
 	private final Label lblTitle = new Label();
+	private final HorizontalPanel pnlToolbar = new HorizontalPanel();
+	private final Anchor anchRefresh = new Anchor("Refresh");
+	private final Anchor anchBack = new Anchor("Back to snippet");
+
 	private final Label lblStatus = new Label();
 
 	private final ScrollPanel scrollHistory = new ScrollPanel();
@@ -54,10 +58,29 @@ public class CodeHistoryPage extends Composite {
 
 		lblTitle.setText("View code history of " + snippet.title);
 
+		pnlToolbar.add(anchRefresh);
+		pnlToolbar.add(anchBack);
+
 		rootPanel.add(lblTitle);
 		rootPanel.add(lblStatus);
+		rootPanel.add(pnlToolbar);
 		rootPanel.add(scrollHistory);
 		rootPanel.add(codePanel);
+
+		anchRefresh.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				update();
+			}
+		});
+		anchBack.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				backToSnippet();
+			}
+		});
 
 		initWidget(rootPanel);
 		applyStyle();
@@ -234,5 +257,10 @@ public class CodeHistoryPage extends Composite {
 		});
 
 		codePanel.add(btnSetCurrent);
+	}
+
+	/** Go back to snippet */
+	private void backToSnippet() {
+		Control.myGUI.showSnipPage(snippet);
 	}
 }
