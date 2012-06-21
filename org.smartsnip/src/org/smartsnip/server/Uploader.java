@@ -18,6 +18,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.smartsnip.client.UploadCode;
 import org.smartsnip.core.Code;
+import org.smartsnip.core.Persistence;
+import org.smartsnip.core.Snippet;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.NotFoundException;
 
@@ -35,8 +37,7 @@ public class Uploader extends SessionServlet {
 	/** Serialisation ID */
 	private static final long serialVersionUID = 6158787027931799617L;
 
-	private final static String UPLOAD_DIRECTORY = System
-			.getProperty("java.io.tmpdir");
+	private final static String UPLOAD_DIRECTORY = System.getProperty("java.io.tmpdir");
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -69,8 +70,7 @@ public class Uploader extends SessionServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		// Code ID if set
 		final long codeID;
@@ -88,24 +88,26 @@ public class Uploader extends SessionServlet {
 
 			session = Session.getSession(sessionCookie, false);
 
-			// TODO Uncomment needed lines for access denial
-
 			// Get Code object and check if it existing
 			codeID = Long.parseLong(codeIDParam);
 			// code = Code.getCode(codeID);
-			code = null;
-			// if (code == null)
-			// throw new NotFoundException("Code object with id " + codeID +
-			// " cannot be found.");
+			code = Persistence.getInstance().getCode(codeID);
+			if (code == null)
+				throw new NotFoundException("Code object with id " + codeID + " cannot be found.");
+			Snippet snippet = Snippet.getSnippet(code.snippetId);
+			if (snippet == null)
+				throw new NotFoundException("Parent snippet object to code cannot be found.");
 
 			// Check session access policy
 			if (session == null)
 				throw new NoAccessException("No session associated");
-			// if (!session.isLoggedIn()
-			// || !session.getPolicy().canEditSnippet(session,
-			// code.snippet))
-			// throw new NoAccessException("Session policy denies the access");
+			if (!session.isLoggedIn() || !session.getPolicy().canEditSnippet(session, snippet))
+				throw new NoAccessException("Session policy denies the access");
 
+		} catch (IOException e) {
+			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			resp.getWriter().print("Error during accessing the database: " + e.getMessage());
+			return;
 		} catch (NotFoundException e) {
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			resp.getWriter().print("Object not found: " + e.getMessage());
@@ -155,17 +157,13 @@ public class Uploader extends SessionServlet {
 						resp.flushBuffer();
 						// Done, the file has been downloaded, now apply the
 						// thing
-						Code.writeCodeFile(codeID,
-								uploadedFile.getAbsolutePath());
-						File deleteFile = new File(
-								uploadedFile.getAbsolutePath());
+						Code.writeCodeFile(codeID, uploadedFile.getAbsolutePath());
+						File deleteFile = new File(uploadedFile.getAbsolutePath());
 						if (!deleteFile.delete()) {
 							deleteFile.deleteOnExit();
-							System.err
-									.println("Code for code obj received, but file cannot be deleted!");
+							System.err.println("Code for code obj received, but file cannot be deleted!");
 						} else {
-							System.out.println("Code for code object " + codeID
-									+ " received.");
+							System.out.println("Code for code object " + codeID + " received.");
 						}
 
 						resp.getWriter().print("File successfully received");
@@ -173,8 +171,7 @@ public class Uploader extends SessionServlet {
 						break; // Do NOT accept more files
 
 					} else
-						throw new IOException(
-								"The file already exists in repository.");
+						throw new IOException("The file already exists in repository.");
 				}
 
 				// OK, if the request has been handled
@@ -183,22 +180,17 @@ public class Uploader extends SessionServlet {
 					resp.getWriter().print("Upload transaction completed");
 				} else {
 					resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-					resp.getWriter().print(
-							"No file received for setting source code");
+					resp.getWriter().print("No file received for setting source code");
 					return;
 				}
 			} catch (Exception e) {
 				resp.getWriter().print("Error: " + e.getMessage());
 
-				resp.sendError(
-						HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-						"An error occurred while loading the file : "
-								+ e.getMessage());
+				resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while loading the file : " + e.getMessage());
 			}
 
 		} else {
-			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
-					"Request contents type is not supported by the uploader servlet.");
+			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "Request contents type is not supported by the uploader servlet.");
 		}
 	}
 
@@ -233,8 +225,7 @@ public class Uploader extends SessionServlet {
 	 * }
 	 */
 
-	private void fetchFile(InputStream input, OutputStream output)
-			throws IOException {
+	private void fetchFile(InputStream input, OutputStream output) throws IOException {
 		try {
 			byte[] buffer = new byte[2048];
 			int len = 0;
