@@ -155,7 +155,7 @@ public class Notification {
 	 */
 	protected synchronized void refreshDB() {
 		try {
-			Persistence.getInstance().writeNotification(this, IPersistence.DB_DEFAULT);
+			Persistence.getInstance().writeNotification(this, IPersistence.DB_UPDATE_ONLY);
 		} catch (IOException ex) {
 			System.err.println("IOException during writing notification (id=" + this.getId() + "): " + ex.getMessage());
 			ex.printStackTrace(System.err);

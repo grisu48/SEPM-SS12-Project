@@ -1,5 +1,6 @@
 package org.smartsnip.shared;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * Notification exchange object.
@@ -7,7 +8,7 @@ package org.smartsnip.shared;
  * @author Felix Niederwanger
  * 
  */
-public class XNotification {
+public class XNotification implements IsSerializable {
 	/**
 	 * identifier
 	 */

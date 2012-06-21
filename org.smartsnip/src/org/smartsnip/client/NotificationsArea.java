@@ -69,9 +69,9 @@ public class NotificationsArea extends Composite {
 
 				// Set style
 				if (unreadOnly)
-					btnUnreadOnly.setStyleName("enabledToggleButton");
-				else
 					btnUnreadOnly.setStyleName("disabledToggleButton");
+				else
+					btnUnreadOnly.setStyleName("enabledToggleButton");
 
 				update();
 			}
@@ -96,6 +96,7 @@ public class NotificationsArea extends Composite {
 
 	private void applyStyles() {
 		lblTitle.setStyleName("h3");
+		btnUnreadOnly.setStyleName("disabledToggleButton");
 
 		btnRefresh.setStyleName("enabledToggleButton");
 		btnMarkAllRead.setStyleName("enabledToggleButton");
@@ -116,8 +117,12 @@ public class NotificationsArea extends Composite {
 					return;
 				}
 
+				// Add this to scoll panel, that allows only one widget
+				final VerticalPanel vertPanel = new VerticalPanel();
+				scrollPanel.add(vertPanel);
+
 				for (XNotification notification : result)
-					scrollPanel.add(createNotificationPanel(notification));
+					vertPanel.add(createNotificationPanel(notification));
 
 				lblStatus.setText("Showing " + result.size() + (unreadOnly ? " unread" : "") + " notifications");
 				enableControls();

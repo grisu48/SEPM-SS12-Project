@@ -95,6 +95,11 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 
 		Logging.printInfo("Editing comment wit id " + commentID);
 		comment.edit(newMessage);
+
+		User owner = comment.getOwner();
+		if (!user.equals(owner))
+			owner.createNotification("Your comment \"" + comment.getMessage() + "\" has been edited by " + user.getUsername(), "Snippet "
+					+ comment.getSnippet().getName());
 	}
 
 	@Override
@@ -111,6 +116,10 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 
 		Logging.printInfo("Deleting comment wit id " + commentID);
 		comment.delete();
+
+		User owner = comment.getOwner();
+		if (!user.equals(owner))
+			owner.createNotification("Your comment \"" + comment.getMessage() + "\" has been deleted", user.getUsername());
 	}
 
 	@Override
