@@ -52,6 +52,13 @@ public interface ICategory extends RemoteService {
 	public List<XCategory> getCategories(String root);
 
 	/**
+	 * Gets all categories
+	 * 
+	 * @return All categories
+	 */
+	public List<XCategory> getAllCategories();
+
+	/**
 	 * Gets a list of {@link XSnippet} of a given category (given by it's name)
 	 * If the given category doesn't exists, null is returned.
 	 * 

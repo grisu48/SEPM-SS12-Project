@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.core.Category;
+import org.smartsnip.core.Persistence;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.shared.ICategory;
 import org.smartsnip.shared.NoAccessException;
@@ -70,8 +71,7 @@ public class ICategoryImpl extends GWTSessionServlet implements ICategory {
 	}
 
 	@Override
-	public XCategory add(String name, String description, String parent)
-			throws NoAccessException {
+	public XCategory add(String name, String description, String parent) throws NoAccessException {
 		if (name == null || name.isEmpty())
 			return null;
 		if (description == null || description.isEmpty())
@@ -90,8 +90,7 @@ public class ICategoryImpl extends GWTSessionServlet implements ICategory {
 			Category root = Category.createCategory(name, description, parent);
 			return root.toXCategory();
 		} catch (IOException e) {
-			System.err.println("IOException during creation of new category: "
-					+ e.getMessage());
+			System.err.println("IOException during creation of new category: " + e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -113,8 +112,7 @@ public class ICategoryImpl extends GWTSessionServlet implements ICategory {
 	}
 
 	@Override
-	public void createCategory(XCategory category) throws NoAccessException,
-			IllegalArgumentException {
+	public void createCategory(XCategory category) throws NoAccessException, IllegalArgumentException {
 		if (category == null)
 			return;
 		// Exists already??
@@ -136,14 +134,30 @@ public class ICategoryImpl extends GWTSessionServlet implements ICategory {
 			throw new NoAccessException();
 
 		try {
-			Category.createCategory(category.name, category.description,
-					parent.getName());
+			Category.createCategory(category.name, category.description, parent.getName());
 		} catch (IOException e) {
-			System.err.println("IOException during creation of new category \""
-					+ category.name + "\" by user " + session.getUsername()
+			System.err.println("IOException during creation of new category \"" + category.name + "\" by user " + session.getUsername()
 					+ ": " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
+	}
+
+	@Override
+	public List<XCategory> getAllCategories() {
+		try {
+			List<Category> categories = Persistence.getInstance().getAllCategories();
+			List<XCategory> result = new ArrayList<XCategory>(categories.size());
+
+			for (Category category : categories)
+				result.add(category.toXCategory());
+			return result;
+
+		} catch (IOException e) {
+			System.err.println("IOException during getting all categories: " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
+
 	}
 
 }

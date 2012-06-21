@@ -20,4 +20,6 @@ public interface ICategoryAsync {
 
 	void createCategory(XCategory category, AsyncCallback<Void> callback);
 
+	void getAllCategories(AsyncCallback<List<XCategory>> callback);
+
 }
