@@ -963,7 +963,7 @@ public class Session {
 
 		List<Session> sessions = getSessions();
 		for (Session session : sessions) {
-			if (session.user.equals(user))
+			if (session.user != null && session.user.equals(user))
 				return true;
 		}
 		return false;

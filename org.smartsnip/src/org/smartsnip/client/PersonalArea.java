@@ -47,6 +47,7 @@ public class PersonalArea extends Composite {
 		lblOwnSnippets = new Label("My snippets");
 		lblFavorites = new Label("Favorites");
 		raFav = new ResultArea();
+		myPersonalField = new PersonalField();
 
 		// Check if guest session, that hied the field PersonalArea and
 		// OwnSnippets
@@ -54,26 +55,24 @@ public class PersonalArea extends Composite {
 			// Guest session
 			guestSession = true;
 
-			myPersonalField = null;
 			raOwn = null;
 
-			// grid.setWidget(0, 0, lblMyPersonalArea);
 			grid.setWidget(0, 2, lblFavorites);
 			grid.setWidget(1, 2, raFav);
 		} else {
 			// User session
 			guestSession = false;
 
-			myPersonalField = new PersonalField();
 			raOwn = new ResultArea();
 
-			// grid.setWidget(0, 0, lblMyPersonalArea);
-			grid.setWidget(1, 0, myPersonalField);
 			grid.setWidget(0, 1, lblOwnSnippets);
 			grid.setWidget(1, 1, raOwn);
-			grid.setWidget(0, 2, lblFavorites);
-			grid.setWidget(1, 2, raFav);
 		}
+
+		// grid.setWidget(0, 0, lblMyPersonalArea);
+		grid.setWidget(1, 0, myPersonalField);
+		grid.setWidget(0, 2, lblFavorites);
+		grid.setWidget(1, 2, raFav);
 		initWidget(grid);
 
 		updateSnippets();
@@ -103,25 +102,20 @@ public class PersonalArea extends Composite {
 			if (guestSession) {
 				// Guest session - hide fields
 				grid.remove(lblOwnSnippets);
-				grid.remove(myPersonalField);
 				grid.remove(raOwn);
 
-				myPersonalField = null;
 				raOwn = null;
 			} else {
 				// User session - show new fields
-				myPersonalField = new PersonalField();
 				raOwn = new ResultArea();
 
 				// grid.setWidget(0, 0, lblMyPersonalArea);
-				grid.setWidget(1, 0, myPersonalField);
 				grid.setWidget(0, 1, lblOwnSnippets);
 				grid.setWidget(1, 1, raOwn);
 			}
 		}
 
-		if (myPersonalField != null)
-			myPersonalField.update();
+		myPersonalField.update();
 
 		updateSnippets();
 	}
