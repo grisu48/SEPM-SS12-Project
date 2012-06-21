@@ -47,8 +47,10 @@ public class SourceDownloader extends SessionServlet {
 					List<Ticket> allTickets = new ArrayList<Ticket>(tickets.values());
 
 					for (Ticket ticket : allTickets) {
-						if (ticket.isExpired())
+						if (ticket.isExpired()) {
 							tickets.remove(ticket.id);
+							System.out.println("Ticket " + ticket.id + " is expired");
+						}
 					}
 				}
 			}
@@ -76,10 +78,12 @@ public class SourceDownloader extends SessionServlet {
 		private final long id;
 		private final Byte[] stream;
 		private final long creationTime;
+		private final String filename;
 
-		private Ticket(long id, Byte[] stream) {
+		private Ticket(long id, Byte[] stream, String filename) {
 			this.id = id;
 			this.stream = stream;
+			this.filename = filename;
 			this.creationTime = System.currentTimeMillis();
 		}
 
@@ -100,6 +104,10 @@ public class SourceDownloader extends SessionServlet {
 		 */
 		public Byte[] getStream() {
 			return stream;
+		}
+
+		public String getFilename() {
+			return filename;
 		}
 
 		private boolean isExpired() {
@@ -125,11 +133,12 @@ public class SourceDownloader extends SessionServlet {
 			while (tickets.containsKey(id))
 				id = id ^ rnd.nextLong();
 
-			ticket = new Ticket(id, code.getDownloadableSource());
+			ticket = new Ticket(id, code.getDownloadableSource(), code.getDownloadableSourceName());
 			tickets.put(id, ticket);
 		}
 
 		// Ticket has been created
+		System.out.println("Creating download ticket for code (id=" + code.getHashID() + ")object. TicketID=" + ticket.id);
 		return ticket.id;
 	}
 
@@ -181,8 +190,21 @@ public class SourceDownloader extends SessionServlet {
 			}
 
 			// Ticket found. Upload the source code
-			writer.print(ticket.getStream());
+			Byte[] stream = ticket.getStream();
+			String filename = ticket.getFilename();
+			String mimetype = getServletConfig().getServletContext().getMimeType(filename);
+			resp.setContentType(mimetype == null ? "application/octet-stream" : mimetype);
+			resp.setContentLength(stream.length);
+			resp.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+
+			for (byte b : stream)
+				writer.print((char) b);
+
 			writer.flush();
+
+			// Remove ticket
+			System.out.println("Ticket " + ticket.id + " has been uploaded to " + req.getRemoteHost());
+			ticket.delete();
 
 		} catch (IOException e) {
 			// Ignore it - Maybe the stream is closed by other side while
@@ -238,7 +260,7 @@ public class SourceDownloader extends SessionServlet {
 	 *             Thrown if illegal request
 	 */
 	private long extractTicketId(HttpServletRequest req) throws IllegalArgumentException {
-		Object ticket = req.getAttribute(ticketHeader);
+		Object ticket = req.getParameter(ticketHeader);
 		if (ticket == null)
 			throw new IllegalArgumentException("No ticket defined");
 		try {

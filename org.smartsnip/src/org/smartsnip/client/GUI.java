@@ -694,13 +694,6 @@ public class GUI {
 	 *            link to be created
 	 */
 	public void showDownloadPopup(String message, String convertToLink) {
-
-		// TODO Implement me
-
-		// Currently unused
-
-		if (true)
-			return;
 		Window.scrollTo(0, 0);
 
 		if (message == null)
@@ -710,13 +703,14 @@ public class GUI {
 
 		final PopupPanel popup = new PopupPanel(true, true);
 		Button close = new Button("<b>Close</b>");
-		Anchor link = new Anchor(convertToLink);
+		Anchor link = new Anchor("Download the source now");
 		link.setHref(convertToLink);
 
 		popup.setTitle("Link ");
 		VerticalPanel vertPanel = new VerticalPanel();
 		Label lname = new Label(message);
 		vertPanel.add(lname);
+		vertPanel.add(link);
 		vertPanel.add(close);
 		popup.setWidget(vertPanel);
 		popup.setGlassEnabled(true);

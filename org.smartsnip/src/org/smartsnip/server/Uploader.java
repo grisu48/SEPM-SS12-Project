@@ -2,7 +2,6 @@ package org.smartsnip.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
@@ -194,54 +193,4 @@ public class Uploader extends SessionServlet {
 		}
 	}
 
-	/*
-	 * @Override protected void doPost(HttpServletRequest request,
-	 * HttpServletResponse response) { ServletFileUpload upload = new
-	 * ServletFileUpload();
-	 * 
-	 * try { FileItemIterator iter = upload.getItemIterator(request);
-	 * 
-	 * while (iter.hasNext()) { FileItemStream item = iter.next();
-	 * 
-	 * String name = item.getFieldName(); InputStream stream =
-	 * item.openStream();
-	 * 
-	 * // Process the input stream OutputStream out = new FileOutputStream(
-	 * "/home/phoenix/temp/temp.tmp", false); int len; byte[] buffer = new
-	 * byte[8192]; long bytesReceived = 0; int maxFileSize = 10 * (1024 * 1024);
-	 * // 10 megs max
-	 * 
-	 * long time = System.currentTimeMillis(); while ((len = stream.read(buffer,
-	 * 0, buffer.length)) != -1) { out.write(buffer, 0, len); bytesReceived +=
-	 * len; if (bytesReceived > maxFileSize) { stream.close(); out.close();
-	 * System.err.println("Max file size exceeded"); } } time =
-	 * System.currentTimeMillis() - time; double speed = (double)
-	 * (bytesReceived) / (double) time;
-	 * 
-	 * System.out.println(bytesReceived + " bytes received in " + time +
-	 * "ms (~ " + speed + "kBytes/s)"); } } catch (Exception e) { throw new
-	 * RuntimeException(e); }
-	 * 
-	 * }
-	 */
-
-	private void fetchFile(InputStream input, OutputStream output) throws IOException {
-		try {
-			byte[] buffer = new byte[2048];
-			int len = 0;
-
-			do {
-				len = input.read(buffer);
-				if (len <= 0)
-					break;
-
-				output.write(buffer, 0, len);
-			} while (true);
-
-			// done
-		} finally {
-			input.close();
-			output.close();
-		}
-	}
 }

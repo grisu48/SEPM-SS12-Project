@@ -244,48 +244,6 @@ public class SnipArea extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				anchDownload.setEnabled(false);
-
-				ISnippet.Util.getInstance().getDownloadSourceTicket(snippet.codeID, new AsyncCallback<Long>() {
-
-					@Override
-					public void onSuccess(Long result) {
-						// Got the download link
-						Control.myGUI.showDownloadPopup("Downloadticket received ... \nClick on the following link to download ... ",
-								convertToLink(result));
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						anchDownload.setEnabled(true);
-						if (caught == null)
-							return;
-						if (caught instanceof NoAccessException) {
-							Control.myGUI.showErrorPopup("Access denied", caught);
-						} else if (caught instanceof NotFoundException) {
-							Control.myGUI.showErrorPopup("Snippet hash id not found", caught);
-						} else
-							Control.myGUI.showErrorPopup("Error", caught);
-					}
-
-					/* Converts the download ticket into a link */
-					private String convertToLink(long id) {
-
-						String result = GWT.getHostPageBaseURL();
-						if (!result.endsWith("/"))
-							result += "/";
-
-						result += "downloader?ticket=" + id;
-						return result;
-					}
-				});
-			}
-		});
-
-		anchDownload.setEnabled(false);
-		anchDownload.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
 				requestDownload();
 			}
 		});
@@ -471,7 +429,48 @@ public class SnipArea extends Composite {
 
 	/** Requests a download */
 	private void requestDownload() {
+		anchDownload.setEnabled(false);
+		anchDownload.setText("Requesting download ticket ... ");
+		ISnippet.Util.getInstance().getDownloadSourceTicket(snippet.codeID, new AsyncCallback<Long>() {
 
+			@Override
+			public void onSuccess(Long result) {
+				// Got the download link
+				Control.myGUI.showDownloadPopup("Downloadticket received ... \nClick on the following link to download ... ",
+						convertToLink(result));
+				reset();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				reset();
+				anchDownload.setEnabled(true);
+				if (caught == null)
+					return;
+				if (caught instanceof NoAccessException) {
+					Control.myGUI.showErrorPopup("Access denied", caught);
+				} else if (caught instanceof NotFoundException) {
+					Control.myGUI.showErrorPopup("Snippet code id not found", caught);
+				} else
+					Control.myGUI.showErrorPopup("Error", caught);
+			}
+
+			/* Converts the download ticket into a link */
+			private String convertToLink(long id) {
+
+				String result = GWT.getHostPageBaseURL();
+				if (!result.endsWith("/"))
+					result += "/";
+
+				result += "downloader?ticket=" + id;
+				return result;
+			}
+
+			private void reset() {
+				anchDownload.setEnabled(true);
+				anchDownload.setText("Download source");
+			}
+		});
 	}
 
 	/**

@@ -31,9 +31,8 @@ public class XSnippet implements IsSerializable, Cloneable {
 		// this("", 0, "", "", null, null, null, "", "", "", "", 0);
 	}
 
-	public XSnippet(String owner, long hash, String title, String description,
-			String category, ArrayList<String> tags, String code, long codeID,
-			String codeHTML, String language, String license, int viewcount) {
+	public XSnippet(String owner, long hash, String title, String description, String category, ArrayList<String> tags, String code,
+			long codeID, String codeHTML, String language, String license, int viewcount) {
 		this.owner = owner;
 		this.hash = hash;
 		this.title = title;
@@ -46,12 +45,11 @@ public class XSnippet implements IsSerializable, Cloneable {
 		this.license = license;
 		this.viewcount = viewcount;
 		this.isFavorite = false;
+		this.codeID = codeID;
 	}
 
-	public XSnippet(String owner, long hash, String title, String description,
-			String category, ArrayList<String> tags, String code, long codeID,
-			String codeHTML, String language, String license, int viewcount,
-			boolean isFavorite) {
+	public XSnippet(String owner, long hash, String title, String description, String category, ArrayList<String> tags, String code,
+			long codeID, String codeHTML, String language, String license, int viewcount, boolean isFavorite) {
 		this.owner = owner;
 		this.hash = hash;
 		this.title = title;
@@ -64,6 +62,7 @@ public class XSnippet implements IsSerializable, Cloneable {
 		this.license = license;
 		this.viewcount = viewcount;
 		this.isFavorite = isFavorite;
+		this.codeID = codeID;
 	}
 
 	/**
