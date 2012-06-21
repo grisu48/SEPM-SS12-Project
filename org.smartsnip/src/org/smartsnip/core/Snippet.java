@@ -419,6 +419,14 @@ public class Snippet {
 	public synchronized void increaseViewCounter() {
 		viewcount++;
 		refreshDB();
+
+		// XXX Seems to be a database error ...
+		// TODO: @Gerhard: Check tthis ous.
+		Snippet TEST = Snippet.getSnippet(this.id);
+		if (TEST.viewcount != viewcount) {
+			// XXX Should NOT happen, but unfortunately this happens ...
+			System.err.println("DB ERROR");
+		}
 	}
 
 	/**

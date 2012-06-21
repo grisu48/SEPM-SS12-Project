@@ -210,6 +210,19 @@ public class Control implements EntryPoint {
 	 */
 	public void changeToSnipPage(XSnippet snip) {
 		myGUI.showSnipPage(snip);
+
+		// Increase view counter
+		ISnippet.Util.getInstance().increaseViewCounter(snip.hash, new AsyncCallback<Void>() {
+			// Ignore callback here
+
+			@Override
+			public void onSuccess(Void result) {
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
 	}
 
 	/**
