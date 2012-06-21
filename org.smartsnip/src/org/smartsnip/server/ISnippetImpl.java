@@ -311,33 +311,25 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 	}
 
 	@Override
-	public boolean hasDownloadableSource(long snippet_id) throws NotFoundException {
-		Snippet snippet = Snippet.getSnippet(snippet_id);
-		if (snippet == null)
-			throw new NotFoundException();
-
-		Code code = snippet.getCode();
+	public boolean hasDownloadableSource(long codeID) throws NotFoundException {
+		Code code = Code.getCode(codeID);
 		if (code == null)
-			return false;
+			throw new NotFoundException();
 		else
-			return snippet.getCode().hasDownloadableSource();
+			return code.hasDownloadableSource();
 	}
 
 	@Override
-	public long getDownloadSourceTicket(long snippet_id) throws NotFoundException, NoAccessException {
-		Snippet snippet = Snippet.getSnippet(snippet_id);
-		if (snippet == null)
-			throw new NotFoundException();
-
-		Code code = snippet.getCode();
+	public long getDownloadSourceTicket(long codeID) throws NotFoundException, NoAccessException {
+		Code code = Code.getCode(codeID);
 		if (code == null)
-			throw new NotFoundException("Snippet does not contain any source codes");
+			throw new NotFoundException("Code object not found");
 
 		if (!code.hasDownloadableSource())
 			throw new NotFoundException("Snippet does not provide any downloadable source code packets");
 
 		// Creates a new ticket
-		long ticket = SourceDownloader.createTicket(code.code);
+		long ticket = SourceDownloader.createTicket(code);
 		return ticket;
 	}
 

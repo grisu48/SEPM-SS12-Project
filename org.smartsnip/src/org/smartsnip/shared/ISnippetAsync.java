@@ -39,9 +39,9 @@ public interface ISnippetAsync {
 
 	void getMoreLanguages(AsyncCallback<List<String>> callback);
 
-	void getDownloadSourceTicket(long snippet_id, AsyncCallback<Long> callback);
+	void getDownloadSourceTicket(long codeID, AsyncCallback<Long> callback);
 
-	void hasDownloadableSource(long snippet_id, AsyncCallback<Boolean> callback);
+	void hasDownloadableSource(long codeID, AsyncCallback<Boolean> callback);
 
 	void canEdit(long snippet_id, AsyncCallback<Boolean> callback);
 

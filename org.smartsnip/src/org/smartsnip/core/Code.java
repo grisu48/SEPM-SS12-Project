@@ -351,6 +351,7 @@ public abstract class Code {
 		XCode result = new XCode();
 
 		result.code = code;
+		result.codeHTML = getFormattedHTML();
 		result.language = getLanguage();
 		result.downloadAbleSource = downloadAbleSource;
 		result.id = id;
@@ -358,5 +359,22 @@ public abstract class Code {
 		result.version = version;
 
 		return result;
+	}
+
+	/**
+	 * Get code object from DB
+	 * 
+	 * @param codeID
+	 *            id of the code object to fetch
+	 * @return the fetched code object or null if not exitisting or on error
+	 */
+	public static Code getCode(long codeID) {
+		try {
+			return Persistence.getInstance().getCode(codeID);
+		} catch (IOException e) {
+			System.err.println("IOException during fetch of code object with id = " + codeID + ": " + e.getMessage());
+			e.printStackTrace(System.err);
+			return null;
+		}
 	}
 }

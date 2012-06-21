@@ -245,7 +245,7 @@ public class SnipArea extends Composite {
 			public void onClick(ClickEvent event) {
 				anchDownload.setEnabled(false);
 
-				ISnippet.Util.getInstance().getDownloadSourceTicket(snippet.hash, new AsyncCallback<Long>() {
+				ISnippet.Util.getInstance().getDownloadSourceTicket(snippet.codeID, new AsyncCallback<Long>() {
 
 					@Override
 					public void onSuccess(Long result) {
@@ -480,5 +480,7 @@ public class SnipArea extends Composite {
 	private void viewCodeHistory() {
 		if (!snippet.canEdit)
 			return;
+
+		Control.myGUI.showCodeHistoryPage(snippet);
 	}
 }

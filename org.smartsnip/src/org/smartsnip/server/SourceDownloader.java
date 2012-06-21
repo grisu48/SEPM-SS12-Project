@@ -17,6 +17,7 @@ import java.util.TimerTask;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.smartsnip.core.Code;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.NoAccessException;
@@ -43,8 +44,7 @@ public class SourceDownloader extends SessionServlet {
 				// Check for expired tickets and remove them
 
 				synchronized (tickets) {
-					List<Ticket> allTickets = new ArrayList<Ticket>(
-							tickets.values());
+					List<Ticket> allTickets = new ArrayList<Ticket>(tickets.values());
 
 					for (Ticket ticket : allTickets) {
 						if (ticket.isExpired())
@@ -74,12 +74,12 @@ public class SourceDownloader extends SessionServlet {
 	 */
 	public static class Ticket {
 		private final long id;
-		private final String code;
+		private final Byte[] stream;
 		private final long creationTime;
 
-		private Ticket(long id, String code) {
+		private Ticket(long id, Byte[] stream) {
 			this.id = id;
-			this.code = code;
+			this.stream = stream;
 			this.creationTime = System.currentTimeMillis();
 		}
 
@@ -98,8 +98,8 @@ public class SourceDownloader extends SessionServlet {
 		/**
 		 * @return the code of the ticket
 		 */
-		public String getCode() {
-			return code;
+		public Byte[] getStream() {
+			return stream;
 		}
 
 		private boolean isExpired() {
@@ -117,15 +117,15 @@ public class SourceDownloader extends SessionServlet {
 	/** Container for all download tickets */
 	private static final HashMap<Long, Ticket> tickets = new HashMap<Long, SourceDownloader.Ticket>();
 
-	public static long createTicket(String code) {
-		long id = code.hashCode();
+	public static long createTicket(Code code) {
+		long id = code.code.hashCode(); // TODO get random hash
 		Ticket ticket;
 
 		synchronized (tickets) {
 			while (tickets.containsKey(id))
 				id = id ^ rnd.nextLong();
 
-			ticket = new Ticket(id, code);
+			ticket = new Ticket(id, code.getDownloadableSource());
 			tickets.put(id, ticket);
 		}
 
@@ -157,8 +157,7 @@ public class SourceDownloader extends SessionServlet {
 	 *            Must be positive
 	 */
 	public static void setExpirationTime(int seconds, int minutes, int hours) {
-		setExpirationTime(1000 * seconds + 1000 * 60 * minutes + 1000 * 60 * 60
-				* hours);
+		setExpirationTime(1000 * seconds + 1000 * 60 * minutes + 1000 * 60 * 60 * hours);
 	}
 
 	@Override
@@ -182,7 +181,7 @@ public class SourceDownloader extends SessionServlet {
 			}
 
 			// Ticket found. Upload the source code
-			writer.print(ticket.code);
+			writer.print(ticket.getStream());
 			writer.flush();
 
 		} catch (IOException e) {
@@ -198,8 +197,7 @@ public class SourceDownloader extends SessionServlet {
 
 			writer.println("<body>");
 			writer.println("<h1>The requested ticket is invalid</h1>");
-			writer.println("<p>The returned error was: <b>" + e.getMessage()
-					+ "</b></p>");
+			writer.println("<p>The returned error was: <b>" + e.getMessage() + "</b></p>");
 			writer.println("<hr>");
 			writer.println("<p>Re-check the download link and try again.</p>");
 			writer.println("<p>It's also possible that your ticket has expired</p>");
@@ -213,8 +211,7 @@ public class SourceDownloader extends SessionServlet {
 			writer.println("<body>");
 			writer.println("<h1>500 - Server error</h1>");
 			writer.println("<p>There was an unhandled exception on the server:</p>");
-			writer.println("<p>" + e.getClass().getName() + ": <b>"
-					+ e.getMessage() + "</b></p>");
+			writer.println("<p>" + e.getClass().getName() + ": <b>" + e.getMessage() + "</b></p>");
 			e.printStackTrace(writer);
 			writer.println("</body>");
 			resp.setStatus(500);
@@ -240,8 +237,7 @@ public class SourceDownloader extends SessionServlet {
 	 * @throws IllegalArgumentException
 	 *             Thrown if illegal request
 	 */
-	private long extractTicketId(HttpServletRequest req)
-			throws IllegalArgumentException {
+	private long extractTicketId(HttpServletRequest req) throws IllegalArgumentException {
 		Object ticket = req.getAttribute(ticketHeader);
 		if (ticket == null)
 			throw new IllegalArgumentException("No ticket defined");
@@ -271,25 +267,21 @@ public class SourceDownloader extends SessionServlet {
 				long snipID;
 				String snippet_id = req.getParameter(SNIPPET_REQUEST);
 				if (snippet_id == null || snippet_id.isEmpty())
-					throw new IllegalArgumentException(
-							"Snippet id not definied");
+					throw new IllegalArgumentException("Snippet id not definied");
 				try {
 					snipID = Long.parseLong(snippet_id);
 				} catch (NumberFormatException e) {
-					throw new IllegalArgumentException(
-							"Snippet ID not a valid number", e);
+					throw new IllegalArgumentException("Snippet ID not a valid number", e);
 				}
 				snippet = Snippet.getSnippet(snipID);
 				if (snippet == null)
-					throw new IllegalArgumentException("Snippet not found",
-							new NotFoundException());
+					throw new IllegalArgumentException("Snippet not found", new NotFoundException());
 
 			}
 
 			// Check if the current session is privileged to edit the snippet
 			if (!session.getPolicy().canEditSnippet(session, snippet))
-				throw new NoAccessException(
-						"Not privileged to edit the snippet");
+				throw new NoAccessException("Not privileged to edit the snippet");
 
 			String filename = getNewTempFile(snippet);
 			File file = new File(filename);
@@ -300,16 +292,14 @@ public class SourceDownloader extends SessionServlet {
 			writer.println("</head>");
 
 			writer.println("<body>");
-			writer.println("<p><b>Uploading file to snippet <i>"
-					+ snippet.getName() + "</i> ... </b></p>");
+			writer.println("<p><b>Uploading file to snippet <i>" + snippet.getName() + "</i> ... </b></p>");
 
 			long receivedBytes = 0;
 			try {
 				if (file.exists())
 					file.delete();
 
-				OutputStream output = new BufferedOutputStream(
-						new FileOutputStream(file, false));
+				OutputStream output = new BufferedOutputStream(new FileOutputStream(file, false));
 				InputStream input = req.getInputStream();
 				byte[] buffer = new byte[1024];
 				int len = 0;
@@ -334,8 +324,7 @@ public class SourceDownloader extends SessionServlet {
 				// File system IOException
 
 				if (receivedBytes > 0)
-					writer.println("<p>An <b>IOExcepton</b> occured after "
-							+ receivedBytes + " bytes of data</p>");
+					writer.println("<p>An <b>IOExcepton</b> occured after " + receivedBytes + " bytes of data</p>");
 
 				// Handle as normal IOException
 				throw e;
@@ -343,8 +332,7 @@ public class SourceDownloader extends SessionServlet {
 
 			// Check if quota has exceeded
 			if (receivedBytes > maxFileBytes) {
-				writer.println("<p> Max. file quota (" + maxFileBytes
-						+ " bytes) exceeded. Upload cancelled </p>");
+				writer.println("<p> Max. file quota (" + maxFileBytes + " bytes) exceeded. Upload cancelled </p>");
 			} else {
 				// Export to user
 				snippet.getCode().applySourceCode(file.getAbsolutePath());

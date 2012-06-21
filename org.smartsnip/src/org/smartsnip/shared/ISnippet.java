@@ -250,16 +250,16 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 * 
 	 * @return true if a downloadable source is found
 	 */
-	public boolean hasDownloadableSource(long snippet_id) throws NotFoundException;
+	public boolean hasDownloadableSource(long codeID) throws NotFoundException;
 
 	/**
 	 * Gets a download ticket for the source code.
 	 * 
-	 * @return the ticket id for the source
+	 * @return the code if the ticket is generated for
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public long getDownloadSourceTicket(long snippet_id) throws NotFoundException, NoAccessException;
+	public long getDownloadSourceTicket(long codeID) throws NotFoundException, NoAccessException;
 
 	/**
 	 * Checks if the current session/user can edit a given snippet
