@@ -1,5 +1,7 @@
 package org.smartsnip.shared;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
@@ -30,7 +32,7 @@ public class XNotification implements IsSerializable {
 	/**
 	 * Time the notification was created
 	 */
-	public String time;
+	public Date time;
 	/**
 	 * Source of the notification
 	 */
