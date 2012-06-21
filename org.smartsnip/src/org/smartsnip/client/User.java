@@ -436,6 +436,7 @@ public class User {
 							@Override
 							public void onFailure(Throwable caught) {
 								lblStatus.setText("Error setting new real name");
+								enableControls();
 							}
 						});
 					if (email != null) {
@@ -452,6 +453,7 @@ public class User {
 							@Override
 							public void onFailure(Throwable caught) {
 								lblStatus.setText("Error setting new email");
+								enableControls();
 							}
 						});
 
