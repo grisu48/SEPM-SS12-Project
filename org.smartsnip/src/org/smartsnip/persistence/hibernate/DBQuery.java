@@ -20,9 +20,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import org.smartsnip.persistence.IPersistence;
-import org.smartsnip.shared.Pair;
-
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
@@ -30,6 +27,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.NaturalId;
+import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.shared.Pair;
 
 /**
  * This class keeps and handles queries of a session. It can set up and execute
@@ -126,6 +125,16 @@ class DBQuery {
 	private static final int COLUMN_TRANSFORMER_WRITE = 49152;
 
 	/**
+	 * Order clause used with the {@link #addOrder(String, boolean)} method.
+	 */
+	public static final Boolean ORDER_ASCENDING = false;
+
+	/**
+	 * Order clause used with the {@link #addOrder(String, boolean)} method.
+	 */
+	public static final Boolean ORDER_DESCENDING = true;
+
+	/**
 	 * the session which owns this query
 	 */
 	private final Session session;
@@ -162,6 +171,12 @@ class DBQuery {
 	 * Contains all {@link ColumnTransformer} attached to a parameter.
 	 */
 	private Map<String, ColumnTransformer> transformers = new TreeMap<String, ColumnTransformer>();
+
+	/**
+	 * Contains all order clauses. Use {@link #addOrder(String, boolean)} to
+	 * define an order clause of a query.
+	 */
+	private List<Pair<String, Boolean>> orderClauses = new ArrayList<Pair<String, Boolean>>();
 
 	/**
 	 * Contains the region of the query cache in which the query is to store. If
@@ -235,6 +250,19 @@ class DBQuery {
 	}
 
 	/**
+	 * add a order clause to the query.
+	 * 
+	 * @param column
+	 *            the name of the column.
+	 * @param order
+	 *            Use the constant {@link #ORDER_ASCENDING} for ascending order
+	 *            or {@link #ORDER_DESCENDING} for descending order.
+	 */
+	void addOrder(String column, boolean order) {
+		this.orderClauses.add(new Pair<String, Boolean>(column, order));
+	}
+
+	/**
 	 * Concatenate the parameters to a HQL update query.
 	 * 
 	 * @param targetEntity
@@ -283,7 +311,8 @@ class DBQuery {
 	 */
 	private String buildTransformedParameter(String parameter, int flags) {
 		String result = parameter;
-		if (hasFlag(flags, COLUMN_TRANSFORMER) && this.transformers.containsKey(parameter)) {
+		if (hasFlag(flags, COLUMN_TRANSFORMER)
+				&& this.transformers.containsKey(parameter)) {
 			if (hasFlag(flags, COLUMN_TRANSFORMER_WRITE)
 					&& !this.transformers.get(parameter).write().isEmpty()) {
 				result = this.transformers.get(parameter).write();
@@ -295,6 +324,32 @@ class DBQuery {
 			result = ":" + parameter;
 		}
 		return result;
+	}
+
+	/**
+	 * Build the order clause using the {@link #orderClauses} list.
+	 * 
+	 * @return the order clause as string or an empty string if no order clause
+	 *         is defined.
+	 */
+	private String buildOrderClause() {
+		StringBuilder builder = new StringBuilder(" order by ");
+		boolean hasOrderClauses = false;
+		for (Pair<String, Boolean> clause : this.orderClauses) {
+			if (hasOrderClauses) {
+				builder.append(", ");
+			}
+			builder.append(clause.first);
+			if (clause.second == ORDER_DESCENDING) {
+				builder.append(" desc");
+			} else {
+				builder.append(" asc");
+			}
+		}
+		if (hasOrderClauses) {
+			return builder.toString();
+		}
+		return "";
 	}
 
 	/**
@@ -477,6 +532,7 @@ class DBQuery {
 		} else {
 			builder.append(buildWhereClause(QUERY_EMPTY_VALID));
 		}
+		builder.append(buildOrderClause());
 		log.trace(builder.toString());
 		return builder.toString();
 	}
@@ -914,7 +970,8 @@ class DBQuery {
 				| COLUMN_TRANSFORMER);
 		if ((key = getKey(targetEntity, QUERY_NULLABLE)) != null) {
 			if (!this.parameters.isEmpty()) {
-				if (buildUpdateQuery(targetEntity, flags | COLUMN_TRANSFORMER).executeUpdate() < 1) {
+				if (buildUpdateQuery(targetEntity, flags | COLUMN_TRANSFORMER)
+						.executeUpdate() < 1) {
 					throw new HibernateException(
 							"failed to update entity with key" + key);
 				}
@@ -1395,6 +1452,7 @@ class DBQuery {
 		StringBuilder builder = new StringBuilder("select ");
 		builder.append(selectString).append(" ")
 				.append(buildFromQueryString(targetEntity, flags));
+		builder.append(buildOrderClause());
 		Query result = this.session.createQuery(builder.toString());
 		for (Pair<String, Object> s : this.selectParameters) {
 			result.setParameter(s.first, s.second);
@@ -1614,6 +1672,7 @@ class DBQuery {
 		this.parameters = new ArrayList<Pair<String, Object>>();
 		this.whereParameters = new ArrayList<Pair<Vector<String>, Object>>();
 		this.selectParameters = new ArrayList<Pair<String, Object>>();
+		this.orderClauses = new ArrayList<Pair<String,Boolean>>();
 		this.cacheRegion = null;
 		this.initialized = false;
 		log.trace("initialized = false");

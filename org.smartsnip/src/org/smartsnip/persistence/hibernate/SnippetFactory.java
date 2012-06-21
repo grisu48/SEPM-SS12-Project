@@ -12,10 +12,11 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
+import org.hibernate.search.FullTextQuery;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.SearchException;
@@ -737,20 +738,33 @@ public class SnippetFactory {
 		}
 		List<Snippet> result = new ArrayList<Snippet>(initialSize);
 
-		// set the sorting order
-		addSortingCriteria(session.createCriteria(DBSnippet.class),
-				sortingOrder);
-
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
 
 			DBQuery query = new DBQuery(session);
+
+			// set the sorting order, reverse order chosen in all cases
+			switch (sortingOrder) {
+			case IPersistence.SORT_LATEST:
+				query.addOrder("lastEdited", DBQuery.ORDER_DESCENDING);
+				break;
+			case IPersistence.SORT_MOSTVIEWED:
+				query.addOrder("viewcount", DBQuery.ORDER_DESCENDING);
+				break;
+			case IPersistence.SORT_BEST_RATED:
+				query.addOrder("ratingAverage", DBQuery.ORDER_DESCENDING);
+				break;
+			default:
+				// case IPersistence.SORT_UNSORTED
+				break;
+			}
+
 			DBSnippet entity = new DBSnippet();
 			Snippet snippet;
 
-			for (Iterator<DBSnippet> iterator = query.iterate(entity, start, count,
-					DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
+			for (Iterator<DBSnippet> iterator = query.iterate(entity, start,
+					count, DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
 				entity = iterator.next();
 
 				snippet = helper.createSnippet(entity.getSnippetId(), entity
@@ -972,9 +986,6 @@ public class SnippetFactory {
 
 		FullTextSession fullTextSession = Search.getFullTextSession(session);
 
-		addSortingCriteria(session.createCriteria(DBSnippet.class),
-				sortingOrder);
-
 		Transaction tx = null;
 		try {
 			tx = fullTextSession.beginTransaction(); // TODO include tags,
@@ -983,19 +994,42 @@ public class SnippetFactory {
 			// lucene full text query
 			QueryBuilder builder = fullTextSession.getSearchFactory()
 					.buildQueryBuilder().forEntity(DBSnippet.class).get();
-			org.apache.lucene.search.Query ftQuery = null;
+			org.apache.lucene.search.Query luceneQuery = null;
 			try {
-				ftQuery = builder.keyword().onFields("headline", "description")
+				luceneQuery = builder.keyword()
+						.onFields("headline", "description")
 						.matching(searchString).createQuery();
+
 			} catch (SearchException se) {
 				Logger log = Logger.getLogger(SnippetFactory.class);
 				log.trace("Search with no results: " + searchString, se);
 			}
 
-			if (ftQuery != null) {
-				// wrap Lucene query in a org.hibernate.Query
-				org.hibernate.Query query = fullTextSession
-						.createFullTextQuery(ftQuery, DBSnippet.class);
+			if (luceneQuery != null) {
+				// wrap it in a hibernate.search query and add sorting criteria
+				FullTextQuery query = fullTextSession.createFullTextQuery(
+						luceneQuery, DBSnippet.class);
+
+				// set the sorting order, reverse order chosen in all cases
+				switch (sortingOrder) {
+				case IPersistence.SORT_LATEST:
+					query.setSort(new Sort(new SortField("lastEdited",
+							SortField.STRING, true)));
+					break;
+				case IPersistence.SORT_MOSTVIEWED:
+					query.setSort(new Sort(new SortField("viewcount",
+							SortField.STRING, true)));
+					break;
+				case IPersistence.SORT_BEST_RATED:
+					query.setSort(new Sort(new SortField("ratingAverage",
+							SortField.STRING, true)));
+					break;
+				default:
+					// case IPersistence.SORT_UNSORTED
+					break;
+				}
+
+				// narrow the result range
 				if (start != null && start > 0) {
 					query.setFirstResult(start);
 				}
@@ -1005,12 +1039,10 @@ public class SnippetFactory {
 				query.setCacheable(true);
 
 				// execute search and build Snippets
-				DBSnippet entity;
 				Snippet snippet;
 				@SuppressWarnings("unchecked")
-				Iterator<DBSnippet> iterator = query.iterate();
-				for (; iterator.hasNext();) {
-					entity = iterator.next();
+				List<DBSnippet> entities = query.list();
+				for (DBSnippet entity : entities) {
 					snippet = helper.createSnippet(entity.getSnippetId(),
 							entity.getOwner(), entity.getHeadline(), entity
 									.getDescription(), CategoryFactory
@@ -1118,33 +1150,5 @@ public class SnippetFactory {
 		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
 				| DBQuery.QUERY_CACHEABLE);
 		return entity;
-	}
-
-	/**
-	 * Helper method to define the sorting order of a DB-query.
-	 * 
-	 * @param criteria
-	 *            an {@link org.hibernate.Criteria} object according to the
-	 *            active session.
-	 * @param sorting
-	 *            the sorting type
-	 * @return the criteria looped through for chaining calls
-	 */
-	private static Criteria addSortingCriteria(Criteria criteria, int sorting) {
-		switch (sorting) {
-		case IPersistence.SORT_LATEST:
-			criteria.addOrder(Order.desc("lastEdited"));
-			break;
-		case IPersistence.SORT_MOSTVIEWED:
-			criteria.addOrder(Order.desc("viewcount"));
-			break;
-		case IPersistence.SORT_BEST_RATED:
-			criteria.addOrder(Order.desc("ratingAverage"));
-			break;
-		default:
-			// case IPersistence.SORT_UNSORTED
-			break;
-		}
-		return criteria;
 	}
 }

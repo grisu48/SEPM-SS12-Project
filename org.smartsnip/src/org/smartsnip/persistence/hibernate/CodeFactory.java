@@ -9,10 +9,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
 import org.smartsnip.core.Code;
 import org.smartsnip.core.File;
 import org.smartsnip.core.Snippet;
@@ -270,12 +268,13 @@ public class CodeFactory {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Implementation of {@link IPersistence#getCode(Long)}
+	 * 
 	 * @param codeId
 	 * @return the code object
-	 * @throws IOException 
+	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getCode(java.lang.Long)
 	 */
 	static Code getCode(Long codeId) throws IOException {
@@ -302,8 +301,8 @@ public class CodeFactory {
 			DBSessionFactory.close(session);
 		}
 		return helper.createCode(entity.getCodeId(), entity.getFile(),
-				entity.getLanguage(), entity.getSnippetId(), entity.getVersion(),
-				entity.getFileName());
+				entity.getLanguage(), entity.getSnippetId(),
+				entity.getVersion(), entity.getFileName());
 	}
 
 	/**
@@ -447,8 +446,8 @@ public class CodeFactory {
 				DBQuery.QUERY_CACHEABLE); itr.hasNext();) {
 			entity = itr.next();
 			result.add(helper.createCode(entity.getCodeId(), entity.getFile(),
-					entity.getLanguage(), snippet.getHashId(), entity.getVersion(),
-					entity.getFileName()));
+					entity.getLanguage(), snippet.getHashId(),
+					entity.getVersion(), entity.getFileName()));
 		}
 		return result;
 	}
@@ -466,18 +465,20 @@ public class CodeFactory {
 	 */
 	static Code fetchNewestCode(SqlPersistenceHelper helper, Session session,
 			Snippet snippet) {
-		Criteria criteria = session.createCriteria(DBCode.class);
-		criteria.addOrder(Order.desc("version"));
-		DBQuery query = new DBQuery(session);
 		DBCode entity = new DBCode();
 		entity.setSnippetId(snippet.getHashId());
-		entity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE
+		DBQuery query = new DBQuery(session);
+		Integer version = (Integer) query.selectSingle(entity, "max(version)",
+				DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_CACHEABLE);
+		query.reset();
+		entity.setVersion(version);
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL
 				| DBQuery.QUERY_CACHEABLE);
 		Code result = null;
 		if (entity != null) {
 			result = helper.createCode(entity.getCodeId(), entity.getFile(),
-					entity.getLanguage(), snippet.getHashId(), entity.getVersion(),
-					entity.getFileName());
+					entity.getLanguage(), snippet.getHashId(),
+					entity.getVersion(), entity.getFileName());
 		}
 		return result;
 	}

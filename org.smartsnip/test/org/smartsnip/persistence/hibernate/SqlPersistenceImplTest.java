@@ -1362,16 +1362,14 @@ public class SqlPersistenceImplTest {
 	 */
 	@Test
 	public void testSearch() throws Throwable {
-		List<Snippet> snippets = instance.search("Joe", null, null,
-				IPersistence.SORT_LATEST);
+		List<Snippet> snippets = instance.search("snippet", null, null,
+				IPersistence.SORT_MOSTVIEWED);
 		System.err.println("Search:");
 		for (Snippet s : snippets) {
 			System.out.println("Search result: snippetId = " + s.getHashId()
 					+ " Headline: " + s.getName() + " Data: "
 					+ s.getDescription() + " Tags: " + s.getTags()
-					+ " Category: " + s.getCategoryName() + " Code: "
-					+ s.getCode().getCode() + " Language: "
-					+ s.getCode().getLanguage() + " License: " + s.getLicense()
+					+ " Category: " + s.getCategoryName() + " License: " + s.getLicense()
 					+ " Viewcount: " + s.getViewcount() + " Rating: "
 					+ s.getAverageRating() + " Owner: " + s.getOwnerUsername());
 		}
