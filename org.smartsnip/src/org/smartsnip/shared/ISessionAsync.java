@@ -43,4 +43,8 @@ public interface ISessionAsync {
 	void getNotificationCount(boolean unreadOnly, AsyncCallback<Long> callback);
 
 	void getNotifications(boolean unreadOnly, AsyncCallback<List<XNotification>> callback);
+
+	void markAllNotificationsRead(AsyncCallback<Void> callback);
+
+	void markNotificationRead(long id, boolean read, AsyncCallback<Void> callback);
 }

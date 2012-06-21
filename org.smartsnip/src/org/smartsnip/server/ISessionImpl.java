@@ -66,8 +66,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	}
 
 	@Override
-	public boolean login(String username, String password)
-			throws NoAccessException {
+	public boolean login(String username, String password) throws NoAccessException {
 
 		Session session = getSession();
 
@@ -99,8 +98,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	}
 
 	@Override
-	public boolean registerNewUser(String username, String password,
-			String email) throws NoAccessException {
+	public boolean registerNewUser(String username, String password, String email) throws NoAccessException {
 		if (username == null)
 			return false;
 		if (password == null || password.isEmpty())
@@ -119,8 +117,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 		if (User.exists(username))
 			return false;
 		try {
-			logInfo("Requesting create new user (USER=" + username + "; MAIL="
-					+ email + ")");
+			logInfo("Requesting create new user (USER=" + username + "; MAIL=" + email + ")");
 			if (User.createNewUser(username, password, email) == null)
 				return false;
 
@@ -138,9 +135,8 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	}
 
 	@Override
-	public XSearch doSearch(String searchString, List<String> tags,
-			List<String> categories, SearchSorting sorting, int start,
-			int count, final int id) {
+	public XSearch doSearch(String searchString, List<String> tags, List<String> categories, SearchSorting sorting, int start, int count,
+			final int id) {
 
 		long time = System.currentTimeMillis();
 		XSearch result = new XSearch();
@@ -188,8 +184,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 		result.categories = resultCategories;
 		result.tags = resultTags;
 
-		List<Tag> allTagsMatchingSearchCriteria = search
-				.getAllTagsMatchingSearchCriteria();
+		List<Tag> allTagsMatchingSearchCriteria = search.getAllTagsMatchingSearchCriteria();
 		for (Tag tag : allTagsMatchingSearchCriteria) {
 			result.tagsAppearingInSearchString.add(tag.name);
 		}
@@ -198,12 +193,9 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 		time = System.currentTimeMillis() - time;
 		if (result.totalresults > 0) {
 			if (searchString == null || searchString.isEmpty()) {
-				logInfo("Search for all Snippets. " + result.totalresults
-						+ " results total found in " + time + " ms");
+				logInfo("Search for all Snippets. " + result.totalresults + " results total found in " + time + " ms");
 			} else
-				logInfo("Search for: \"" + searchString + "\". "
-						+ result.totalresults + " results total found in "
-						+ time + " ms");
+				logInfo("Search for: \"" + searchString + "\". " + result.totalresults + " results total found in " + time + " ms");
 		}
 
 		// Log search
@@ -221,8 +213,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 		if (!session.isLoggedIn())
 			return null;
 
-		XUser user = new XUser(session.getUsername(), session.getRealname(),
-				session.getMail());
+		XUser user = new XUser(session.getUsername(), session.getRealname(), session.getMail());
 
 		return user;
 	}
@@ -257,10 +248,29 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 			return new ArrayList<XNotification>();
 
 		List<Notification> notifications = user.getNotifications(unreadOnly);
-		List<XNotification> result = new ArrayList<XNotification>(
-				notifications.size());
+		List<XNotification> result = new ArrayList<XNotification>(notifications.size());
 		for (Notification notification : notifications)
 			result.add(notification.toXNotification());
 		return result;
+	}
+
+	@Override
+	public void markAllNotificationsRead() {
+		Session session = getSession();
+		User user = session.getUser();
+		if (!session.isLoggedIn() || user == null)
+			return;
+
+		user.markNotificationsRead();
+	}
+
+	@Override
+	public void markNotificationRead(long id, boolean read) {
+		Session session = getSession();
+		User user = session.getUser();
+		if (!session.isLoggedIn() || user == null)
+			return;
+
+		// TODO Implementation needed
 	}
 }

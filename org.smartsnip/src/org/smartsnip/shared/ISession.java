@@ -77,8 +77,7 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the login process fails
 	 */
-	public boolean login(String username, String password)
-			throws NoAccessException;
+	public boolean login(String username, String password) throws NoAccessException;
 
 	/**
 	 * Logs the session out
@@ -115,8 +114,7 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @return a List with max count snippets that match the search string, or
 	 *         null, if something went wrong
 	 */
-	public XSearch doSearch(String searchString, List<String> tags,
-			List<String> categories, XSearch.SearchSorting sorting, int start,
+	public XSearch doSearch(String searchString, List<String> tags, List<String> categories, XSearch.SearchSorting sorting, int start,
 			int count, int id);
 
 	/**
@@ -152,8 +150,7 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public boolean registerNewUser(String username, String password,
-			String email) throws NoAccessException;
+	public boolean registerNewUser(String username, String password, String email) throws NoAccessException;
 
 	/**
 	 * @return Gets the cookie value for this session
@@ -172,8 +169,7 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @throw {@link NoAccessException} Thrown, if there was a service denial by
 	 *        the server
 	 */
-	public XUser getUser(String username) throws NotFoundException,
-			NoAccessException;
+	public XUser getUser(String username) throws NotFoundException, NoAccessException;
 
 	/**
 	 * Gets general informations about the sessions
@@ -201,4 +197,19 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @return the notifications
 	 */
 	public List<XNotification> getNotifications(boolean unreadOnly);
+
+	/**
+	 * Marks all notifications as read
+	 */
+	public void markAllNotificationsRead();
+
+	/**
+	 * Mark a notification as read
+	 * 
+	 * @param id
+	 *            ID of the notification to be marked
+	 * @param read
+	 *            true if read, false if mark as unread
+	 */
+	public void markNotificationRead(long id, boolean read);
 }
