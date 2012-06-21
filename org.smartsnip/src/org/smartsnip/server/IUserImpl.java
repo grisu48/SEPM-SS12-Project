@@ -92,18 +92,24 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 	}
 
 	@Override
-	public void setPassword(String password) throws NoAccessException {
-		if (password == null || password.isEmpty())
+	public void setPassword(String oldpassword, String newpassword) throws NoAccessException {
+		if (newpassword == null || newpassword.isEmpty() || oldpassword == null || oldpassword.isEmpty())
 			return;
 
 		Session session = getSession();
 		User user = session.getUser();
 
-		if (user == null || !session.getPolicy().canEditUserData(session, user))
-			throw new NoAccessException();
+		if (user == null || !session.getPolicy().canEditUserData(session, user)) {
+			Logging.printWarning("Request for setting new password denied, access denied by policy");
+			throw new NoAccessException("Access denied");
+		}
+		if (!user.checkPassword(oldpassword)) {
+			Logging.printWarning("Request for setting new password denied, wrong credentials");
+			throw new NoAccessException("Wrong password");
+		}
 
 		Logging.printInfo("Sets a new password");
-		user.setPassword(password);
+		user.setPassword(newpassword);
 	}
 
 	@Override

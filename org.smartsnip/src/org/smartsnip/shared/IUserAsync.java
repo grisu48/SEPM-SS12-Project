@@ -18,7 +18,7 @@ public interface IUserAsync {
 
 	void getFavorites(AsyncCallback<List<XSnippet>> callback);
 
-	void setPassword(String pw1, AsyncCallback<Void> callback);
+	void setPassword(String oldpassword, String newpassword, AsyncCallback<Void> callback);
 
 	void getUsers(int start, int count, AsyncCallback<List<XUser>> callback);
 

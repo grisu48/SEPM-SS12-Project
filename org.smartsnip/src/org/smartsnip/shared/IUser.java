@@ -100,12 +100,14 @@ public interface IUser extends RemoteService, IsSerializable {
 	/**
 	 * Sets the password for a user
 	 * 
-	 * @param password
+	 * @param oldpassword
+	 *            old password to verify
+	 * @param newpassword
 	 *            to be set to
 	 * @throws NoAccessException
 	 *             Thrown, if the server denies the access
 	 */
-	public void setPassword(String password) throws NoAccessException;
+	public void setPassword(String oldpassword, String newpassword) throws NoAccessException;
 
 	/**
 	 * Gets a subset of the list of all users of the system
