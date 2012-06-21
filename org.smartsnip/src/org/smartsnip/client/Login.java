@@ -143,6 +143,7 @@ public class Login extends Composite {
 		final String password = passPassword.getText();
 
 		if (username.isEmpty() || password.isEmpty()) {
+			btnLogin.setEnabled(true);
 			lblStatus.setText("Some arguments are missing ");
 			return;
 		}
@@ -172,12 +173,13 @@ public class Login extends Composite {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				if (caught == null)
-					lblStatus.setText("Login failed (unknown reason)");
-				else if (caught instanceof NoAccessException)
-					lblStatus.setText("Login failed - Wrong login credentials");
+				if (caught == null) lblStatus.setText("Login failed (unknown reason)");
+				else if (caught instanceof NoAccessException) lblStatus
+						.setText("Login failed - Wrong login credentials");
 				else
 					lblStatus.setText("Login failed: " + caught.getMessage());
+
+				btnLogin.setEnabled(true);
 			}
 		});
 	}
