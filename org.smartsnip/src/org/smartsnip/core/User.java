@@ -897,4 +897,12 @@ public class User {
 	public void setLastLoginNow() {
 		setLastLogin(new Date());
 	}
+
+	/**
+	 * Marks all notifications of the user as read
+	 */
+	public void markNotificationsRead() {
+		// TODO Auto-generated method stub
+
+	}
 }
