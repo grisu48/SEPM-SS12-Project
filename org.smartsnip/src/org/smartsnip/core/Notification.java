@@ -1,6 +1,7 @@
 package org.smartsnip.core;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.shared.XNotification;
@@ -28,7 +29,7 @@ public class Notification {
 	/**
 	 * Time the notification was created
 	 */
-	private final String time;
+	private final Date time;
 	/**
 	 * Source of the notification
 	 */
@@ -59,7 +60,7 @@ public class Notification {
 	 *            If the notification refers to a snippet (the id of the
 	 *            snippet)
 	 */
-	Notification(Long id, String owner, String message, boolean read, String time, String source, Long refersToSnippet) {
+	Notification(Long id, String owner, String message, boolean read, Date time, String source, Long refersToSnippet) {
 		super();
 		this.id = id;
 		this.owner = owner;
@@ -119,7 +120,7 @@ public class Notification {
 	/**
 	 * @return the sending time of the notification
 	 */
-	public String getTime() {
+	public Date getTime() {
 		return time;
 	}
 
