@@ -112,9 +112,11 @@ public class CodeHistoryPage extends Composite {
 		this.history = history;
 
 		scrollHistory.clear();
+		final VerticalPanel vrtPanel = new VerticalPanel();
+		scrollHistory.add(vrtPanel);
 		for (XCode code : history) {
 			if (code != null)
-				scrollHistory.add(createCodePanel(code));
+				vrtPanel.add(createCodePanel(code));
 		}
 	}
 
