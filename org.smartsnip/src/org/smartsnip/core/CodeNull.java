@@ -10,7 +10,7 @@ public class CodeNull extends Code {
 	public static CodeNull instance = new CodeNull();
 
 	private CodeNull() {
-		super("/* NULL-CODE Object */", "Null", null, 0L, 0, false);
+		super("/* NULL-CODE Object */", "Null", null, 0L, 0, null);
 	}
 
 	@Override
@@ -23,6 +23,9 @@ public class CodeNull extends Code {
 		return code;
 	}
 
+	/**
+	 * @return this {@link CodeNull} instance
+	 */
 	public static CodeNull getInstance() {
 		return instance;
 	}

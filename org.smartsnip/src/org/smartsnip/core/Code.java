@@ -23,7 +23,7 @@ public abstract class Code {
 
 	/** If the code has a downloadable source */
 	// TODO Implement downloadable source
-	private boolean downloadAbleSource = false;
+	private String downloadAbleSource = null;
 
 	/** Identifier of this code segment */
 	private long id = 0L;
@@ -40,7 +40,7 @@ public abstract class Code {
 	 * @param version
 	 * @param downloadAbleSource indicates this code has a downloadable source
 	 */
-	Code(String code, String language, Long snippetId, Long id, int version, boolean downloadAbleSource) {
+	Code(String code, String language, Long snippetId, Long id, int version, String downloadAbleSource) {
 		if (code.length() == 0)
 			throw new IllegalArgumentException("Cannot create snippet with no code");
 		if (language.length() == 0)
@@ -164,7 +164,7 @@ public abstract class Code {
 		language = language.trim();
 
 		// build always a generic code object
-		Code result = new CodeGeneric(code, language, ownerSnippetId, ownerSnippetId, version, false);
+		Code result = new CodeGeneric(code, language, ownerSnippetId, ownerSnippetId, version, null);
 
 		addToDB(result);
 		return result;
@@ -213,15 +213,11 @@ public abstract class Code {
 			throw new IllegalArgumentException("Cannot create code object with no language");
 		if (ownerSnippetId == null)
 			throw new NullPointerException("Cannot create code segment without a snippet");
-		boolean downloadAbleSource = false;
-		if (downloadableSourceName != null) {
-			downloadAbleSource = true;
-		}
 
 		language = language.trim();
 
 		// build always a generic code object
-		Code result = new CodeGeneric(code, language, ownerSnippetId, id, version, downloadAbleSource);
+		Code result = new CodeGeneric(code, language, ownerSnippetId, id, version, downloadableSourceName);
 
 		/*
 		 * THIS METHOD IS CALLED FROM THE DB, DO NOT WRITE INTO THE DB!!
@@ -288,7 +284,17 @@ public abstract class Code {
 	 * @return if there is a downloadable source code
 	 */
 	public boolean hasDownloadableSource() {
-		return downloadAbleSource;
+		if (downloadAbleSource == null || downloadAbleSource.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * @return if there is a downloadable source code
+	 */
+	public String getDownloadableSourceName() {
+		return this.downloadAbleSource;
 	}
 
 	/**
@@ -342,7 +348,7 @@ public abstract class Code {
 		result.code = code;
 		result.codeHTML = getFormattedHTML();
 		result.language = getLanguage();
-		result.downloadAbleSource = downloadAbleSource;
+		result.downloadAbleSource = hasDownloadableSource(); // boolean flag
 		result.id = id;
 		result.snippetId = snippetId;
 		result.version = version;

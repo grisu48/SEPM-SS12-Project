@@ -6,6 +6,9 @@ package org.smartsnip.core;
  */
 public class CodeJava extends Code {
 
+	/**
+	 * the language identifier
+	 */
 	public final static String language = "Java";
 
 	/**
@@ -21,7 +24,7 @@ public class CodeJava extends Code {
 	 * @param version the version number
 	 * @param downloadAbleSource 
 	 */
-	CodeJava(String code, Long snippetId, Long id, int version, boolean downloadAbleSource) {
+	CodeJava(String code, Long snippetId, Long id, int version, String downloadAbleSource) {
 		super(code, language, snippetId, id, version, downloadAbleSource);
 	}
 

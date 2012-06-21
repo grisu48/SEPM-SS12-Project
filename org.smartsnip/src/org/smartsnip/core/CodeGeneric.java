@@ -45,9 +45,11 @@ public class CodeGeneric extends Code {
 	 *            persistence yet
 	 * @param version
 	 *            the version of the code
+	 * @param downloadAbleSource
+	 *            the filename of the downloadable source or null if not present
 	 */
 	public CodeGeneric(String code, String language, Long snippetId, Long id,
-			int version, boolean downloadAbleSource) {
+			int version, String downloadAbleSource) {
 		super(code, language, snippetId, id, version, downloadAbleSource);
 		this.language = language;
 	}
@@ -71,13 +73,14 @@ public class CodeGeneric extends Code {
 
 	/**
 	 * @return The highlighter string to passed as argument on the syntax
-	 *         highlighting engine. If no syntax highlighting is available for this
-	 *         code object this method returns {@link #HIGHLIGHTER_NONE}.
+	 *         highlighting engine. If no syntax highlighting is available for
+	 *         this code object this method returns {@link #HIGHLIGHTER_NONE}.
 	 */
 	public String getHighlighter() {
 		if (this.highlighter == null) {
 			try {
-				this.highlighter = Persistence.instance.getLanguageProperties(this.language).first;
+				this.highlighter = Persistence.instance
+						.getLanguageProperties(this.language).first;
 			} catch (IOException ignored) {
 				this.highlighter = HIGHLIGHTER_NONE;
 			}
