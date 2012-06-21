@@ -131,6 +131,9 @@ public class Meta extends Composite {
 		initWidget(metaPanel);
 
 		applyStyles();
+
+		// Initial update
+		update();
 	}
 
 	private void applyStyles() {
