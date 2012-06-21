@@ -56,7 +56,7 @@ public class Meta extends Composite {
 
 		notificationIcon = new NotificationIcon();
 
-		icon = new Image(Control.baseURL + "/images/user1.png");
+		icon = new Image(Control.baseURL + "/images/guest.png");
 		icon.setSize("35px", "35px");
 
 		user.addClickHandler(new ClickHandler() {
