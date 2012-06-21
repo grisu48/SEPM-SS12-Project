@@ -334,7 +334,7 @@ public class ModeratorArea extends Composite {
 			}
 
 			/**
-			 * Creates aan array, allows the control for each user The array is
+			 * Creates an array, allows the control for each user The array is
 			 * suited for a 7-dim grid, that is in onSuccess used and defined.
 			 * These two methods are coupled!
 			 * 

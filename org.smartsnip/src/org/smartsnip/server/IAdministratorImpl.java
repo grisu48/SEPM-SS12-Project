@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.smartsnip.core.Logging;
 import org.smartsnip.core.User;
+import org.smartsnip.security.PrivilegeController;
 import org.smartsnip.shared.IAdministrator;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.NotFoundException;
@@ -25,26 +26,62 @@ public class IAdministratorImpl extends IModeratorImpl implements IAdministrator
 
 	@Override
 	public void setUserState(String username, UserState state) throws NotFoundException, NoAccessException {
-		// TODO Auto-generated method stub
+		if (username == null || state == null)
+			return;
 
+		Session session = getSession();
+		User user = session.getUser();
+		if (user == null || !user.isAdministrator())
+			throw new NoAccessException();
+
+		User targetUser = User.getUser(username);
+		if (targetUser == null)
+			throw new NotFoundException();
+
+		targetUser.setState(state);
 	}
 
 	@Override
 	public boolean isAdministrator() {
-		// TODO Auto-generated method stub
-		return false;
+		Session session = getSession();
+		User user = session.getUser();
+		if (user == null)
+			return false;
+		return user.isAdministrator();
 	}
 
 	@Override
 	public void setPassword(String username, String password) throws NotFoundException, NoAccessException {
-		// TODO Auto-generated method stub
+		Session session = getSession();
+		User user = session.getUser();
+		if (user == null || !user.isAdministrator())
+			throw new NoAccessException();
+
+		User targetUser = User.getUser(username);
+		if (targetUser == null)
+			throw new NotFoundException();
+
+		if (password == null || password.isEmpty())
+			throw new IllegalArgumentException("Empty password");
+
+		if (!PrivilegeController.acceptPassword(password))
+			throw new IllegalArgumentException("Password denied");
+
+		targetUser.setPassword(password);
 
 	}
 
 	@Override
 	public void deleteUser(String username) throws NotFoundException, NoAccessException {
-		// TODO Auto-generated method stub
+		Session session = getSession();
+		User user = session.getUser();
+		if (user == null || !user.isAdministrator())
+			throw new NoAccessException();
 
+		User targetUser = User.getUser(username);
+		if (targetUser == null)
+			throw new NotFoundException();
+		targetUser.delete();
 	}
 
 	@Override
