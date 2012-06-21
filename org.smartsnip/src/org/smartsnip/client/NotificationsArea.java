@@ -102,8 +102,7 @@ public class NotificationsArea extends Composite {
 	/** Updates the component */
 	public void update() {
 		lblStatus.setText("Getting notifications ... ");
-		btnRefresh.setEnabled(false);
-		btnUnreadOnly.setEnabled(false);
+		disableControls();
 		scrollPanel.clear();
 
 		ISession.Util.getInstance().getNotifications(unreadOnly, new AsyncCallback<List<XNotification>>() {
@@ -119,8 +118,7 @@ public class NotificationsArea extends Composite {
 					scrollPanel.add(createNotificationPanel(notification));
 
 				lblStatus.setText("Showing " + result.size() + (unreadOnly ? " unread" : "") + " notifications");
-				btnRefresh.setEnabled(true);
-				btnUnreadOnly.setEnabled(true);
+				enableControls();
 
 			}
 
@@ -174,8 +172,34 @@ public class NotificationsArea extends Composite {
 
 					@Override
 					public void onClick(ClickEvent event) {
-						// TODO Auto-generated method stub
+						btnMarkRead.setEnabled(false);
 
+						if (notification.read) {
+							btnMarkRead.setText("Marking unread ... ");
+						} else {
+							btnMarkRead.setText("Marking read ... ");
+						}
+						ISession.Util.getInstance().markNotificationRead(notification.id, !notification.read, new AsyncCallback<Void>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								refreshButton();
+							}
+
+							@Override
+							public void onSuccess(Void result) {
+								notification.read = !notification.read;
+								refreshButton();
+							}
+
+							private void refreshButton() {
+								if (notification.read)
+									btnMarkRead.setText("Mark unread");
+								else
+									btnMarkRead.setText("Mark read");
+								btnMarkRead.setEnabled(true);
+							}
+						});
 					}
 				});
 
@@ -192,14 +216,41 @@ public class NotificationsArea extends Composite {
 			public void onFailure(Throwable caught) {
 				// TODO: Make this pretty
 				lblStatus.setText("Getting notifications failed: " + caught.getMessage());
-				btnRefresh.setEnabled(true);
-				btnUnreadOnly.setEnabled(true);
+				enableControls();
 			}
 		});
 	}
 
 	/** Mark all notifications read */
 	private void markAllRead() {
+		disableControls();
+		lblStatus.setText("Marking all read ... ");
+		ISession.Util.getInstance().markAllNotificationsRead(new AsyncCallback<Void>() {
 
+			@Override
+			public void onSuccess(Void result) {
+				update();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				lblStatus.setText("Error marking all read: " + caught.getMessage());
+				enableControls();
+			}
+		});
+	}
+
+	/** Re-enabled the controls */
+	private void enableControls() {
+		btnRefresh.setEnabled(true);
+		btnMarkAllRead.setEnabled(true);
+		btnUnreadOnly.setEnabled(true);
+	}
+
+	/** Disabled the controls */
+	private void disableControls() {
+		btnRefresh.setEnabled(false);
+		btnMarkAllRead.setEnabled(false);
+		btnUnreadOnly.setEnabled(false);
 	}
 }
