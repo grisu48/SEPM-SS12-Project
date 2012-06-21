@@ -1,6 +1,7 @@
 package org.smartsnip.server;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -288,8 +289,7 @@ public class Session {
 	 */
 	private static Session createNewSession(String cookie) {
 		if (cookie == null || cookie.length() == 0)
-			throw new NullPointerException(
-					"Cannot create session with null cookie");
+			throw new NullPointerException("Cannot create session with null cookie");
 		Session newSession;
 		synchronized (obfuscatedSessions) {
 			String obfuscated = assignNewObfuscatedKey();
@@ -383,8 +383,7 @@ public class Session {
 	 * @throws NoAccessException
 	 *             Thrown as security exception when the login process fails.
 	 */
-	public synchronized void login(String username, String password)
-			throws NoAccessException {
+	public synchronized void login(String username, String password) throws NoAccessException {
 		doActivity();
 		logout();
 
@@ -400,6 +399,7 @@ public class Session {
 			throw new NoAccessException("Invalid username or password");
 
 		this.user = user;
+		user.setLastLoginNow();
 		refreshPolicy();
 	}
 
@@ -948,5 +948,24 @@ public class Session {
 		result.user = (isLoggedIn() ? user.getUsername() : null);
 
 		return result;
+	}
+
+	/**
+	 * Checks if a given user is currently logged in
+	 * 
+	 * @param user
+	 *            to be checked
+	 * @return true if logged in otherwise false
+	 */
+	public static boolean isLoggedIn(User user) {
+		if (user == null)
+			return false;
+
+		List<Session> sessions = getSessions();
+		for (Session session : sessions) {
+			if (session.user.equals(user))
+				return true;
+		}
+		return false;
 	}
 }

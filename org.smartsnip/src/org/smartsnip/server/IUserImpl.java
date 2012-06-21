@@ -14,6 +14,7 @@ import org.smartsnip.shared.XUser;
  * This is the implementation of the {@link org.smartsnip.shared.IUser}
  * interface that runs on the server
  * 
+ * @author Felix Niederwanger
  */
 public class IUserImpl extends GWTSessionServlet implements IUser {
 
@@ -116,7 +117,7 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 			return null; // Something went wrong ...
 		List<XUser> result = new ArrayList<XUser>(users.size());
 		for (User user : users)
-			result.add(user.toXUser());
+			result.add(toXUser(user, session));
 		return result;
 	}
 
@@ -125,7 +126,29 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 		User user = getSession().getUser();
 		if (user == null)
 			return null;
-		return user.toXUser();
+		return toXUser(user, getSession());
 	}
 
+	/**
+	 * Converts a given user to a {@link XUser} object and adds also
+	 * session-specific properties
+	 * 
+	 * @param user
+	 *            to be converted
+	 * @param session
+	 *            the object belongs to
+	 * @return Converted {@link XUser} object or null, if user was null
+	 */
+	public static XUser toXUser(User user, Session session) {
+		if (user == null)
+			return null;
+		final XUser result = user.toXUser();
+
+		// Currently the parameter session is not used, but still here in
+		// respect to further development
+
+		result.isLoggedIn = Session.isLoggedIn(user);
+
+		return result;
+	}
 }

@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.security.IHash;
 import org.smartsnip.security.MD5;
+import org.smartsnip.server.IUserImpl;
 import org.smartsnip.shared.XUser;
 
 // NOTE: TODO: Implement the notification system
@@ -54,8 +55,7 @@ public class User {
 	 * 
 	 */
 	public enum UserState {
-		unvalidated("unvalidate"), validated("validated"), deleted("deleted"), moderator(
-				"moderator"), administrator("administrator");
+		unvalidated("unvalidate"), validated("validated"), deleted("deleted"), moderator("moderator"), administrator("administrator");
 
 		/** Message for toString */
 		private final String message;
@@ -94,17 +94,14 @@ public class User {
 	 * @throws IllegalArgumentException
 	 *             Thrown if one of the arguments is null or empty
 	 */
-	User(String username, String realName, String email, UserState state,
-			Date lastLogin) {
+	User(String username, String realName, String email, UserState state, Date lastLogin) {
 		if (username == null || username.isEmpty())
-			throw new IllegalArgumentException(
-					"Cannot create user with empty username");
+			throw new IllegalArgumentException("Cannot create user with empty username");
 		if (realName == null) {
 			realName = "";
 		}
 		if (email == null || email.isEmpty())
-			throw new IllegalArgumentException(
-					"Cannot create user with empty email");
+			throw new IllegalArgumentException("Cannot create user with empty email");
 
 		this.username = username.toLowerCase();
 		this.realName = realName;
@@ -153,8 +150,7 @@ public class User {
 		try {
 			result = Persistence.instance.getUser(username);
 		} catch (IOException e) {
-			log.info("IOException during getting User \" " + username + "\":"
-					+ e.getMessage(), e);
+			log.info("IOException during getting User \" " + username + "\":" + e.getMessage(), e);
 			return null;
 		}
 
@@ -197,8 +193,7 @@ public class User {
 	 *             the strings is empty, the username is already taken or if the
 	 *             email-address is invalid
 	 */
-	public static synchronized User createNewUser(String username,
-			String password, String email) throws IllegalArgumentException {
+	public static synchronized User createNewUser(String username, String password, String email) throws IllegalArgumentException {
 		return createNewUser(username, password, email, username);
 	}
 
@@ -226,8 +221,7 @@ public class User {
 	 *             the strings is empty, the username is already taken or if the
 	 *             email-address is invalid
 	 */
-	public static synchronized User createNewUser(String username,
-			String password, String email, String realname)
+	public static synchronized User createNewUser(String username, String password, String email, String realname)
 			throws IllegalArgumentException {
 		if (username.length() == 0)
 			throw new IllegalArgumentException("Username cannot be empty");
@@ -275,8 +269,7 @@ public class User {
 
 		// Create notification for this process
 		String stateString = state.toString();
-		Notification.createNotification("Your userstate is set to: "
-				+ stateString, getUsername());
+		Notification.createNotification("Your userstate is set to: " + stateString, getUsername());
 		notifications = null; // Needs refresh
 
 		refreshDB();
@@ -297,8 +290,7 @@ public class User {
 		try {
 			Persistence.instance.removeUser(user, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			log.warn("IOException during deleteUser(" + user.username + "): "
-					+ e.getMessage(), e);
+			log.warn("IOException during deleteUser(" + user.username + "): " + e.getMessage(), e);
 		}
 	}
 
@@ -336,8 +328,7 @@ public class User {
 		try {
 			return Persistence.instance.verifyPassword(this, password);
 		} catch (IOException e) {
-			log.info("IOException during checking password for user \""
-					+ username + "\": " + e.getMessage(), e);
+			log.info("IOException during checking password for user \"" + username + "\": " + e.getMessage(), e);
 			return false;
 		}
 
@@ -367,8 +358,7 @@ public class User {
 	 */
 	public void setEmail(String email) throws IllegalArgumentException {
 		if (email.length() == 0)
-			throw new IllegalArgumentException(
-					"Empty email address not allowed");
+			throw new IllegalArgumentException("Empty email address not allowed");
 		if (!isValidEmailAddress(email))
 			throw new IllegalArgumentException("Illegal email-address");
 
@@ -422,19 +412,15 @@ public class User {
 	 *            the password to set
 	 * @throws IllegalArgumentException
 	 */
-	public synchronized void setPassword(String password)
-			throws IllegalArgumentException {
+	public synchronized void setPassword(String password) throws IllegalArgumentException {
 		if (password.length() == 0)
 			throw new IllegalArgumentException("Empty password not allowed");
 		password = hashAlgorithm.hash(password);
 
 		try {
-			Persistence.instance.writeLogin(this, password, true,
-					IPersistence.DB_DEFAULT);
+			Persistence.instance.writeLogin(this, password, true, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			log.warn(
-					"IOException during writing password for user \""
-							+ this.getUsername() + "\": " + e.getMessage(), e);
+			log.warn("IOException during writing password for user \"" + this.getUsername() + "\": " + e.getMessage(), e);
 		}
 	}
 
@@ -469,8 +455,7 @@ public class User {
 		try {
 			return Persistence.getInstance().getUserSnippets(this);
 		} catch (IOException e) {
-			log.warn("IOException during getMySnippets(" + this.getUsername()
-					+ "): " + e.getMessage(), e);
+			log.warn("IOException during getMySnippets(" + this.getUsername() + "): " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -484,11 +469,9 @@ public class User {
 
 		List<Snippet> result = null;
 		try {
-			result = new ArrayList<Snippet>(Persistence.getInstance()
-					.getFavorited(this));
+			result = new ArrayList<Snippet>(Persistence.getInstance().getFavorited(this));
 		} catch (IOException e) {
-			log.warn("IOException during getting favorites for user \""
-					+ getUsername() + "\": " + e.getMessage(), e);
+			log.warn("IOException during getting favorites for user \"" + getUsername() + "\": " + e.getMessage(), e);
 		}
 
 		favourites = result;
@@ -536,6 +519,7 @@ public class User {
 	 */
 	public void setLastLogin(Date lastLogin) {
 		this.lastLogin = lastLogin;
+		refreshDB();
 	}
 
 	/**
@@ -552,9 +536,7 @@ public class User {
 		try {
 			Persistence.instance.writeUser(this, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
-			log.warn(
-					"IOException writing out user \"" + username + "\": "
-							+ e.getMessage(), e);
+			log.warn("IOException writing out user \"" + username + "\": " + e.getMessage(), e);
 		}
 	}
 
@@ -570,14 +552,12 @@ public class User {
 			return;
 
 		try {
-			Persistence.getInstance().addFavourite(snippet, this,
-					IPersistence.DB_NEW_ONLY);
+			Persistence.getInstance().addFavourite(snippet, this, IPersistence.DB_NEW_ONLY);
 			favourites = Persistence.getInstance().getFavorited(this);
 		} catch (IOException e) {
 			log.warn(
-					"IOException writing favorite snippet (id="
-							+ snippet.getHashId() + ") for user \"" + username
-							+ "\": " + e.getMessage(), e);
+					"IOException writing favorite snippet (id=" + snippet.getHashId() + ") for user \"" + username + "\": "
+							+ e.getMessage(), e);
 		}
 	}
 
@@ -593,14 +573,12 @@ public class User {
 			return;
 
 		try {
-			Persistence.getInstance().removeFavourite(snippet, this,
-					IPersistence.DB_NEW_ONLY);
+			Persistence.getInstance().removeFavourite(snippet, this, IPersistence.DB_NEW_ONLY);
 			favourites = Persistence.getInstance().getFavorited(this);
 		} catch (IOException e) {
 			log.warn(
-					"IOException writing favorite snippet (id="
-							+ snippet.getHashId() + ") for user \"" + username
-							+ "\": " + e.getMessage(), e);
+					"IOException writing favorite snippet (id=" + snippet.getHashId() + ") for user \"" + username + "\": "
+							+ e.getMessage(), e);
 		}
 	}
 
@@ -619,7 +597,7 @@ public class User {
 			return false;
 
 		User user = (User) obj;
-		return user.username.equals(this.username);
+		return user.username.equalsIgnoreCase(this.username);
 	}
 
 	@Override
@@ -642,8 +620,7 @@ public class User {
 		try {
 			Persistence.instance.writeUser(user, IPersistence.DB_NEW_ONLY);
 		} catch (IOException e) {
-			log.warn("IOException during adding user \" " + user.getUsername()
-					+ "\" to db: " + e.getMessage(), e);
+			log.warn("IOException during adding user \" " + user.getUsername() + "\" to db: " + e.getMessage(), e);
 		}
 	}
 
@@ -792,12 +769,9 @@ public class User {
 			return notifications;
 
 		try {
-			notifications = Persistence.getInstance().getNotifications(
-					this.username, false);
+			notifications = Persistence.getInstance().getNotifications(this.username, false);
 		} catch (IOException e) {
-			System.err
-					.println("IOException during fetching notifications for user \""
-							+ this.username + "\": " + e.getMessage());
+			System.err.println("IOException during fetching notifications for user \"" + this.username + "\": " + e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -875,8 +849,7 @@ public class User {
 		try {
 			users = Persistence.instance.getAllUsers(start, count);
 		} catch (IOException e) {
-			System.err.println("IOException during fetching  all users : "
-					+ e.getMessage());
+			System.err.println("IOException during fetching  all users : " + e.getMessage());
 			e.printStackTrace(System.err);
 			users = new ArrayList<User>();
 		}
@@ -884,7 +857,9 @@ public class User {
 	}
 
 	/**
-	 * Creates a {@link XUser} object
+	 * Creates a {@link XUser} object. User
+	 * {@link IUserImpl#toXUser(User, org.smartsnip.server.Session)} to also add
+	 * session-specific values that are not assigned here
 	 * 
 	 * @return the creates {@link XUser} object for this {@link User}
 	 */
@@ -894,7 +869,32 @@ public class User {
 		result.username = getUsername();
 		result.email = getEmail();
 		result.realname = getRealName();
+		result.lastLoginTime = getLastLogin();
+		switch (getState()) {
+		case administrator:
+			result.state = XUser.UserState.administrator;
+			break;
+		case deleted:
+			result.state = XUser.UserState.deleted;
+			break;
+		case moderator:
+			result.state = XUser.UserState.moderator;
+			break;
+		case validated:
+			result.state = XUser.UserState.validated;
+			break;
+		default:
+			result.state = XUser.UserState.unvalidated;
+			break;
+		}
 
 		return result;
+	}
+
+	/**
+	 * Sets the last login to NOW
+	 */
+	public void setLastLoginNow() {
+		setLastLogin(new Date());
 	}
 }
