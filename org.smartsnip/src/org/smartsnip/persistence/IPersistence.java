@@ -526,15 +526,15 @@ public interface IPersistence {
 	 *            the comment to vote for
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a bitwise or connection. 
+	 *            can be added by a bitwise or connection.
 	 * @return the actual values of the votes<br>
 	 *         The first parameter gives the positive votes, the seconds
 	 *         parameter of the pair gives the number of negative votes.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public Pair<Integer, Integer> votePositive(User user, Comment comment, int flags)
-			throws IOException;
+	public Pair<Integer, Integer> votePositive(User user, Comment comment,
+			int flags) throws IOException;
 
 	/**
 	 * Persist a negative vote. This operation updates an existing vote if the
@@ -555,8 +555,8 @@ public interface IPersistence {
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public Pair<Integer, Integer> voteNegative(User user, Comment comment, int flags)
-			throws IOException;
+	public Pair<Integer, Integer> voteNegative(User user, Comment comment,
+			int flags) throws IOException;
 
 	/**
 	 * Remove a vote. This operation updates an existing vote to 'none' in
@@ -1026,6 +1026,17 @@ public interface IPersistence {
 	 */
 	public List<Tag> getAllTags(Integer start, Integer count)
 			throws IOException;
+
+	/**
+	 * Get the notification by id.
+	 * 
+	 * @param id
+	 *            the id
+	 * @return the notification
+	 * @throws IOException
+	 *             at a problem retrieving the data
+	 */
+	public Notification getNotification(Long id) throws IOException;
 
 	/**
 	 * Get all notifications belonging to the given user.

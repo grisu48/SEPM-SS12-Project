@@ -600,6 +600,40 @@ public class UserFactory {
 	}
 
 	/**
+	 * Implementation of {@link IPersistence#getNotification(Long)}
+	 * 
+	 * @param id
+	 * @return the notification
+	 * @throws IOException
+	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getNotification(java.lang.Long)
+	 */
+	static Notification getNotification(Long id) throws IOException {
+		Session session = DBSessionFactory.open();
+		SqlPersistenceHelper helper = new SqlPersistenceHelper();
+		DBNotification entity;
+
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			DBQuery query = new DBQuery(session);
+
+			entity = new DBNotification();
+			entity.setNotificationId(id);
+
+			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			tx.commit();
+		} catch (RuntimeException e) {
+			if (tx != null)
+				tx.rollback();
+			throw new IOException(e);
+		} finally {
+			DBSessionFactory.close(session);
+		}
+		return helper
+				.createNotification(entity.getNotificationId(), entity.getUserName(), entity.getMessage(), entity.isViewed(), entity.getCreatedAt(), entity.getOrigin(), entity.getSnippetId());
+	}
+
+	/**
 	 * Implementation of {@link IPersistence#getNotifications(String, boolean)}
 	 * 
 	 * @param userName
@@ -633,7 +667,7 @@ public class UserFactory {
 			for (DBNotification notif : entities) {
 				result.add(helper.createNotification(notif.getNotificationId(),
 						userName, notif.getMessage(), notif.isViewed(), notif
-								.getCreatedAt().toString(), notif.getOrigin(),
+								.getCreatedAt(), notif.getOrigin(),
 						notif.getSnippetId()));
 			}
 			tx.commit();

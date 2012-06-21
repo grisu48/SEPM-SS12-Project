@@ -551,6 +551,14 @@ public class SqlPersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getNotification(java.lang.Long)
+	 */
+	@Override
+	public Notification getNotification(Long id) throws IOException {
+		return UserFactory.getNotification(id);
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getNotifications(java.lang.String,
 	 *      boolean)
 	 */

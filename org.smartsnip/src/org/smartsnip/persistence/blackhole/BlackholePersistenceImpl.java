@@ -504,6 +504,16 @@ public class BlackholePersistenceImpl implements IPersistence {
 	}
 
 	/**
+	 * @see org.smartsnip.persistence.IPersistence#getNotification(java.lang.Long)
+	 */
+	@Override
+	public Notification getNotification(Long id) throws IOException {
+		return this.helper.createNotification(1L, staticUser1.getUsername(),
+				"Some obscure things happened.", false, new Date(),
+				"unknown", null);
+	}
+
+	/**
 	 * @see org.smartsnip.persistence.IPersistence#getNotifications(java.lang.String,
 	 *      boolean)
 	 */
@@ -513,7 +523,7 @@ public class BlackholePersistenceImpl implements IPersistence {
 		checkFail();
 		List<Notification> list = new ArrayList<Notification>();
 		Notification not1 = this.helper.createNotification(1L, userName,
-				"Some obscure things happened.", false, "12. 3. 2012, 13.00",
+				"Some obscure things happened.", false, new Date(),
 				"unknown", null);
 		list.add(not1);
 		return list;

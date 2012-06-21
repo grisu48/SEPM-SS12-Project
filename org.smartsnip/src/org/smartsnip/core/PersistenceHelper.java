@@ -85,7 +85,7 @@ public class PersistenceHelper {
 	 * @return an initialized Notification object
 	 */
 	protected Notification createNotification(Long id, String owner,
-			String message, Boolean read, String time, String source,
+			String message, Boolean read, Date time, String source,
 			Long targetSnippet) {
 		return new Notification(id, owner, message, read, time, source,
 				targetSnippet);

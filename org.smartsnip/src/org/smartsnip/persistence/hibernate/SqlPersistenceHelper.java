@@ -70,11 +70,11 @@ public class SqlPersistenceHelper extends PersistenceHelper {
 	/**
 	 * @see org.smartsnip.core.PersistenceHelper#createNotification(java.lang.Long,
 	 *      java.lang.String, java.lang.String, java.lang.Boolean,
-	 *      java.lang.String, java.lang.String, java.lang.Long)
+	 *      java.util.Date, java.lang.String, java.lang.Long)
 	 */
 	@Override
 	protected Notification createNotification(Long id, String owner,
-			String message, Boolean read, String time, String source,
+			String message, Boolean read, Date time, String source,
 			Long targetSnippet) {
 		// Auto-generated method stub
 		return super.createNotification(id, owner, message, read, time, source,

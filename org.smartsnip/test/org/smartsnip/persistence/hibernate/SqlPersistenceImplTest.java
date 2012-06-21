@@ -201,7 +201,7 @@ public class SqlPersistenceImplTest {
 
 		Notification notif = helper
 				.createNotification(1L, user1.getUsername(), "a test notification", false,
-						"now", "source is unknown", snip1.getHashId());
+						new Date(), "source is unknown", snip1.getHashId());
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
 
 		List<Comment> comments = new ArrayList<Comment>();
@@ -428,7 +428,7 @@ public class SqlPersistenceImplTest {
 		Long snipId = instance.writeSnippet(snip, IPersistence.DB_DEFAULT);
 		snip.id = snipId;
 		Notification notif = helper.createNotification(22L, user.getUsername(), "notif",
-				false, "now", "source", snip.getHashId());
+				false, new Date(), "source", snip.getHashId());
 		instance.writeNotification(notif, IPersistence.DB_DEFAULT);
 		System.out.println("Snippet Id = " + snipId);
 	}

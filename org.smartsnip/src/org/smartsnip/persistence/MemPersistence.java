@@ -1098,6 +1098,12 @@ public class MemPersistence implements IPersistence {
 	}
 	
 	@Override
+	public Notification getNotification(Long id) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public void close() throws IOException {
 		this.fail = true;
 	}
