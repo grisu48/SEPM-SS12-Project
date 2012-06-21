@@ -1,13 +1,11 @@
 package org.smartsnip.client;
 
 import org.smartsnip.shared.IModerator;
-import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.XUser;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -48,21 +46,10 @@ public class Meta extends Composite {
 	/** To prevent too much updates we store the current logged in flag */
 	private final boolean loggedInFlag = false;
 
-	private final Timer refresh = new Timer() {
-
-		@Override
-		public void run() {
-			update();
-		}
-	};
-
 	/**
-	 * Initializes the menu
+	 * Initialises the menu
 	 */
 	public Meta() {
-
-		// Add a refresh timer
-		refresh.schedule(5000);
 
 		control = Control.getInstance();
 		pnlUser = new VerticalPanel();
@@ -146,24 +133,7 @@ public class Meta extends Composite {
 
 	/** Update */
 	public void update() {
-		ISession.Util.getInstance().isLoggedIn(new AsyncCallback<Boolean>() {
-
-			@Override
-			public void onSuccess(Boolean result) {
-				if (result == null) {
-					onFailure(new IllegalArgumentException("NUll returned"));
-					return;
-				}
-
-				update(result);
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Possible error handling!
-			}
-		});
-
+		update(Control.getInstance().isLoggedIn());
 	}
 
 	/**
@@ -173,7 +143,7 @@ public class Meta extends Composite {
 	 * @param isLoggedin
 	 *            indicating if the current session is logged in or not
 	 */
-	private void update(final boolean isLoggedin) {
+	void update(final boolean isLoggedin) {
 		changeToolbarVisibility(isLoggedin);
 
 		if (isLoggedin) {
@@ -227,9 +197,6 @@ public class Meta extends Composite {
 	 *            login status
 	 */
 	private void changeToolbarVisibility(final boolean loggedIn) {
-		if (loggedInFlag == loggedIn)
-			return;
-
 		// With the visibility this frak is not working
 		// FRAKKING GWT!!!
 

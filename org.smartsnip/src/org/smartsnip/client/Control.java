@@ -13,6 +13,7 @@ import org.smartsnip.shared.XUser;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -29,6 +30,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * 
  */
 public class Control implements EntryPoint {
+
 	/** Base URL that should be before every resource */
 	public static final String baseURL = getBaseURL();
 
@@ -54,6 +56,18 @@ public class Control implements EntryPoint {
 	public final static ISnippetAsync proxySnippet = ISnippet.Util.getInstance();
 	/** Main GUI distributor */
 	public final static GUI myGUI = GUI.getInstance();
+
+	/** Timer delay for refresh timer */
+	private final int TIMER_DELAY = 2000;
+
+	/** A scheduled timer call for some refreshings */
+	private final Timer scheduledTimer = new Timer() {
+
+		@Override
+		public void run() {
+			timerCall();
+		}
+	};
 
 	private Control() {
 	}
@@ -82,6 +96,9 @@ public class Control implements EntryPoint {
 	 */
 	@Override
 	public void onModuleLoad() {
+		// Actaivate timer
+		scheduledTimer.schedule(TIMER_DELAY);
+
 		proxySession.getSessionCookie(new AsyncCallback<String>() {
 
 			@Override
@@ -523,5 +540,35 @@ public class Control implements EntryPoint {
 		loggedIn = true;
 		myGUI.refreshMeta();
 		myGUI.refresh();
+	}
+
+	/** Scheduled timer call */
+	private void timerCall() {
+		ISession.Util.getInstance().isLoggedIn(new AsyncCallback<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean result) {
+				if (result == null) {
+					onFailure(new IllegalArgumentException("Null returned"));
+					return;
+				}
+
+				Control.this.loggedIn = result;
+				Control.myGUI.myMeta.update(loggedIn);
+				reschedule();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// Ignore
+
+				// But reschedule
+				reschedule();
+			}
+
+			private void reschedule() {
+				scheduledTimer.schedule(TIMER_DELAY);
+			}
+		});
 	}
 }
