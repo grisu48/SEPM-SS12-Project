@@ -6,6 +6,7 @@ import org.smartsnip.shared.ISession;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -24,7 +25,8 @@ public class NotificationIcon extends Composite {
 	private int newNotifications = 0;
 
 	/** Notification image URL */
-	private final String imageURL = Control.baseURL + "/images/notification.png";
+	private final String imageURL_NONEW = Control.baseURL + "/images/notification.png";
+	private final String imageURL_NEW = Control.baseURL + "/images/notification_new.png";
 
 	/** This component is based on a button with text and a image */
 	private final Button btnNotifications;
@@ -32,9 +34,19 @@ public class NotificationIcon extends Composite {
 	/** Root panel of the component */
 	private final Panel rootPanel = new FlowPanel();
 
+	/** Periodical refresh check */
+	Timer refresher = new Timer() {
+
+		@Override
+		public void run() {
+			update();
+		}
+	};
+
 	/** Initialises a new NotififactionIcon */
 	public NotificationIcon() {
 		btnNotifications = new Button("");
+		refresher.schedule(5000); // 5 seconds delay
 
 		btnNotifications.addClickHandler(new ClickHandler() {
 
@@ -46,7 +58,7 @@ public class NotificationIcon extends Composite {
 
 		/* CSS hack, so that we have a button with text and graphics */
 		btnNotifications.setPixelSize(10, 10);
-		DOM.setStyleAttribute(btnNotifications.getElement(), "background", "transparent url('" + imageURL + "')");
+		DOM.setStyleAttribute(btnNotifications.getElement(), "background", "transparent url('" + imageURL_NONEW + "')");
 		DOM.setStyleAttribute(btnNotifications.getElement(), "border", "solid 0px white");
 		DOM.setStyleAttribute(btnNotifications.getElement(), "textAlign", "center");
 		rootPanel.add(btnNotifications);
@@ -85,9 +97,14 @@ public class NotificationIcon extends Composite {
 	 * */
 	private void refreshComponent() {
 		boolean newArrived = (newNotifications > 0);
-		if (newArrived)
+		if (newArrived) {
+			// notification_new.png
 			btnNotifications.setText(newNotifications + "");
-		else
+			DOM.setStyleAttribute(btnNotifications.getElement(), "background", "transparent url('" + imageURL_NEW + "')");
+		} else {
+			// notification.png
 			btnNotifications.setText("");
+			DOM.setStyleAttribute(btnNotifications.getElement(), "background", "transparent url('" + imageURL_NONEW + "')");
+		}
 	}
 }
