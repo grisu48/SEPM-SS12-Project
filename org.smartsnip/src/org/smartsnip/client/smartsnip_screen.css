@@ -618,3 +618,20 @@ height: 80px;
   font-weight: normal;
   font-size: 80%;
 }
+
+
+.enabledToggleButton {
+	padding:10px;
+	margin:10px;
+	background-image:none;
+	background-color:#a9c34a;
+	color:white;
+}
+
+.disabledToggleButton {
+	padding:10px;
+	margin:10px;
+	background-image:none;
+	background-color:#DEE8BA;
+	color:white;
+}

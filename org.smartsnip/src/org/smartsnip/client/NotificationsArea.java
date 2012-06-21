@@ -11,14 +11,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ToggleButton;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * The area for managing notifications
@@ -70,9 +69,9 @@ public class NotificationsArea extends Composite {
 
 				// Set style
 				if (unreadOnly)
-					btnUnreadOnly.setStyleName("btEn");
+					btnUnreadOnly.setStyleName("enabledToggleButton");
 				else
-					btnUnreadOnly.setStyleName("btDis");
+					btnUnreadOnly.setStyleName("disabledToggleButton");
 
 				update();
 			}
@@ -97,6 +96,9 @@ public class NotificationsArea extends Composite {
 
 	private void applyStyles() {
 		lblTitle.setStyleName("h3");
+
+		btnRefresh.setStyleName("enabledToggleButton");
+		btnMarkAllRead.setStyleName("enabledToggleButton");
 	}
 
 	/** Updates the component */

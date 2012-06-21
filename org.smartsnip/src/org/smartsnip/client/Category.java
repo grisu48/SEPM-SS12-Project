@@ -7,6 +7,7 @@ import org.smartsnip.shared.XCategory;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -143,10 +144,15 @@ public abstract class Category extends PopupPanel {
 		fetchCategories();
 	}
 
-	/** Apply styles */
+	/** Apply style properties */
 	private void applyStyles() {
 		lblTitle.setStyleName("h3");
 		setStyleName("contact");
+
+		Window.scrollTo(0, 0);
+		setGlassEnabled(true);
+		setPopupPosition(90, 104);
+		setWidth("250px");
 	}
 
 	/** Closes the popup panel */
