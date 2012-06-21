@@ -137,9 +137,9 @@ public class Comment {
 		if (user == null)
 			return;
 		try {
-			Persistence.instance.votePositive(user, this,
+			Pair<Integer, Integer> votes = Persistence.instance.votePositive(user, this,
 					IPersistence.DB_DEFAULT);
-			updateVotes();
+			updateVotes(votes);
 		} catch (IOException e) {
 			System.err.println("IOException during votePositive("
 					+ user.getUsername() + ") " + e.getMessage());
@@ -158,9 +158,9 @@ public class Comment {
 		if (user == null)
 			return;
 		try {
-			Persistence.instance.voteNegative(user, this,
+			Pair<Integer, Integer> votes = Persistence.instance.voteNegative(user, this,
 					IPersistence.DB_DEFAULT);
-			updateVotes();
+			updateVotes(votes);
 		} catch (IOException e) {
 			System.err.println("IOException during voteNegative("
 					+ user.getUsername() + ") " + e.getMessage());
@@ -180,8 +180,8 @@ public class Comment {
 		if (user == null)
 			return;
 		try {
-			Persistence.instance.unVote(user, this, IPersistence.DB_DEFAULT);
-			updateVotes();
+			Pair<Integer, Integer> votes = Persistence.instance.unVote(user, this, IPersistence.DB_DEFAULT);
+			updateVotes(votes);
 		} catch (IOException e) {
 			System.err.println("IOException during unvote("
 					+ user.getUsername() + ") " + e.getMessage());
@@ -193,7 +193,7 @@ public class Comment {
 	 * @return the negative votes of the comment
 	 */
 	public synchronized int getNegativeVotes() {
-		updateVotes();
+//		updateVotes(); // no update at this position
 		return lemons;
 	}
 
@@ -201,7 +201,7 @@ public class Comment {
 	 * @return the positive votes of the comment
 	 */
 	public synchronized int getPositiveVotes() {
-		updateVotes();
+//		updateVotes(); // no update at this position
 		return chocolates;
 	}
 
@@ -209,7 +209,7 @@ public class Comment {
 	 * @return the total votes of the comment
 	 */
 	public synchronized int getTotalVotes() {
-		updateVotes();
+//		updateVotes(); // no update at this position
 		return lemons + chocolates;
 	}
 
@@ -314,7 +314,16 @@ public class Comment {
 			e.printStackTrace(System.err);
 		}
 	}
-
+	
+	/** 
+	 * Updates the votes
+	 * @param votes the votes returned from the write methods
+	 */
+	private void updateVotes(Pair<Integer, Integer> votes) {
+		this.chocolates = votes.first;
+		this.lemons = votes.second;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null)

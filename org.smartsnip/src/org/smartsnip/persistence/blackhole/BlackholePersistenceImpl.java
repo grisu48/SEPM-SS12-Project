@@ -265,10 +265,11 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeVote(Integer vote, Comment comment, User user, int flags)
+	public Pair<Integer, Integer> writeVote(Integer vote, Comment comment, User user, int flags)
 			throws IOException {
 		checkFail();
 		// do nothing -> data vanish in the black hole!
+		return getVotes(comment);
 	}
 
 	/**
@@ -276,10 +277,11 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void votePositive(User user, Comment comment, int flags)
+	public Pair<Integer, Integer> votePositive(User user, Comment comment, int flags)
 			throws IOException {
 		checkFail();
 		// do nothing -> data vanish in the black hole!
+		return getVotes(comment);
 	}
 
 	/**
@@ -287,10 +289,11 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void voteNegative(User user, Comment comment, int flags)
+	public Pair<Integer, Integer> voteNegative(User user, Comment comment, int flags)
 			throws IOException {
 		checkFail();
 		// do nothing -> data vanish in the black hole!
+		return getVotes(comment);
 	}
 
 	/**
@@ -298,10 +301,11 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void unVote(User user, Comment comment, int flags)
+	public Pair<Integer, Integer> unVote(User user, Comment comment, int flags)
 			throws IOException {
 		checkFail();
 		// do nothing -> data vanish in the black hole!
+		return getVotes(comment);
 	}
 
 	/**

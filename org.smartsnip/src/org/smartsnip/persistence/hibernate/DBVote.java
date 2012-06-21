@@ -87,15 +87,28 @@ public class DBVote {
 		/**
 		 * The value of the vote: not set
 		 */
-		none,
+		none(0),
 		/**
 		 * The value of the vote: negative vote
 		 */
-		negative,
+		negative(-1),
 		/**
 		 * The value of the vote: positive vote
 		 */
-		positive
+		positive(+1);
+		
+		private int value;
+		
+		private Vote(int value) {
+			this.value = value;
+		}
+		
+		/**
+		 * @return the value
+		 */
+		public int getValue() {
+			return this.value;
+		}
 	}
 
 	/**

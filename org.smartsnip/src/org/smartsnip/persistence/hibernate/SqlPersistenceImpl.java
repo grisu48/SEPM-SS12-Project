@@ -240,9 +240,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeVote(Integer vote, Comment comment, User user, int flags)
+	public Pair<Integer, Integer> writeVote(Integer vote, Comment comment, User user, int flags)
 			throws IOException {
-		CommentFactory.writeVote(vote, comment, user, flags);
+		return CommentFactory.writeVote(vote, comment, user, flags);
 	}
 
 	/**
@@ -250,9 +250,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void votePositive(User user, Comment comment, int flags)
+	public Pair<Integer, Integer> votePositive(User user, Comment comment, int flags)
 			throws IOException {
-		CommentFactory.votePositive(user, comment, flags);
+		return CommentFactory.votePositive(user, comment, flags);
 	}
 
 	/**
@@ -260,9 +260,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void voteNegative(User user, Comment comment, int flags)
+	public Pair<Integer, Integer> voteNegative(User user, Comment comment, int flags)
 			throws IOException {
-		CommentFactory.voteNegative(user, comment, flags);
+		return CommentFactory.voteNegative(user, comment, flags);
 	}
 
 	/**
@@ -270,9 +270,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Comment, int)
 	 */
 	@Override
-	public void unVote(User user, Comment comment, int flags)
+	public Pair<Integer, Integer> unVote(User user, Comment comment, int flags)
 			throws IOException {
-		CommentFactory.unVote(user, comment, flags);
+		return CommentFactory.unVote(user, comment, flags);
 	}
 
 	/**

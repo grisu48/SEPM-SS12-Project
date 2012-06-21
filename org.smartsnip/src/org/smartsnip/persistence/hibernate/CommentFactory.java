@@ -118,28 +118,57 @@ public class CommentFactory {
 	 * @param comment
 	 * @param user
 	 * @param flags
+	 * @return a pair of numbers representing the positive and negative votes
 	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeVote(java.lang.Integer,
 	 *      org.smartsnip.core.Comment, org.smartsnip.core.User, int)
 	 */
-	static void writeVote(Integer vote, Comment comment, User user, int flags)
-			throws IOException {
+	static Pair<Integer, Integer> writeVote(Integer vote, Comment comment,
+			User user, int flags) throws IOException {
 		Session session = DBSessionFactory.open();
+		Integer posVotes;
+		Integer negVotes;
 
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
 
+			// fetch old votes before trigger updates them
+			DBComment dbComment = fetchComment(comment.getHashID(), session);
+			posVotes = dbComment.getPosVotes();
+			negVotes = dbComment.getNegVotes();
+
+			DBQuery query = new DBQuery(session);
 			DBVote entity = new DBVote();
 
 			entity.setVoteId(comment.getHashID(), user.getUsername());
+			DBVote.Vote prevValue = (DBVote.Vote) query.selectSingle(entity,
+					"vote", DBQuery.QUERY_CACHEABLE | DBQuery.QUERY_NULLABLE
+							| DBQuery.QUERY_UNIQUE_RESULT);
+			if (prevValue != null) {
+				switch (prevValue) {
+				case positive:
+					posVotes--;
+					break;
+				case negative:
+					negVotes--;
+					break;
+				default:
+					// do nothing
+					break;
+				}
+			}
+
+			// write new vote
+			query.reset();
 			DBVote.Vote dbVote = DBVote.Vote.none;
 			if (vote > 0) {
 				dbVote = DBVote.Vote.positive;
+				posVotes++;
 			}
 			if (vote < 0) {
 				dbVote = DBVote.Vote.negative;
+				negVotes++;
 			}
 			entity.setVote(dbVote);
 
@@ -152,6 +181,7 @@ public class CommentFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
+		return new Pair<Integer, Integer>(posVotes, negVotes);
 	}
 
 	/**
@@ -160,22 +190,50 @@ public class CommentFactory {
 	 * @param user
 	 * @param comment
 	 * @param flags
+	 * @return a pair of numbers representing the positive and negative votes
 	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#votePositive(org.smartsnip.core.User,
 	 *      org.smartsnip.core.Comment, int)
 	 */
-	static void votePositive(User user, Comment comment, int flags)
-			throws IOException {
+	static Pair<Integer, Integer> votePositive(User user, Comment comment,
+			int flags) throws IOException {
 		Session session = DBSessionFactory.open();
+		Integer posVotes;
+		Integer negVotes;
 
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
+
+			// fetch old votes before trigger updates them
+			DBComment dbComment = fetchComment(comment.getHashID(), session);
+			posVotes = dbComment.getPosVotes();
+			negVotes = dbComment.getNegVotes();
+
 			DBQuery query = new DBQuery(session);
 
 			DBVote entity = new DBVote();
 
 			entity.setVoteId(comment.getHashID(), user.getUsername());
+			DBVote.Vote prevValue = (DBVote.Vote) query.selectSingle(entity,
+					"vote", DBQuery.QUERY_CACHEABLE | DBQuery.QUERY_NULLABLE
+							| DBQuery.QUERY_UNIQUE_RESULT);
+			if (prevValue != null) {
+				switch (prevValue) {
+				case positive:
+					posVotes--;
+					break;
+				case negative:
+					negVotes--;
+					break;
+				default:
+					// do nothing
+					break;
+				}
+			}
+
+			// write new vote
+			query.reset();
 			entity.setVote(DBVote.Vote.positive);
 
 			query.write(entity, flags);
@@ -187,6 +245,7 @@ public class CommentFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
+		return new Pair<Integer, Integer>(posVotes, negVotes);
 	}
 
 	/**
@@ -195,22 +254,50 @@ public class CommentFactory {
 	 * @param user
 	 * @param comment
 	 * @param flags
+	 * @return a pair of numbers representing the positive and negative votes
 	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#voteNegative(org.smartsnip.core.User,
 	 *      org.smartsnip.core.Comment, int)
 	 */
-	static void voteNegative(User user, Comment comment, int flags)
-			throws IOException {
+	static Pair<Integer, Integer> voteNegative(User user, Comment comment,
+			int flags) throws IOException {
 		Session session = DBSessionFactory.open();
+		Integer posVotes;
+		Integer negVotes;
 
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
+
+			// fetch old votes before trigger updates them
+			DBComment dbComment = fetchComment(comment.getHashID(), session);
+			posVotes = dbComment.getPosVotes();
+			negVotes = dbComment.getNegVotes();
+
 			DBQuery query = new DBQuery(session);
 
 			DBVote entity = new DBVote();
 
 			entity.setVoteId(comment.getHashID(), user.getUsername());
+			DBVote.Vote prevValue = (DBVote.Vote) query.selectSingle(entity,
+					"vote", DBQuery.QUERY_CACHEABLE | DBQuery.QUERY_NULLABLE
+							| DBQuery.QUERY_UNIQUE_RESULT);
+			if (prevValue != null) {
+				switch (prevValue) {
+				case positive:
+					posVotes--;
+					break;
+				case negative:
+					negVotes--;
+					break;
+				default:
+					// do nothing
+					break;
+				}
+			}
+
+			// write new vote
+			query.reset();
 			entity.setVote(DBVote.Vote.negative);
 
 			query.write(entity, flags);
@@ -222,6 +309,7 @@ public class CommentFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
+		return new Pair<Integer, Integer>(posVotes, negVotes);
 	}
 
 	/**
@@ -230,21 +318,49 @@ public class CommentFactory {
 	 * @param user
 	 * @param comment
 	 * @param flags
+	 * @return a pair of numbers representing the positive and negative votes
 	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#unVote(org.smartsnip.core.User,
 	 *      org.smartsnip.core.Comment, int)
 	 */
-	static void unVote(User user, Comment comment, int flags)
+	static Pair<Integer, Integer> unVote(User user, Comment comment, int flags)
 			throws IOException {
 		Session session = DBSessionFactory.open();
+		Integer posVotes;
+		Integer negVotes;
 
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
+
+			// fetch old votes before trigger updates them
+			DBComment dbComment = fetchComment(comment.getHashID(), session);
+			posVotes = dbComment.getPosVotes();
+			negVotes = dbComment.getNegVotes();
+
 			DBQuery query = new DBQuery(session);
 
 			DBVote entity = new DBVote();
 			entity.setVoteId(comment.getHashID(), user.getUsername());
+			DBVote.Vote prevValue = (DBVote.Vote) query.selectSingle(entity,
+					"vote", DBQuery.QUERY_CACHEABLE | DBQuery.QUERY_NULLABLE
+							| DBQuery.QUERY_UNIQUE_RESULT);
+			if (prevValue != null) {
+				switch (prevValue) {
+				case positive:
+					posVotes--;
+					break;
+				case negative:
+					negVotes--;
+					break;
+				default:
+					// do nothing
+					break;
+				}
+			}
+
+			// remove vote
+			query.reset();
 
 			query.remove(entity, flags);
 			tx.commit();
@@ -255,6 +371,7 @@ public class CommentFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
+		return new Pair<Integer, Integer>(posVotes, negVotes);
 	}
 
 	/**
@@ -368,11 +485,7 @@ public class CommentFactory {
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
-			DBQuery query = new DBQuery(session);
-
-			entity = new DBComment();
-			entity.setCommentId(comment.getHashID());
-			entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+			entity = fetchComment(comment.getHashID(), session);
 
 			tx.commit();
 		} catch (RuntimeException e) {
@@ -476,5 +589,24 @@ public class CommentFactory {
 			result.add(iterator.next().getCommentId());
 		}
 		return result;
+	}
+
+	/**
+	 * Helper method to fetch a comment by it's Id
+	 * 
+	 * @param commentId
+	 *            the id of the comment as source of the code
+	 * @param session
+	 *            the session in which the query is to execute
+	 * @return the comment
+	 */
+	private static DBComment fetchComment(Long commentId, Session session) {
+		DBComment entity;
+		DBQuery query = new DBQuery(session);
+
+		entity = new DBComment();
+		entity.setCommentId(commentId);
+		entity = query.fromSingle(entity, DBQuery.QUERY_NOT_NULL);
+		return entity;
 	}
 }

@@ -304,11 +304,11 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeVote(Integer vote, Comment comment, User user, int mode)
+	public Pair<Integer, Integer> writeVote(Integer vote, Comment comment, User user, int mode)
 			throws IOException {
 		checkFail();
 		if (vote == null || comment == null || user == null)
-			return;
+			return null;
 
 		HashMap<User, Integer> list = votings.get(comment);
 		if (list == null) {
@@ -316,27 +316,30 @@ public class MemPersistence implements IPersistence {
 			votings.put(comment, list);
 		}
 		list.put(user, vote);
-
+		return getVotes(comment);
 	}
 
 	@Override
-	public void votePositive(User user, Comment comment, int mode)
+	public Pair<Integer, Integer> votePositive(User user, Comment comment, int mode)
 			throws IOException {
 		checkFail();
 		writeVote(+1, comment, user, mode);
+		return getVotes(comment);
 	}
 
 	@Override
-	public void voteNegative(User user, Comment comment, int mode)
+	public Pair<Integer, Integer> voteNegative(User user, Comment comment, int mode)
 			throws IOException {
 		checkFail();
 		writeVote(-1, comment, user, mode);
+		return getVotes(comment);
 	}
 
 	@Override
-	public void unVote(User user, Comment comment, int mode) throws IOException {
+	public Pair<Integer, Integer> unVote(User user, Comment comment, int mode) throws IOException {
 		checkFail();
 		writeVote(0, comment, user, mode);
+		return getVotes(comment);
 	}
 
 	@Override

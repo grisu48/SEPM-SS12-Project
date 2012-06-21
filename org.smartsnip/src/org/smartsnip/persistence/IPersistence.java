@@ -505,12 +505,14 @@ public interface IPersistence {
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a bitwise or connection.
-	 * TODO @return the actual value of Comment.vote_sum
+	 * @return the actual values of the votes<br>
+	 *         The first parameter gives the positive votes, the seconds
+	 *         parameter of the pair gives the number of negative votes.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeVote(Integer vote, Comment comment, User user, int flags)
-			throws IOException;
+	public Pair<Integer, Integer> writeVote(Integer vote, Comment comment,
+			User user, int flags) throws IOException;
 
 	/**
 	 * Persist a positive vote. This operation updates an existing vote if the
@@ -524,12 +526,14 @@ public interface IPersistence {
 	 *            the comment to vote for
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
-	 *            can be added by a bitwise or connection.
-	 * TODO @return the actual value of {@code Comment.vote_sum}
+	 *            can be added by a bitwise or connection. 
+	 * @return the actual values of the votes<br>
+	 *         The first parameter gives the positive votes, the seconds
+	 *         parameter of the pair gives the number of negative votes.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void votePositive(User user, Comment comment, int flags)
+	public Pair<Integer, Integer> votePositive(User user, Comment comment, int flags)
 			throws IOException;
 
 	/**
@@ -545,11 +549,13 @@ public interface IPersistence {
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a bitwise or connection.
-	 * TODO @return the actual value of Comment.vote_sum
+	 * @return the actual values of the votes<br>
+	 *         The first parameter gives the positive votes, the seconds
+	 *         parameter of the pair gives the number of negative votes.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void voteNegative(User user, Comment comment, int flags)
+	public Pair<Integer, Integer> voteNegative(User user, Comment comment, int flags)
 			throws IOException;
 
 	/**
@@ -566,10 +572,13 @@ public interface IPersistence {
 	 *            {@link #DB_NO_DELETE} which sets the vote to 'none'. To force
 	 *            the removal the rating entry set the {@link #DB_FORCE_DELETE}
 	 *            flag.
+	 * @return the actual values of the votes<br>
+	 *         The first parameter gives the positive votes, the seconds
+	 *         parameter of the pair gives the number of negative votes.
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void unVote(User user, Comment comment, int flags)
+	public Pair<Integer, Integer> unVote(User user, Comment comment, int flags)
 			throws IOException;
 
 	/**
