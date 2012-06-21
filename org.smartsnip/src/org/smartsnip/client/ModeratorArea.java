@@ -167,7 +167,7 @@ public class ModeratorArea extends Composite {
 		pnlVertSessions.clear();
 		pnlVertSessions.add(lblSessions);
 
-		IModerator.Util.getInstance().getSessions(new AsyncCallback<List<XSession>>() {
+		IAdministrator.Util.getInstance().getSessions(new AsyncCallback<List<XSession>>() {
 
 			/** Guest session counter for createSessionPanel(XSession) */
 			int guest = 0;
@@ -219,7 +219,7 @@ public class ModeratorArea extends Composite {
 					public void onClick(ClickEvent event) {
 						btnClose.setEnabled(false);
 						lblStatus.setText("Closing ... ");
-						IModerator.Util.getInstance().closeSession(session.key, new AsyncCallback<Void>() {
+						IAdministrator.Util.getInstance().closeSession(session.key, new AsyncCallback<Void>() {
 
 							@Override
 							public void onSuccess(Void result) {
@@ -418,7 +418,7 @@ public class ModeratorArea extends Composite {
 							return;
 						}
 
-						// TODO Implement me
+						User.showChangePasswordPopup(user.username);
 					}
 				});
 				lstState.addChangeHandler(new ChangeHandler() {

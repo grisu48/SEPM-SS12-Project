@@ -1,5 +1,7 @@
 package org.smartsnip.shared;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -13,8 +15,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * @author Felix Niederwanger
  */
 @RemoteServiceRelativePath("administrator")
-public interface IAdministrator extends RemoteService, IsSerializable,
-		IModerator {
+public interface IAdministrator extends RemoteService, IsSerializable, IModerator {
 
 	/** This class provides easy access to the proxy object */
 	public static class Util {
@@ -48,8 +49,7 @@ public interface IAdministrator extends RemoteService, IsSerializable,
 	 * @throws NoAccessException
 	 *             If the access is denied by the server
 	 */
-	public void setPassword(String username, String password)
-			throws NotFoundException, NoAccessException;
+	public void setPassword(String username, String password) throws NotFoundException, NoAccessException;
 
 	/**
 	 * Delete a user from the system
@@ -61,6 +61,24 @@ public interface IAdministrator extends RemoteService, IsSerializable,
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	void deleteUser(String username) throws NotFoundException,
-			NoAccessException;
+	void deleteUser(String username) throws NotFoundException, NoAccessException;
+
+	/**
+	 * @return Gets a list of all sessions
+	 * @throws NoAccessException
+	 *             Thrown, if the access is denied
+	 */
+	public List<XSession> getSessions() throws NoAccessException;
+
+	/**
+	 * Closes a session identified by a key
+	 * 
+	 * @param key
+	 *            of the session to be closed
+	 * @throws NotFoundException
+	 *             Thrown if the session key is not found
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
+	 */
+	public void closeSession(String key) throws NotFoundException, NoAccessException;
 }
