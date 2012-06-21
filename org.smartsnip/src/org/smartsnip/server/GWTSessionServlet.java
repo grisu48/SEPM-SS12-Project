@@ -135,8 +135,7 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 			session = Session.createNewSession();
 			cookie = new Cookie(ISession.cookie_Session_ID, session.getCookie());
 			addCookie(cookie);
-			Logging.printInfo("New Session (SID=" + cookie
-					+ ") attached. Host: " + getRemoteHost());
+			Logging.printInfo("New Session (SID=" + cookie + ") attached. Host: " + getRemoteHost());
 		} else {
 			/** TODO: Check handling if cookies are disabled in browser */
 			String sid = cookie.getValue();
@@ -184,8 +183,7 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 			if (user.equalsIgnoreCase("guest"))
 				Logging.printInfo("(SID=" + cookie + "): " + message);
 			else
-				Logging.printInfo("(SID=" + cookie + ", USER=" + user + "): "
-						+ message);
+				Logging.printInfo("(SID=" + cookie + ", USER=" + user + "): " + message);
 		}
 	}
 
@@ -208,8 +206,7 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 			if (user.equalsIgnoreCase("guest"))
 				Logging.printError("(SID=" + cookie + "): " + message);
 			else
-				Logging.printError("(SID=" + cookie + ", USER=" + user + "): "
-						+ message);
+				Logging.printError("(SID=" + cookie + ", USER=" + user + "): " + message);
 		}
 	}
 
@@ -291,8 +288,7 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 	 *            User to be used
 	 * @return the converted {@link XSnippet} object
 	 */
-	private final XSnippet toXSnippet(Snippet snippet, Session session,
-			User user) {
+	private final XSnippet toXSnippet(Snippet snippet, Session session, User user) {
 		if (snippet == null)
 			return null;
 
@@ -305,14 +301,50 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 		} else {
 			result.isFavorite = user.isFavourite(snippet);
 			result.myRating = user.getSnippetRating(snippet.getHashId());
-			result.isOwn = user.getUsername().equalsIgnoreCase(
-					snippet.getOwnerUsername());
+			result.isOwn = user.getUsername().equalsIgnoreCase(snippet.getOwnerUsername());
 		}
 		result.canRate = session.getPolicy().canRateSnippet(session, snippet);
-		result.canDelete = session.getPolicy().canDeleteSnippet(session,
-				snippet);
+		result.canDelete = session.getPolicy().canDeleteSnippet(session, snippet);
 		result.canEdit = session.getPolicy().canEditSnippet(session, snippet);
 
 		return result;
+	}
+
+	/**
+	 * Send a notification to a user
+	 * 
+	 * @param username
+	 *            Username for the receiver
+	 * @param message
+	 *            Message
+	 */
+	protected final void notifyUser(String username, String message) {
+		notifyUser(username, message, "System");
+	}
+
+	/**
+	 * Send a notification to a user
+	 * 
+	 * @param username
+	 *            Username for the receiver
+	 * @param message
+	 *            Message
+	 * @param source
+	 *            Notification source
+	 */
+	protected final void notifyUser(String username, String message, String source) {
+		if (username == null || username.isEmpty())
+			return;
+		if (message == null || message.isEmpty())
+			return;
+		if (source == null || source.isEmpty())
+			source = "System";
+
+		User user = User.getUser(username);
+		if (user == null)
+			return;
+
+		user.createNotification(message, source);
+
 	}
 }
