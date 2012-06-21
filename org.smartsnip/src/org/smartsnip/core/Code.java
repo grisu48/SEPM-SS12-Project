@@ -265,7 +265,7 @@ public abstract class Code {
 			return;
 
 		try {
-			Persistence.instance.writeCode(code, IPersistence.DB_NEW_ONLY);
+			code.id = Persistence.instance.writeCode(code, IPersistence.DB_NEW_ONLY);
 		} catch (IOException e) {
 			System.err.println("IOException writing out code object with id=" + code.getHashID() + ": " + e.getMessage());
 			e.printStackTrace(System.err);
