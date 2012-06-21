@@ -40,14 +40,8 @@ public class User {
 	/** Timestamp of the user's last login */
 	private Date lastLogin = null;
 
-	/** Caches favourite snippets */
-	private List<Snippet> favourites = null;
-
 	/** The logger for this class */
 	private static Logger log = Logger.getLogger(User.class);
-
-	/** List of all notifications of the user, or null, if not yet loaded */
-	private transient List<Notification> notifications = null;
 
 	/**
 	 * Determines the status of the user, currently if the user has been
@@ -270,7 +264,6 @@ public class User {
 		// Create notification for this process
 		String stateString = state.toString();
 		Notification.createNotification("Your userstate is set to: " + stateString, getUsername());
-		notifications = null; // Needs refresh
 
 		refreshDB();
 	}
@@ -464,9 +457,6 @@ public class User {
 	 * @return a list of the users' favourite snippets
 	 */
 	public synchronized List<Snippet> getFavoriteSnippets() {
-		if (favourites != null)
-			return favourites;
-
 		List<Snippet> result = null;
 		try {
 			result = new ArrayList<Snippet>(Persistence.getInstance().getFavorited(this));
@@ -474,7 +464,6 @@ public class User {
 			log.warn("IOException during getting favorites for user \"" + getUsername() + "\": " + e.getMessage(), e);
 		}
 
-		favourites = result;
 		return result;
 
 	}
@@ -553,7 +542,6 @@ public class User {
 
 		try {
 			Persistence.getInstance().addFavourite(snippet, this, IPersistence.DB_NEW_ONLY);
-			favourites = Persistence.getInstance().getFavorited(this);
 		} catch (IOException e) {
 			log.warn(
 					"IOException writing favorite snippet (id=" + snippet.getHashId() + ") for user \"" + username + "\": "
@@ -574,7 +562,6 @@ public class User {
 
 		try {
 			Persistence.getInstance().removeFavourite(snippet, this, IPersistence.DB_NEW_ONLY);
-			favourites = Persistence.getInstance().getFavorited(this);
 		} catch (IOException e) {
 			log.warn(
 					"IOException writing favorite snippet (id=" + snippet.getHashId() + ") for user \"" + username + "\": "
@@ -747,7 +734,9 @@ public class User {
 	 * @return all notifications of the user
 	 */
 	public synchronized List<Notification> getNotifications(boolean unreadOnly) {
-		List<Notification> notifications = getNotificationsFromCache();
+		List<Notification> notifications = getNotifications();
+		if (notifications == null)
+			return null; // Something went wrong ...
 		if (!unreadOnly)
 			return notifications;
 
@@ -759,15 +748,12 @@ public class User {
 	}
 
 	/**
-	 * Gets the notifications out of the cache, if there or loads the
-	 * notifiactions into it
+	 * Loads all notifications for this user
 	 * 
 	 * @return the notifications
 	 */
-	private List<Notification> getNotificationsFromCache() {
-		if (notifications != null)
-			return notifications;
-
+	private List<Notification> getNotifications() {
+		final List<Notification> notifications;
 		try {
 			notifications = Persistence.getInstance().getNotifications(this.username, false);
 		} catch (IOException e) {
