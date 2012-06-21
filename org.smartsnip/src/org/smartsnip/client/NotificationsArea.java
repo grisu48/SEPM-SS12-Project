@@ -138,7 +138,7 @@ public class NotificationsArea extends Composite {
 
 				final Label lblMessage = new Label(notification.message);
 				final Label lblSource = new Label(notification.source);
-				final Label lblTime = new Label(notification.time);
+				final Label lblTime = new Label(notification.time.toLocaleString());
 				final Anchor anchSnippet;
 				final Button btnMarkRead = new Button(notification.read ? "Mark unread" : "Mark read");
 
