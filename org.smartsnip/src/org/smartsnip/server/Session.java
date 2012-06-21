@@ -1,7 +1,6 @@
 package org.smartsnip.server;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -294,6 +293,7 @@ public class Session {
 		synchronized (obfuscatedSessions) {
 			String obfuscated = assignNewObfuscatedKey();
 			newSession = new Session(cookie, obfuscated);
+			obfuscatedSessions.put(obfuscated, newSession);
 		}
 		synchronized (storedSessions) {
 			storedSessions.put(cookie, newSession);

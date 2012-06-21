@@ -53,7 +53,7 @@ public class IAdministratorImpl extends IModeratorImpl implements IAdministrator
 		User user = session.getUser();
 		if (user == null || !session.isLoggedIn())
 			throw new NoAccessException();
-		if (!user.isModerator())
+		if (!user.isAdministrator())
 			throw new NoAccessException();
 
 		List<Session> sessions = Session.getSessions();
@@ -73,7 +73,7 @@ public class IAdministratorImpl extends IModeratorImpl implements IAdministrator
 		User user = session.getUser();
 		if (user == null || !session.isLoggedIn())
 			throw new NoAccessException();
-		if (!user.isModerator())
+		if (!user.isAdministrator())
 			throw new NoAccessException();
 
 		Session targetSession = Session.getObfuscatedSession(key);

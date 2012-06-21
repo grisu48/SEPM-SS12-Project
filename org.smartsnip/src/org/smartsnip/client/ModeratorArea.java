@@ -366,7 +366,7 @@ public class ModeratorArea extends Composite {
 					lblLastLogin = new Label((user.lastLoginTime == null ? "Not yet logged in" : user.lastLoginTime.toString()));
 				final Button btnDelete = new Button("Delete");
 				final ListBox lstState = new ListBox();
-				fillListBoxWithUserStates(lstState);
+				fillListBoxWithUserStates(lstState, user.state);
 				final Button btnSetPassword = new Button("Set password");
 				btnDelete.setVisible(amIAdmin);
 				btnSetPassword.setVisible(amIAdmin);
@@ -421,6 +421,7 @@ public class ModeratorArea extends Composite {
 						User.showChangePasswordPopup(user.username);
 					}
 				});
+				// This MUST be applied after fillListBoxWithUserStates!!
 				lstState.addChangeHandler(new ChangeHandler() {
 
 					@Override
@@ -454,8 +455,15 @@ public class ModeratorArea extends Composite {
 
 			}
 
-			/** Fills a listbox with user states */
-			private void fillListBoxWithUserStates(ListBox listbox) {
+			/**
+			 * Fills a listbox with user states
+			 * 
+			 * @param listbox
+			 *            box to be filles
+			 * @param state
+			 *            Default userstate
+			 * */
+			private void fillListBoxWithUserStates(ListBox listbox, XUser.UserState state) {
 				if (listbox == null)
 					return;
 				listbox.addItem(UserState2String(UserState.unvalidated)); // 0
@@ -463,6 +471,24 @@ public class ModeratorArea extends Composite {
 				listbox.addItem(UserState2String(UserState.moderator)); // 2
 				listbox.addItem(UserState2String(UserState.administrator)); // 3
 				listbox.addItem(UserState2String(UserState.deleted)); // 4
+
+				switch (state) {
+				case unvalidated:
+					listbox.setSelectedIndex(0);
+					break;
+				case validated:
+					listbox.setSelectedIndex(1);
+					break;
+				case moderator:
+					listbox.setSelectedIndex(2);
+					break;
+				case administrator:
+					listbox.setSelectedIndex(3);
+					break;
+				case deleted:
+					listbox.setSelectedIndex(4);
+					break;
+				}
 			}
 
 			private String UserState2String(XUser.UserState state) {
