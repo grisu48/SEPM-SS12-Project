@@ -70,6 +70,7 @@ public class Snippet {
 	 *            of the new snippet. Must not be null
 	 * @param viewcount
 	 *            of the new snippet. If less than zero, will be set to zero
+	 * @param averageRating the average of all ratings
 	 * @throws IllegalArgumentException
 	 *             Thrown, if at least one of the arguments is null or empty
 	 */
@@ -422,10 +423,10 @@ public class Snippet {
 
 		// XXX Seems to be a database error ...
 		// TODO: @Gerhard: Check tthis ous.
-		Snippet TEST = Snippet.getSnippet(this.id);
-		if (TEST.viewcount != viewcount) {
+		Snippet refreshed = Snippet.getSnippet(this.id);
+		if (refreshed.viewcount != viewcount) {
 			// XXX Should NOT happen, but unfortunately this happens ...
-			System.err.println("DB ERROR");
+			System.err.println("DB ERROR (refreshed.viewcount = " + refreshed.viewcount + ", this.viewcount = " + viewcount);
 		}
 	}
 

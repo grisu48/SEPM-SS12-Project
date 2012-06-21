@@ -63,7 +63,7 @@ public class SnippetFactory {
 			entity.setSnippetId(snippet.getHashId()); // snippetId is read-only
 			entity.setHeadline(snippet.getName());
 			entity.setDescription(snippet.getDescription());
-			// viewCount is read-only
+			entity.setViewcount(snippet.getViewcount());
 			// lastEdited is read-only
 			entity.setOwner(snippet.getOwnerUsername());
 			entity.setCategoryId(CategoryFactory
@@ -131,7 +131,7 @@ public class SnippetFactory {
 				// snippetId is read-only
 				entity.setHeadline(snippet.getName());
 				entity.setDescription(snippet.getDescription());
-				// viewCount is read-only
+				entity.setViewcount(snippet.getViewcount());
 				// lastEdited is read-only
 				entity.setOwner(snippet.getOwnerUsername());
 				entity.setCategoryId(new Long(snippet.getCategory().hashCode()));
