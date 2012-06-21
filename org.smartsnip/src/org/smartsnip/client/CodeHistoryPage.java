@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -193,9 +194,43 @@ public class CodeHistoryPage extends Composite {
 	}
 
 	/** When a code object is selected */
-	private void selectCode(XCode code) {
+	private void selectCode(final XCode code) {
 		codePanel.clear();
 		this.highligter = new PrettyPrint(code);
+
+		final Label lblTitle = new Label("Displaying code version: " + code.version);
+
+		codePanel.add(lblTitle);
 		codePanel.add(highligter);
+
+		final Button btnSetCurrent = new Button("Set as current code");
+		btnSetCurrent.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				btnSetCurrent.setEnabled(false);
+				btnSetCurrent.setText("Setting current version ...");
+				lblStatus.setText("Setting current version ...");
+
+				ISnippet.Util.getInstance().editCode(code.snippetId, code.code, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						lblStatus.setText("Failed setting current code: " + caught.getMessage());
+						btnSetCurrent.setEnabled(true);
+						btnSetCurrent.setText("Retry set ad current code");
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						btnSetCurrent.setText("Set as current code");
+						lblStatus.setText("Current code set");
+						update();
+					}
+				});
+			}
+		});
+
+		codePanel.add(btnSetCurrent);
 	}
 }
