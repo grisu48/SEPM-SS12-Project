@@ -250,4 +250,17 @@ public class PrivilegeController {
 	public static IAccessPolicy getGuestAccessPolicty() {
 		return guestAccessPolicy;
 	}
+
+	/**
+	 * Checks if a password is secure enought
+	 * 
+	 * @param password
+	 *            to be checked
+	 * @return true if secured enought false if considered harmfull
+	 */
+	public static boolean acceptPassword(String password) {
+		if (password == null)
+			return false;
+		return password.length() > 3;
+	}
 }
