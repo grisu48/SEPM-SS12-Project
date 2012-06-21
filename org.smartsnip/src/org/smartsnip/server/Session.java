@@ -7,6 +7,7 @@ import java.util.Random;
 
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Comment;
+import org.smartsnip.core.Logging;
 import org.smartsnip.core.Persistence;
 import org.smartsnip.core.Search;
 import org.smartsnip.core.Snippet;
@@ -298,6 +299,8 @@ public class Session {
 		synchronized (storedSessions) {
 			storedSessions.put(cookie, newSession);
 		}
+		Logging.printInfo("Creating a new session for Cookie " + cookie + ". Welcome aboard. Having currently " + getActiveSessionCount()
+				+ " running sessions");
 		return newSession;
 	}
 
