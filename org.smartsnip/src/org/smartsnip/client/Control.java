@@ -31,6 +31,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class Control implements EntryPoint {
 
+	/**
+	 * Path where the application is deployed, used only if not in development
+	 * mode
+	 */
+	private static final String DEPLOY_PATH = "/Org_smartsnip";
+	// private static final String DEPLOY_PATH = "/";
+
 	/** Base URL that should be before every resource */
 	public static final String baseURL = getBaseURL();
 
@@ -501,18 +508,20 @@ public class Control implements EntryPoint {
 	private static String getBaseURL() {
 		if (isDevelopmentMode())
 			return "";
-		String full = GWT.getModuleBaseURL();
-		String host = GWT.getHostPageBaseURL();
-		if (host.equals(full))
-			return host;
-
-		String url = full.substring(host.length());
-		if (url == "/" || url.isEmpty())
-			return "";
-		if (url.startsWith("/"))
-			url = url.substring(1);
-
-		return url;
+		else
+			return DEPLOY_PATH;
+		// String full = GWT.getModuleBaseURL();
+		// String host = GWT.getHostPageBaseURL();
+		// if (host.equals(full))
+		// return host;
+		//
+		// String url = full.substring(host.length());
+		// if (url == "/" || url.isEmpty())
+		// return "";
+		// if (url.startsWith("/"))
+		// url = url.substring(1);
+		//
+		// return url;
 	}
 
 	/**
