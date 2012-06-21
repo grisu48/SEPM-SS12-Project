@@ -14,6 +14,7 @@ public class XUser implements IsSerializable {
 	public String email;
 	public Date lastLoginTime;
 	public UserState state;
+	public boolean isLoggedIn;
 
 	public XUser() {
 
