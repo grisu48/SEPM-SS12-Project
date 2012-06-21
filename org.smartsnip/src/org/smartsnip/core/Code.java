@@ -22,7 +22,6 @@ public abstract class Code {
 	private final int version;
 
 	/** If the code has a downloadable source */
-	// TODO Implement downloadable source
 	private String downloadAbleSource = null;
 
 	/** Identifier of this code segment */
