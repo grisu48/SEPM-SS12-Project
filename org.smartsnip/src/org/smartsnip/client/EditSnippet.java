@@ -103,28 +103,27 @@ public class EditSnippet extends Composite {
 
 		// TODO Set languages
 
-		ICategory.Util.getInstance().getCategories(null,
-				new AsyncCallback<List<XCategory>>() {
+		ICategory.Util.getInstance().getCategories(null, new AsyncCallback<List<XCategory>>() {
 
-					@Override
-					public void onSuccess(List<XCategory> result) {
-						if (result == null) {
-							return;
-						}
+			@Override
+			public void onSuccess(List<XCategory> result) {
+				if (result == null) {
+					return;
+				}
 
-						for (XCategory category : result) {
-							lstCategory.addItem(category.name);
-						}
+				for (XCategory category : result) {
+					lstCategory.addItem(category.name);
+				}
 
-						selectCategory();
-					}
+				selectCategory();
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Error handling
-						lblStatus.setText("Error fetching categories list");
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Error handling
+				lblStatus.setText("Error fetching categories list");
+			}
+		});
 
 		txtTag = new TextBox();
 		txtTag.setStyleName("txtTag");
@@ -329,29 +328,29 @@ public class EditSnippet extends Composite {
 			private void editCode() {
 				if (original.code.equals(code)) {
 					close();
+					Control.myGUI.refresh();
 					return;
 				}
 
 				lblStatus.setText("Adding code to versioning history ...");
 				// Edit code
-				ISnippet.Util.getInstance().editCode(snippet.hash, code,
-						new AsyncCallback<Void>() {
+				ISnippet.Util.getInstance().editCode(snippet.hash, code, new AsyncCallback<Void>() {
 
-							@Override
-							public void onSuccess(Void result) {
-								close();
-							}
+					@Override
+					public void onSuccess(Void result) {
+						close();
+						Control.myGUI.refresh();
+					}
 
-							@Override
-							public void onFailure(Throwable caught) {
-								btCreate.setEnabled(true);
-								if (caught == null)
-									lblStatus.setText("Error creating code");
-								else
-									lblStatus.setText("Error creating code: "
-											+ caught.getMessage());
-							}
-						});
+					@Override
+					public void onFailure(Throwable caught) {
+						btCreate.setEnabled(true);
+						if (caught == null)
+							lblStatus.setText("Error creating code");
+						else
+							lblStatus.setText("Error creating code: " + caught.getMessage());
+					}
+				});
 			}
 
 			@Override
@@ -360,8 +359,7 @@ public class EditSnippet extends Composite {
 				if (caught == null)
 					lblStatus.setText("Error creating snippet");
 				else
-					lblStatus.setText("Error creating snippet: "
-							+ caught.getMessage());
+					lblStatus.setText("Error creating snippet: " + caught.getMessage());
 			}
 		});
 	}
