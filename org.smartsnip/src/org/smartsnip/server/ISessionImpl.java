@@ -9,6 +9,7 @@ import org.smartsnip.core.Search;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
+import org.smartsnip.security.PrivilegeController;
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XNotification;
@@ -98,7 +99,7 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	}
 
 	@Override
-	public boolean registerNewUser(String username, String password, String email) throws NoAccessException {
+	public boolean registerNewUser(String username, String password, String email) throws NoAccessException, IllegalArgumentException {
 		if (username == null)
 			return false;
 		if (password == null || password.isEmpty())
@@ -116,6 +117,10 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 
 		if (User.exists(username))
 			return false;
+
+		if (!PrivilegeController.acceptPassword(password))
+			throw new IllegalArgumentException("Password denied");
+
 		try {
 			logInfo("Requesting create new user (USER=" + username + "; MAIL=" + email + ")");
 			if (User.createNewUser(username, password, email) == null)

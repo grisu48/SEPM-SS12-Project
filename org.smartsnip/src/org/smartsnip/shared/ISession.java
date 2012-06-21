@@ -149,8 +149,10 @@ public interface ISession extends RemoteService, IsSerializable {
 	 * @return true if success, false if something went wrong
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
+	 * @throws IllegalArgumentException
+	 *             Thrown if the password is denied
 	 */
-	public boolean registerNewUser(String username, String password, String email) throws NoAccessException;
+	public boolean registerNewUser(String username, String password, String email) throws NoAccessException, IllegalArgumentException;
 
 	/**
 	 * @return Gets the cookie value for this session

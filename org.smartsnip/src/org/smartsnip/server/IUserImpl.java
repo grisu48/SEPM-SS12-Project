@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.smartsnip.core.Logging;
 import org.smartsnip.core.User;
+import org.smartsnip.security.PrivilegeController;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XSnippet;
@@ -92,7 +93,7 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 	}
 
 	@Override
-	public void setPassword(String oldpassword, String newpassword) throws NoAccessException {
+	public void setPassword(String oldpassword, String newpassword) throws NoAccessException, IllegalArgumentException {
 		if (newpassword == null || newpassword.isEmpty() || oldpassword == null || oldpassword.isEmpty())
 			return;
 
@@ -107,6 +108,9 @@ public class IUserImpl extends GWTSessionServlet implements IUser {
 			Logging.printWarning("Request for setting new password denied, wrong credentials");
 			throw new NoAccessException("Wrong password");
 		}
+
+		if (!PrivilegeController.acceptPassword(newpassword))
+			throw new IllegalArgumentException("Password denied");
 
 		Logging.printInfo("Sets a new password");
 		user.setPassword(newpassword);
