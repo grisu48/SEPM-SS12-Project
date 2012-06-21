@@ -368,7 +368,7 @@ public class ModeratorArea extends Composite {
 				final ListBox lstState = new ListBox();
 				fillListBoxWithUserStates(lstState);
 				final Button btnSetPassword = new Button("Set password");
-				btnSetPassword.setVisible(amIAdmin);
+				btnDelete.setVisible(amIAdmin);
 				btnSetPassword.setVisible(amIAdmin);
 
 				final Widget[] result = new Widget[7];
