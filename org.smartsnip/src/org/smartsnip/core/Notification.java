@@ -59,8 +59,7 @@ public class Notification {
 	 *            If the notification refers to a snippet (the id of the
 	 *            snippet)
 	 */
-	Notification(Long id, String owner, String message, boolean read,
-			String time, String source, Long refersToSnippet) {
+	Notification(Long id, String owner, String message, boolean read, String time, String source, Long refersToSnippet) {
 		super();
 		this.id = id;
 		this.owner = owner;
@@ -156,11 +155,9 @@ public class Notification {
 	 */
 	protected synchronized void refreshDB() {
 		try {
-			Persistence.getInstance().writeNotification(this,
-					IPersistence.DB_DEFAULT);
+			Persistence.getInstance().writeNotification(this, IPersistence.DB_DEFAULT);
 		} catch (IOException ex) {
-			System.err.println("IOException during writing notification (id="
-					+ this.getId() + "): " + ex.getMessage());
+			System.err.println("IOException during writing notification (id=" + this.getId() + "): " + ex.getMessage());
 			ex.printStackTrace(System.err);
 		}
 	}
@@ -193,16 +190,29 @@ public class Notification {
 	 *            Owner of the notification
 	 * @return the created notification
 	 */
-	public static Notification createNotification(String message,
-			String username) {
+	public static Notification createNotification(String message, String username) {
+		return createNotification(message, username, "System");
+	}
+
+	/**
+	 * Creates a new notification
+	 * 
+	 * @param message
+	 *            Notification message
+	 * @param username
+	 *            Owner of the notification
+	 * @param source
+	 *            Source of the notification
+	 * @return the created notification
+	 */
+	public static Notification createNotification(String message, String username, String source) {
 		if (username == null || username.isEmpty())
 			return null;
 		if (message == null || message.isEmpty())
 			return null;
 
 		// NOTE: ID and TIME is set by database
-		Notification notification = new Notification(null, username, message,
-				false, null, "System", null);
+		Notification notification = new Notification(null, username, message, false, null, source, null);
 		addToDB(notification);
 		return notification;
 	}
@@ -218,11 +228,9 @@ public class Notification {
 			return;
 
 		try {
-			Persistence.getInstance().writeNotification(notification,
-					IPersistence.DB_NEW_ONLY);
+			Persistence.getInstance().writeNotification(notification, IPersistence.DB_NEW_ONLY);
 		} catch (IOException e) {
-			System.err.println("IOException creating new notification: "
-					+ e.getMessage());
+			System.err.println("IOException creating new notification: " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}

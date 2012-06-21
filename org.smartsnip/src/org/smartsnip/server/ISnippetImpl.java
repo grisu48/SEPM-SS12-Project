@@ -71,6 +71,10 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 			throw new NoAccessException();
 
 		snippet.delete();
+
+		User user = session.getUser();
+		if (!snippet.getOwner().equals(user))
+			notifyUser(snippet.getOwnerUsername(), "Your snippet has been deleted by " + user.getUsername(), "Snippet " + snippet.getName());
 	}
 
 	@Override
@@ -103,6 +107,10 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 		if (!session.getPolicy().canEditSnippet(session, snippet))
 			throw new NoAccessException();
 		snippet.setDescription(desc);
+
+		User user = session.getUser();
+		if (!snippet.getOwner().equals(user))
+			notifyUser(snippet.getOwnerUsername(), "Your snippet has been edited by " + user.getUsername(), "Snippet " + snippet.getName());
 	}
 
 	@Override
@@ -120,6 +128,9 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 			throw new NoAccessException();
 
 		snippet.addTag(Tag.createTag(tag));
+
+		if (!snippet.getOwner().equals(session.getUser()))
+			notifyUser(snippet.getOwnerUsername(), "Your snippet has been tagged", "Snippet " + snippet.getName());
 	}
 
 	@Override
@@ -132,6 +143,9 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 			throw new NoAccessException();
 
 		snippet.removeTag(Tag.createTag(tag));
+
+		if (!snippet.getOwner().equals(session.getUser()))
+			notifyUser(snippet.getOwnerUsername(), "Your snippet has been tagged", "Snippet " + snippet.getName());
 	}
 
 	@Override
@@ -160,6 +174,9 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 			e.printStackTrace(System.err);
 			throw new RemoteException();
 		}
+
+		if (!snippet.getOwner().equals(user))
+			notifyUser(snippet.getOwnerUsername(), user.getUsername() + " commented on your snippet", "Snippet " + snippet.getName());
 
 	}
 
@@ -269,6 +286,8 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 		// Access guaranteed. Edit snippet
 		origin.edit(snippet); // Can throw a IllegalArgumentException
 
+		if (!origin.getOwner().equals(user))
+			notifyUser(origin.getOwnerUsername(), "Your snippet has been edited by " + user.getUsername(), "Snippet " + origin.getName());
 	}
 
 	@Override
@@ -295,6 +314,10 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 		// Create new code object
 		Code newCode = Code.createCode(code, old.language, snippet.id, (old.getVersion() + 1));
 		snippet.setCode(newCode);
+
+		if (!snippet.getOwner().equals(user))
+			notifyUser(snippet.getOwnerUsername(), "Your snippet's code has been edited by " + user.getUsername(),
+					"Snippet " + snippet.getName());
 	}
 
 	@Override

@@ -263,4 +263,19 @@ public class PrivilegeController {
 			return false;
 		return password.length() > 3;
 	}
+
+	/**
+	 * Checks a given message to the administrators for spam
+	 * 
+	 * @param message
+	 *            to be checked
+	 * @param email
+	 *            to be checked
+	 * @return true if spam
+	 */
+	public static boolean checkSpam(String message, String email) {
+		if (message.length() < 10)
+			return true;
+		return false;
+	}
 }

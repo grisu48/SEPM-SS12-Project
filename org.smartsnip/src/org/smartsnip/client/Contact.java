@@ -1,7 +1,11 @@
 package org.smartsnip.client;
 
+import org.smartsnip.shared.IAdministrator;
+import org.smartsnip.shared.NoAccessException;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -16,29 +20,30 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  * @author Paul
  * 
- *
- * A composed Widget to display the contact window
- *
+ * 
+ *         A composed Widget to display the contact window
+ * 
  */
 public class Contact extends Composite {
 
 	private final PopupPanel parent;
 
-	private HorizontalPanel buttonPanel = new HorizontalPanel();
-	private VerticalPanel vertPanel;
-	private Label lTitle;
-	private Label lMail;
-	private TextBox tbMail;
-	private Label lMessage;
-	private TextArea taMessage;
-	private Button btnSend;
-	private Button btnClose;
-	private Label lStatus = new Label("");
+	private final HorizontalPanel buttonPanel = new HorizontalPanel();
+	private final VerticalPanel vertPanel;
+	private final Label lTitle;
+	private final Label lMail;
+	private final TextBox tbMail;
+	private final Label lMessage;
+	private final TextArea taMessage;
+	private final Button btnSend;
+	private final Button btnClose;
+	private final Label lStatus = new Label("");
 
 	/**
 	 * Initializes the contact popup
 	 * 
-	 * @param parent - the parent window popup
+	 * @param parent
+	 *            - the parent window popup
 	 */
 	public Contact(PopupPanel parent) {
 
@@ -56,7 +61,7 @@ public class Contact extends Composite {
 		btnSend.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				// XXX todo
+				send();
 			}
 
 		});
@@ -84,6 +89,64 @@ public class Contact extends Composite {
 		setStyleName("contact");
 	}
 
+	/** Submits the message to the server */
+	private void send() {
+		String message = taMessage.getText();
+		String email = tbMail.getText();
+		if (message.length() < 5)
+			return;
+		if (email.length() < 5)
+			return;
 
+		setStatus("Sending ... ", false);
+		IAdministrator.Util.getInstance().messageToAdmin(message, email, new AsyncCallback<Void>() {
+
+			@Override
+			public void onSuccess(Void result) {
+				setStatus("Sent successfully");
+				close();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				if (caught == null)
+					setStatus("Unknown error occured", true);
+				else if (caught instanceof NoAccessException)
+					setStatus("Access denied", true);
+				else if (caught instanceof IllegalArgumentException)
+					setStatus("Illegal argument: " + caught.getMessage(), true);
+				else
+					setStatus("Error: " + caught.getCause(), true);
+			}
+		});
+	}
+
+	/** Close popup */
+	private void close() {
+		parent.hide();
+	}
+
+	/**
+	 * Set status message
+	 * 
+	 * @param message
+	 *            to be displayed
+	 */
+	private void setStatus(String message) {
+		lStatus.setText(message);
+	}
+
+	/**
+	 * Set status message
+	 * 
+	 * @param message
+	 *            to be displayed
+	 * @param controlsEnabled
+	 *            controls enabled or disabled
+	 */
+	private void setStatus(String message, boolean controlsEnabled) {
+		lStatus.setText(message);
+		btnSend.setEnabled(controlsEnabled);
+	}
 
 }

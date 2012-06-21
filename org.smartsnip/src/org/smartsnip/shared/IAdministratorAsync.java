@@ -22,4 +22,6 @@ public interface IAdministratorAsync extends IModeratorAsync {
 
 	void closeSession(String key, AsyncCallback<Void> callback);
 
+	void messageToAdmin(String message, String email, AsyncCallback<Void> callback);
+
 }

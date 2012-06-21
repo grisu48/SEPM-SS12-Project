@@ -81,4 +81,18 @@ public interface IAdministrator extends RemoteService, IsSerializable, IModerato
 	 *             Thrown if the server denies the access
 	 */
 	public void closeSession(String key) throws NotFoundException, NoAccessException;
+
+	/**
+	 * Sends a message to all administrators
+	 * 
+	 * @param message
+	 *            To be sent
+	 * @param email
+	 *            Of the sender. Must be valid!
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access (e.g. SPAM)
+	 * @throws IllegalArgumentException
+	 *             Thrown if an argument is not accepted
+	 */
+	public void messageToAdmin(String message, String email) throws NoAccessException, IllegalArgumentException;
 }

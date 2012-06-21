@@ -888,7 +888,37 @@ public class User {
 	 * Marks all notifications of the user as read
 	 */
 	public void markNotificationsRead() {
-		// TODO Auto-generated method stub
+		List<Notification> notifications = getNotifications(true);
+		for (Notification notify : notifications)
+			notify.markRead();
+	}
 
+	/**
+	 * Create a new notification for this user
+	 * 
+	 * @param message
+	 *            To be notificated
+	 */
+	public void createNotification(String message) {
+		if (message == null || message.isEmpty())
+			return;
+		Notification.createNotification(message, this.username);
+	}
+
+	/**
+	 * Create a new notification for this user
+	 * 
+	 * @param message
+	 *            To be notificated
+	 * @param source
+	 *            Message source
+	 */
+	public void createNotification(String message, String source) {
+		if (message == null || message.isEmpty())
+			return;
+		if (source == null || source.isEmpty())
+			return;
+
+		Notification.createNotification(message, this.username, source);
 	}
 }

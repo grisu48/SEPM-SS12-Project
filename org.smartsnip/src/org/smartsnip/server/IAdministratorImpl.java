@@ -39,6 +39,9 @@ public class IAdministratorImpl extends IModeratorImpl implements IAdministrator
 			throw new NotFoundException();
 
 		targetUser.setState(state);
+
+		if (!user.equals(targetUser))
+			notifyUser(username, user.getUsername() + " (administrator) set your state to " + state, user.getUsername());
 	}
 
 	@Override
@@ -69,6 +72,8 @@ public class IAdministratorImpl extends IModeratorImpl implements IAdministrator
 
 		targetUser.setPassword(password);
 
+		if (!user.equals(targetUser))
+			notifyUser(username, user.getUsername() + " (administrator) set your password", user.getUsername());
 	}
 
 	@Override
@@ -121,6 +126,43 @@ public class IAdministratorImpl extends IModeratorImpl implements IAdministrator
 		Logging.printInfo("MODERATOR: Terminating session for: "
 				+ (targetSessionUser == null ? "Guest session" : targetSessionUser.getUsername()));
 		targetSession.deleteSession();
+	}
+
+	@Override
+	public void messageToAdmin(String message, String email) throws NoAccessException, IllegalArgumentException {
+		if (message == null | message.isEmpty())
+			return;
+		if (!isValidEmailAddress(email))
+			throw new IllegalArgumentException("Invalid email-address");
+
+		// SPAM filter
+		if (PrivilegeController.checkSpam(message, email))
+			throw new NoAccessException();
+
+		// Seems legit. Send it to all administrator
+		List<User> allUsers = User.getUsers(0, Session.getUserCount());
+		for (User user : allUsers)
+			if (user.isAdministrator())
+				user.createNotification(message, email);
+
+	}
+
+	/**
+	 * Internal call to check if the email address is valid
+	 * 
+	 * @param email
+	 *            to be checked
+	 * @return true if valid otherwise false
+	 */
+	private static boolean isValidEmailAddress(String email) {
+		if (email == null || email.length() < 5)
+			return false;
+		int atSign = email.indexOf('@');
+		if (atSign < 1)
+			return false;
+		if (atSign >= email.length())
+			return false;
+		return true;
 	}
 
 }
