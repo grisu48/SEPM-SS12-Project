@@ -42,7 +42,7 @@ public class ResultArea extends Composite {
 		
 		ShortSnipCell myShortSnipCell = new ShortSnipCell();
 		myCellList = new CellList<XSnippet>(myShortSnipCell);
-		myCellList.setPageSize(10);
+		//myCellList.setPageSize(10);
 		myCellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
 	    myCellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 		
