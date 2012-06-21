@@ -3,6 +3,7 @@ package org.smartsnip.core;
 import java.io.IOException;
 
 import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.shared.XCode;
 
 /**
  * 
@@ -40,8 +41,7 @@ public abstract class Code {
 	 */
 	Code(String code, String language, Long snippetId, Long id, int version) {
 		if (code.length() == 0)
-			throw new IllegalArgumentException(
-					"Cannot create snippet with no code");
+			throw new IllegalArgumentException("Cannot create snippet with no code");
 		if (language.length() == 0)
 			throw new IllegalArgumentException("No coding language defined");
 		this.code = formatCode(code);
@@ -150,19 +150,15 @@ public abstract class Code {
 	 *             Thrown if the code or if the language is empty
 	 */
 	// TODO add Version
-	public static Code createCode(String code, String language, Long ownerSnippetId,
-			int version) {
+	public static Code createCode(String code, String language, Long ownerSnippetId, int version) {
 		if (code == null || language == null)
 			throw new NullPointerException();
 		if (code.isEmpty())
-			throw new IllegalArgumentException(
-					"Cannot create code object with no code");
+			throw new IllegalArgumentException("Cannot create code object with no code");
 		if (language.isEmpty())
-			throw new IllegalArgumentException(
-					"Cannot create code object with no language");
+			throw new IllegalArgumentException("Cannot create code object with no language");
 		if (ownerSnippetId == null)
-			throw new NullPointerException(
-					"Cannot create code segment without a snippet");
+			throw new NullPointerException("Cannot create code segment without a snippet");
 
 		language = language.trim();
 
@@ -207,19 +203,15 @@ public abstract class Code {
 	 * @throws IllegalArgumentException
 	 *             Thrown if the code or if the language is empty
 	 */
-	public static Code createCodeDB(String code, String language,
-			Long ownerSnippetId, Long id, int version, String downloadableSourceName) {
+	public static Code createCodeDB(String code, String language, Long ownerSnippetId, Long id, int version, String downloadableSourceName) {
 		if (code == null || language == null)
 			throw new NullPointerException();
 		if (code.isEmpty())
-			throw new IllegalArgumentException(
-					"Cannot create code object with no code");
+			throw new IllegalArgumentException("Cannot create code object with no code");
 		if (language.isEmpty())
-			throw new IllegalArgumentException(
-					"Cannot create code object with no language");
+			throw new IllegalArgumentException("Cannot create code object with no language");
 		if (ownerSnippetId == null)
-			throw new NullPointerException(
-					"Cannot create code segment without a snippet");
+			throw new NullPointerException("Cannot create code segment without a snippet");
 		if (downloadableSourceName != null) {
 			// FIXME downloadable code not implemented in the core
 			// this.downloadAbleSource = true;
@@ -275,8 +267,7 @@ public abstract class Code {
 		try {
 			Persistence.instance.writeCode(code, IPersistence.DB_NEW_ONLY);
 		} catch (IOException e) {
-			System.err.println("IOException writing out code object with id="
-					+ code.getHashID() + ": " + e.getMessage());
+			System.err.println("IOException writing out code object with id=" + code.getHashID() + ": " + e.getMessage());
 			e.printStackTrace(System.err);
 		}
 	}
@@ -291,8 +282,7 @@ public abstract class Code {
 		try {
 			return Persistence.instance.getSnippet(snippetId);
 		} catch (IOException e) {
-			System.err.println("IOException reading snippet object with id="
-					+ this.snippetId + ": " + e.getMessage());
+			System.err.println("IOException reading snippet object with id=" + this.snippetId + ": " + e.getMessage());
 			e.printStackTrace(System.err);
 			return null;
 		}
@@ -324,9 +314,7 @@ public abstract class Code {
 			return file.getContent();
 
 		} catch (IOException e) {
-			System.err
-					.println("IOException during getting source from code (id="
-							+ this.id + "): " + e.getMessage());
+			System.err.println("IOException during getting source from code (id=" + this.id + "): " + e.getMessage());
 			e.printStackTrace(System.err);
 
 			return null;
@@ -348,11 +336,27 @@ public abstract class Code {
 	 * @param fileName
 	 *            File to be written
 	 */
-	public static void writeCodeFile(long codeID, String filename)
-			throws IOException {
+	public static void writeCodeFile(long codeID, String filename) throws IOException {
 
 		File file = new File(File.getContents(filename), filename);
-		Persistence.getInstance().writeCodeFile(codeID, file,
-				IPersistence.DB_DEFAULT);
+		Persistence.getInstance().writeCodeFile(codeID, file, IPersistence.DB_DEFAULT);
+	}
+
+	/**
+	 * Creates a {@link XCode} object out of this object
+	 * 
+	 * @return created {@link XCode} object
+	 */
+	public XCode toXCode() {
+		XCode result = new XCode();
+
+		result.code = code;
+		result.language = getLanguage();
+		result.downloadAbleSource = downloadAbleSource;
+		result.id = id;
+		result.snippetId = snippetId;
+		result.version = version;
+
+		return result;
 	}
 }

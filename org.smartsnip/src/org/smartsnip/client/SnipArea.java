@@ -53,6 +53,7 @@ public class SnipArea extends Composite {
 
 	private final Button btnFav;
 	private final Button btnEdit;
+	private final Button btnHistory;
 	private final Button btnDelete;
 
 	/**
@@ -93,6 +94,7 @@ public class SnipArea extends Composite {
 		license.setStyleName("txt");
 		lblOwner = new Label(getOwnerText(mySnip));
 		lblOwner.setStyleName("txt");
+		btnHistory = new Button("View code history");
 
 		snipFull = new HTMLPanel(mySnip.codeHTML);
 		snipFull.setWidth("680px");
@@ -164,6 +166,14 @@ public class SnipArea extends Composite {
 				}
 			}
 		});
+		btnHistory.setVisible(snippet.canEdit);
+		btnHistory.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				viewCodeHistory();
+			}
+		});
 
 		btnEdit.setVisible(false);
 		btnEdit.addClickHandler(new ClickHandler() {
@@ -174,7 +184,7 @@ public class SnipArea extends Composite {
 				update();
 			}
 		});
-		btnDelete.setVisible(false);
+		btnDelete.setVisible(snippet.canDelete);
 		btnDelete.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -218,7 +228,7 @@ public class SnipArea extends Composite {
 				});
 			}
 		});
-		anchUpload.setVisible(false);
+		anchUpload.setVisible(snippet.canEdit);
 		anchUpload.setStyleName("toollink");
 		anchUpload.addClickHandler(new ClickHandler() {
 
@@ -305,6 +315,7 @@ public class SnipArea extends Composite {
 			public void onSuccess(Boolean result) {
 				btnEdit.setVisible(result);
 				btnDelete.setVisible(result);
+				btnHistory.setVisible(result);
 				anchUpload.setVisible(result);
 			}
 
@@ -318,6 +329,7 @@ public class SnipArea extends Composite {
 		horPanel.add(btnFav);
 		horPanel.add(btnDelete);
 		horPanel.add(btnEdit);
+		horPanel.add(btnHistory);
 		horPanel.add(anchorGrid);
 
 		scrPanel.add(snipFull);
@@ -396,6 +408,7 @@ public class SnipArea extends Composite {
 		btnEdit.setVisible(snippet.canEdit);
 		btnDelete.setVisible(snippet.canDelete);
 		anchUpload.setVisible(snippet.canEdit);
+		btnHistory.setVisible(snippet.canEdit);
 		rating.setEnabled(snippet.canRate);
 
 		updateFavortiteStatus();
@@ -459,5 +472,13 @@ public class SnipArea extends Composite {
 	/** Requests a download */
 	private void requestDownload() {
 
+	}
+
+	/**
+	 * Shows the code history
+	 */
+	private void viewCodeHistory() {
+		if (!snippet.canEdit)
+			return;
 	}
 }

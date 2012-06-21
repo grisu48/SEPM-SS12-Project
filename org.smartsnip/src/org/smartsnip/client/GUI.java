@@ -36,7 +36,7 @@ public class GUI {
 	 * 
 	 */
 	public enum Page {
-		PAGE_Impressum, PAGE_User, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet, PAGE_Blank, PAGE_Notifications, PAGE_Moderator
+		PAGE_Impressum, PAGE_User, PAGE_SnippetOfDay, PAGE_Search, PAGE_Snippet, PAGE_Blank, PAGE_Notifications, PAGE_Moderator, PAGE_CodeHistory
 	}
 
 	/**
@@ -82,6 +82,7 @@ public class GUI {
 	ModeratorArea myModeratorArea = null;
 	final SearchToolbar mySearchToolbar;
 	NotificationsArea myNotifications = null;
+	CodeHistoryPage myCodeHistory = null;
 
 	// Create userPanel
 	SimplePanel userPanel = new SimplePanel();
@@ -667,6 +668,24 @@ public class GUI {
 	}
 
 	/**
+	 * Shows thte code history page for a given snippet. If the snippet is null,
+	 * nothing happens
+	 * 
+	 * @param owner
+	 *            Snippet the code history is shown from
+	 */
+	public void showCodeHistoryPage(XSnippet owner) {
+		if (owner == null)
+			return;
+
+		currentPage = Page.PAGE_CodeHistory;
+		myCodeHistory = new CodeHistoryPage(owner);
+
+		dataPanel.clear();
+		dataPanel.add(myCodeHistory);
+	}
+
+	/**
 	 * Creates a popup window with a link
 	 * 
 	 * @param String
@@ -789,6 +808,9 @@ public class GUI {
 			break;
 		case PAGE_Notifications:
 			myNotifications.update();
+			break;
+		case PAGE_CodeHistory:
+			myCodeHistory.update();
 			break;
 		case PAGE_Search:
 			// Ignore, we don't do a new search

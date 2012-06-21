@@ -7,12 +7,14 @@ import java.util.List;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
 import org.smartsnip.core.Comment;
+import org.smartsnip.core.Persistence;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
 import org.smartsnip.core.User;
 import org.smartsnip.shared.ISnippet;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.NotFoundException;
+import org.smartsnip.shared.XCode;
 import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
@@ -397,5 +399,55 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 		} else {
 			session.removeFavorite(snippet);
 		}
+	}
+
+	@Override
+	public List<XCode> getCodeHistory(long id) throws NotFoundException, NoAccessException {
+		Session session = getSession();
+		Snippet snippet = Snippet.getSnippet(id);
+		if (snippet == null) {
+			// Snippet is not found
+			throw new NotFoundException("No snippet with id " + id + " found");
+		}
+		User user = session.getUser();
+		if (user == null || !session.getPolicy().canEditSnippet(session, snippet))
+			throw new NoAccessException();
+
+		final List<Code> codes;
+		try {
+			codes = Persistence.getInstance().getCodes(snippet);
+		} catch (IOException e) {
+			System.err.println("IOException fetching code history for snippet " + id + ": " + e.getMessage());
+			e.printStackTrace(System.err);
+			throw new RuntimeException("Database error", e);
+		}
+
+		List<XCode> result = new ArrayList<XCode>(codes.size());
+		for (Code code : codes)
+			result.add(toXCode(code, session));
+
+		return result;
+	}
+
+	/**
+	 * Creates a {@link XCode} object out of a code object and assigns also
+	 * session-specific values
+	 * 
+	 * @param code
+	 *            the {@link XCode} should be created from
+	 * @param session
+	 *            Session to be applied
+	 * @return {@link XCode} object
+	 */
+	public static XCode toXCode(Code code, Session session) {
+		if (code == null)
+			return null;
+
+		XCode result = code.toXCode();
+
+		// Currently no session specific values, but still in here for further
+		// developments
+
+		return result;
 	}
 }
