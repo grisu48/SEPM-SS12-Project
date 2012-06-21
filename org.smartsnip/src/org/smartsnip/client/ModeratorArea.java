@@ -308,18 +308,29 @@ public class ModeratorArea extends Composite {
 					return;
 				}
 
-				final int users = result.size();
-				final Grid grid = new Grid(users, 7);
+				int users = result.size();
+				final Grid grid = new Grid(users + 1, 7);
 
-				int row = 0;
+				// add grid descriptions
+				final Label[] lblDescs = new Label[] { new Label("Username"), new Label("Real name"), new Label("Email"),
+						new Label("Last login"), new Label(""), new Label(""), new Label(""), };
+				for (int column = 0; column < lblDescs.length; column++)
+					grid.setWidget(0, column, lblDescs[column]);
+
+				int row = 1; // First row are descriptions. Do not overwrite
+								// them!
 				for (XUser user : result) {
-					Widget[] widgets = createUserControls(user);
-					for (int i = 0; i < 7; i++)
-						grid.setWidget(row, i, widgets[i]);
-					row++;
+					// This is just for safety
+					if (user != null) {
+						Widget[] widgets = createUserControls(user);
+						for (int i = 0; i < 7; i++)
+							grid.setWidget(row, i, widgets[i]);
+						row++;
+					}
 				}
 
 				lblUsers.setText("Fetched " + users + " users");
+				pnlVertUsers.add(grid);
 			}
 
 			/**
@@ -332,6 +343,9 @@ public class ModeratorArea extends Composite {
 			 * @return component array
 			 */
 			private Widget[] createUserControls(final XUser user) {
+				if (user == null)
+					return null;
+
 				// Widgets:
 				// 0 - Username
 				// 1 - Realname
@@ -344,7 +358,12 @@ public class ModeratorArea extends Composite {
 				final Label lblRealName = new Label(user.realname);
 				final Label lblEmail = new Label(user.email);
 				// TODO: Use DateFormat.format
-				final Label lblLastLogin = new Label(user.lastLoginTime.toLocaleString());
+				final Label lblLastLogin;
+				if (user.isLoggedIn) {
+					String date = (user.lastLoginTime == null ? "???" : user.lastLoginTime.toString());
+					lblLastLogin = new Label("Logged in since " + date);
+				} else
+					lblLastLogin = new Label((user.lastLoginTime == null ? "Not yet logged in" : user.lastLoginTime.toString()));
 				final Button btnDelete = new Button("Delete");
 				final ListBox lstState = new ListBox();
 				fillListBoxWithUserStates(lstState);

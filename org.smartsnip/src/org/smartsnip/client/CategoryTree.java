@@ -111,7 +111,8 @@ public class CategoryTree extends Composite {
 		 *            y-coordinate the menu will be shown
 		 */
 		public static void showPopup(CategoryTreeItem item, int x, int y) {
-			if (item == null) return;
+			if (item == null)
+				return;
 			PopupMenuCategory popup = new PopupMenuCategory(item);
 			popup.show(x, y);
 		}
@@ -159,7 +160,8 @@ public class CategoryTree extends Composite {
 		private CategoryTreeItem(XCategory category) {
 			this.category = category;
 
-			if (category == null) super.setText("Root");
+			if (category == null)
+				super.setText("Root");
 			else
 				super.setText(category.name);
 			super.addItem(fetchItem);
@@ -167,47 +169,54 @@ public class CategoryTree extends Composite {
 
 		/** Fetches the subchildren */
 		public void fetchChildren() {
-			if (fetching) return;
-			if (fetched) return;
+			if (fetching)
+				return;
+			if (fetched)
+				return;
 
 			setStatus("Fetching children ... ");
+			this.removeItem(fetchItem);
 			fetching = true;
-			ICategory.Util.getInstance().getCategories((category == null ? null : category.name),
-					new AsyncCallback<List<XCategory>>() {
+			ICategory.Util.getInstance().getCategories((category == null ? null : category.name), new AsyncCallback<List<XCategory>>() {
 
-						@Override
-						public void onSuccess(List<XCategory> result) {
-							fetching = false;
-							if (result == null) {
-								onFailure(new IllegalArgumentException("Null returned"));
-								return;
-							}
-							setStatus("");
+				@Override
+				public void onSuccess(List<XCategory> result) {
+					fetching = false;
+					if (result == null) {
+						onFailure(new IllegalArgumentException("Null returned"));
+						return;
+					}
+					setStatus("");
 
-							CategoryTreeItem parent = CategoryTreeItem.this;
-							parent.removeItem(fetchItem);
-							subCategories = new ArrayList<CategoryTreeItem>();
-							for (XCategory childCategory : result) {
-								CategoryTreeItem child = new CategoryTreeItem(childCategory);
-								parent.addItem(child);
-								subCategories.add(child);
-							}
-						}
+					CategoryTreeItem parent = CategoryTreeItem.this;
+					subCategories = new ArrayList<CategoryTreeItem>();
+					for (XCategory childCategory : result) {
+						CategoryTreeItem child = new CategoryTreeItem(childCategory);
+						parent.addItem(child);
+						subCategories.add(child);
+					}
+				}
 
-						@Override
-						public void onFailure(Throwable caught) {
-							fetching = false;
-							String message;
-							if (caught instanceof NoAccessException) message = "Access denial";
-							else if (caught instanceof NotFoundException) message = "Not found";
-							else
-								message = caught.getMessage();
+				@Override
+				public void onFailure(Throwable caught) {
+					fetching = false;
+					String message;
+					if (caught == null)
+						message = "Unknown error";
+					else if (caught instanceof NoAccessException)
+						message = "Access denial";
+					else if (caught instanceof NotFoundException)
+						message = "Not found";
+					else
+						message = caught.getMessage();
 
-							setStatus(message);
-							fetching = false;
-							fetched = false;
-						}
-					});
+					setStatus(message);
+					fetchItem.setText("Error: " + message);
+					CategoryTreeItem.this.addItem(fetchItem);
+					fetching = false;
+					fetched = false;
+				}
+			});
 
 			fetched = true;
 		}
@@ -221,7 +230,7 @@ public class CategoryTree extends Composite {
 		private void setStatus(String text) {
 			if (text == null || text.isEmpty()) {
 				super.setText(category.name);
-				fetchItem.setText("Fetching ... ");
+				fetchItem.setText("");
 			} else {
 				super.setText(category.name + "(" + text + ")");
 				fetchItem.setText(text);
@@ -242,8 +251,10 @@ public class CategoryTree extends Composite {
 		 *            new name
 		 */
 		public void editName(String name) {
-			if (name == null || name.isEmpty()) return;
-			if (name.equals(category.name)) return;
+			if (name == null || name.isEmpty())
+				return;
+			if (name.equals(category.name))
+				return;
 
 			// TODO Implement me!
 		}
@@ -294,7 +305,8 @@ public class CategoryTree extends Composite {
 				TreeItem item = event.getTarget();
 				if (item instanceof CategoryTreeItem) {
 					CategoryTreeItem categoryItem = (CategoryTreeItem) item;
-					if (!categoryItem.isFetched()) categoryItem.fetchChildren();
+					if (!categoryItem.isFetched())
+						categoryItem.fetchChildren();
 				}
 			}
 		});
@@ -352,7 +364,8 @@ public class CategoryTree extends Composite {
 	 *            to be removed
 	 */
 	private void removeItem(CategoryTreeItem item) {
-		if (item == null) return;
+		if (item == null)
+			return;
 		treeCategories.removeItem(item);
 	}
 
@@ -367,8 +380,10 @@ public class CategoryTree extends Composite {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				if (caught == null) lblCategories.setText("Unknown error while updating");
-				else if (caught instanceof NoAccessException) lblCategories.setText("Update failed: Access denied");
+				if (caught == null)
+					lblCategories.setText("Unknown error while updating");
+				else if (caught instanceof NoAccessException)
+					lblCategories.setText("Update failed: Access denied");
 				else
 					lblCategories.setText("Update failed: " + caught.getMessage());
 			}
