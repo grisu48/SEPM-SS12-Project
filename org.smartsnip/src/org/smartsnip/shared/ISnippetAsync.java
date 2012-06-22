@@ -14,7 +14,7 @@ public interface ISnippetAsync {
 
 	void delete(long snippet, AsyncCallback<Void> callback);
 
-	void rateSnippet(long id, int rate, AsyncCallback<Void> callback);
+	void rateSnippet(long id, int rate, AsyncCallback<Float> callback);
 
 	void setDescription(long id, String desc, AsyncCallback<Void> callback);
 

@@ -208,14 +208,19 @@ public class SnipArea extends Composite {
 			public void rate(final int rate) {
 				rating.setEnabled(false);
 
-				ISnippet.Util.getInstance().rateSnippet(snippet.hash, rate, new AsyncCallback<Void>() {
+				ISnippet.Util.getInstance().rateSnippet(snippet.hash, rate, new AsyncCallback<Float>() {
 
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess(Float result) {
+						if(result == null) {
+							onFailure(new IllegalArgumentException("Null returned"));
+							return;
+						}
+						
 						rating.setEnabled(true);
 						rating.setRatingStatus(rate);
-						lblAverageRating.setText("Getting rating ... ");
-						update();
+						lblAverageRating.setText("Rating: " + getRating(result));
+						rating.setRatingStatus(snippet.myRating);
 					}
 
 					@Override

@@ -92,8 +92,9 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 *            rating score from 1 to 5
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
+	 * @returns the actualized average rating
 	 */
-	public void rateSnippet(long id, int rate) throws NoAccessException, NotFoundException;
+	public Float rateSnippet(long id, int rate) throws NoAccessException, NotFoundException;
 
 	/**
 	 * Changes the description of a snippet, based on it's id hash. If the given

@@ -78,7 +78,7 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 	}
 
 	@Override
-	public void rateSnippet(long id, int rate) throws NoAccessException, NotFoundException {
+	public Float rateSnippet(long id, int rate) throws NoAccessException, NotFoundException {
 		Snippet snippet = findSnippetThrowsException(id);
 		Session session = getSession();
 		if (!session.getPolicy().canRateSnippet(session, snippet))
@@ -88,13 +88,12 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 			throw new NoAccessException();
 
 		if (rate < 0 || rate > 5)
-			return;
+			return null;
 		if (rate == 0) {
-			snippet.unrate(user);
+			return snippet.unrate(user);
 		} else {
-			snippet.setRating(user, rate);
+			return snippet.setRating(user, rate);
 		}
-
 	}
 
 	@Override
