@@ -93,9 +93,18 @@ public class CategoryTree extends Composite {
 			@Override
 			public void execute() {
 				close();
-				if (Control.myGUI.showConfirmPopup("Really delete the category " + item.category.name + "?") == true) {
-					item.delete();
-				}
+
+				Control.myGUI.showConfirmPopup("Really delete the category " + item.category.name + "?", new ConfirmCallback() {
+
+					@Override
+					public void onYes() {
+						item.delete();
+					}
+
+					@Override
+					public void onNo() {
+					}
+				});
 			}
 		});
 

@@ -314,26 +314,35 @@ public class CommentField extends Composite {
 
 	/** Delete the comment */
 	private void delete() {
-		if (Control.myGUI.showConfirmPopup("Are you sure, you want to delete the selected comment? (Undo NOT possible!)\n  "
-				+ comment.message, "Confirmation") == true) {
-			// Delete
-			disable();
-			IComment.Util.getInstance().delete(comment.id, new AsyncCallback<Void>() {
+		Control.myGUI.showConfirmPopup("Are you sure, you want to delete the selected comment? (Undo NOT possible!)\n  " + comment.message,
+				new ConfirmCallback() {
 
-				@Override
-				public void onSuccess(Void result) {
-					// Is deleted
-					CommentField.this.setVisible(false);
-					parent.update();
-				}
+					@Override
+					public void onYes() {
+						// Delete
+						disable();
+						IComment.Util.getInstance().delete(comment.id, new AsyncCallback<Void>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					// something went wrong ...
-					resetControls();
-				}
-			});
-		}
+							@Override
+							public void onSuccess(Void result) {
+								// Is deleted
+								CommentField.this.setVisible(false);
+								parent.update();
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								// something went wrong ...
+								resetControls();
+							}
+						});
+					}
+
+					@Override
+					public void onNo() {
+					}
+				});
+
 	}
 
 	/** Disables all components */

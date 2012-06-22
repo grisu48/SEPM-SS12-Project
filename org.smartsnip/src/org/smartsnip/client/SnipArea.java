@@ -189,10 +189,18 @@ public class SnipArea extends Composite {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				if (Control.myGUI.showConfirmPopup("Really delete this snippet?\nThis action cannot be undone!", "Confirm action") == false)
-					return;
+				Control.myGUI.showConfirmPopup("Really delete this snippet?\nThis action cannot be undone!", new ConfirmCallback() {
 
-				setDeleted();
+					@Override
+					public void onYes() {
+						setDeleted();
+					}
+
+					@Override
+					public void onNo() {
+					}
+				});
+
 			}
 		});
 
@@ -212,11 +220,11 @@ public class SnipArea extends Composite {
 
 					@Override
 					public void onSuccess(Float result) {
-						if(result == null) {
+						if (result == null) {
 							onFailure(new IllegalArgumentException("Null returned"));
 							return;
 						}
-						
+
 						rating.setEnabled(true);
 						rating.setRatingStatus(rate);
 						lblAverageRating.setText("Rating: " + getRating(result));

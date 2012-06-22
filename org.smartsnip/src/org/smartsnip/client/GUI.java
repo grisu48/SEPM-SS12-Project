@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  */
 public class GUI {
+
 	private static final GUI instance = new GUI();
 
 	/**
@@ -293,10 +294,12 @@ public class GUI {
 	 * 
 	 * @param message
 	 *            Message to be displayed
-	 * @return true if the user clicked YES, false if the user clicked NO
+	 * @param callback
+	 *            Callback for results. true if the user clicked YES, false if
+	 *            the user clicked NO
 	 */
-	public boolean showConfirmPopup(String message) {
-		return showConfirmPopup(message, "Confirmation");
+	public void showConfirmPopup(String message, final ConfirmCallback callback) {
+		showConfirmPopup(message, "Confirmation", callback);
 	}
 
 	/**
@@ -306,9 +309,11 @@ public class GUI {
 	 *            Message to be displayed
 	 * @param title
 	 *            Title of the message to be displayed
-	 * @return true if the user clicked YES, false if the user clicked NO
+	 * @param callback
+	 *            Callback for results. true if the user clicked YES, false if
+	 *            the user clicked NO
 	 */
-	public boolean showConfirmPopup(String message, String title) {
+	public void showConfirmPopup(String message, String title, final ConfirmCallback callback) {
 
 		Window.scrollTo(0, 0);
 
@@ -334,26 +339,23 @@ public class GUI {
 		confirmPopup.setPopupPosition(110, 100);
 		confirmPopup.setWidth("340px");
 
-		final ReturnValue<Boolean> result = new ReturnValue<Boolean>();
 		btnNo.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				result.setValue(Boolean.FALSE);
 				confirmPopup.hide();
+				callback.onNo();
 			}
 		});
 		btnYes.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				result.setValue(Boolean.TRUE);
 				confirmPopup.hide();
+				callback.onYes();
 			}
 		});
 		confirmPopup.show();
-
-		return result.getValue() == Boolean.TRUE;
 	}
 
 	/**

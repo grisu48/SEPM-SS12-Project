@@ -181,31 +181,37 @@ public class EditComment {
 		btnDelete.setEnabled(false);
 		btnApply.setEnabled(false);
 
-		if (Control.myGUI.showConfirmPopup("Do you really want to delete this comment?\nA undo is NOT possible!", "Confirm action") == false) {
-			resetButtons();
-			return;
-		} else {
-			// Delete
-			lblStatus.setText("Deleting ... ");
-			IComment.Util.getInstance().delete(comment.id, new AsyncCallback<Void>() {
+		Control.myGUI.showConfirmPopup("Do you really want to delete this comment?\nA undo is NOT possible!", new ConfirmCallback() {
 
-				@Override
-				public void onSuccess(Void result) {
-					lblStatus.setText("Success");
-					close();
-				}
+			@Override
+			public void onYes() {
+				// Delete
+				lblStatus.setText("Deleting ... ");
+				IComment.Util.getInstance().delete(comment.id, new AsyncCallback<Void>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					resetButtons();
-					if (caught == null)
-						lblStatus.setText("Failed (unknown error");
-					else if (caught instanceof NoAccessException)
-						lblStatus.setText("Access denied");
-					else
-						lblStatus.setText("Failed: " + caught.getMessage());
-				}
-			});
-		}
+					@Override
+					public void onSuccess(Void result) {
+						lblStatus.setText("Success");
+						close();
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						resetButtons();
+						if (caught == null)
+							lblStatus.setText("Failed (unknown error");
+						else if (caught instanceof NoAccessException)
+							lblStatus.setText("Access denied");
+						else
+							lblStatus.setText("Failed: " + caught.getMessage());
+					}
+				});
+			}
+
+			@Override
+			public void onNo() {
+				resetButtons();
+			}
+		});
 	}
 }

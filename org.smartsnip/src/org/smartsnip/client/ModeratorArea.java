@@ -388,25 +388,35 @@ public class ModeratorArea extends Composite {
 							Control.myGUI.showMessagePopup("Access denied");
 							return;
 						}
-						if (Control.myGUI.showConfirmPopup("Do you really want do delete user " + user.username + "?") == true) {
-							btnDelete.setEnabled(false);
-							btnDelete.setText("Deleting ... ");
-							IAdministrator.Util.getInstance().deleteUser(user.username, new AsyncCallback<Void>() {
+						Control.myGUI.showConfirmPopup("Do you really want do delete user " + user.username + "?", new ConfirmCallback() {
 
-								@Override
-								public void onFailure(Throwable caught) {
-									btnDelete.setText("Retry");
-									Control.myGUI.showErrorPopup("An error occured while deleting user " + user.username, caught);
-								}
+							@Override
+							public void onYes() {
+								btnDelete.setEnabled(false);
+								btnDelete.setText("Deleting ... ");
+								IAdministrator.Util.getInstance().deleteUser(user.username, new AsyncCallback<Void>() {
 
-								@Override
-								public void onSuccess(Void result) {
-									// Update users all components will be
-									// erased
-									updateUsers();
-								}
-							});
-						}
+									@Override
+									public void onFailure(Throwable caught) {
+										btnDelete.setText("Retry");
+										Control.myGUI.showErrorPopup("An error occured while deleting user " + user.username, caught);
+									}
+
+									@Override
+									public void onSuccess(Void result) {
+										// Update users all components will be
+										// erased
+										updateUsers();
+									}
+								});
+							}
+
+							@Override
+							public void onNo() {
+								// TODO Auto-generated method stub
+
+							}
+						});
 					}
 				});
 				btnSetPassword.addClickHandler(new ClickHandler() {
