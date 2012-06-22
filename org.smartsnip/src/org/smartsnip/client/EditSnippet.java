@@ -55,7 +55,6 @@ public class EditSnippet extends Composite {
 	private final TextBox txtName;
 	private final TextArea txtDescription;
 	private final TextArea txtCode;
-	private final ListBox lstLanguage;
 	private final ListBox lstCategory;
 	private final ListBox lstLicense;
 	private final TextBox txtTag;
@@ -91,7 +90,6 @@ public class EditSnippet extends Composite {
 		txtName = new TextBox();
 		txtDescription = new TextArea();
 		txtCode = new TextArea();
-		lstLanguage = new ListBox();
 		lstCategory = new ListBox();
 		lstLicense = new ListBox();
 		lstLicense.addItem("CC");
@@ -183,7 +181,6 @@ public class EditSnippet extends Composite {
 		pnlControl.add(btCreate);
 		pnlControl.add(btCancel);
 
-		pnlProp.add(lstLanguage);
 		pnlProp.add(lstCategory);
 		pnlProp.add(lstLicense);
 

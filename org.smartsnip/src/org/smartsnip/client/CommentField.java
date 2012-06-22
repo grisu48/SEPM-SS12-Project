@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  *         A composed Widget to display one single comment
  * 
  */
-public class CommentField extends Composite {
+public class CommentField extends Composite implements Updateable {
 	/** Current associated comment */
 	private final XComment comment;
 
@@ -308,7 +308,17 @@ public class CommentField extends Composite {
 
 	/** Edit the comment */
 	private void edit() {
-		EditComment.startEditComment(comment);
+		EditComment.startEditComment(comment, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				update();
+			}
+		});
 		parent.update();
 	}
 

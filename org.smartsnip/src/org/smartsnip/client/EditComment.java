@@ -25,6 +25,9 @@ public class EditComment {
 	/** Comment that currently is edited */
 	private final XComment comment;
 
+	/** Callback if assigned, or null if not assigned */
+	private final AsyncCallback<Void> callback;
+
 	/* Components */
 	private final PopupPanel popup = new PopupPanel(false, true);
 
@@ -47,8 +50,10 @@ public class EditComment {
 	 * 
 	 * @param comment
 	 *            to be edited
+	 * @param callback
 	 */
-	private EditComment(final XComment comment) {
+	private EditComment(final XComment comment, final AsyncCallback<Void> callback) {
+		this.callback = callback;
 		this.comment = comment;
 
 		lblOwner.setText("Owner: " + comment.owner);
@@ -83,6 +88,7 @@ public class EditComment {
 			@Override
 			public void onClick(ClickEvent event) {
 				close();
+				callback.onFailure(null);
 			}
 		});
 
@@ -104,26 +110,10 @@ public class EditComment {
 		Window.scrollTo(0, 0);
 		popup.setStyleName("contactForm");
 		popup.setGlassEnabled(true);
+		popup.setModal(callback != null); // Must be modal if there is a
+											// callback
 		popup.setPopupPosition(90, 104);
 		popup.setWidth("450px");
-	}
-
-	/**
-	 * Starts the editing of a comment. This method shows a new
-	 * {@link EditComment} popup and finishes, when the editing has done
-	 * 
-	 * 
-	 * If the given parameter comment is null, nothing happens
-	 * 
-	 * @param comment
-	 *            to be edited
-	 */
-	public static void startEditComment(XComment comment) {
-		if (comment == null)
-			return;
-
-		EditComment edit = new EditComment(comment);
-		edit.show();
 	}
 
 	/** Shows the popuppanel and starts the editing */
@@ -153,6 +143,7 @@ public class EditComment {
 			@Override
 			public void onSuccess(Void result) {
 				lblStatus.setText("Success");
+				callback.onSuccess(null);
 				close();
 			}
 
@@ -193,6 +184,7 @@ public class EditComment {
 					public void onSuccess(Void result) {
 						lblStatus.setText("Success");
 						close();
+						callback.onSuccess(null);
 					}
 
 					@Override
@@ -213,5 +205,42 @@ public class EditComment {
 				resetButtons();
 			}
 		});
+	}
+
+	/**
+	 * Starts the editing of a comment. This method shows a new
+	 * {@link EditComment} popup and finishes, when the editing has done
+	 * 
+	 * 
+	 * If the given parameter comment is null, nothing happens
+	 * 
+	 * @param comment
+	 *            to be edited
+	 */
+	public static void startEditComment(XComment comment) {
+		startEditComment(comment, null);
+	}
+
+	/**
+	 * Starts the editing of a comment. This method shows a new
+	 * {@link EditComment} popup and finishes, when the editing has done
+	 * 
+	 * 
+	 * If the given parameter comment is null, nothing happens
+	 * 
+	 * @param comment
+	 *            to be edited
+	 * @param callback
+	 *            Callback, when the edit process is done. Calls
+	 *            {@link AsyncCallback#onSuccess(Object)} if there was a change,
+	 *            and {@link AsyncCallback#onFailure(Throwable)} if the process
+	 *            was cancelled
+	 */
+	public static void startEditComment(XComment comment, AsyncCallback<Void> asyncCallback) {
+		if (comment == null)
+			return;
+
+		EditComment edit = new EditComment(comment, asyncCallback);
+		edit.show();
 	}
 }

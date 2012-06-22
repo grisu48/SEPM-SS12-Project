@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  *         A composed Widget to create a possibility to comment
  * 
  */
-public class CommentArea extends Composite {
+public class CommentArea extends Composite implements Updateable {
 
 	private final XSnippet snippet;
 
@@ -108,37 +108,33 @@ public class CommentArea extends Composite {
 	public void update() {
 		lblComments.setText("Refreshing comments ... ");
 
-		ISnippet.Util.getInstance().getComments(snippet.hash, 0, 50,
-				new AsyncCallback<List<XComment>>() {
+		ISnippet.Util.getInstance().getComments(snippet.hash, 0, 50, new AsyncCallback<List<XComment>>() {
 
-					@Override
-					public void onSuccess(List<XComment> result) {
-						if (result == null)
-							result = new ArrayList<XComment>();
+			@Override
+			public void onSuccess(List<XComment> result) {
+				if (result == null)
+					result = new ArrayList<XComment>();
 
-						vertComments.clear();
+				vertComments.clear();
 
-						for (XComment i : result) {
-							vertComments.add(new CommentField(CommentArea.this,
-									i));
-						}
-						int count = result.size();
-						lblComments.setText(count + " Comment"
-								+ (count == 1 ? "" : "s"));
+				for (XComment i : result) {
+					vertComments.add(new CommentField(CommentArea.this, i));
+				}
+				int count = result.size();
+				lblComments.setText(count + " Comment" + (count == 1 ? "" : "s"));
 
-						if (result.size() < 4) {
-							Label myLabel = new Label(
-									"Feel free to start commenting");
-							vertComments.add(myLabel);
-						}
-					}
+				if (result.size() < 4) {
+					Label myLabel = new Label("Feel free to start commenting");
+					vertComments.add(myLabel);
+				}
+			}
 
-					@Override
-					public void onFailure(Throwable caught) {
-						vertComments.add(new Label("CommentList is null"));
-						lblComments.setText("No comments");
-					}
-				});
+			@Override
+			public void onFailure(Throwable caught) {
+				vertComments.add(new Label("CommentList is null"));
+				lblComments.setText("No comments");
+			}
+		});
 	}
 
 }
