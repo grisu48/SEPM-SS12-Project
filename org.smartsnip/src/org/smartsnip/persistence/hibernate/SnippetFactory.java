@@ -226,7 +226,7 @@ public class SnippetFactory {
 		Float oldRating, ratingCount;
 		Float overwritten = 0F;
 		Float oneIfOverwritten = 0F;
-		
+
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
@@ -235,22 +235,28 @@ public class SnippetFactory {
 			// get the old rating
 			DBSnippet snip = new DBSnippet();
 			snip.setSnippetId(snippet.getHashId());
-			oldRating = (Float) query.selectSingle(snip, "ratingAverage", DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_UNIQUE_RESULT);
-			
-			// get the rating which will be overwritten (if present)
-			DBRating entity = new DBRating();
-			entity.setRatingId(snippet.getHashId(), user.getUsername());
+			oldRating = (Float) query.selectSingle(snip, "ratingAverage",
+					DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_UNIQUE_RESULT);
+
+			// get the number of ratings
 			query.reset();
-			DBRating oldEntity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE | DBQuery.QUERY_UNIQUE_RESULT);
-			if(oldEntity != null && oldEntity.getValue() > 0F) {
+			DBRating entity = new DBRating();
+			entity.setRatingId(snippet.getHashId(), null);
+			query.addWhereParameter("value >", "value", "", 0);
+			List<DBRating> ratings = query
+					.from(entity, IPersistence.DB_DEFAULT);
+			ratingCount = new Integer(ratings.size()).floatValue();
+
+			// get the rating which will be overwritten (if present)
+			query.reset();
+			entity.setRatingId(snippet.getHashId(), user.getUsername());
+			DBRating oldEntity = query.fromSingle(entity,
+					DBQuery.QUERY_NULLABLE | DBQuery.QUERY_UNIQUE_RESULT);
+			if (oldEntity != null && oldEntity.getValue() > 0F) {
 				overwritten = oldEntity.getValue().floatValue();
 				oneIfOverwritten = 1F;
 			}
-			// get the number of ratings
-			query.reset();
-			query.addWhereParameter("ratingId >", "ratingId", "", 0F);
-			ratingCount = query.count(entity, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_UNIQUE_RESULT).floatValue();
-			
+
 			// write the new rating
 			query.reset();
 			entity.setValue(rating);
@@ -264,7 +270,8 @@ public class SnippetFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return ((ratingCount * oldRating) + rating.floatValue() - overwritten) / (ratingCount + 1F - oneIfOverwritten);
+		return ((ratingCount * oldRating) + rating.floatValue() - overwritten)
+				/ (ratingCount + 1F - oneIfOverwritten);
 	}
 
 	/**
@@ -284,7 +291,7 @@ public class SnippetFactory {
 		Float oldRating, ratingCount;
 		Float overwritten = 0F;
 		Float oneIfOverwritten = 0F;
-		
+
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
@@ -293,35 +300,33 @@ public class SnippetFactory {
 			// get the old rating
 			DBSnippet snip = new DBSnippet();
 			snip.setSnippetId(snippet.getHashId());
-			oldRating = (Float) query.selectSingle(snip, "ratingAverage", DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_UNIQUE_RESULT);
-			
-			// get the rating which will be overwritten (if present)
+			oldRating = (Float) query.selectSingle(snip, "ratingAverage",
+					DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_UNIQUE_RESULT);
+
+			// get the number of ratings
 			DBRating entity = new DBRating();
-			Long snipId = null;
-			String userName = null;
-			if (snippet != null) {
-				snipId = snippet.getHashId();
-			}
-			if (user != null) {
-				user.getUsername();
-			}
-			entity.setRatingId(snipId, userName);
+			entity.setRatingId(snippet.getHashId(), null);
 			query.reset();
-			DBRating oldEntity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE | DBQuery.QUERY_UNIQUE_RESULT);
-			if(oldEntity != null && oldEntity.getValue() > 0F) {
+			query.addWhereParameter("value >", "value", "", 0);
+			List<DBRating> ratings = query
+					.from(entity, IPersistence.DB_DEFAULT);
+			ratingCount = new Integer(ratings.size()).floatValue();
+
+			// get the rating which will be overwritten (if present)
+			query.reset();
+			entity.setRatingId(snippet.getHashId(), user.getUsername());
+			DBRating oldEntity = query.fromSingle(entity,
+					DBQuery.QUERY_NULLABLE | DBQuery.QUERY_UNIQUE_RESULT);
+			if (oldEntity != null && oldEntity.getValue() > 0F) {
 				overwritten = oldEntity.getValue().floatValue();
 				oneIfOverwritten = 1F;
 			}
 
-			// get the number of ratings
+			// remove the rating
 			query.reset();
-			query.addWhereParameter("ratingId >", "ratingId", "", 0F);
-			ratingCount = query.count(entity, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_UNIQUE_RESULT).floatValue();
-			
-			// write the new rating
-			query.reset();
-
-			query.remove(entity, flags);
+			if (oldEntity != null) {
+				query.remove(entity, flags);
+			}
 			tx.commit();
 		} catch (RuntimeException e) {
 			if (tx != null)
@@ -330,7 +335,8 @@ public class SnippetFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return ((ratingCount * oldRating) - overwritten) / (ratingCount - oneIfOverwritten);
+		return ((ratingCount * oldRating) - overwritten)
+				/ (ratingCount - oneIfOverwritten);
 	}
 
 	/**
