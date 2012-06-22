@@ -61,6 +61,9 @@ public class SnippetOfDay extends HttpServlet {
 				writer.println("<!--LANG=" + result.language + "-->");
 				writer.println("<p>Language: " + result.language + "<p>");
 
+				writer.println("<!--RATING=" + result.rating + "-->");
+				writer.println("<p>Rating: " + result.rating + "<p>");
+
 				writer.println("<!--CATEGORY=" + result.category + "-->");
 				writer.println("<p>Category: " + result.category + "<p>");
 
