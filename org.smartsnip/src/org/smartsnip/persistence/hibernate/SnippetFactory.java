@@ -1063,7 +1063,7 @@ public class SnippetFactory {
 			if (luceneQuery != null) {
 				// wrap it in a hibernate.search query and add sorting criteria
 				FullTextQuery query = fullTextSession.createFullTextQuery(
-						luceneQuery, DBSnippet.class);
+						luceneQuery);
 
 				// set the sorting order, reverse order chosen in all cases
 				switch (sortingOrder) {

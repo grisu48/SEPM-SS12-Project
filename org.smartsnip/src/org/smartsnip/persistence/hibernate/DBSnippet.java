@@ -18,12 +18,14 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.DocumentId;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Index;
+import org.hibernate.search.annotations.Resolution;
 import org.hibernate.search.annotations.Store;
-
 /**
  * Database OR mapping class for table Snippet
  * 
@@ -53,14 +55,18 @@ public class DBSnippet {
 	private String description;
 
 	@Column(name = "viewcount")
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	private Integer viewcount;
 
 	@GeneratedValue
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
 	@Column(name = "rating_average", insertable = false, updatable = false)
 	private Float ratingAverage;
 
 	@GeneratedValue
 	@Temporal(TemporalType.TIMESTAMP)
+	@Field(index=Index.YES, analyze=Analyze.YES, store=Store.YES)
+	@DateBridge(resolution=Resolution.MINUTE)
 	@Column(name = "last_edited", insertable = false, updatable = false)
 	private Date lastEdited;
 
