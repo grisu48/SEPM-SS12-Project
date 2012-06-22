@@ -880,4 +880,18 @@ public class Snippet {
 	private void invalidateCache() {
 		averageRating = null;
 	}
+
+	/**
+	 * Sets the snippet of the day
+	 * 
+	 * @param snippet
+	 *            to be set
+	 */
+	public static void setSnippetOfDay(Snippet snippet) {
+		if (snippet == null)
+			return;
+		snippetOfDay = snippet.getHashId();
+		snippetOfDayRefreshTime = System.currentTimeMillis();
+		SourceDownloader.createSnippetOfDayTicket();
+	}
 }

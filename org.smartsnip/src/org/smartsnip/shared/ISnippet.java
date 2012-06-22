@@ -309,4 +309,16 @@ public interface ISnippet extends RemoteService, IsSerializable {
 	 *             Thrown if the server denies the access
 	 */
 	public List<XCode> getCodeHistory(long snippet) throws NotFoundException, NoAccessException;
+
+	/**
+	 * Defines a snippet as the snippet of the day
+	 * 
+	 * @param snippet
+	 *            to be defined
+	 * @throws NotFoundException
+	 *             Thrown if the snippet is not found
+	 * @throws NoAccessException
+	 *             Thrown if the server denies the access
+	 */
+	public void setAsSnippetOfDay(long snippet) throws NotFoundException, NoAccessException;
 }

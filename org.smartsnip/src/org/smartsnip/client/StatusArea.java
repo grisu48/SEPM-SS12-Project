@@ -38,6 +38,23 @@ public class StatusArea extends Composite {
 		lbSelectSort.addItem("Latest Snippets");
 		lbSelectSort.addItem("Mostly Viewed");
 		lbSelectSort.addItem("Best Rated");
+
+		// Must be before setting change handler
+		switch (Control.search.getSorting()) {
+		case time:
+			lbSelectSort.setSelectedIndex(1);
+			break;
+		case mostViewed:
+			lbSelectSort.setSelectedIndex(2);
+			break;
+		case highestRated:
+			lbSelectSort.setSelectedIndex(3);
+			break;
+		default:
+			lbSelectSort.setSelectedIndex(0);
+			break;
+		}
+
 		lbSelectSort.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {

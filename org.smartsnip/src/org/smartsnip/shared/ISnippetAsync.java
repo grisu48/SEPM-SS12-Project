@@ -55,4 +55,6 @@ public interface ISnippetAsync {
 
 	void getCodeHistory(long snippet, AsyncCallback<List<XCode>> callback);
 
+	void setAsSnippetOfDay(long snippet, AsyncCallback<Void> callback);
+
 }

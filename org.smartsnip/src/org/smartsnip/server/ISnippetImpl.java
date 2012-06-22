@@ -466,4 +466,18 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 
 		return result;
 	}
+
+	@Override
+	public void setAsSnippetOfDay(long id) throws NotFoundException, NoAccessException {
+		Session session = getSession();
+		User user = session.getUser();
+		Snippet snippet = Snippet.getSnippet(id);
+		if (snippet == null)
+			throw new NotFoundException();
+
+		if (user == null || !user.isModerator())
+			throw new NoAccessException();
+
+		Snippet.setSnippetOfDay(snippet);
+	}
 }

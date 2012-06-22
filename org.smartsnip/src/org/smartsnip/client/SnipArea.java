@@ -54,6 +54,7 @@ public class SnipArea extends Composite {
 	private final Button btnFav;
 	private final Button btnEdit;
 	private final Button btnHistory;
+	private final Button btnSetSnippetOfDay;
 	private final Button btnDelete;
 
 	/**
@@ -95,6 +96,7 @@ public class SnipArea extends Composite {
 		lblOwner = new Label(getOwnerText(mySnip));
 		lblOwner.setStyleName("txt");
 		btnHistory = new Button("View code history");
+		btnSetSnippetOfDay = new Button("Set as Snippet of day");
 
 		snipFull = new HTMLPanel(mySnip.codeHTML);
 		snipFull.setWidth("680px");
@@ -218,6 +220,14 @@ public class SnipArea extends Composite {
 
 			}
 		});
+		btnSetSnippetOfDay.setVisible(snippet.canEdit);
+		btnSetSnippetOfDay.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				setSnippetOfDay();
+			}
+		});
 
 		rating.setStyleName("toollink");
 		rating.setRatingHandler(new Rating.RatingHandler() {
@@ -315,6 +325,7 @@ public class SnipArea extends Composite {
 		horPanel.add(btnFav);
 		horPanel.add(btnDelete);
 		horPanel.add(btnEdit);
+		horPanel.add(btnSetSnippetOfDay);
 		horPanel.add(btnHistory);
 		horPanel.add(anchorGrid);
 
@@ -395,6 +406,7 @@ public class SnipArea extends Composite {
 		btnDelete.setVisible(snippet.canDelete);
 		anchUpload.setVisible(snippet.canEdit);
 		btnHistory.setVisible(snippet.canEdit);
+		btnSetSnippetOfDay.setVisible(snippet.canEdit);
 		rating.setEnabled(snippet.canRate);
 
 		updateFavortiteStatus();
@@ -453,6 +465,7 @@ public class SnipArea extends Composite {
 		anchDownload.setEnabled(false);
 		anchUpload.setEnabled(false);
 		btnHistory.setEnabled(false);
+		btnSetSnippetOfDay.setEnabled(false);
 		rating.setEnabled(false);
 	}
 
@@ -510,5 +523,33 @@ public class SnipArea extends Composite {
 			return;
 
 		Control.myGUI.showCodeHistoryPage(snippet);
+	}
+
+	/**
+	 * Set snippet of the day
+	 */
+	private void setSnippetOfDay() {
+		btnSetSnippetOfDay.setEnabled(false);
+		btnSetSnippetOfDay.setText("Setting ... ");
+
+		ISnippet.Util.getInstance().setAsSnippetOfDay(snippet.hash, new AsyncCallback<Void>() {
+
+			@Override
+			public void onSuccess(Void result) {
+				btnSetSnippetOfDay.setText("Set as snippet of day");
+				reset();
+
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				btnSetSnippetOfDay.setText("Retry setting as snippet of day");
+				reset();
+			}
+
+			private void reset() {
+				btnSetSnippetOfDay.setEnabled(true);
+			}
+		});
 	}
 }
