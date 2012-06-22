@@ -88,11 +88,11 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 	}
 
 	@Override
-	public void edit(long commentID, String newMessage) throws NoAccessException {
+	public XComment edit(long commentID, String newMessage) throws NoAccessException {
 		Session session = getSession();
 		Comment comment = Comment.getComment(commentID);
 		if (comment == null)
-			return;
+			return null;
 		if (!session.getPolicy().canEditComment(session, comment))
 			throw new NoAccessException();
 		User user = session.getUser();
@@ -106,6 +106,8 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 		if (!user.equals(owner))
 			owner.createNotification("Your comment \"" + comment.getMessage() + "\" has been edited by " + user.getUsername(), "Snippet "
 					+ comment.getSnippet().getName());
+
+		return toXComment(comment, session);
 	}
 
 	@Override

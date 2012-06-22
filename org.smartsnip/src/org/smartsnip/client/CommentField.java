@@ -3,6 +3,7 @@ package org.smartsnip.client;
 import java.util.Date;
 
 import org.smartsnip.shared.IComment;
+import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XComment;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -11,7 +12,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -37,7 +37,7 @@ public class CommentField extends Composite implements Updateable {
 	private final HorizontalPanel horPanel;
 	private final HorizontalPanel horToolbar;
 	private final VerticalPanel pnlVertButtons;
-	private final HTMLPanel commentText;
+	private final Label lblComment;
 
 	private final VerticalPanel verPanel;
 	private final Label lblOwner;
@@ -63,7 +63,7 @@ public class CommentField extends Composite implements Updateable {
 
 		horPnlMain = new HorizontalPanel();
 		horPanel = new HorizontalPanel();
-		commentText = new HTMLPanel(myComment.message);
+		lblComment = new Label(myComment.message);
 
 		verPanel = new VerticalPanel();
 		lblOwner = new Label(myComment.owner);
@@ -188,7 +188,7 @@ public class CommentField extends Composite implements Updateable {
 		pnlVertButtons.add(btnEdit);
 		pnlVertButtons.add(btnDelete);
 
-		verPanel.add(commentText);
+		verPanel.add(lblComment);
 		verPanel.add(horPanel);
 		verPanel.add(horToolbar);
 		verPanel.add(pnlVertButtons);
@@ -272,7 +272,13 @@ public class CommentField extends Composite implements Updateable {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// Ignore
+				if (caught == null)
+					return;
+
+				if (caught instanceof NotFoundException) {
+					// Deleted
+					CommentField.this.setVisible(false);
+				}
 			}
 		});
 	}
@@ -301,6 +307,7 @@ public class CommentField extends Composite implements Updateable {
 	 * Updates all components according to the values set in comment
 	 */
 	private void updateComponents() {
+		lblComment.setText(comment.message);
 		lblOwner.setText(comment.owner);
 		lblDate.setText(getTimeString(comment.time));
 		lblRating.setText(getRatingString(comment.positiveVotes, comment.negativeVotes));
@@ -308,18 +315,18 @@ public class CommentField extends Composite implements Updateable {
 
 	/** Edit the comment */
 	private void edit() {
-		EditComment.startEditComment(comment, new AsyncCallback<Void>() {
+		EditComment.startEditComment(comment, new ResultCallback<XComment>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				update();
+			public void onReturn(XComment result) {
+				if (result == null) {
+					// Has been deleted
+					CommentField.this.setVisible(false);
+				} else {
+					updateXComment(result);
+				}
 			}
 		});
-		parent.update();
 	}
 
 	/** Delete the comment */

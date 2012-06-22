@@ -14,7 +14,7 @@ public interface ICommentAsync {
 
 	void unvote(long commentID, AsyncCallback<XComment> callback);
 
-	void edit(long commentID, String newMessage, AsyncCallback<Void> callback);
+	void edit(long commentID, String newMessage, AsyncCallback<XComment> callback);
 
 	void delete(long commentID, AsyncCallback<Void> callback);
 

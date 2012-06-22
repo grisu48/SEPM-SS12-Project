@@ -1,5 +1,6 @@
 package org.smartsnip.client;
 
+import org.smartsnip.shared.IAdministrator;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.XUser;
@@ -115,10 +116,13 @@ public class User {
 			passNewPassword.addKeyDownHandler(enterHandler);
 			passConfirm.addKeyDownHandler(enterHandler);
 
-			grid.setWidget(0, 0, lblOldPassword);
+			if (username == null) {
+				grid.setWidget(0, 0, lblOldPassword);
+				grid.setWidget(0, 1, passOldPassword);
+			}
+
 			grid.setWidget(1, 0, lblNewPassword);
 			grid.setWidget(2, 0, lblConfirm);
-			grid.setWidget(0, 1, passOldPassword);
 			grid.setWidget(1, 1, passNewPassword);
 			grid.setWidget(2, 1, passConfirm);
 
@@ -155,10 +159,11 @@ public class User {
 			String oldPW = passOldPassword.getText();
 			String newPW = passNewPassword.getText();
 
-			if (oldPW.isEmpty() || newPW.isEmpty()) {
+			if ((username == null && oldPW.isEmpty()) || newPW.isEmpty()) {
 				lblStatus.setText("Insert password");
 				return;
 			}
+
 			if (!newPW.equals(passConfirm.getText())) {
 				lblStatus.setText("Passwords do not match");
 				return;
@@ -166,7 +171,7 @@ public class User {
 
 			disableControls();
 
-			IUser.Util.getInstance().setPassword(oldPW, newPW, new AsyncCallback<Void>() {
+			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 				@Override
 				public void onSuccess(Void result) {
@@ -184,7 +189,12 @@ public class User {
 					else
 						lblStatus.setText("Error: " + caught.getMessage());
 				}
-			});
+			};
+
+			if (username == null)
+				IUser.Util.getInstance().setPassword(oldPW, newPW, callback);
+			else
+				IAdministrator.Util.getInstance().setPassword(username, newPW, callback);
 
 		}
 

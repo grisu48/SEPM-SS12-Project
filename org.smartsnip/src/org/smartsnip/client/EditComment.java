@@ -26,7 +26,7 @@ public class EditComment {
 	private final XComment comment;
 
 	/** Callback if assigned, or null if not assigned */
-	private final AsyncCallback<Void> callback;
+	private final ResultCallback<XComment> callback;
 
 	/* Components */
 	private final PopupPanel popup = new PopupPanel(false, true);
@@ -52,7 +52,7 @@ public class EditComment {
 	 *            to be edited
 	 * @param callback
 	 */
-	private EditComment(final XComment comment, final AsyncCallback<Void> callback) {
+	private EditComment(final XComment comment, final ResultCallback<XComment> callback) {
 		this.callback = callback;
 		this.comment = comment;
 
@@ -88,7 +88,6 @@ public class EditComment {
 			@Override
 			public void onClick(ClickEvent event) {
 				close();
-				callback.onFailure(null);
 			}
 		});
 
@@ -138,13 +137,13 @@ public class EditComment {
 		btnApply.setEnabled(false);
 
 		lblStatus.setText("Editing ... ");
-		IComment.Util.getInstance().edit(comment.id, newComment, new AsyncCallback<Void>() {
+		IComment.Util.getInstance().edit(comment.id, newComment, new AsyncCallback<XComment>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(XComment result) {
 				lblStatus.setText("Success");
-				callback.onSuccess(null);
 				close();
+				callback.onReturn(result);
 			}
 
 			@Override
@@ -184,7 +183,7 @@ public class EditComment {
 					public void onSuccess(Void result) {
 						lblStatus.setText("Success");
 						close();
-						callback.onSuccess(null);
+						callback.onReturn(null);
 					}
 
 					@Override
@@ -231,16 +230,13 @@ public class EditComment {
 	 * @param comment
 	 *            to be edited
 	 * @param callback
-	 *            Callback, when the edit process is done. Calls
-	 *            {@link AsyncCallback#onSuccess(Object)} if there was a change,
-	 *            and {@link AsyncCallback#onFailure(Throwable)} if the process
-	 *            was cancelled
+	 *            Callback, when the edit process is done
 	 */
-	public static void startEditComment(XComment comment, AsyncCallback<Void> asyncCallback) {
+	public static void startEditComment(XComment comment, ResultCallback<XComment> callback) {
 		if (comment == null)
 			return;
 
-		EditComment edit = new EditComment(comment, asyncCallback);
+		EditComment edit = new EditComment(comment, callback);
 		edit.show();
 	}
 }

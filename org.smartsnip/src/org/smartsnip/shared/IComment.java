@@ -109,7 +109,7 @@ public interface IComment extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             If an access denial happens on the server
 	 */
-	public void edit(long commentID, String newMessage) throws NoAccessException;
+	public XComment edit(long commentID, String newMessage) throws NoAccessException;
 
 	/**
 	 * Deletes a comment, identified by its hash id. If the comment is not
