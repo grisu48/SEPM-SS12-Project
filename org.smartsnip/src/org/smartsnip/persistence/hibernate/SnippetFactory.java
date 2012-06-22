@@ -215,21 +215,44 @@ public class SnippetFactory {
 	 * @param snippet
 	 * @param user
 	 * @param flags
+	 * @return the updated average rating
 	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#writeRating(java.lang.Integer,
 	 *      org.smartsnip.core.Snippet, org.smartsnip.core.User, int)
 	 */
-	static void writeRating(Integer rating, Snippet snippet, User user,
+	static Float writeRating(Integer rating, Snippet snippet, User user,
 			int flags) throws IOException {
 		Session session = DBSessionFactory.open();
-
+		Float oldRating, ratingCount;
+		Float overwritten = 0F;
+		Float oneIfOverwritten = 0F;
+		
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
 			DBQuery query = new DBQuery(session);
 
+			// get the old rating
+			DBSnippet snip = new DBSnippet();
+			snip.setSnippetId(snippet.getHashId());
+			oldRating = (Float) query.selectSingle(snip, "ratingAverage", DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_UNIQUE_RESULT);
+			
+			// get the rating which will be overwritten (if present)
 			DBRating entity = new DBRating();
 			entity.setRatingId(snippet.getHashId(), user.getUsername());
+			query.reset();
+			DBRating oldEntity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE | DBQuery.QUERY_UNIQUE_RESULT);
+			if(oldEntity != null && oldEntity.getValue() > 0F) {
+				overwritten = oldEntity.getValue().floatValue();
+				oneIfOverwritten = 1F;
+			}
+			// get the number of ratings
+			query.reset();
+			query.addWhereParameter("ratingId >", "ratingId", "", 0F);
+			ratingCount = query.count(entity, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_UNIQUE_RESULT).floatValue();
+			
+			// write the new rating
+			query.reset();
 			entity.setValue(rating);
 
 			query.write(entity, flags);
@@ -241,6 +264,7 @@ public class SnippetFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
+		return ((ratingCount * oldRating) + rating.floatValue() - overwritten) / (ratingCount + 1F - oneIfOverwritten);
 	}
 
 	/**
@@ -249,19 +273,29 @@ public class SnippetFactory {
 	 * @param user
 	 * @param snippet
 	 * @param flags
+	 * @return the updated average rating
 	 * @throws IOException
 	 * @see org.smartsnip.persistence.hibernate.SqlPersistenceImpl#unRate(org.smartsnip.core.User,
 	 *      org.smartsnip.core.Snippet, int)
 	 */
-	static void unRate(User user, Snippet snippet, int flags)
+	static Float unRate(User user, Snippet snippet, int flags)
 			throws IOException {
 		Session session = DBSessionFactory.open();
-
+		Float oldRating, ratingCount;
+		Float overwritten = 0F;
+		Float oneIfOverwritten = 0F;
+		
 		Transaction tx = null;
 		try {
 			tx = session.beginTransaction();
 			DBQuery query = new DBQuery(session);
 
+			// get the old rating
+			DBSnippet snip = new DBSnippet();
+			snip.setSnippetId(snippet.getHashId());
+			oldRating = (Float) query.selectSingle(snip, "ratingAverage", DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_UNIQUE_RESULT);
+			
+			// get the rating which will be overwritten (if present)
 			DBRating entity = new DBRating();
 			Long snipId = null;
 			String userName = null;
@@ -272,6 +306,20 @@ public class SnippetFactory {
 				user.getUsername();
 			}
 			entity.setRatingId(snipId, userName);
+			query.reset();
+			DBRating oldEntity = query.fromSingle(entity, DBQuery.QUERY_NULLABLE | DBQuery.QUERY_UNIQUE_RESULT);
+			if(oldEntity != null && oldEntity.getValue() > 0F) {
+				overwritten = oldEntity.getValue().floatValue();
+				oneIfOverwritten = 1F;
+			}
+
+			// get the number of ratings
+			query.reset();
+			query.addWhereParameter("ratingId >", "ratingId", "", 0F);
+			ratingCount = query.count(entity, DBQuery.QUERY_NOT_NULL | DBQuery.QUERY_UNIQUE_RESULT).floatValue();
+			
+			// write the new rating
+			query.reset();
 
 			query.remove(entity, flags);
 			tx.commit();
@@ -282,6 +330,7 @@ public class SnippetFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
+		return ((ratingCount * oldRating) - overwritten) / (ratingCount - oneIfOverwritten);
 	}
 
 	/**

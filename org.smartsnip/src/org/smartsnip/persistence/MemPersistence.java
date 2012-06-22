@@ -289,11 +289,11 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void writeRating(Integer rating, Snippet snippet, User user, int mode)
+	public Float writeRating(Integer rating, Snippet snippet, User user, int mode)
 			throws IOException {
 		checkFail();
 		if (rating == null || snippet == null || user == null)
-			return;
+			return 0F;
 
 		HashMap<User, Integer> list = ratings.get(snippet);
 		if (list == null) {
@@ -301,6 +301,7 @@ public class MemPersistence implements IPersistence {
 			ratings.put(snippet, list);
 		}
 		list.put(user, rating);
+		return getAverageRating(snippet);
 	}
 
 	@Override
@@ -838,15 +839,16 @@ public class MemPersistence implements IPersistence {
 	}
 
 	@Override
-	public void unRate(User user, Snippet snippet, int mode) throws IOException {
+	public Float unRate(User user, Snippet snippet, int mode) throws IOException {
 		checkFail();
 		if (snippet == null || user == null)
-			return;
+			return 0F;
 
 		HashMap<User, Integer> list = ratings.get(snippet);
 		if (list == null)
-			return;
+			return 0F;
 		list.remove(user);
+		return getAverageRating(snippet);
 	}
 
 	@Override

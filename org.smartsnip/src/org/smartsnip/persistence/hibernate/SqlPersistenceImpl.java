@@ -220,9 +220,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Snippet, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeRating(Integer rating, Snippet snippet, User user,
+	public Float writeRating(Integer rating, Snippet snippet, User user,
 			int flags) throws IOException {
-		SnippetFactory.writeRating(rating, snippet, user, flags);
+		return SnippetFactory.writeRating(rating, snippet, user, flags);
 	}
 
 	/**
@@ -230,9 +230,9 @@ public class SqlPersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Snippet, int)
 	 */
 	@Override
-	public void unRate(User user, Snippet snippet, int flags)
+	public Float unRate(User user, Snippet snippet, int flags)
 			throws IOException {
-		SnippetFactory.unRate(user, snippet, flags);
+		return SnippetFactory.unRate(user, snippet, flags);
 	}
 
 	/**

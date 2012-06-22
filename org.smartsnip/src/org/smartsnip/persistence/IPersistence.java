@@ -463,10 +463,11 @@ public interface IPersistence {
 	 * @param flags
 	 *            the constraints for the write access. more than one constraint
 	 *            can be added by a bitwise or connection.
+	 * @return the average rating of the snippet
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void writeRating(Integer rating, Snippet snippet, User user,
+	public Float writeRating(Integer rating, Snippet snippet, User user,
 			int flags) throws IOException;
 
 	/**
@@ -483,10 +484,11 @@ public interface IPersistence {
 	 *            {@link #DB_NO_DELETE} which sets the rating to {@code 0}. To
 	 *            force the removal the rating entry set the
 	 *            {@link #DB_FORCE_DELETE} flag.
+	 * @return the average rating of the snippet
 	 * @throws IOException
 	 *             at a problem committing the data
 	 */
-	public void unRate(User user, Snippet snippet, int flags)
+	public Float unRate(User user, Snippet snippet, int flags)
 			throws IOException;
 
 	/**

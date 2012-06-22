@@ -254,10 +254,11 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Snippet, org.smartsnip.core.User, int)
 	 */
 	@Override
-	public void writeRating(Integer rating, Snippet snippet, User user,
+	public Float writeRating(Integer rating, Snippet snippet, User user,
 			int flags) throws IOException {
 		checkFail();
 		// do nothing -> data vanish in the black hole!
+		return getAverageRating(snippet);
 	}
 
 	/**
@@ -732,9 +733,10 @@ public class BlackholePersistenceImpl implements IPersistence {
 	 *      org.smartsnip.core.Snippet, int)
 	 */
 	@Override
-	public void unRate(User user, Snippet snippet, int flags)
+	public Float unRate(User user, Snippet snippet, int flags)
 			throws IOException {
 		checkFail();
+		return getAverageRating(snippet);
 	}
 
 	/**
