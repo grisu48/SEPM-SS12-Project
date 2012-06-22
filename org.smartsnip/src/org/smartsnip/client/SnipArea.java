@@ -193,7 +193,22 @@ public class SnipArea extends Composite {
 
 					@Override
 					public void onYes() {
-						setDeleted();
+						btnDelete.setText("Deleting ... ");
+						btnDelete.setEnabled(false);
+						ISnippet.Util.getInstance().delete(snippet.hash, new AsyncCallback<Void>() {
+
+							@Override
+							public void onSuccess(Void result) {
+								setDeleted();
+								btnDelete.setText("Deleted");
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								btnDelete.setEnabled(true);
+								btnDelete.setText("Retry deleting");
+							}
+						});
 					}
 
 					@Override
@@ -437,6 +452,7 @@ public class SnipArea extends Composite {
 		btnFav.setEnabled(false);
 		anchDownload.setEnabled(false);
 		anchUpload.setEnabled(false);
+		btnHistory.setEnabled(false);
 		rating.setEnabled(false);
 	}
 

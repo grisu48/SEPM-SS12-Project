@@ -7,6 +7,7 @@ import java.util.List;
 import org.smartsnip.core.Category;
 import org.smartsnip.core.Code;
 import org.smartsnip.core.Comment;
+import org.smartsnip.core.Logging;
 import org.smartsnip.core.Persistence;
 import org.smartsnip.core.Snippet;
 import org.smartsnip.core.Tag;
@@ -70,6 +71,7 @@ public class ISnippetImpl extends GWTSessionServlet implements ISnippet {
 		if (!session.getPolicy().canDeleteSnippet(session, snippet))
 			throw new NoAccessException();
 
+		Logging.printInfo("Deleting snippet " + snippet.getName() + " (id=" + hash + ")");
 		snippet.delete();
 
 		User user = session.getUser();
