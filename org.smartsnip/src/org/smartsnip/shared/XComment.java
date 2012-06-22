@@ -14,13 +14,13 @@ public class XComment implements IsSerializable {
 	public long id;
 	public boolean canEdit = false;
 	public boolean canDelete = false;
+	public boolean canComment = false;
 
 	private XComment() {
 
 	}
 
-	public XComment(String owner, long id, long snippet, String message,
-			int positiveVotes, int negativeVotes, Date time) {
+	public XComment(String owner, long id, long snippet, String message, int positiveVotes, int negativeVotes, Date time) {
 		this.owner = owner;
 		this.id = id;
 		this.snippet = snippet;

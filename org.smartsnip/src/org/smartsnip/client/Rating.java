@@ -185,7 +185,7 @@ public class Rating extends Composite {
 	 * @param enabled
 	 *            if enabled or disabled
 	 */
-	public void setRatingEanbled(boolean enabled) {
+	public void setRatingEnabled(boolean enabled) {
 		btnNull.setVisible(enabled);
 		for (Button btnRating : btnRatings)
 			btnRating.setVisible(enabled);

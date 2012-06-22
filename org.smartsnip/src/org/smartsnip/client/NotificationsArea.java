@@ -210,6 +210,8 @@ public class NotificationsArea extends Composite {
 					}
 				});
 
+				btnMarkRead.setStyleName("gwt-Button-Small");
+
 				result.add(lblMessage);
 				result.add(lblSource);
 				result.add(lblTime);

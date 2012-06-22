@@ -193,12 +193,28 @@ public class SourceDownloader extends SessionServlet {
 			Byte[] stream = ticket.getStream();
 			String filename = ticket.getFilename();
 			String mimetype = getServletConfig().getServletContext().getMimeType(filename);
-			resp.setContentType(mimetype == null ? "application/octet-stream" : mimetype);
+			resp.setContentType((mimetype == null ? "application/octet-stream" : mimetype)); // +
+																								// ";charset=UTF-8");
 			resp.setContentLength(stream.length);
 			resp.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
 
-			for (byte b : stream)
-				writer.print((char) b);
+			for (Byte b : stream)
+				writer.write((char) (byte) b);
+
+			// /* The output goes with chunks at a fixed size */
+			// final int chunkSize = 1024;
+			// final byte[] buffer = new byte[chunkSize];
+			// int i = 0;
+			//
+			// for (Byte b : stream) {
+			// buffer[i++] = b;
+			// if (i >= chunkSize) {
+			// String output = new String(buffer, "UTF-8");
+			// writer.print(output);
+			// i = 0;
+			// }
+			// }
+			// // Send remaining
 
 			writer.flush();
 

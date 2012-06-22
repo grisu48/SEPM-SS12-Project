@@ -51,8 +51,6 @@ public class CommentField extends Composite {
 	private final Button btnEdit;
 	private final Button btnDelete;
 
-	private boolean canRate = false;
-
 	/**
 	 * Initializes the comment
 	 * 
@@ -88,12 +86,12 @@ public class CommentField extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				enableRatingLinks(false);
-				IComment.Util.getInstance().votePositive(comment.id, new AsyncCallback<Void>() {
+				IComment.Util.getInstance().votePositive(comment.id, new AsyncCallback<XComment>() {
 
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess(XComment result) {
 						enableRatingLinks(true);
-						update();
+						updateXComment(result);
 					}
 
 					@Override
@@ -109,12 +107,12 @@ public class CommentField extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				enableRatingLinks(false);
-				IComment.Util.getInstance().voteNegative(comment.id, new AsyncCallback<Void>() {
+				IComment.Util.getInstance().voteNegative(comment.id, new AsyncCallback<XComment>() {
 
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess(XComment result) {
 						enableRatingLinks(true);
-						update();
+						updateXComment(result);
 					}
 
 					@Override
@@ -131,12 +129,12 @@ public class CommentField extends Composite {
 			@Override
 			public void onClick(ClickEvent event) {
 				enableRatingLinks(false);
-				IComment.Util.getInstance().unvote(comment.id, new AsyncCallback<Void>() {
+				IComment.Util.getInstance().unvote(comment.id, new AsyncCallback<XComment>() {
 
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess(XComment result) {
 						enableRatingLinks(true);
-						update();
+						updateXComment(result);
 					}
 
 					@Override
@@ -144,21 +142,6 @@ public class CommentField extends Composite {
 						enableRatingLinks(true);
 					}
 				});
-			}
-		});
-		enableRatingLinks(false);
-		IComment.Util.getInstance().canComment(comment.id, new AsyncCallback<Boolean>() {
-
-			@Override
-			public void onSuccess(Boolean result) {
-				enableRatingLinks(true);
-				canRate = result;
-			}
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// Something went wrong
-				// TODO: Error handling??
 			}
 		});
 
@@ -215,6 +198,7 @@ public class CommentField extends Composite {
 
 		initWidget(horPnlMain);
 
+		resetControls();
 		applyStyles();
 	}
 
@@ -236,18 +220,33 @@ public class CommentField extends Composite {
 	 * @return the string that should be displayed
 	 */
 	private String getRatingString(int positiveVotes, int negativeVotes) {
-		if (positiveVotes == 0 && negativeVotes == 0) return "No votes";
+		if (positiveVotes == 0 && negativeVotes == 0)
+			return "No votes";
 
 		StringBuffer buffer = new StringBuffer("");
 
-		if (positiveVotes > 0) {
-			buffer.append("+");
-			buffer.append(positiveVotes);
+		buffer.append((positiveVotes - negativeVotes));
+		buffer.append(" ");
 
-		}
-		if (negativeVotes > 0) {
-			buffer.append("-");
+		if (positiveVotes > 0 && negativeVotes > 0) {
+			buffer.append(" |");
+			buffer.append(positiveVotes);
+			buffer.append(" - ");
 			buffer.append(negativeVotes);
+			buffer.append(" |");
+		} else {
+
+			if (positiveVotes > 0) {
+				buffer.append(" | + ");
+				buffer.append(positiveVotes);
+				buffer.append(" |");
+			}
+			if (negativeVotes > 0) {
+				buffer.append(" | - ");
+				buffer.append(negativeVotes);
+				buffer.append(" |");
+
+			}
 
 		}
 
@@ -261,17 +260,21 @@ public class CommentField extends Composite {
 	 * @return
 	 */
 	private String getTimeString(Date time) {
-		if (time == null) return "";
+		if (time == null)
+			return "";
 		long diff = System.currentTimeMillis() - time.getTime();
 
 		int days = (int) (diff / (1000 * 60 * 60 * 24));
-		if (days > 2) return days + " days ago";
+		if (days > 2)
+			return days + " days ago";
 
 		int hours = (int) (diff / (1000 * 60 * 60));
-		if (hours > 1) return hours + " hours ago";
+		if (hours > 1)
+			return hours + " hours ago";
 
 		int minutes = (int) (diff / (1000 * 60));
-		if (minutes > 2) return minutes + " minutes ago";
+		if (minutes > 2)
+			return minutes + " minutes ago";
 
 		return "A moment ago ...";
 
@@ -291,17 +294,7 @@ public class CommentField extends Composite {
 
 			@Override
 			public void onSuccess(XComment result) {
-				if (result == null) return;
-				if (result.id != comment.id) return;
-
-				comment.message = result.message;
-				comment.negativeVotes = result.negativeVotes;
-				comment.owner = result.owner;
-				comment.positiveVotes = result.positiveVotes;
-				comment.snippet = result.snippet;
-				comment.time = result.time;
-
-				updateComponents();
+				updateXComment(result);
 			}
 
 			@Override
@@ -309,6 +302,26 @@ public class CommentField extends Composite {
 				// Ignore
 			}
 		});
+	}
+
+	/**
+	 * Second update step, when the update values are arrived
+	 * 
+	 * @param newComment
+	 *            update values
+	 */
+	private void updateXComment(XComment newComment) {
+		if (newComment == null || newComment.id != comment.id)
+			return;
+
+		comment.message = newComment.message;
+		comment.negativeVotes = newComment.negativeVotes;
+		comment.owner = newComment.owner;
+		comment.positiveVotes = newComment.positiveVotes;
+		comment.snippet = newComment.snippet;
+		comment.time = newComment.time;
+
+		updateComponents();
 	}
 
 	/**
@@ -328,9 +341,8 @@ public class CommentField extends Composite {
 
 	/** Delete the comment */
 	private void delete() {
-		if (Control.myGUI.showConfirmPopup(
-				"Are you sure, you want to delete the selected comment? (Undo NOT possible!)\n  " + comment.message,
-				"Confirmation") == true) {
+		if (Control.myGUI.showConfirmPopup("Are you sure, you want to delete the selected comment? (Undo NOT possible!)\n  "
+				+ comment.message, "Confirmation") == true) {
 			// Delete
 			disable();
 			IComment.Util.getInstance().delete(comment.id, new AsyncCallback<Void>() {
@@ -364,9 +376,9 @@ public class CommentField extends Composite {
 	private void resetControls() {
 		btnDelete.setEnabled(comment.canDelete);
 		btnEdit.setEnabled(comment.canEdit);
-		anchRateNegative.setEnabled(canRate);
-		anchRatePositive.setEnabled(canRate);
-		anchUnvote.setEnabled(canRate);
+		anchRateNegative.setVisible(comment.canComment);
+		anchRatePositive.setVisible(comment.canComment);
+		anchUnvote.setVisible(comment.canComment);
 	}
 
 }

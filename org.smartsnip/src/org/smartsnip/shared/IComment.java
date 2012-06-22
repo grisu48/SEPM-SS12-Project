@@ -39,8 +39,7 @@ public interface IComment extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown if the server denies the access
 	 */
-	public XComment getComment(long commentID) throws NotFoundException,
-			NoAccessException;
+	public XComment getComment(long commentID) throws NotFoundException, NoAccessException;
 
 	/**
 	 * Gets the comments from a snippet. If the snippet does not exists, the
@@ -60,8 +59,7 @@ public interface IComment extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             Thrown, if there is an access denial on the server
 	 */
-	public List<XComment> getComments(long snippethash, int start, int count)
-			throws NoAccessException;
+	public List<XComment> getComments(long snippethash, int start, int count) throws NoAccessException;
 
 	/**
 	 * Votes positive for a comment given by it's id If the comment has not been
@@ -71,8 +69,9 @@ public interface IComment extends RemoteService, IsSerializable {
 	 *            id of the comment to rate
 	 * @throws NoAccessException
 	 *             Thrown, if there is an access denial on the server
+	 * @return The refreshed comment values
 	 */
-	public void votePositive(long commentID) throws NoAccessException;
+	public XComment votePositive(long commentID) throws NoAccessException;
 
 	/**
 	 * Votes negative for a comment given by it's id If the comment has not been
@@ -82,8 +81,9 @@ public interface IComment extends RemoteService, IsSerializable {
 	 *            id of the comment to rate
 	 * @throws NoAccessException
 	 *             Thrown, if there is an access denial on the server
+	 * @return The refreshed comment values
 	 */
-	public void voteNegative(long commentID) throws NoAccessException;
+	public XComment voteNegative(long commentID) throws NoAccessException;
 
 	/**
 	 * Removes the vote for a comment given by it's id If the comment has not
@@ -93,8 +93,9 @@ public interface IComment extends RemoteService, IsSerializable {
 	 *            id of the comment to rate
 	 * @throws NoAccessException
 	 *             Thrown, if there is an access denial on the server
+	 * @return The refreshed comment values
 	 */
-	public void unvote(long commentID) throws NoAccessException;
+	public XComment unvote(long commentID) throws NoAccessException;
 
 	/**
 	 * Changes the message of a given comment entry, identified by its hash id.
@@ -108,8 +109,7 @@ public interface IComment extends RemoteService, IsSerializable {
 	 * @throws NoAccessException
 	 *             If an access denial happens on the server
 	 */
-	public void edit(long commentID, String newMessage)
-			throws NoAccessException;
+	public void edit(long commentID, String newMessage) throws NoAccessException;
 
 	/**
 	 * Deletes a comment, identified by its hash id. If the comment is not

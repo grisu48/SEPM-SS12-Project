@@ -34,7 +34,7 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 	}
 
 	@Override
-	public void votePositive(long commentID) throws NoAccessException {
+	public XComment votePositive(long commentID) throws NoAccessException {
 		Session session = getSession();
 		if (!session.getPolicy().canComment(session))
 			throw new NoAccessException();
@@ -43,14 +43,16 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 			throw new NoAccessException();
 		Comment comment = Comment.getComment(commentID);
 		if (comment == null)
-			return;
+			return null;
 
 		Logging.printInfo("Votes positive on comment " + commentID);
 		comment.votePositive(user);
+
+		return toXComment(comment, session);
 	}
 
 	@Override
-	public void voteNegative(long commentID) throws NoAccessException {
+	public XComment voteNegative(long commentID) throws NoAccessException {
 		Session session = getSession();
 		if (!session.getPolicy().canComment(session))
 			throw new NoAccessException();
@@ -59,14 +61,16 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 			throw new NoAccessException();
 		Comment comment = Comment.getComment(commentID);
 		if (comment == null)
-			return;
+			return null;
 
 		Logging.printInfo("Votes negative on comment " + commentID);
 		comment.voteNegative(user);
+
+		return toXComment(comment, session);
 	}
 
 	@Override
-	public void unvote(long commentID) throws NoAccessException {
+	public XComment unvote(long commentID) throws NoAccessException {
 		Session session = getSession();
 		if (!session.getPolicy().canComment(session))
 			throw new NoAccessException();
@@ -75,10 +79,12 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 			throw new NoAccessException();
 		Comment comment = Comment.getComment(commentID);
 		if (comment == null)
-			return;
+			return null;
 
 		Logging.printInfo("Unvotes on comment " + commentID);
 		comment.unvote(user);
+
+		return toXComment(comment, session);
 	}
 
 	@Override
@@ -201,6 +207,7 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 		if (session != null) {
 			result.canDelete = session.getPolicy().canDeleteComment(session, comment);
 			result.canEdit = session.getPolicy().canEditComment(session, comment);
+			result.canComment = session.getPolicy().canComment(session);
 		}
 		return result;
 	}

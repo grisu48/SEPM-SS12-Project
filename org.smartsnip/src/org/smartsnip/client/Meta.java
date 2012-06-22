@@ -1,11 +1,13 @@
 package org.smartsnip.client;
 
 import org.smartsnip.shared.IModerator;
+import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.IUser;
 import org.smartsnip.shared.XUser;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -27,6 +29,153 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class Meta extends Composite {
 
+	/**
+	 * This component is based on a button with text and a image
+	 * 
+	 * It acts as the button for the user
+	 * */
+	private class UserIcon extends Image {
+		/* Resources */
+		private final String GUEST_SRC = Control.baseURL + "/images/guest.png";
+		private final String USER_SRC = Control.baseURL + "/images/user.png";
+		private final String NOTIF_SRC = Control.baseURL + "/images/user_msg.png";
+		/* End of resources */
+
+		/** Notification refresh delay, if in user mode. In milliseconds */
+		private static final int NOTIFICATION_REFRESH_DELAY = 5000;
+
+		/** Notification refresh timer */
+		private final Timer refresher = new Timer() {
+
+			@Override
+			public void run() {
+				refresh();
+				refresher.schedule(NOTIFICATION_REFRESH_DELAY);
+			}
+		};
+
+		/** Current image URL */
+		private String currentImage = "";
+
+		/** If set as user or not */
+		private boolean isUser = false;
+		/** Current number of new notifications */
+		private int newNotifications = 0;
+
+		private UserIcon() {
+			setGuestImage();
+
+			refresher.schedule(NOTIFICATION_REFRESH_DELAY);
+			this.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					UserIcon.this.onClick();
+				}
+			});
+		}
+
+		/** Event on click */
+		private void onClick() {
+			if (isUser)
+				Control.myGUI.showNotificationPage();
+		}
+
+		/**
+		 * Sets the current image to the USER image
+		 */
+		private void setUserImage() {
+			this.setUrl(USER_SRC);
+		}
+
+		/**
+		 * Sets the current image to the USER with new NOTIFICATION image
+		 */
+		private void setNewNotificationImage() {
+			this.setUrl(NOTIF_SRC);
+		}
+
+		/**
+		 * Sets the current image to the GUEST image
+		 */
+		private void setGuestImage() {
+			this.setUrl(GUEST_SRC);
+		}
+
+		@Override
+		public void setUrl(String url) {
+			if (url == null)
+				return;
+			if (currentImage.equals(url))
+				return;
+			this.currentImage = url;
+			super.setUrl(url);
+		}
+
+		/** Set guest mode */
+		private void setGuest() {
+			isUser = false;
+			newNotifications = 0;
+			setGuestImage();
+
+		}
+
+		/** Set user mode */
+		private void setUser() {
+			isUser = true;
+			setUserImage();
+		}
+
+		/**
+		 * Does a refresh cycle. This clal should be called from the refresh
+		 * timer {@link #refresher}
+		 */
+		private void refresh() {
+			if (!isUser)
+				return;
+
+			ISession.Util.getInstance().getNotificationCount(true, new AsyncCallback<Long>() {
+
+				@Override
+				public void onSuccess(Long result) {
+					if (result == null) {
+						onFailure(new IllegalArgumentException("Null returned"));
+						return;
+					}
+
+					long temp = result;
+					newNotifications = (int) temp;
+					refreshComponent();
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					// Ignore
+					newNotifications = 0;
+					refreshComponent();
+				}
+			});
+		}
+
+		/**
+		 * Refreshes the component based on it's parameters. Should be called
+		 * from {@link #refresh()}
+		 */
+		private void refreshComponent() {
+			if (!isUser)
+				return;
+
+			boolean newArrived = (newNotifications > 0);
+			if (newArrived) {
+				setNewNotificationImage();
+				setTitle(newNotifications + " new notifications");
+			} else {
+				setUser();
+				setTitle("");
+			}
+		}
+	}
+
 	/* Controls */
 
 	private final VerticalPanel pnlUser;
@@ -36,10 +185,8 @@ public class Meta extends Composite {
 	private final Anchor register;
 	private final Anchor logout;
 	private final Anchor mod;
-	private final Image icon;
+	private final UserIcon userIcon;
 	private final Control control;
-
-	private final NotificationIcon notificationIcon;
 
 	/* End of controls */
 
@@ -60,10 +207,8 @@ public class Meta extends Composite {
 		register = new Anchor(" > Register");
 		logout = new Anchor(" > Logout");
 
-		notificationIcon = new NotificationIcon();
-
-		icon = new Image(Control.baseURL + "/images/guest.png");
-		icon.setSize("35px", "35px");
+		userIcon = new UserIcon();
+		userIcon.setSize("35px", "35px");
 
 		user.addClickHandler(new ClickHandler() {
 			@Override
@@ -107,7 +252,7 @@ public class Meta extends Composite {
 
 		// Assume we are not logged in
 		metaPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		metaPanel.add(icon);
+		metaPanel.add(userIcon);
 		metaPanel.add(user);
 		metaPanel.add(login);
 		metaPanel.add(register);
@@ -147,6 +292,7 @@ public class Meta extends Composite {
 		changeToolbarVisibility(isLoggedin);
 
 		if (isLoggedin) {
+			userIcon.setUser();
 			IUser.Util.getInstance().getMe(new AsyncCallback<XUser>() {
 
 				@Override
@@ -170,11 +316,6 @@ public class Meta extends Composite {
 						return;
 					boolean isModerator = result;
 					mod.setVisible(isModerator);
-
-					if (isModerator)
-						icon.setUrl(Control.baseURL + "/images/moderator.png");
-					else
-						icon.setUrl(Control.baseURL + "/images/user.png");
 				}
 
 				@Override
@@ -184,9 +325,8 @@ public class Meta extends Composite {
 		} else {
 			// If not logged in
 			user.setText("Guest");
-			icon.setUrl(Control.baseURL + "/images/guest.png");
+			userIcon.setGuest();
 		}
-		notificationIcon.update();
 	}
 
 	/**
@@ -203,7 +343,7 @@ public class Meta extends Composite {
 		// XXX Ugly hack to get rid of the visibility problem
 		metaPanel.clear();
 
-		metaPanel.add(icon);
+		metaPanel.add(userIcon);
 		metaPanel.add(user);
 
 		if (!loggedIn) {
@@ -211,7 +351,6 @@ public class Meta extends Composite {
 			metaPanel.add(register);
 		} else {
 			metaPanel.add(mod);
-			metaPanel.add(notificationIcon);
 			metaPanel.add(logout);
 		}
 

@@ -24,8 +24,8 @@ public class PersonalArea extends Composite {
 
 	/* Controls */
 	private final Grid grid;
-	private PersonalField myPersonalField;
-	private ResultArea raOwn;
+	private final PersonalField myPersonalField;
+	private final ResultArea raOwn;
 	private final ResultArea raFav;
 
 	// private final Label lblMyPersonalArea;
@@ -35,7 +35,7 @@ public class PersonalArea extends Composite {
 	/* End of controls */
 
 	/** Indicating if currently displaying reduced controls for a guest session */
-	private boolean guestSession;
+	private boolean guestSession = true;
 
 	/**
 	 * Initializes the personal area
@@ -49,25 +49,38 @@ public class PersonalArea extends Composite {
 		raFav = new ResultArea();
 		myPersonalField = new PersonalField();
 
-		// Check if guest session, that hied the field PersonalArea and
-		// OwnSnippets
-		if (!Control.getInstance().isLoggedIn()) {
-			// Guest session
-			guestSession = true;
+		raOwn = new ResultArea();
 
-			raOwn = null;
+		grid.setWidget(0, 1, lblOwnSnippets);
+		grid.setWidget(1, 1, raOwn);
 
-			grid.setWidget(0, 2, lblFavorites);
-			grid.setWidget(1, 2, raFav);
-		} else {
-			// User session
-			guestSession = false;
+		/*
+		 * This call is needed, if the browser does a refresh and is then
+		 * re-loaded. In this cases the isloggedin value has some strange
+		 * behaviours
+		 */
+		ISession.Util.getInstance().isLoggedIn(new AsyncCallback<Boolean>() {
 
-			raOwn = new ResultArea();
+			@Override
+			public void onSuccess(Boolean result) {
+				if (result == null) {
+					onFailure(new IllegalArgumentException("Server returned null"));
+					return;
+				}
 
-			grid.setWidget(0, 1, lblOwnSnippets);
-			grid.setWidget(1, 1, raOwn);
-		}
+				guestSession = !result;
+				if (guestSession) {
+					grid.remove(lblOwnSnippets);
+					grid.remove(raOwn);
+				}
+
+				update();
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
 
 		// grid.setWidget(0, 0, lblMyPersonalArea);
 		grid.setWidget(1, 0, myPersonalField);
@@ -75,7 +88,8 @@ public class PersonalArea extends Composite {
 		grid.setWidget(1, 2, raFav);
 		initWidget(grid);
 
-		updateSnippets();
+		// In AsyncCallback!
+		// updateSnippets();
 		applyStyles();
 	}
 
@@ -95,26 +109,6 @@ public class PersonalArea extends Composite {
 	 * 
 	 */
 	public void update() {
-		// Check logged in state
-		if (Control.getInstance().isLoggedIn() != guestSession) {
-			// Login state has been changed, also update reduced fields
-			guestSession = Control.getInstance().isLoggedIn();
-			if (guestSession) {
-				// Guest session - hide fields
-				grid.remove(lblOwnSnippets);
-				grid.remove(raOwn);
-
-				raOwn = null;
-			} else {
-				// User session - show new fields
-				raOwn = new ResultArea();
-
-				// grid.setWidget(0, 0, lblMyPersonalArea);
-				grid.setWidget(0, 1, lblOwnSnippets);
-				grid.setWidget(1, 1, raOwn);
-			}
-		}
-
 		myPersonalField.update();
 
 		updateSnippets();

@@ -103,8 +103,11 @@ public class Control implements EntryPoint {
 	 */
 	@Override
 	public void onModuleLoad() {
+		// Not logged in
+		user.isLoggedIn = false;
+
 		// Actaivate timer
-		scheduledTimer.schedule(TIMER_DELAY);
+		scheduledTimer.schedule(200);
 
 		proxySession.getSessionCookie(new AsyncCallback<String>() {
 
@@ -387,7 +390,7 @@ public class Control implements EntryPoint {
 				changeLoginState(false);
 				refresh();
 				myGUI.myMeta.update();
-				myGUI.showSearchPage();
+				myGUI.showBlankPage();
 			}
 		});
 

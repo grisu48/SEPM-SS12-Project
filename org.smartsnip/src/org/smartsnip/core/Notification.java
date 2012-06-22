@@ -134,7 +134,7 @@ public class Notification {
 	/**
 	 * Marks the notification as read
 	 */
-	void markRead() {
+	public void markRead() {
 		if (read == true)
 			return;
 		read = true;
@@ -144,7 +144,7 @@ public class Notification {
 	/**
 	 * Marks the notification as unread
 	 */
-	void markUnread() {
+	public void markUnread() {
 		if (read == false)
 			return;
 		read = false;

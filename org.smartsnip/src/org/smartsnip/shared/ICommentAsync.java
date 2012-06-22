@@ -6,14 +6,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ICommentAsync {
 
-	void getComments(long snippethash, int start, int count,
-			AsyncCallback<List<XComment>> callback);
+	void getComments(long snippethash, int start, int count, AsyncCallback<List<XComment>> callback);
 
-	void votePositive(long commentID, AsyncCallback<Void> callback);
+	void votePositive(long commentID, AsyncCallback<XComment> callback);
 
-	void voteNegative(long commentID, AsyncCallback<Void> callback);
+	void voteNegative(long commentID, AsyncCallback<XComment> callback);
 
-	void unvote(long commentID, AsyncCallback<Void> callback);
+	void unvote(long commentID, AsyncCallback<XComment> callback);
 
 	void edit(long commentID, String newMessage, AsyncCallback<Void> callback);
 

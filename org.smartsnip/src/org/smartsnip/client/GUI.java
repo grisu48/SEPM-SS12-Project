@@ -795,7 +795,8 @@ public class GUI {
 				myCommentArea.update();
 			break;
 		case PAGE_User:
-			myPersonalArea.update();
+			// Workaround to fix the personal area problem
+			showPersonalPage();
 			break;
 		case PAGE_Moderator:
 			myModeratorArea.update();

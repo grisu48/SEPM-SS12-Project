@@ -212,6 +212,10 @@ public interface ISession extends RemoteService, IsSerializable {
 	 *            ID of the notification to be marked
 	 * @param read
 	 *            true if read, false if mark as unread
+	 * @throws NotFoundException
+	 *             Thrown if the notification is not found
+	 * @throws NoAccessException
+	 *             Thrown if it is not your notification
 	 */
-	public void markNotificationRead(long id, boolean read);
+	public void markNotificationRead(long id, boolean read) throws NotFoundException, NoAccessException;
 }

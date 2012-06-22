@@ -12,6 +12,7 @@ import org.smartsnip.core.User;
 import org.smartsnip.security.PrivilegeController;
 import org.smartsnip.shared.ISession;
 import org.smartsnip.shared.NoAccessException;
+import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XNotification;
 import org.smartsnip.shared.XSearch;
 import org.smartsnip.shared.XSearch.SearchSorting;
@@ -270,12 +271,21 @@ public class ISessionImpl extends GWTSessionServlet implements ISession {
 	}
 
 	@Override
-	public void markNotificationRead(long id, boolean read) {
+	public void markNotificationRead(long id, boolean read) throws NotFoundException, NoAccessException {
 		Session session = getSession();
 		User user = session.getUser();
 		if (!session.isLoggedIn() || user == null)
 			return;
 
-		// TODO Implementation needed
+		Notification notification = Notification.get(id);
+		if (notification == null)
+			throw new NotFoundException();
+		if (!user.getUsername().equalsIgnoreCase(notification.getOwner()))
+			throw new NoAccessException();
+
+		if (read)
+			notification.markRead();
+		else
+			notification.markUnread();
 	}
 }
