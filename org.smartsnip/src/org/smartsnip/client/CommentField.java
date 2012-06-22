@@ -223,34 +223,7 @@ public class CommentField extends Composite {
 		if (positiveVotes == 0 && negativeVotes == 0)
 			return "No votes";
 
-		StringBuffer buffer = new StringBuffer("");
-
-		buffer.append((positiveVotes - negativeVotes));
-		buffer.append(" ");
-
-		if (positiveVotes > 0 && negativeVotes > 0) {
-			buffer.append(" |");
-			buffer.append(positiveVotes);
-			buffer.append(" - ");
-			buffer.append(negativeVotes);
-			buffer.append(" |");
-		} else {
-
-			if (positiveVotes > 0) {
-				buffer.append(" | + ");
-				buffer.append(positiveVotes);
-				buffer.append(" |");
-			}
-			if (negativeVotes > 0) {
-				buffer.append(" | - ");
-				buffer.append(negativeVotes);
-				buffer.append(" |");
-
-			}
-
-		}
-
-		return buffer.toString();
+		return "(+" + positiveVotes + "|-" + negativeVotes + ")";
 	}
 
 	/**
