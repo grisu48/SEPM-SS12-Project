@@ -345,6 +345,7 @@ class DBQuery {
 			} else {
 				builder.append(" asc");
 			}
+			hasOrderClauses = true;
 		}
 		if (hasOrderClauses) {
 			return builder.toString();

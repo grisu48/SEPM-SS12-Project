@@ -1377,6 +1377,28 @@ public class SqlPersistenceImplTest {
 
 	/**
 	 * Test method for
+	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getAllSnippets(java.lang.Integer, java.lang.Integer, int)}
+	 * .
+	 * 
+	 * @throws Throwable
+	 */
+	@Test
+	public void testGetAllSnippets() throws Throwable {
+		List<Snippet> snippets = instance.getAllSnippets(null, null,
+				IPersistence.SORT_MOSTVIEWED);
+		System.err.println("All Snippets:");
+		for (Snippet s : snippets) {
+			System.out.println("Result: snippetId = " + s.getHashId()
+					+ " Headline: " + s.getName() + " Data: "
+					+ s.getDescription() + " Tags: " + s.getTags()
+					+ " Category: " + s.getCategoryName() + " License: " + s.getLicense()
+					+ " Viewcount: " + s.getViewcount() + " Rating: "
+					+ s.getAverageRating() + " Owner: " + s.getOwnerUsername());
+		}
+	}
+
+	/**
+	 * Test method for
 	 * {@link org.smartsnip.persistence.hibernate.SqlPersistenceImpl#getUserCount()}
 	 * .
 	 * 

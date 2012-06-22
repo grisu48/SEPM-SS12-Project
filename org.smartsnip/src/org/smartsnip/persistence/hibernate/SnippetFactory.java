@@ -28,6 +28,8 @@ import org.smartsnip.core.User;
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.shared.Pair;
 
+import com.sun.xml.internal.stream.Entity;
+
 /**
  * @author littlelion
  * 
@@ -815,12 +817,11 @@ public class SnippetFactory {
 				break;
 			}
 
-			DBSnippet entity = new DBSnippet();
+			DBSnippet dbSnip = new DBSnippet();
 			Snippet snippet;
+			List<DBSnippet> snips = query.from(dbSnip, start, count, DBQuery.QUERY_CACHEABLE);
 
-			for (Iterator<DBSnippet> iterator = query.iterate(entity, start,
-					count, DBQuery.QUERY_CACHEABLE); iterator.hasNext();) {
-				entity = iterator.next();
+			for (DBSnippet entity: snips) {
 
 				snippet = helper.createSnippet(entity.getSnippetId(), entity
 						.getOwner(), entity.getHeadline(), entity
