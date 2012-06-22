@@ -117,7 +117,7 @@ public class NotificationsArea extends Composite {
 					return;
 				}
 
-				// Add this to scoll panel, that allows only one widget
+				// Add this to scroll panel, that allows only one widget
 				final VerticalPanel vertPanel = new VerticalPanel();
 				scrollPanel.add(vertPanel);
 
@@ -157,7 +157,7 @@ public class NotificationsArea extends Composite {
 
 								@Override
 								public void onFailure(Throwable caught) {
-									// Error occured. Offer retry
+									// Error occurred. Offer retry
 									anchSnippet.setText("Go to snippet (retry)");
 									anchSnippet.setEnabled(true);
 								}
@@ -197,6 +197,7 @@ public class NotificationsArea extends Composite {
 							public void onSuccess(Void result) {
 								notification.read = !notification.read;
 								refreshButton();
+								notificationsChanged();
 							}
 
 							private void refreshButton() {
@@ -239,6 +240,7 @@ public class NotificationsArea extends Composite {
 			@Override
 			public void onSuccess(Void result) {
 				update();
+				notificationsChanged();
 			}
 
 			@Override
@@ -261,5 +263,12 @@ public class NotificationsArea extends Composite {
 		btnRefresh.setEnabled(false);
 		btnMarkAllRead.setEnabled(false);
 		btnUnreadOnly.setEnabled(false);
+	}
+
+	/**
+	 * When something changes on a notification
+	 */
+	private void notificationsChanged() {
+		Control.myGUI.refreshMeta();
 	}
 }

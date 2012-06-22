@@ -7,7 +7,6 @@ import org.smartsnip.shared.XUser;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -41,19 +40,6 @@ public class Meta extends Composite {
 		private final String NOTIF_SRC = Control.baseURL + "/images/user_msg.png";
 		/* End of resources */
 
-		/** Notification refresh delay, if in user mode. In milliseconds */
-		private static final int NOTIFICATION_REFRESH_DELAY = 5000;
-
-		/** Notification refresh timer */
-		private final Timer refresher = new Timer() {
-
-			@Override
-			public void run() {
-				refresh();
-				refresher.schedule(NOTIFICATION_REFRESH_DELAY);
-			}
-		};
-
 		/** Current image URL */
 		private String currentImage = "";
 
@@ -65,7 +51,6 @@ public class Meta extends Composite {
 		private UserIcon() {
 			setGuestImage();
 
-			refresher.schedule(NOTIFICATION_REFRESH_DELAY);
 			this.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -125,55 +110,6 @@ public class Meta extends Composite {
 			isUser = true;
 			setUserImage();
 		}
-
-		/**
-		 * Does a refresh cycle. This clal should be called from the refresh
-		 * timer {@link #refresher}
-		 */
-		private void refresh() {
-			if (!isUser)
-				return;
-
-			ISession.Util.getInstance().getNotificationCount(true, new AsyncCallback<Long>() {
-
-				@Override
-				public void onSuccess(Long result) {
-					if (result == null) {
-						onFailure(new IllegalArgumentException("Null returned"));
-						return;
-					}
-
-					long temp = result;
-					newNotifications = (int) temp;
-					refreshComponent();
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					// Ignore
-					newNotifications = 0;
-					refreshComponent();
-				}
-			});
-		}
-
-		/**
-		 * Refreshes the component based on it's parameters. Should be called
-		 * from {@link #refresh()}
-		 */
-		private void refreshComponent() {
-			if (!isUser)
-				return;
-
-			boolean newArrived = (newNotifications > 0);
-			if (newArrived) {
-				setNewNotificationImage();
-				setTitle(newNotifications + " new notifications");
-			} else {
-				setUser();
-				setTitle("");
-			}
-		}
 	}
 
 	/* Controls */
@@ -187,11 +123,12 @@ public class Meta extends Composite {
 	private final Anchor mod;
 	private final UserIcon userIcon;
 	private final Control control;
+	private final Anchor notifications;
 
 	/* End of controls */
 
-	/** To prevent too much updates we store the current logged in flag */
-	private final boolean loggedInFlag = false;
+	/** If moderator or not, used in {@link #changeToolbarVisibility(boolean)} */
+	private boolean isModerator;
 
 	/**
 	 * Initialises the menu
@@ -206,6 +143,7 @@ public class Meta extends Composite {
 		user = new Anchor("Guest");
 		register = new Anchor(" > Register");
 		logout = new Anchor(" > Logout");
+		notifications = new Anchor("> Notifications");
 
 		userIcon = new UserIcon();
 		userIcon.setSize("35px", "35px");
@@ -249,6 +187,13 @@ public class Meta extends Composite {
 			}
 
 		});
+		notifications.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				Control.myGUI.showNotificationPage();
+			}
+		});
 
 		// Assume we are not logged in
 		metaPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -278,7 +223,30 @@ public class Meta extends Composite {
 
 	/** Update */
 	public void update() {
-		update(Control.getInstance().isLoggedIn());
+		if (Control.getInstance().isLoggedIn()) {
+			update(true);
+
+			ISession.Util.getInstance().getNotificationCount(true, new AsyncCallback<Long>() {
+
+				@Override
+				public void onSuccess(Long result) {
+					if (result == null) {
+						onFailure(new IllegalArgumentException("NUll returned"));
+						return;
+					}
+
+					long temp = result;
+					notifications.setText("> Notifications" + (temp > 0 ? " (" + temp + ")" : ""));
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					// Ignore
+				}
+			});
+		} else {
+			update(false);
+		}
 	}
 
 	/**
@@ -314,7 +282,7 @@ public class Meta extends Composite {
 				public void onSuccess(Boolean result) {
 					if (result == null)
 						return;
-					boolean isModerator = result;
+					isModerator = result;
 					mod.setVisible(isModerator);
 				}
 
@@ -344,13 +312,16 @@ public class Meta extends Composite {
 		metaPanel.clear();
 
 		metaPanel.add(userIcon);
-		metaPanel.add(user);
 
 		if (!loggedIn) {
+			metaPanel.add(user);
 			metaPanel.add(login);
 			metaPanel.add(register);
 		} else {
-			metaPanel.add(mod);
+			metaPanel.add(user);
+			metaPanel.add(notifications);
+			if (isModerator)
+				metaPanel.add(mod);
 			metaPanel.add(logout);
 		}
 
