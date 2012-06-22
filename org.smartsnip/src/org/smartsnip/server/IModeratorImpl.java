@@ -6,6 +6,7 @@ import org.smartsnip.shared.IModerator;
 import org.smartsnip.shared.NoAccessException;
 import org.smartsnip.shared.NotFoundException;
 import org.smartsnip.shared.XUser;
+import org.smartsnip.shared.XUser.UserState;
 
 public class IModeratorImpl extends GWTSessionServlet implements IModerator {
 
@@ -25,7 +26,7 @@ public class IModeratorImpl extends GWTSessionServlet implements IModerator {
 
 	@Override
 	public void setUserState(String username, XUser.UserState state) throws NotFoundException, NoAccessException {
-		if (username == null)
+		if (username == null || state == null || state == UserState.deleted)
 			return;
 
 		Session session = getSession();
@@ -39,7 +40,11 @@ public class IModeratorImpl extends GWTSessionServlet implements IModerator {
 		if (targetUser == null)
 			throw new NotFoundException();
 
-		Logging.printInfo("MODERATOR: Setting state of user \"" + targetUser.username + "\" to " + state);
+		if (state == UserState.administrator)
+			if (!user.isAdministrator())
+				throw new NoAccessException();
+
+		Logging.printInfo(user.getUsername() + " (moderator) set the state of the user " + targetUser.getUsername() + " to " + state);
 		targetUser.setState(state);
 	}
 

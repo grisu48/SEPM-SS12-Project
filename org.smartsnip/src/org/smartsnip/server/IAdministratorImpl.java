@@ -26,7 +26,7 @@ public class IAdministratorImpl extends IModeratorImpl implements IAdministrator
 
 	@Override
 	public void setUserState(String username, UserState state) throws NotFoundException, NoAccessException {
-		if (username == null || state == null)
+		if (username == null || state == null || state == UserState.deleted)
 			return;
 
 		Session session = getSession();
@@ -39,6 +39,7 @@ public class IAdministratorImpl extends IModeratorImpl implements IAdministrator
 			throw new NotFoundException();
 
 		targetUser.setState(state);
+		Logging.printInfo(user.getUsername() + " (admin) set the state of the user " + targetUser.getUsername() + " to " + state);
 
 		if (!user.equals(targetUser))
 			notifyUser(username, user.getUsername() + " (administrator) set your state to " + state, user.getUsername());
@@ -71,6 +72,7 @@ public class IAdministratorImpl extends IModeratorImpl implements IAdministrator
 			throw new IllegalArgumentException("Password denied");
 
 		targetUser.setPassword(password);
+		Logging.printInfo(user.getUsername() + " (admin) changed the password of " + targetUser.getUsername());
 
 		if (!user.equals(targetUser))
 			notifyUser(username, user.getUsername() + " (administrator) set your password", user.getUsername());
@@ -87,6 +89,8 @@ public class IAdministratorImpl extends IModeratorImpl implements IAdministrator
 		if (targetUser == null)
 			throw new NotFoundException();
 		targetUser.delete();
+
+		Logging.printInfo(user.getUsername() + " (admin) deleted user " + targetUser.getUsername());
 	}
 
 	@Override
