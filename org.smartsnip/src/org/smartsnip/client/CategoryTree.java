@@ -49,6 +49,8 @@ public class CategoryTree extends Composite {
 		private PopupMenuCategory(CategoryTreeItem item) {
 			this.item = item;
 
+			popupPanel.setAutoHideEnabled(true);
+
 			popupMenu.addItem(popupAdd);
 			popupMenu.addItem(popupEdit);
 			popupMenu.addItem(popupDelete);
@@ -61,7 +63,6 @@ public class CategoryTree extends Composite {
 
 		/** Apply style theme */
 		private void applyStyle() {
-			popupMenu.setStyleName("popup");
 			popupAdd.setStyleName("popup-item");
 			popupEdit.setStyleName("popup-item");
 			popupDelete.setStyleName("popup-item");

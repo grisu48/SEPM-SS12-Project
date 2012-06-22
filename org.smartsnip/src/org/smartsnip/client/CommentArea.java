@@ -106,6 +106,7 @@ public class CommentArea extends Composite implements Updateable {
 	 * 
 	 */
 	public void update() {
+		myComment.setText("");
 		lblComments.setText("Refreshing comments ... ");
 
 		ISnippet.Util.getInstance().getComments(snippet.hash, 0, 50, new AsyncCallback<List<XComment>>() {
@@ -131,7 +132,7 @@ public class CommentArea extends Composite implements Updateable {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				vertComments.add(new Label("CommentList is null"));
+				vertComments.add(new Label("Error fetching comment list: " + caught.getMessage()));
 				lblComments.setText("No comments");
 			}
 		});

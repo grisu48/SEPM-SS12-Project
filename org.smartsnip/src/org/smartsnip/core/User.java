@@ -839,7 +839,13 @@ public class User {
 			e.printStackTrace(System.err);
 			users = new ArrayList<User>();
 		}
-		return users;
+
+		List<User> result = new ArrayList<User>(users.size());
+		for (User user : users)
+			if (user != null && !user.isDeleted())
+				result.add(user);
+
+		return result;
 	}
 
 	/**
