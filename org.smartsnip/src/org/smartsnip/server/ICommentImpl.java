@@ -200,7 +200,7 @@ public class ICommentImpl extends GWTSessionServlet implements IComment {
 	 *            to apply the session specific values
 	 * @return converted {@link XComment} value
 	 */
-	static XComment toXComment(Comment comment, Session session) {
+	public static XComment toXComment(Comment comment, Session session) {
 		if (comment == null)
 			return null;
 		XComment result = comment.toXComment();

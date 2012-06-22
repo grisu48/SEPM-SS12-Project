@@ -306,6 +306,7 @@ public class GWTSessionServlet extends RemoteServiceServlet {
 		result.canRate = session.getPolicy().canRateSnippet(session, snippet);
 		result.canDelete = session.getPolicy().canDeleteSnippet(session, snippet);
 		result.canEdit = session.getPolicy().canEditSnippet(session, snippet);
+		result.canComment = session.getPolicy().canComment(session);
 
 		return result;
 	}
