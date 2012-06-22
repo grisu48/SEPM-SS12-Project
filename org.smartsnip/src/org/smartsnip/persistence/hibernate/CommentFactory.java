@@ -143,7 +143,7 @@ public class CommentFactory {
 
 			entity.setVoteId(comment.getHashID(), user.getUsername());
 			DBVote.Vote prevValue = (DBVote.Vote) query.selectSingle(entity,
-					"vote", DBQuery.QUERY_CACHEABLE | DBQuery.QUERY_NULLABLE
+					"vote", DBQuery.QUERY_NULLABLE
 							| DBQuery.QUERY_UNIQUE_RESULT);
 			if (prevValue != null) {
 				switch (prevValue) {
@@ -245,7 +245,7 @@ public class CommentFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return new Pair<Integer, Integer>(posVotes, negVotes);
+		return new Pair<Integer, Integer>(posVotes + 1, negVotes);
 	}
 
 	/**
@@ -309,7 +309,7 @@ public class CommentFactory {
 		} finally {
 			DBSessionFactory.close(session);
 		}
-		return new Pair<Integer, Integer>(posVotes, negVotes);
+		return new Pair<Integer, Integer>(posVotes, negVotes + 1);
 	}
 
 	/**
@@ -343,7 +343,7 @@ public class CommentFactory {
 			DBVote entity = new DBVote();
 			entity.setVoteId(comment.getHashID(), user.getUsername());
 			DBVote.Vote prevValue = (DBVote.Vote) query.selectSingle(entity,
-					"vote", DBQuery.QUERY_CACHEABLE | DBQuery.QUERY_NULLABLE
+					"vote", DBQuery.QUERY_NULLABLE
 							| DBQuery.QUERY_UNIQUE_RESULT);
 			if (prevValue != null) {
 				switch (prevValue) {
