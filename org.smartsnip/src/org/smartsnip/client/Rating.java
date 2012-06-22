@@ -5,7 +5,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -13,9 +12,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  * @author Felix
  * 
- *
- * A composed Widget to display the rating
- *
+ * 
+ *         A composed Widget to display the rating
+ * 
  */
 public class Rating extends Composite {
 
@@ -23,8 +22,6 @@ public class Rating extends Composite {
 	private final HorizontalPanel pnlHorizontal;
 	private final Button btnNull;
 	private final Button[] btnRatings;
-
-	private final Label lblRating;
 
 	/** Current set rating */
 	private int rating = 0;
@@ -96,8 +93,6 @@ public class Rating extends Composite {
 		pnlVertical = new VerticalPanel();
 		pnlHorizontal = new HorizontalPanel();
 
-		lblRating = new Label("");
-
 		btnNull = new Button("Unrate");
 		btnNull.addClickHandler(new RatingClickHandler(0));
 		pnlHorizontal.add(btnNull);
@@ -109,7 +104,6 @@ public class Rating extends Composite {
 		}
 
 		pnlVertical.add(pnlHorizontal);
-		pnlVertical.add(lblRating);
 		initWidget(pnlVertical);
 	}
 
@@ -157,11 +151,6 @@ public class Rating extends Composite {
 	public void setRatingStatus(int value) {
 		if (value < 0 || value > getMax())
 			return;
-		if (value == 0) {
-			lblRating.setText("Unrated");
-		} else {
-			lblRating.setText("Rated: " + value);
-		}
 	}
 
 	/**
