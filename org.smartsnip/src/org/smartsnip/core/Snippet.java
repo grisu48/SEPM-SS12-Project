@@ -687,16 +687,18 @@ public class Snippet {
 	 * 
 	 * @param user
 	 *            the rating should be removed from
+	 * @return the updated rating average
 	 */
-	public void unrate(User user) {
+	public Float unrate(User user) {
 		if (user == null)
-			return;
+			return null;
 		try {
-			Persistence.getInstance().unRate(user, this, IPersistence.DB_DEFAULT);
+			return Persistence.getInstance().unRate(user, this, IPersistence.DB_DEFAULT);
 		} catch (IOException e) {
 			System.err.println("IOException during unrating of snippet " + getHashId() + " of user " + user.getUsername() + ": "
 					+ e.getMessage());
 			e.printStackTrace(System.err);
+			return null;
 		}
 	}
 
@@ -710,20 +712,22 @@ public class Snippet {
 	 * @param rate
 	 *            must be between 0 and 5. If 0, the rating is removed. If
 	 *            between 1 and 5, the according rating is set
+	 * @return the updated rating average
 	 */
-	public void setRating(User user, int rate) {
+	public Float setRating(User user, int rate) {
 		if (user == null || rate < 0 || rate > 5)
-			return;
+			return null;
 
 		if (rate == 0)
-			unrate(user);
+			return unrate(user);
 		else {
 			try {
-				Persistence.getInstance().writeRating(rate, this, user, IPersistence.DB_DEFAULT);
+				return Persistence.getInstance().writeRating(rate, this, user, IPersistence.DB_DEFAULT);
 			} catch (IOException e) {
 				System.err.println("IOException during rating of snippet " + getHashId() + " to score=" + rate + " of user "
 						+ user.getUsername() + ": " + e.getMessage());
 				e.printStackTrace(System.err);
+				return null;
 			}
 		}
 	}
