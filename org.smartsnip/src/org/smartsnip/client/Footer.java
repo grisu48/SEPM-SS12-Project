@@ -15,9 +15,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * 
  * @author Paul
  * 
- *
- * A composed Widget to display the footer
- *
+ * 
+ *         A composed Widget to display the footer
+ * 
  */
 public class Footer extends Composite {
 
@@ -39,6 +39,7 @@ public class Footer extends Composite {
 	private final Anchor aSource;
 	private final Anchor aAndroid;
 	private final Anchor aSnippet;
+	private final Anchor aGitHub;
 
 	/**
 	 * Initializes the footer
@@ -55,13 +56,14 @@ public class Footer extends Composite {
 		name2 = new Label("Felix Niederwanger");
 		aName3 = new Anchor("Paul Opitz", false, "http://perdix.at");
 		aSource = new Anchor("Download Source Code", false, "");
-		aAndroid = new Anchor("Download Android Client", false, "");
+		aAndroid = new Anchor("Download Android Client", false, "/source/org.smartsnip.android.apk");
 		aSnippet = new Anchor("Mobile Snipped of the Day");
 		aSnippet.setHref(GWT.getHostPageBaseURL() + "snippetofday");
+		aGitHub = new Anchor("Project at GitHub", false, "https://github.com/grisu48/SEPM-SS12-Project", "_blank");
 		links = new Label("Links");
 		links.addStyleName("h4");
-		aLink1 = new Anchor("Universität Innsbruck", false, "http://uibk.ac.at");
-		aLink2 = new Anchor("You can make IT", false, "http://youcanmakeit.at");
+		aLink1 = new Anchor("Universität Innsbruck", false, "http://uibk.ac.at", "_blank");
+		aLink2 = new Anchor("You can make IT", false, "http://youcanmakeit.at", "_blank");
 		about = new Label("About this Website");
 		about.addStyleName("h4");
 		impressum = new Anchor("Impressum");
@@ -104,23 +106,19 @@ public class Footer extends Composite {
 		vertPanel3.add(links);
 
 		vertPanel3.add(aSnippet);
-		vertPanel3.add(aLink1);
-		vertPanel3.add(aLink2);
 
-		// TODO Increment
 		// vertPanel3.add(aSource);
-		// vertPanel3.add(aAndroid);
+		vertPanel3.add(aAndroid);
 		// vertPanel3.add(aLink1);
 		// vertPanel3.add(aLink2);
+		vertPanel3.add(aGitHub);
+
 		footerGrid.setWidget(0, 0, vertPanel1);
 		footerGrid.setWidget(0, 1, vertPanel2);
 		footerGrid.setWidget(0, 2, vertPanel3);
-		footerGrid.getCellFormatter().setVerticalAlignment(0, 0,
-				HasVerticalAlignment.ALIGN_TOP);
-		footerGrid.getCellFormatter().setVerticalAlignment(0, 1,
-				HasVerticalAlignment.ALIGN_TOP);
-		footerGrid.getCellFormatter().setVerticalAlignment(0, 2,
-				HasVerticalAlignment.ALIGN_TOP);
+		footerGrid.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
+		footerGrid.getCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
+		footerGrid.getCellFormatter().setVerticalAlignment(0, 2, HasVerticalAlignment.ALIGN_TOP);
 		footerGrid.setWidth("100%");
 
 		initWidget(footerGrid);
