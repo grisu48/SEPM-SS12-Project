@@ -61,6 +61,12 @@ public class SnippetOfDay extends HttpServlet {
 				writer.println("<!--LANG=" + result.language + "-->");
 				writer.println("<p>Language: " + result.language + "<p>");
 
+				writer.println("<!--CATEGORY=" + result.category + "-->");
+				writer.println("<p>Category: " + result.category + "<p>");
+
+				writer.println("<!--LICENSE=" + result.license + "-->");
+				writer.println("<p>License: " + result.license + "<p>");
+
 				writer.println("<!--DESC=" + result.description + "-->");
 				writer.println("<hr>");
 				writer.println("<p>" + result.description + "<p>");
@@ -68,6 +74,12 @@ public class SnippetOfDay extends HttpServlet {
 
 				writer.println("<!--CODE=" + result.code + "-->");
 				writer.println("<p>" + result.codeHTML + "<p>");
+
+				// Check for source code
+				String downloadLink = SourceDownloader.getSnippetOfDaySourceURL();
+				if (downloadLink != null) {
+					writer.println("<!--LINK=" + result.code + "-->");
+				}
 
 				writer.println("<hr>");
 			}
@@ -85,8 +97,7 @@ public class SnippetOfDay extends HttpServlet {
 			writer.println("<body>");
 			writer.println("<h1>500 - Server error</h1>");
 			writer.println("<p>There was an unhandled exception on the server:</p>");
-			writer.println("<p>" + e.getClass().getName() + ": <b>"
-					+ e.getMessage() + "</b></p>");
+			writer.println("<p>" + e.getClass().getName() + ": <b>" + e.getMessage() + "</b></p>");
 			e.printStackTrace(writer);
 			writer.println("</body>");
 			resp.setStatus(500);

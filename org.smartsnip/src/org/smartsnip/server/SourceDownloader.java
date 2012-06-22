@@ -70,6 +70,9 @@ public class SourceDownloader extends SessionServlet {
 	/** HTTP argument header for the ticket id */
 	public static final String ticketHeader = "ticket";
 
+	/** Static ticket for the snippet of the day */
+	public static Ticket snippetOfDayTicket = createSnippetOfDayTicket();
+
 	/**
 	 * A ticket for downloading
 	 * 
@@ -79,6 +82,8 @@ public class SourceDownloader extends SessionServlet {
 		private final Byte[] stream;
 		private final long creationTime;
 		private final String filename;
+		private boolean isStatic = false; // Static ticket means, it
+											// cannot be deleted
 
 		private Ticket(long id, Byte[] stream, String filename) {
 			this.id = id;
@@ -115,6 +120,9 @@ public class SourceDownloader extends SessionServlet {
 		}
 
 		public void delete() {
+			if (isStatic)
+				return;
+
 			synchronized (tickets) {
 				if (tickets.containsKey(this.id))
 					tickets.remove(this.id);
@@ -140,6 +148,37 @@ public class SourceDownloader extends SessionServlet {
 		// Ticket has been created
 		System.out.println("Creating download ticket for code (id=" + code.getHashID() + ")object. TicketID=" + ticket.id);
 		return ticket.id;
+	}
+
+	/**
+	 * Creates the ticket for the snippet of the day and returns it
+	 * 
+	 * @return Ticket for the snippet of the day
+	 */
+	public static synchronized Ticket createSnippetOfDayTicket() {
+		SourceDownloader.snippetOfDayTicket = null;
+
+		Snippet snippet = Snippet.getSnippetOfDay();
+		if (snippet == null)
+			return null;
+
+		Code code = snippet.getCode();
+		if (!code.hasDownloadableSource())
+			return null;
+
+		Ticket ticket = new Ticket(code.getHashID(), code.getDownloadableSource(), code.getDownloadableSourceName());
+		ticket.isStatic = true;
+		SourceDownloader.snippetOfDayTicket = ticket;
+		return ticket;
+	}
+
+	/**
+	 * @returnthe URL to download the ticket of the day or null, if not existing
+	 */
+	public static String getSnippetOfDaySourceURL() {
+		if (snippetOfDayTicket == null)
+			return null;
+		return "download?" + ticketHeader + "=" + snippetOfDayTicket.id;
 	}
 
 	/**

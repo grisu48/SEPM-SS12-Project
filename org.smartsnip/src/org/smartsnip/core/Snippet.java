@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.smartsnip.persistence.IPersistence;
+import org.smartsnip.server.SourceDownloader;
 import org.smartsnip.shared.XComment;
 import org.smartsnip.shared.XSnippet;
 
@@ -70,7 +71,8 @@ public class Snippet {
 	 *            of the new snippet. Must not be null
 	 * @param viewcount
 	 *            of the new snippet. If less than zero, will be set to zero
-	 * @param averageRating the average of all ratings
+	 * @param averageRating
+	 *            the average of all ratings
 	 * @throws IllegalArgumentException
 	 *             Thrown, if at least one of the arguments is null or empty
 	 */
@@ -746,6 +748,8 @@ public class Snippet {
 		try {
 			snippetOfDay = Persistence.getInstance().getRandomSnippet(Math.random()).getHashId();
 			snippetOfDayRefreshTime = System.currentTimeMillis();
+			SourceDownloader.createSnippetOfDayTicket();
+
 		} catch (IOException e) {
 			System.err.println("IOException fetching randomized snippet: " + e.getMessage());
 			e.printStackTrace(System.err);
