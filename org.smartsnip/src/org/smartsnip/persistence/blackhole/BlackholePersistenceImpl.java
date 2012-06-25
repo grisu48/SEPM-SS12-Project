@@ -22,7 +22,7 @@ import sun.reflect.Reflection;
  * Implementation of the persistence layer. This class provides minimal database
  * functionality. It stores no data and provides only predefined datasets.
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class BlackholePersistenceImpl implements IPersistence {

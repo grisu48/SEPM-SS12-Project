@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.smartsnip.persistence.hibernate.SqlPersistenceImpl;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class PersistenceFactoryTest {

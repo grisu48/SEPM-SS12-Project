@@ -12,7 +12,7 @@ import org.apache.commons.cli.*;
  * This class contains a console utility to reindex the full-text index files of
  * Lucene the the search engine used by hibernate.
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class FullTextMassIndexer {

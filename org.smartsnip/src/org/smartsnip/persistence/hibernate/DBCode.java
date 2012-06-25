@@ -22,7 +22,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.Store;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

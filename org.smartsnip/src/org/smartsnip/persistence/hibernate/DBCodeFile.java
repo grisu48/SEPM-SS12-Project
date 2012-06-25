@@ -18,7 +18,7 @@ import org.hibernate.search.annotations.DocumentId;
 import org.smartsnip.persistence.IPersistence;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  *
  */
 @Entity

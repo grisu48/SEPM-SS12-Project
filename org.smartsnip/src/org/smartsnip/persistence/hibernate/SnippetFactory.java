@@ -31,7 +31,7 @@ import org.smartsnip.shared.Pair;
 import com.sun.xml.internal.stream.Entity;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class SnippetFactory {

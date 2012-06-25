@@ -17,7 +17,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.DynamicInsert;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

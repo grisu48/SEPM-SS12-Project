@@ -20,7 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  *
  */
 public class DBTagTest {

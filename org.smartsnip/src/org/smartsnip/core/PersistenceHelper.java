@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * A helper class to pass on the needed core objects to the persistence package.
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class PersistenceHelper {

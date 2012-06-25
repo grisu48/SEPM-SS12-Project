@@ -24,7 +24,7 @@ import org.smartsnip.persistence.IPersistence;
  * <p>
  * This part contains all methods relating to User.
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class UserFactory {

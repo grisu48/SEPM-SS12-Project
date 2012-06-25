@@ -30,7 +30,7 @@ import org.smartsnip.core.User;
 /**
  * Database OR mapping class for table User
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

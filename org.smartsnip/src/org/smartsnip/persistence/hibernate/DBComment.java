@@ -20,7 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicInsert;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

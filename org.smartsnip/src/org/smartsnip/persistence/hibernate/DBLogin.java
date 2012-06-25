@@ -13,7 +13,7 @@ import org.smartsnip.persistence.IPersistence;
 /**
  * Database OR mapping class for table Password
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

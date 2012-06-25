@@ -19,7 +19,7 @@ import org.smartsnip.core.User;
 import org.smartsnip.core.User.UserState;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class SqlPersistenceHelper extends PersistenceHelper {

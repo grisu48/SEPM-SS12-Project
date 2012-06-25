@@ -11,7 +11,7 @@ import java.io.InputStream;
 /**
  * File persistable to database
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * @author Felix Niederwanger
  * 
  */

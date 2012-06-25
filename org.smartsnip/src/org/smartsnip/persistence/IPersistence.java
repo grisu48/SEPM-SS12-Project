@@ -41,7 +41,7 @@ import sun.reflect.Reflection;
  * {@code (2 + [depth of subpackage-tree])} for more details see
  * {@link Reflection#getCallerClass(int)}
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public interface IPersistence {

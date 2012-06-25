@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  * class. Only one kind of persistence object selected of multiple
  * implementations can be instantiated at a time.
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class PersistenceFactory {

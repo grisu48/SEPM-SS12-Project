@@ -12,7 +12,7 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class DBSessionFactory {

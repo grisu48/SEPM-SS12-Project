@@ -13,7 +13,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.smartsnip.persistence.IPersistence;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

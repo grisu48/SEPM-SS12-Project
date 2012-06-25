@@ -18,7 +18,7 @@ import org.smartsnip.core.Snippet;
 import org.smartsnip.persistence.IPersistence;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class CategoryFactory {

@@ -16,7 +16,7 @@ import org.hibernate.annotations.DynamicInsert;
  * Database OR mapping class for table RelTagSnippet This class is a
  * relationship, no entity. So it is annotated to remove in an increment.
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

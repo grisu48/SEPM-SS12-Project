@@ -8,7 +8,7 @@ import org.smartsnip.shared.XCode;
 /**
  * 
  * @author Felix Niederwanger
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public abstract class Code {

@@ -14,7 +14,7 @@ import org.hibernate.search.Search;
  * This class provides maintainance tools to keep the database and it's
  * components up to date.
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class Maintainance {

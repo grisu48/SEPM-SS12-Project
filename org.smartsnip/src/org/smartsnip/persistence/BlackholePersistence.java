@@ -7,7 +7,7 @@ package org.smartsnip.persistence;
 import org.smartsnip.persistence.blackhole.BlackholePersistenceImpl;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  *
  */
 public class BlackholePersistence extends BlackholePersistenceImpl {

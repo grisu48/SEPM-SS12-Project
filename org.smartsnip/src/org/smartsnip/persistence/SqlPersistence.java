@@ -7,7 +7,7 @@ package org.smartsnip.persistence;
 import org.smartsnip.persistence.hibernate.SqlPersistenceImpl;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  *
  */
 public class SqlPersistence extends SqlPersistenceImpl {

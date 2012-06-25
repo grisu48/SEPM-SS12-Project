@@ -14,7 +14,7 @@ import org.hibernate.annotations.NaturalId;
 /**
  * Database OR mapping class for table Tag
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

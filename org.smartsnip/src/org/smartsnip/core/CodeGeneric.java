@@ -10,7 +10,7 @@ import java.io.IOException;
  * This class represents the concrete code. It is a generic object built of the
  * properties of the database.
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class CodeGeneric extends Code {

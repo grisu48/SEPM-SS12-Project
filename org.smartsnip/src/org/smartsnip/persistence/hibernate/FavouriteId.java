@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Id class for the entity {@link DBFavourite}
- * @author littlelion
+ * @author Gerhard Aigner
  *
  */
 @Embeddable

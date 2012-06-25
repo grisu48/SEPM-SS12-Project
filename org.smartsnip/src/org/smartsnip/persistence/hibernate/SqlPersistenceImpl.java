@@ -14,7 +14,7 @@ import org.smartsnip.shared.Pair;
 import sun.reflect.Reflection;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class SqlPersistenceImpl implements IPersistence {

@@ -18,7 +18,7 @@ import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.shared.Pair;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class CodeFactory {

@@ -19,7 +19,7 @@ import org.hibernate.search.annotations.Store;
 /**
  * Database OR mapping class for table Tag
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

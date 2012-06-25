@@ -15,7 +15,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.smartsnip.persistence.IPersistence;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity
@@ -80,7 +80,7 @@ public class DBVote {
 	/**
 	 * This enum represents the vote of a comment
 	 * 
-	 * @author littlelion
+	 * @author Gerhard Aigner
 	 * 
 	 */
 	public enum Vote {

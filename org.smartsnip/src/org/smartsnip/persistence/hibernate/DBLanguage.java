@@ -15,7 +15,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 /**
  * Database OR mapping class for table Language
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

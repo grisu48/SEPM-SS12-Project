@@ -25,7 +25,7 @@ import org.hibernate.search.annotations.Store;
 /**
  * Database OR mapping class for table Category
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 @Entity

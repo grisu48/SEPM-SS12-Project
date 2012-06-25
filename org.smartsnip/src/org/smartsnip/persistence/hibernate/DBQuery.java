@@ -34,7 +34,7 @@ import org.smartsnip.shared.Pair;
  * This class keeps and handles queries of a session. It can set up and execute
  * some HQL queries.
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 class DBQuery {

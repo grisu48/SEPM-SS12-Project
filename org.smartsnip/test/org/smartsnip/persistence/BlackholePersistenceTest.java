@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.junit.Test;
 
 /**
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class BlackholePersistenceTest {

@@ -62,7 +62,7 @@ import org.smartsnip.shared.Pair;
  * &lt;property name="connection.password"&gt;test_password&lt;/property&gt;
  * </p>
  * 
- * @author littlelion
+ * @author Gerhard Aigner
  * 
  */
 public class SqlPersistenceImplTest {
