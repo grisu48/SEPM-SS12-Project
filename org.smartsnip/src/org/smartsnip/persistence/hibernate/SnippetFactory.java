@@ -28,8 +28,6 @@ import org.smartsnip.core.User;
 import org.smartsnip.persistence.IPersistence;
 import org.smartsnip.shared.Pair;
 
-import com.sun.xml.internal.stream.Entity;
-
 /**
  * @author Gerhard Aigner
  * 
